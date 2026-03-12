@@ -1,22 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { createServerFn } from '@tanstack/react-start';
-import { createUser, getAllUsers } from '#/db/queries/users';
-
-const fetchAllUsers = createServerFn({
-  method: 'GET',
-}).handler(() => {
-  return getAllUsers();
-});
-
-const createNewUser = createServerFn({
-  method: 'POST',
-}).handler(() => {
-  return createUser({
-    email: 'test@test.com',
-    firstName: 'Foo',
-    lastName: 'Bar',
-  });
-});
+import { apiRoutes } from '#/api/routes';
 
 const Home = () => {
   const users = Route.useLoaderData();
@@ -25,7 +8,7 @@ const Home = () => {
   return (
     <button
       onClick={async () => {
-        await createNewUser();
+        await apiRoutes.users.create();
       }}
       type="button"
     >
@@ -37,6 +20,6 @@ const Home = () => {
 export const Route = createFileRoute('/')({
   component: Home,
   loader: async () => {
-    return fetchAllUsers();
+    return apiRoutes.users.getAll();
   },
 });

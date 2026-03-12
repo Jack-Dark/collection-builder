@@ -11,7 +11,6 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CollectionIndexRouteImport } from './routes/collection/index'
-import { Route as RouteTreeGenRouteImport } from './routes/routeTree.gen'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -23,39 +22,30 @@ const CollectionIndexRoute = CollectionIndexRouteImport.update({
   path: '/collection/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const RouteTreeGenRoute = RouteTreeGenRouteImport.update({
-  id: '/routeTree/gen',
-  path: '/routeTree/gen',
-  getParentRoute: () => rootRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/routeTree/gen': typeof RouteTreeGenRoute
   '/collection/': typeof CollectionIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/routeTree/gen': typeof RouteTreeGenRoute
   '/collection': typeof CollectionIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/routeTree/gen': typeof RouteTreeGenRoute
   '/collection/': typeof CollectionIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/routeTree/gen' | '/collection/'
+  fullPaths: '/' | '/collection/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/routeTree/gen' | '/collection'
-  id: '__root__' | '/' | '/routeTree/gen' | '/collection/'
+  to: '/' | '/collection'
+  id: '__root__' | '/' | '/collection/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  RouteTreeGenRoute: typeof RouteTreeGenRoute
   CollectionIndexRoute: typeof CollectionIndexRoute
 }
 
@@ -75,19 +65,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CollectionIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/routeTree/gen': {
-      id: '/routeTree/gen'
-      path: '/routeTree/gen'
-      fullPath: '/routeTree/gen'
-      preLoaderRoute: typeof RouteTreeGenRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  RouteTreeGenRoute: RouteTreeGenRoute,
   CollectionIndexRoute: CollectionIndexRoute,
 }
 export const routeTree = rootRouteImport
