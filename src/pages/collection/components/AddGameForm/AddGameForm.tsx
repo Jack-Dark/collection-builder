@@ -27,8 +27,7 @@ export const AddGameForm: RouteComponent = () => {
       router.invalidate();
     },
     validators: {
-      onChange: apiRoutes.games.createSchema,
-      onMount: apiRoutes.games.createSchema,
+      onSubmit: apiRoutes.games.createSchema,
     },
   });
 
@@ -46,40 +45,78 @@ export const AddGameForm: RouteComponent = () => {
           alignItems: 'flex-start',
         }}
       >
-        <form.Field name="name">
-          {(field) => {
+        <form.Subscribe
+          selector={(state) => {
+            return {
+              errors: state.errors,
+            };
+          }}
+        >
+          {({ errors }) => {
             return (
-              <TextField
-                label="Name"
-                name={field.name}
-                onChange={(e) => {
-                  field.handleChange(e.target.value);
+              <form.Field name="name">
+                {(field) => {
+                  const errorMsg = errors?.[0]?.[field.name]?.[0]?.message;
+
+                  return (
+                    <TextField
+                      error={!!errorMsg}
+                      helperText={errorMsg}
+                      label="Name"
+                      name={field.name}
+                      onChange={(e) => {
+                        field.handleChange(e.target.value);
+                      }}
+                      required
+                      sx={{ width: '100%' }}
+                    />
+                  );
                 }}
-                sx={{ width: '100%' }}
-              />
+              </form.Field>
             );
           }}
-        </form.Field>
-        <form.Field name="system">
-          {(field) => {
+        </form.Subscribe>
+        <form.Subscribe
+          selector={(state) => {
+            return {
+              errors: state.errors,
+            };
+          }}
+        >
+          {({ errors }) => {
             return (
-              <FormControl fullWidth>
-                <Autocomplete
-                  onChange={(_e, value) => {
-                    field.setValue(value!);
-                  }}
-                  // disablePortal
-                  options={systemsList}
-                  renderInput={(params) => {
-                    return (
-                      <TextField {...params} label="System" name={field.name} />
-                    );
-                  }}
-                />
-              </FormControl>
+              <form.Field name="system">
+                {(field) => {
+                  const errorMsg = errors?.[0]?.[field.name]?.[0]?.message;
+
+                  return (
+                    <FormControl fullWidth>
+                      <Autocomplete
+                        onChange={(_e, value) => {
+                          field.setValue(value!);
+                        }}
+                        // disablePortal
+                        options={systemsList}
+                        renderInput={(params) => {
+                          return (
+                            <TextField
+                              {...params}
+                              error={!!errorMsg}
+                              helperText={errorMsg}
+                              label="System"
+                              name={field.name}
+                              required
+                            />
+                          );
+                        }}
+                      />
+                    </FormControl>
+                  );
+                }}
+              </form.Field>
             );
           }}
-        </form.Field>
+        </form.Subscribe>
 
         <form.Field
           listeners={{
@@ -116,22 +153,28 @@ export const AddGameForm: RouteComponent = () => {
           selector={(state) => {
             return {
               editionDetails: state.values.editionDetails,
+              errors: state.errors,
               isSpecialEdition: state.values.isSpecialEdition,
             };
           }}
         >
-          {({ editionDetails, isSpecialEdition }) => {
+          {({ editionDetails, errors, isSpecialEdition }) => {
             return (
               isSpecialEdition && (
                 <form.Field name="editionDetails">
                   {(field) => {
+                    const errorMsg = errors?.[0]?.[field.name]?.[0]?.message;
+
                     return (
                       <TextField
+                        error={!!errorMsg}
+                        helperText={errorMsg}
                         label="Edition details"
                         name={field.name}
                         onChange={(e) => {
                           field.handleChange(e.target.value);
                         }}
+                        required
                         value={editionDetails}
                       />
                     );
