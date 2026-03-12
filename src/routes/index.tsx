@@ -1,8 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
-
-import { neon } from '@neondatabase/serverless';
-import { configs } from '#/configs';
 import { createUser, getAllUsers } from '#/db/queries/users';
 
 const fetchAllUsers = createServerFn({
@@ -10,6 +7,7 @@ const fetchAllUsers = createServerFn({
 }).handler(() => {
   return getAllUsers();
 });
+
 const createNewUser = createServerFn({
   method: 'POST',
 }).handler(() => {
@@ -26,10 +24,10 @@ const Home = () => {
 
   return (
     <button
-      type="button"
       onClick={async () => {
         await createNewUser();
       }}
+      type="button"
     >
       Create User
     </button>

@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as RouteTreeGenRouteImport } from './routes/routeTree.gen'
+import { Route as CollectionsVideoGamesIndexRouteImport } from './routes/collections/video-games/index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -22,31 +23,41 @@ const RouteTreeGenRoute = RouteTreeGenRouteImport.update({
   path: '/routeTree/gen',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CollectionsVideoGamesIndexRoute =
+  CollectionsVideoGamesIndexRouteImport.update({
+    id: '/collections/video-games/',
+    path: '/collections/video-games/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/routeTree/gen': typeof RouteTreeGenRoute
+  '/collections/video-games/': typeof CollectionsVideoGamesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/routeTree/gen': typeof RouteTreeGenRoute
+  '/collections/video-games': typeof CollectionsVideoGamesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/routeTree/gen': typeof RouteTreeGenRoute
+  '/collections/video-games/': typeof CollectionsVideoGamesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/routeTree/gen'
+  fullPaths: '/' | '/routeTree/gen' | '/collections/video-games/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/routeTree/gen'
-  id: '__root__' | '/' | '/routeTree/gen'
+  to: '/' | '/routeTree/gen' | '/collections/video-games'
+  id: '__root__' | '/' | '/routeTree/gen' | '/collections/video-games/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   RouteTreeGenRoute: typeof RouteTreeGenRoute
+  CollectionsVideoGamesIndexRoute: typeof CollectionsVideoGamesIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -65,12 +76,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RouteTreeGenRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/collections/video-games/': {
+      id: '/collections/video-games/'
+      path: '/collections/video-games'
+      fullPath: '/collections/video-games/'
+      preLoaderRoute: typeof CollectionsVideoGamesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   RouteTreeGenRoute: RouteTreeGenRoute,
+  CollectionsVideoGamesIndexRoute: CollectionsVideoGamesIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -1,0 +1,70 @@
+import type { FilterFn, TableOptions } from '@tanstack/react-table';
+
+import { rankItem } from '@tanstack/match-sorter-utils';
+import {
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+} from '@tanstack/react-table';
+
+const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
+  // Rank the item
+  const itemRank = rankItem(row.getValue(columnId), value);
+
+  // Store the itemRank info
+  addMeta({ itemRank });
+
+  // Return if the item should be filtered in/out
+  return itemRank.passed;
+};
+
+type TablePropsDef<T> = Omit<TableOptions<T>, 'filterFns' | 'getCoreRowModel'> &
+  Partial<Pick<TableOptions<T>, 'filterFns' | 'getCoreRowModel'>>;
+
+export const Table = <T,>(props: TablePropsDef<T>) => {
+  const table = useReactTable<T>({
+    filterFns: {
+      fuzzy: fuzzyFilter,
+    },
+    getCoreRowModel: getCoreRowModel(),
+    ...props,
+  });
+
+  return (
+    <table>
+      <thead>
+        {table.getHeaderGroups().map((hg) => {
+          return (
+            <tr key={hg.id}>
+              {hg.headers.map((header) => {
+                return (
+                  <th className="text-left px-2 py-1" key={header.id}>
+                    {flexRender(
+                      header.column.columnDef.header,
+                      header.getContext(),
+                    )}
+                  </th>
+                );
+              })}
+            </tr>
+          );
+        })}
+      </thead>
+      <tbody>
+        {table.getRowModel().rows.map((row) => {
+          return (
+            <tr key={row.id}>
+              {row.getVisibleCells().map((cell) => {
+                return (
+                  <td className="border px-2 py-1" key={cell.id}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </td>
+                );
+              })}
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
+  );
+};

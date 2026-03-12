@@ -22,13 +22,17 @@ export const gamesDbSchema = pgTable('games', {
   name: text().notNull(),
   system: text().notNull(),
   isSpecialEdition: boolean().notNull(),
-  editionDetails: text().notNull(),
+  editionDetails: text(),
   userId: integer().references(() => {
     return usersDbSchema.id;
   }),
   ...timestamps,
   /* eslint-enable perfectionist/sort-objects */
 });
+
+export type GameDef = typeof gamesDbSchema.$inferSelect;
+
+export type NewGameDef = typeof gamesDbSchema.$inferInsert;
 
 export const usersDbSchema = pgTable('users', {
   /* eslint-disable perfectionist/sort-objects */
