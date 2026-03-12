@@ -3,15 +3,13 @@ import type { RouteComponent } from '@tanstack/react-router';
 import {
   Button,
   Checkbox,
-  FormControl,
   FormControlLabel,
   FormGroup,
-  InputLabel,
-  MenuItem,
-  Select,
   TextField,
   Typography,
   Stack,
+  Autocomplete,
+  FormControl,
 } from '@mui/material';
 import { useForm } from '@tanstack/react-form';
 import { useRouter } from '@tanstack/react-router';
@@ -30,6 +28,7 @@ export const AddGameForm: RouteComponent = () => {
     },
     validators: {
       onChange: apiRoutes.games.createSchema,
+      onMount: apiRoutes.games.createSchema,
     },
   });
 
@@ -51,12 +50,12 @@ export const AddGameForm: RouteComponent = () => {
           {(field) => {
             return (
               <TextField
-                sx={{ width: '100%' }}
-                {...field}
                 label="Name"
+                name={field.name}
                 onChange={(e) => {
                   field.handleChange(e.target.value);
                 }}
+                sx={{ width: '100%' }}
               />
             );
           }}
@@ -65,18 +64,18 @@ export const AddGameForm: RouteComponent = () => {
           {(field) => {
             return (
               <FormControl fullWidth>
-                <InputLabel>System</InputLabel>
-                <Select
-                  {...field}
-                  label="System"
-                  onChange={(e) => {
-                    field.handleChange(e.target.value as string);
+                <Autocomplete
+                  onChange={(_e, value) => {
+                    field.setValue(value!);
                   }}
-                >
-                  {systemsList.map((name) => {
-                    return <MenuItem value={name}>{name}</MenuItem>;
-                  })}
-                </Select>
+                  // disablePortal
+                  options={systemsList}
+                  renderInput={(params) => {
+                    return (
+                      <TextField {...params} label="System" name={field.name} />
+                    );
+                  }}
+                />
               </FormControl>
             );
           }}
@@ -95,7 +94,7 @@ export const AddGameForm: RouteComponent = () => {
         >
           {(field) => {
             return (
-              <FormGroup {...field}>
+              <FormGroup>
                 <FormControlLabel
                   control={
                     <Checkbox
@@ -128,11 +127,11 @@ export const AddGameForm: RouteComponent = () => {
                   {(field) => {
                     return (
                       <TextField
+                        label="Edition details"
+                        name={field.name}
                         onChange={(e) => {
                           field.handleChange(e.target.value);
                         }}
-                        {...field}
-                        label="Edition details"
                         value={editionDetails}
                       />
                     );
@@ -149,12 +148,15 @@ export const AddGameForm: RouteComponent = () => {
               errors: state.errors,
               isFormValid: state.isFormValid,
               isValid: state.isValid,
+              values: state.values,
             };
           }}
         >
-          {({ errors, isFormValid, isValid }) => {
-            // console.clear();
-            // console.log('🚀 ~ Collection ~ errors:', errors);
+          {(state) => {
+            console.clear();
+            console.log('🚀 ~ AddGameForm ~ state:', state);
+
+            const { isFormValid, isValid } = state;
 
             return (
               <Button disabled={!isValid && !isFormValid} type="submit">
