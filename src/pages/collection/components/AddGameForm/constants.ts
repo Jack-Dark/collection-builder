@@ -1,5 +1,7 @@
 import type { ObjectValues } from '#/types/common';
 
+import type { AddGameFormSchemaDef } from './types';
+
 const systems = {
   microsoftXbox: 'Xbox',
   microsoftXbox360: 'Xbox 360',
@@ -29,3 +31,10 @@ const systems = {
 
 export const systemsList: ObjectValues<typeof systems>[] =
   Object.values(systems).sort();
+
+export const defaultValues: AddGameFormSchemaDef = {
+  editionDetails: '',
+  isSpecialEdition: false,
+  name: '',
+  system: '',
+};

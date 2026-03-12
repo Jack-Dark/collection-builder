@@ -18,10 +18,10 @@ export const getGameByName = async (name: string) => {
   return game;
 };
 
-export const createGame = async (Game: NewGameRecordDef) => {
+export const createGame = async (game: NewGameRecordDef) => {
   const [newGame] = await db
     .insert(gamesTable)
-    .values(Game)
+    .values(game)
     .onConflictDoNothing()
     .returning();
 

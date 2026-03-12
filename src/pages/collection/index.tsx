@@ -9,22 +9,14 @@ import { AddGameForm } from './components/AddGameForm';
 import { collectionTableColumns } from './constants';
 
 export const Collection: RouteComponent = () => {
-  const [showAddForm, setShowAddForm] = useState<boolean>(true);
+  const [showAddForm, setShowAddForm] = useState<boolean>(false);
 
   const games = useLoaderData({ from: '/collection/' });
-  console.log('🚀 ~ Home ~ games:', games);
 
   return (
     <main className="page-wrap px-4 py-12">
       <section className="bg-white text-black rounded-2xl p-6 sm:p-8">
         <Stack spacing={4}>
-          <Button
-            onClick={async () => {
-              // await getAllGames();
-            }}
-          >
-            <Typography>MAKE ENDPOINT REQUEST</Typography>
-          </Button>
           <Button
             onClick={() => {
               setShowAddForm((prev) => {
