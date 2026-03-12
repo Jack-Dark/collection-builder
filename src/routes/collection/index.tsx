@@ -1,3 +1,5 @@
+import type { GameDef } from '#/db/schema';
+
 import {
   Button,
   Checkbox,
@@ -17,6 +19,7 @@ import { createServerFn } from '@tanstack/react-start';
 import { createColumnHelper } from '@tanstack/react-table';
 import { Table } from '#/components/Table';
 import { createGame, getAllGames } from '#/db/queries/games';
+import formatDate, { masks } from 'dateformat';
 import { useState } from 'react';
 import * as zod from 'zod';
 
@@ -62,18 +65,7 @@ type ObjectValues<T extends Record<any, any>> = T[keyof T];
 
 type System = ObjectValues<typeof systems>;
 
-type CollectionItemDef = {
-  id: number;
-  name: string;
-  system: string;
-  /** If true, pushes to the systems table instead of the games table. */
-  // isConsole: boolean;
-  isSpecialEdition: boolean;
-  editionDetails: string | null;
-  // dateAdded: number;
-};
-
-const columnHelper = createColumnHelper<CollectionItemDef>();
+const columnHelper = createColumnHelper<GameDef>();
 
 const columns = [
   columnHelper.accessor('name', {
@@ -93,6 +85,18 @@ const columns = [
       const text = getValue();
 
       return text ? <Typography>{text}</Typography> : null;
+    },
+    header: 'Edition',
+  }),
+  columnHelper.accessor('createdAt', {
+    cell: ({ getValue }) => {
+      const date = getValue();
+
+      return date ? (
+        <Typography>
+          {formatDate(date, `${masks.paddedShortDate} @ ${masks.shortTime}`)}
+        </Typography>
+      ) : null;
     },
     header: 'Edition',
   }),
@@ -334,7 +338,7 @@ const Collection = () => {
   );
 };
 
-export const Route = createFileRoute('/collections/video-games/')({
+export const Route = createFileRoute('/collection/')({
   component: Collection,
   loader: async () => {
     return fetchAllGames();
