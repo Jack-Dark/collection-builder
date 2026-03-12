@@ -18,7 +18,7 @@ import { useLoaderData, useRouter } from '@tanstack/react-router';
 import { apiRoutes } from '#/api/routes';
 
 import { systemsList } from './constants';
-import { defaultValues, addGameFormSchema } from './schema';
+import { defaultValues } from './schema';
 
 export const AddGameForm: RouteComponent = () => {
   const router = useRouter();
@@ -33,7 +33,7 @@ export const AddGameForm: RouteComponent = () => {
       router.invalidate();
     },
     validators: {
-      onChange: addGameFormSchema,
+      onChange: apiRoutes.games.createSchema,
     },
   });
 

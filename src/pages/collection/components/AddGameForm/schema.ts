@@ -1,11 +1,5 @@
-import * as zod from 'zod';
-
-export const addGameFormSchema = zod.object({
-  editionDetails: zod.string().describe('Edition details'),
-  isSpecialEdition: zod.boolean().describe('Is special edition'),
-  name: zod.string().describe('Name').min(1),
-  system: zod.string().describe('System').min(1),
-});
+import type { apiRoutes } from '#/api/routes';
+import type * as zod from 'zod';
 
 export const defaultValues: AddGameFormSchemaDef = {
   editionDetails: '',
@@ -14,4 +8,4 @@ export const defaultValues: AddGameFormSchemaDef = {
   system: '',
 };
 
-type AddGameFormSchemaDef = zod.Infer<typeof addGameFormSchema>;
+type AddGameFormSchemaDef = zod.Infer<typeof apiRoutes.games.createSchema>;

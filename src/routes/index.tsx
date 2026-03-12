@@ -8,7 +8,16 @@ const Home = () => {
   return (
     <button
       onClick={async () => {
-        await apiRoutes.users.create();
+        // TODO - REPLACE WITH ACTUAL AUTHENTICATION
+        // TODO - BETTER AUTH? CLERK?
+        await apiRoutes.users.create({
+          data: {
+            email: 'test@test.com',
+            firstName: 'Foo',
+            hashedPassword: 'unset',
+            lastName: 'Bar',
+          },
+        });
       }}
       type="button"
     >

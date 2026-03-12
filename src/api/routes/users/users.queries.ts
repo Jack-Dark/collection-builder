@@ -1,4 +1,4 @@
-import { eq } from 'drizzle-orm';
+import { like } from 'drizzle-orm';
 
 import type { NewUserRecordDef } from './users.types';
 
@@ -9,8 +9,13 @@ export const getAllUsers = async () => {
   return await db.select().from(usersTable);
 };
 
-export const getUser = async (id: number) => {
-  return await db.select().from(usersTable).where(eq(usersTable.id, id));
+export const getUserByEmail = async (email: string) => {
+  const [user] = await db
+    .select()
+    .from(usersTable)
+    .where(like(usersTable.email, `%${email}%`));
+
+  return user;
 };
 
 export const createUser = async (user: NewUserRecordDef) => {

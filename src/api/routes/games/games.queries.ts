@@ -1,4 +1,4 @@
-import { eq } from 'drizzle-orm';
+import { like } from 'drizzle-orm';
 
 import type { NewGameRecordDef } from './games.types';
 
@@ -9,8 +9,13 @@ export const getAllGames = async () => {
   return await db.select().from(gamesTable);
 };
 
-export const getGame = async (id: number) => {
-  return await db.select().from(gamesTable).where(eq(gamesTable.id, id));
+export const getGameByName = async (name: string) => {
+  const [game] = await db
+    .select()
+    .from(gamesTable)
+    .where(like(gamesTable.name, `%${name}%`));
+
+  return game;
 };
 
 export const createGame = async (Game: NewGameRecordDef) => {
