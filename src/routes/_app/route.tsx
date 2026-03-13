@@ -1,14 +1,6 @@
-import { createFileRoute, Outlet } from '@tanstack/react-router';
+import { createFileRoute } from '@tanstack/react-router';
+import { Layout } from '#/layout';
 
 export const Route = createFileRoute('/_app')({
-  component: PathlessLayoutComponent,
+  component: Layout,
 });
-
-function PathlessLayoutComponent() {
-  return (
-    <div>
-      <h1>Pathless layout</h1>
-      <Outlet />
-    </div>
-  );
-}

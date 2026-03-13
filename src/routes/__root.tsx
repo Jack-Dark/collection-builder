@@ -41,6 +41,7 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
   return (
     <html>
       <head>
+        <link href="/src/style.css" rel="stylesheet" />
         <HeadContent />
       </head>
       <body>
