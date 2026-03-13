@@ -4,7 +4,7 @@ import { neon } from '@neondatabase/serverless';
 import { configs } from '#/configs.ts';
 import { drizzle } from 'drizzle-orm/node-postgres';
 
-import * as schema from './types.ts';
+import * as schema from './common.ts';
 
 export const db = drizzle({
   casing: 'snake_case',

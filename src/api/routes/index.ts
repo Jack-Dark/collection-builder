@@ -1,7 +1,7 @@
-import { games } from './games';
-import { users } from './users';
+import { gamesRoutes } from './games/client';
+import { usersRoutes } from './users/client';
 
 export const apiRoutes = {
-  games,
-  users,
+  games: gamesRoutes,
+  users: usersRoutes,
 };

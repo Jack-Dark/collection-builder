@@ -3,7 +3,7 @@ import {
   createUser,
   getAllUsers,
   getUserByEmail,
-} from '#/api/routes/users/users.queries';
+} from '#/api/routes/users/server/queries';
 import * as zod from 'zod';
 
 export const getAll = createServerFn({

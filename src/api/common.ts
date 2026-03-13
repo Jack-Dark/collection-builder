@@ -7,3 +7,5 @@ export const timestamps = {
   deletedAt: timestamp(),
   /* eslint-enable perfectionist/sort-objects */
 };
+
+export type TimestampsDef = typeof timestamps;

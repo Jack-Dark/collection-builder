@@ -1,7 +1,7 @@
-import { usersTable } from '#/api/routes/users/users.schema';
+import { timestamps } from '#/api/common';
 import { pgTable, serial, text, boolean, integer } from 'drizzle-orm/pg-core';
 
-import { timestamps } from '../../types';
+import { usersTable } from '../../users/server/schema';
 
 export const gamesTable = pgTable('games', {
   /* eslint-disable perfectionist/sort-objects */

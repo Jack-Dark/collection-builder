@@ -1,9 +1,9 @@
 import { like } from 'drizzle-orm';
 
-import type { NewUserRecordDef } from './users.types';
+import type { NewUserRecordDef } from './types';
 
-import { db } from '../../db';
-import { usersTable } from './users.schema';
+import { db } from '../../../db';
+import { usersTable } from './schema';
 
 export const getAllUsers = async () => {
   return await db.select().from(usersTable);

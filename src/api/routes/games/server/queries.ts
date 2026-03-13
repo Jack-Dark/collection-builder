@@ -1,9 +1,9 @@
+import { db } from '#/api/db';
 import { and, eq, isNull } from 'drizzle-orm';
 
-import type { NewGameRecordDef } from './games.types';
+import type { NewGameRecordDef } from './types';
 
-import { db } from '../../db';
-import { gamesTable } from './games.schema';
+import { gamesTable } from './schema';
 
 export const getAllGames = async () => {
   return await db.select().from(gamesTable).where(isNull(gamesTable.deletedAt));
@@ -32,6 +32,7 @@ export const updateGameById = async (
   id: number,
   game: Partial<Omit<NewGameRecordDef, 'id'>>,
 ) => {
+  // TODO - PROBABLY HAVE TO MERGE OLD AND NEW DATA. GET GAME BY ID, IF NEEDED
   const [updatedGame] = await db
     .update(gamesTable)
     .set({ ...game, updatedAt: new Date() })

@@ -1,4 +1,4 @@
-import type { GameRecordDef } from '#/api/routes/games/games.types';
+import type { GameRecordDef } from '#/api/routes/games/server/types';
 
 import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import { Button, Typography } from '@mui/material';

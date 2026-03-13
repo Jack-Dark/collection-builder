@@ -1,11 +1,7 @@
-import type { NewGameRecordDef } from '#/api/routes/games/games.types';
+import type { NewGameRecordDef } from '#/api/routes/games/server/types';
 
 import { createFileRoute } from '@tanstack/react-router';
-import {
-  deleteGameById,
-  getGameById,
-  updateGameById,
-} from '#/api/routes/games/games.queries';
+import { gamesDbQueries } from '#/api/routes/games/server';
 
 export const Route = createFileRoute('/api/games/$id/')({
   server: {
@@ -13,14 +9,14 @@ export const Route = createFileRoute('/api/games/$id/')({
       DELETE: async ({ params }) => {
         const id = Number(params.id);
 
-        await deleteGameById(id);
+        await gamesDbQueries.deleteGameById(id);
 
         return new Response();
       },
       GET: async ({ params }) => {
         const id = Number(params.id);
 
-        const updatedGame = await getGameById(id);
+        const updatedGame = await gamesDbQueries.getGameById(id);
 
         return new Response(JSON.stringify(updatedGame));
       },
@@ -29,7 +25,10 @@ export const Route = createFileRoute('/api/games/$id/')({
         // Access the request body, for example, a JSON body
         const gameDetails: Partial<NewGameRecordDef> = await request.json();
 
-        const updatedGame = await updateGameById(id, gameDetails);
+        const updatedGame = await gamesDbQueries.updateGameById(
+          id,
+          gameDetails,
+        );
 
         return new Response(JSON.stringify(updatedGame));
       },

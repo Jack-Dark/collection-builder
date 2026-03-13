@@ -1,6 +1,5 @@
+import { timestamps } from '#/api/common';
 import { pgTable, serial, text, varchar } from 'drizzle-orm/pg-core';
-
-import { timestamps } from '../../types';
 
 export const usersTable = pgTable('users', {
   /* eslint-disable perfectionist/sort-objects */

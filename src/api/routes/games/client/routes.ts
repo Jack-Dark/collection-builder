@@ -1,13 +1,11 @@
-import type {
-  getGameById,
-  createGame,
-  updateGameById,
-} from '#/api/routes/games/games.queries';
-
-import { createServerFn } from '@tanstack/react-start';
-import { getAllGames } from '#/api/routes/games/games.queries';
 import { configs } from '#/configs';
 import * as zod from 'zod';
+
+import type {
+  GameRecordDef,
+  NewGameRecordDef,
+  UpdateGameRecordDef,
+} from '../server/types';
 
 const createBaseSchema = zod.object({
   editionDetails: zod.string().describe('Edition details'),
@@ -23,24 +21,19 @@ const createIsSpecialEditionSchema = zod.object({
     .describe('Edition details'),
   isSpecialEdition: zod.literal(true).describe('Is special edition'),
 });
+
 const createIsNotSpecialEditionSchema = zod.object({
   ...createBaseSchema.shape,
   editionDetails: zod.literal('').describe('Edition details'),
   isSpecialEdition: zod.literal(false).describe('Is special edition'),
 });
+
 export const createSchema = zod.union([
   createIsSpecialEditionSchema,
   createIsNotSpecialEditionSchema,
 ]);
 
-
-export const getAll = createServerFn({
-  method: 'GET',
-}).handler(() => {
-  return getAllGames();
-});
-
-export const create = async (game: Parameters<typeof createGame>[0]) => {
+export const create = async (game: NewGameRecordDef) => {
   const url = `${configs.hostUrl}api/games`;
   console.log('🚀 ~ FETCH create ~ url:', url);
 
@@ -53,7 +46,7 @@ export const create = async (game: Parameters<typeof createGame>[0]) => {
       throw new Error(`Response status: ${response.status}`);
     }
 
-    const result: ReturnType<typeof createGame> = await response.json();
+    const result: GameRecordDef = await response.json();
 
     return result;
   } catch (error) {
@@ -63,9 +56,9 @@ export const create = async (game: Parameters<typeof createGame>[0]) => {
   }
 };
 export const updateById = async (
-  ...args: Parameters<typeof updateGameById>
+  id: number,
+  gameDetails: UpdateGameRecordDef,
 ) => {
-  const [id, gameDetails] = args;
   const url = `${configs.hostUrl}api/games/${id}`;
   try {
     const response = await fetch(url, {
@@ -76,7 +69,7 @@ export const updateById = async (
       throw new Error(`Response status: ${response.status}`);
     }
 
-    const result: ReturnType<typeof updateGameById> = await response.json();
+    const result: GameRecordDef = await response.json();
 
     return result;
   } catch (error) {
@@ -110,7 +103,7 @@ export const getById = async (id: number) => {
       throw new Error(`Response status: ${response.status}`);
     }
 
-    const result: ReturnType<typeof getGameById> = await response.json();
+    const result: GameRecordDef = await response.json();
 
     return result;
   } catch (error) {
