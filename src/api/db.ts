@@ -4,12 +4,12 @@ import { neon } from '@neondatabase/serverless';
 import { configs } from '#/configs.ts';
 import { drizzle } from 'drizzle-orm/node-postgres';
 
-import * as schema from './common.ts';
+import * as schema from './schema.ts';
 
 export const db = drizzle({
   casing: 'snake_case',
   connection: configs.dbUrl,
-  schema,
+  schema: schema,
 });
 
 let client: NeonQueryFunction<boolean, boolean> | undefined;

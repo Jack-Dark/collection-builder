@@ -1,10 +1,10 @@
-import type { TimestampsDef } from '#/api/common';
+import type { TimestampsDef } from '#/api/types';
 
-import type { gamesTable } from './schema';
+import type { games } from '../../../schema';
 
-export type GameRecordDef = typeof gamesTable.$inferSelect;
+export type GameRecordDef = typeof games.$inferSelect;
 
-export type NewGameRecordDef = typeof gamesTable.$inferInsert;
+export type NewGameRecordDef = typeof games.$inferInsert;
 
 export type UpdateGameRecordDef = Partial<
   Omit<GameRecordDef, 'id' | 'userId' | keyof TimestampsDef>

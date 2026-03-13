@@ -3,24 +3,24 @@ import { and, eq, isNull } from 'drizzle-orm';
 
 import type { NewGameRecordDef, UpdateGameRecordDef } from './types';
 
-import { gamesTable } from './schema';
+import { games } from '../../../schema';
 
 export const getAllGames = async () => {
-  return await db.select().from(gamesTable).where(isNull(gamesTable.deletedAt));
+  return await db.select().from(games).where(isNull(games.deletedAt));
 };
 
 export const getGameById = async (id: number) => {
   const [game] = await db
     .select()
-    .from(gamesTable)
-    .where(and(eq(gamesTable.id, id), isNull(gamesTable.deletedAt)));
+    .from(games)
+    .where(and(eq(games.id, id), isNull(games.deletedAt)));
 
   return game;
 };
 
 export const createGame = async (gameDetails: NewGameRecordDef) => {
   const [newGame] = await db
-    .insert(gamesTable)
+    .insert(games)
     .values(gameDetails)
     .onConflictDoNothing()
     .returning();
@@ -34,17 +34,14 @@ export const updateGameById = async (
 ) => {
   // TODO - PROBABLY HAVE TO MERGE OLD AND NEW DATA. GET GAME BY ID, IF NEEDED
   const [updatedGame] = await db
-    .update(gamesTable)
+    .update(games)
     .set({ ...game, updatedAt: new Date() })
-    .where(and(eq(gamesTable.id, id), isNull(gamesTable.deletedAt)))
+    .where(and(eq(games.id, id), isNull(games.deletedAt)))
     .returning();
 
   return updatedGame;
 };
 
 export const deleteGameById = async (id: number) => {
-  await db
-    .update(gamesTable)
-    .set({ deletedAt: new Date() })
-    .where(eq(gamesTable.id, id));
+  await db.update(games).set({ deletedAt: new Date() }).where(eq(games.id, id));
 };

@@ -14,6 +14,12 @@ const config = defineConfig({
     // react's vite plugin must come after start's vite plugin
     viteReact(),
   ],
+  preview: {
+    port: 8080,
+  },
+  server: {
+    port: 3000,
+  },
 });
 
 export default config;

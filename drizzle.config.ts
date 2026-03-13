@@ -7,6 +7,6 @@ export default defineConfig({
     url: configs.dbUrl,
   },
   dialect: 'postgresql',
-  schema: './src/db/schema.ts',
   out: './migrations',
+  schema: './src/api/schema.ts',
 });

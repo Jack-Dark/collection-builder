@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CollectionIndexRouteImport } from './routes/collection/index'
 import { Route as ApiGamesIndexRouteImport } from './routes/api/games/index'
+import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as ApiGamesIdIndexRouteImport } from './routes/api/games/$id/index'
 
 const IndexRoute = IndexRouteImport.update({
@@ -29,6 +30,11 @@ const ApiGamesIndexRoute = ApiGamesIndexRouteImport.update({
   path: '/api/games/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
+  id: '/api/auth/$',
+  path: '/api/auth/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiGamesIdIndexRoute = ApiGamesIdIndexRouteImport.update({
   id: '/api/games/$id/',
   path: '/api/games/$id/',
@@ -38,12 +44,14 @@ const ApiGamesIdIndexRoute = ApiGamesIdIndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/collection/': typeof CollectionIndexRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/games/': typeof ApiGamesIndexRoute
   '/api/games/$id/': typeof ApiGamesIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/collection': typeof CollectionIndexRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/games': typeof ApiGamesIndexRoute
   '/api/games/$id': typeof ApiGamesIdIndexRoute
 }
@@ -51,20 +59,33 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/collection/': typeof CollectionIndexRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/games/': typeof ApiGamesIndexRoute
   '/api/games/$id/': typeof ApiGamesIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/collection/' | '/api/games/' | '/api/games/$id/'
+  fullPaths:
+    | '/'
+    | '/collection/'
+    | '/api/auth/$'
+    | '/api/games/'
+    | '/api/games/$id/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/collection' | '/api/games' | '/api/games/$id'
-  id: '__root__' | '/' | '/collection/' | '/api/games/' | '/api/games/$id/'
+  to: '/' | '/collection' | '/api/auth/$' | '/api/games' | '/api/games/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/collection/'
+    | '/api/auth/$'
+    | '/api/games/'
+    | '/api/games/$id/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CollectionIndexRoute: typeof CollectionIndexRoute
+  ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiGamesIndexRoute: typeof ApiGamesIndexRoute
   ApiGamesIdIndexRoute: typeof ApiGamesIdIndexRoute
 }
@@ -92,6 +113,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiGamesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/auth/$': {
+      id: '/api/auth/$'
+      path: '/api/auth/$'
+      fullPath: '/api/auth/$'
+      preLoaderRoute: typeof ApiAuthSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/games/$id/': {
       id: '/api/games/$id/'
       path: '/api/games/$id'
@@ -105,6 +133,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CollectionIndexRoute: CollectionIndexRoute,
+  ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiGamesIndexRoute: ApiGamesIndexRoute,
   ApiGamesIdIndexRoute: ApiGamesIdIndexRoute,
 }
