@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
 import { gamesDbQueries } from '#/api/routes/games/server';
-import { Collection } from '#/pages/collection';
+import { Collection } from '#/pages/Collection';
 
 export const Route = createFileRoute('/collection/')({
   component: Collection,

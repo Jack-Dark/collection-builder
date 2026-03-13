@@ -1,29 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { apiRoutes } from '#/api/routes';
-
-const Home = () => {
-  const users = Route.useLoaderData();
-
-  return (
-    <button
-      onClick={async () => {
-        // TODO - REPLACE WITH ACTUAL AUTHENTICATION
-        // TODO - BETTER AUTH? CLERK?
-        await apiRoutes.users.create({
-          data: {
-            email: 'test@test.com',
-            firstName: 'Foo',
-            hashedPassword: 'unset',
-            lastName: 'Bar',
-          },
-        });
-      }}
-      type="button"
-    >
-      Create User
-    </button>
-  );
-};
+import { Home } from '#/pages/Home';
 
 export const Route = createFileRoute('/')({
   component: Home,

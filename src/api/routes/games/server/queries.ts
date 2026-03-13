@@ -1,7 +1,7 @@
 import { db } from '#/api/db';
 import { and, eq, isNull } from 'drizzle-orm';
 
-import type { NewGameRecordDef } from './types';
+import type { NewGameRecordDef, UpdateGameRecordDef } from './types';
 
 import { gamesTable } from './schema';
 
@@ -30,7 +30,7 @@ export const createGame = async (gameDetails: NewGameRecordDef) => {
 
 export const updateGameById = async (
   id: number,
-  game: Partial<Omit<NewGameRecordDef, 'id'>>,
+  game: Partial<UpdateGameRecordDef>,
 ) => {
   // TODO - PROBABLY HAVE TO MERGE OLD AND NEW DATA. GET GAME BY ID, IF NEEDED
   const [updatedGame] = await db
