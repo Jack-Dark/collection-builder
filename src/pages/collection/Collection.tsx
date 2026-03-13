@@ -12,7 +12,6 @@ export const Collection: RouteComponent = () => {
   const [showAddForm, setShowAddForm] = useState<boolean>(true);
 
   const games = useLoaderData({ from: '/collection/' });
-  console.log('🚀 ~ Collection ~ games:', games);
 
   return (
     <main className="page-wrap px-4 py-12">

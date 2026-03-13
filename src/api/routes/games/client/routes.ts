@@ -35,13 +35,13 @@ export const createSchema = zod.union([
 
 export const create = async (game: NewGameRecordDef) => {
   const url = `${configs.hostUrl}api/games`;
-  console.log('🚀 ~ FETCH create ~ url:', url);
 
   try {
     const response = await fetch(url, {
       body: JSON.stringify(game),
       method: 'POST',
     });
+
     if (!response.ok) {
       throw new Error(`Response status: ${response.status}`);
     }
@@ -78,6 +78,7 @@ export const updateById = async (
     console.error(error.message);
   }
 };
+
 export const deleteById = async (id: number) => {
   const url = `${configs.hostUrl}api/games/${id}`;
 

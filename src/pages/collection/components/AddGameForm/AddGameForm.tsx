@@ -23,7 +23,8 @@ export const AddGameForm: RouteComponent = () => {
   const form = useForm({
     defaultValues: defaultValues,
     onSubmit: async ({ value }) => {
-      await apiRoutes.games.create(value);
+      const response = await apiRoutes.games.create(value);
+      console.log('🚀 ~ AddGameForm ~ response:', response);
       router.invalidate();
     },
     validators: {

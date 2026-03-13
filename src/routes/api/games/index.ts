@@ -5,14 +5,12 @@ export const Route = createFileRoute('/api/games/')({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        // Access the request body, for example, a JSON body
-        const body: Parameters<typeof gamesDbQueries.createGame>[0] =
+        const gameDetails: Parameters<typeof gamesDbQueries.createGame>[0] =
           await request.json();
-        console.log('🚀 ~ ROUTE body:', body);
 
-        const updatedGame = gamesDbQueries.createGame(body);
+        const createdGameRecord = await gamesDbQueries.createGame(gameDetails);
 
-        return new Response(JSON.stringify(updatedGame));
+        return Response.json(createdGameRecord);
       },
     },
   },

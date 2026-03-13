@@ -11,14 +11,14 @@ export const Route = createFileRoute('/api/games/$id/')({
 
         await gamesDbQueries.deleteGameById(id);
 
-        return new Response();
+        return Response.json({ message: 'Game deleted successfully' });
       },
       GET: async ({ params }) => {
         const id = Number(params.id);
 
         const updatedGame = await gamesDbQueries.getGameById(id);
 
-        return new Response(JSON.stringify(updatedGame));
+        return Response.json(updatedGame);
       },
       PUT: async ({ params, request }) => {
         const id = Number(params.id);
@@ -30,7 +30,7 @@ export const Route = createFileRoute('/api/games/$id/')({
           gameDetails,
         );
 
-        return new Response(JSON.stringify(updatedGame));
+        return Response.json(updatedGame);
       },
     },
   },

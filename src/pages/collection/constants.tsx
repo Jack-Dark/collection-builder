@@ -59,8 +59,8 @@ export const collectionTableColumns = [
           </Button>
 
           <Button
-            onClick={() => {
-              apiRoutes.games.deleteById(id);
+            onClick={async () => {
+              await apiRoutes.games.deleteById(id);
               router.invalidate();
             }}
           >

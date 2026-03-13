@@ -3,7 +3,6 @@ import { apiRoutes } from '#/api/routes';
 
 const Home = () => {
   const users = Route.useLoaderData();
-  console.log('🚀 ~ Home ~ users:', users);
 
   return (
     <button
