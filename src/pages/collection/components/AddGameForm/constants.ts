@@ -35,8 +35,6 @@ export const systemsList: ObjectValues<typeof systems>[] =
 export const defaultValues: AddGameFormSchemaDef = {
   editionDetails: '',
   isSpecialEdition: false,
-  name: 'TEST',
-  system: systems.microsoftXbox,
-  // name: '',
-  // system: '',
+  name: '',
+  system: '',
 };

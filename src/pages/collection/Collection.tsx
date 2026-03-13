@@ -9,7 +9,7 @@ import { AddGameForm } from './components/AddGameForm';
 import { collectionTableColumns } from './constants';
 
 export const Collection: RouteComponent = () => {
-  const [showAddForm, setShowAddForm] = useState<boolean>(true);
+  const [showAddForm, setShowAddForm] = useState<boolean>(false);
 
   const games = useLoaderData({ from: '/collection/' });
 
