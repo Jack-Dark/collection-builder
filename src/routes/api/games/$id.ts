@@ -3,7 +3,7 @@ import type { NewGameRecordDef } from '#/api/routes/games/server/types';
 import { createFileRoute } from '@tanstack/react-router';
 import { gamesDbQueries } from '#/api/routes/games/server';
 
-export const Route = createFileRoute('/api/games/$id/')({
+export const Route = createFileRoute('/api/games/$id')({
   server: {
     handlers: {
       DELETE: async ({ params }) => {

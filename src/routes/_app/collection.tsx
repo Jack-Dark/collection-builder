@@ -3,7 +3,7 @@ import { createServerFn } from '@tanstack/react-start';
 import { gamesDbQueries } from '#/api/routes/games/server';
 import { Collection } from '#/pages/Collection';
 
-export const Route = createFileRoute('/collection/')({
+export const Route = createFileRoute('/_app/collection')({
   component: Collection,
   loader: async () => {
     return fetchAllGames();

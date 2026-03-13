@@ -32,6 +32,7 @@ export const SignUpForm: RouteComponent = () => {
           },
           onSuccess: (ctx) => {
             // redirect to the dashboard or sign in page
+            // router.navigate('/collection')
           },
         },
       );

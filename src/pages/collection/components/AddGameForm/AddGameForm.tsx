@@ -14,11 +14,14 @@ import {
 import { useForm } from '@tanstack/react-form';
 import { useRouter } from '@tanstack/react-router';
 import { apiRoutes } from '#/api/routes';
+import { authClient } from '#/utils/auth-client';
 
 import { systemsList, defaultValues } from './constants';
 
 export const AddGameForm: RouteComponent = () => {
   const router = useRouter();
+
+  const { data: session } = authClient.useSession();
 
   const form = useForm({
     defaultValues: defaultValues,
@@ -26,7 +29,7 @@ export const AddGameForm: RouteComponent = () => {
       const response = await apiRoutes.games.create({
         ...value,
         // TODO - FIX
-        userId: 'COMING SOON',
+        userId: session?.user?.id as string,
       });
       console.log('🚀 ~ AddGameForm ~ response:', response);
       router.invalidate();

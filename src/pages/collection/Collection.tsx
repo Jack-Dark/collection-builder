@@ -11,7 +11,7 @@ import { collectionTableColumns } from './constants';
 export const Collection: RouteComponent = () => {
   const [showAddForm, setShowAddForm] = useState<boolean>(false);
 
-  const games = useLoaderData({ from: '/collection/' });
+  const games = useLoaderData({ from: '/_app/collection' });
 
   return (
     <main className="page-wrap px-4 py-12">

@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { gamesDbQueries } from '#/api/routes/games/server';
 
-export const Route = createFileRoute('/api/games/')({
+export const Route = createFileRoute('/api/games')({
   server: {
     handlers: {
       POST: async ({ request }) => {
