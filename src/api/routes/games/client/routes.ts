@@ -1,4 +1,3 @@
-import { configs } from '#/configs';
 import * as zod from 'zod';
 
 import type {
@@ -34,7 +33,7 @@ export const createSchema = zod.union([
 ]);
 
 export const create = async (game: NewGameRecordDef) => {
-  const url = `${configs.hostUrl}api/games`;
+  const url = `/api/games`;
 
   try {
     const response = await fetch(url, {
@@ -59,7 +58,7 @@ export const updateById = async (
   id: number,
   gameDetails: UpdateGameRecordDef,
 ) => {
-  const url = `${configs.hostUrl}api/games/${id}`;
+  const url = `/api/games/${id}`;
   try {
     const response = await fetch(url, {
       body: JSON.stringify(gameDetails),
@@ -80,7 +79,7 @@ export const updateById = async (
 };
 
 export const deleteById = async (id: number) => {
-  const url = `${configs.hostUrl}api/games/${id}`;
+  const url = `/api/games/${id}`;
 
   try {
     const response = await fetch(url, {
@@ -97,7 +96,7 @@ export const deleteById = async (id: number) => {
 };
 
 export const getById = async (id: number) => {
-  const url = `${configs.hostUrl}api/games/${id}`;
+  const url = `/api/games/${id}`;
   try {
     const response = await fetch(url, { method: 'GET' });
     if (!response.ok) {
