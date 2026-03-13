@@ -1,9 +1,12 @@
-import { createServerFn } from '@tanstack/react-start';
-import {
+import type {
+  getGameById,
   createGame,
-  getAllGames,
-  getGameByName,
+  updateGameById,
 } from '#/api/routes/games/games.queries';
+
+import { createServerFn } from '@tanstack/react-start';
+import { getAllGames } from '#/api/routes/games/games.queries';
+import { configs } from '#/configs';
 import * as zod from 'zod';
 
 const createBaseSchema = zod.object({
@@ -30,14 +33,17 @@ export const createSchema = zod.union([
   createIsNotSpecialEditionSchema,
 ]);
 
-export const create = createServerFn({
-  method: 'POST',
-})
-  .inputValidator(createSchema)
-  .handler(async ({ data }) => {
-    // TODO - ADD AUTHENTICATED USER ID LOGIC
-    return createGame(data);
-  });
+// // TODO - move into page route logic
+// export const create = createServerFn({
+//   method: 'POST',
+// })
+//   .inputValidator(createSchema)
+//   .handler(async ({ data }) => {
+//     // TODO - ADD AUTHENTICATED USER ID LOGIC
+//     return createGame(data);
+//   });
+
+// export const create = createGame;
 
 export const getAll = createServerFn({
   method: 'GET',
@@ -45,12 +51,84 @@ export const getAll = createServerFn({
   return getAllGames();
 });
 
-const getByNameSchema = zod.object({ name: zod.string() });
+export const create = async (game: Parameters<typeof createGame>[0]) => {
+  const url = `${configs.hostUrl}api/games`;
+  console.log('🚀 ~ FETCH create ~ url:', url);
 
-export const getByName = createServerFn({
-  method: 'GET',
-})
-  .inputValidator(getByNameSchema)
-  .handler(({ data }) => {
-    return getGameByName(data.name);
-  });
+  try {
+    const response = await fetch(url, {
+      body: JSON.stringify(game),
+      method: 'POST',
+    });
+    if (!response.ok) {
+      throw new Error(`Response status: ${response.status}`);
+    }
+
+    const result: ReturnType<typeof createGame> = await response.json();
+
+    return result;
+  } catch (error) {
+    // TODO - fix
+    // @ts-expect-error
+    console.error(error.message);
+  }
+};
+export const updateById = async (
+  ...args: Parameters<typeof updateGameById>
+) => {
+  const [id, gameDetails] = args;
+  const url = `${configs.hostUrl}api/games/${id}`;
+  try {
+    const response = await fetch(url, {
+      body: JSON.stringify(gameDetails),
+      method: 'PUT',
+    });
+    if (!response.ok) {
+      throw new Error(`Response status: ${response.status}`);
+    }
+
+    const result: ReturnType<typeof updateGameById> = await response.json();
+
+    return result;
+  } catch (error) {
+    // TODO - fix
+    // @ts-expect-error
+    console.error(error.message);
+  }
+};
+export const deleteById = async (id: number) => {
+  const url = `${configs.hostUrl}api/games/${id}`;
+
+  try {
+    const response = await fetch(url, {
+      method: 'DELETE',
+    });
+    if (!response.ok) {
+      throw new Error(`Response status: ${response.status}`);
+    }
+  } catch (error) {
+    // TODO - fix
+    // @ts-expect-error
+    console.error(error.message);
+  }
+};
+
+export const getById = async (id: number) => {
+  const url = `${configs.hostUrl}api/games/${id}`;
+  try {
+    const response = await fetch(url, { method: 'GET' });
+    if (!response.ok) {
+      throw new Error(`Response status: ${response.status}`);
+    }
+
+    const result: ReturnType<typeof getGameById> = await response.json();
+
+    return result;
+  } catch (error) {
+    // TODO - fix
+    // @ts-expect-error
+    console.error(error.message);
+  }
+};
+
+// export const updateById = updateGame;

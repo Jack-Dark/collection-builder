@@ -1,6 +1,7 @@
 // src/routes/__root.tsx
 /// <reference types="vite/client" />
 import type { ReactNode } from 'react';
+
 import {
   Outlet,
   createRootRoute,
@@ -9,21 +10,23 @@ import {
 } from '@tanstack/react-router';
 
 export const Route = createRootRoute({
-  head: () => ({
-    meta: [
-      {
-        charSet: 'utf-8',
-      },
-      {
-        name: 'viewport',
-        content: 'width=device-width, initial-scale=1',
-      },
-      {
-        title: 'TanStack Start Starter',
-      },
-    ],
-  }),
   component: RootComponent,
+  head: () => {
+    return {
+      meta: [
+        {
+          charSet: 'utf-8',
+        },
+        {
+          content: 'width=device-width, initial-scale=1',
+          name: 'viewport',
+        },
+        {
+          title: 'Game Collection Manager',
+        },
+      ],
+    };
+  },
 });
 
 function RootComponent() {

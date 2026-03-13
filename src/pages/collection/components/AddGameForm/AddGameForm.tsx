@@ -23,7 +23,7 @@ export const AddGameForm: RouteComponent = () => {
   const form = useForm({
     defaultValues: defaultValues,
     onSubmit: async ({ value }) => {
-      await apiRoutes.games.create({ data: value });
+      await apiRoutes.games.create(value);
       router.invalidate();
     },
     validators: {
@@ -60,6 +60,7 @@ export const AddGameForm: RouteComponent = () => {
 
                   return (
                     <TextField
+                      defaultValue={defaultValues[field.name]}
                       error={!!errorMsg}
                       helperText={errorMsg}
                       label="Name"
@@ -92,6 +93,7 @@ export const AddGameForm: RouteComponent = () => {
                   return (
                     <FormControl fullWidth>
                       <Autocomplete
+                        defaultValue={defaultValues[field.name]}
                         onChange={(_e, value) => {
                           field.setValue(value!);
                         }}
@@ -136,6 +138,7 @@ export const AddGameForm: RouteComponent = () => {
                   control={
                     <Checkbox
                       className="p-0"
+                      defaultChecked={defaultValues[field.name]}
                       onChange={(e) => {
                         field.handleChange(e.target.checked);
                       }}
@@ -167,6 +170,7 @@ export const AddGameForm: RouteComponent = () => {
 
                     return (
                       <TextField
+                        defaultValue={defaultValues[field.name]}
                         error={!!errorMsg}
                         helperText={errorMsg}
                         label="Edition details"
@@ -188,21 +192,15 @@ export const AddGameForm: RouteComponent = () => {
         <form.Subscribe
           selector={(state) => {
             return {
-              errors: state.errors,
               isFormValid: state.isFormValid,
-              isValid: state.isValid,
-              values: state.values,
             };
           }}
         >
           {(state) => {
-            console.clear();
-            console.log('🚀 ~ AddGameForm ~ state:', state);
-
-            const { isFormValid, isValid } = state;
+            const { isFormValid } = state;
 
             return (
-              <Button disabled={!isValid && !isFormValid} type="submit">
+              <Button disabled={!isFormValid} type="submit">
                 <Typography>Submit</Typography>
               </Button>
             );

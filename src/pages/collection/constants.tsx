@@ -1,7 +1,10 @@
 import type { GameRecordDef } from '#/api/routes/games/games.types';
 
-import { Typography } from '@mui/material';
+import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
+import { Button, Typography } from '@mui/material';
+import { useRouter } from '@tanstack/react-router';
 import { createColumnHelper } from '@tanstack/react-table';
+import { apiRoutes } from '#/api/routes';
 import formatDate, { masks } from 'dateformat';
 
 const columnHelper = createColumnHelper<GameRecordDef>();
@@ -38,5 +41,34 @@ export const collectionTableColumns = [
       ) : null;
     },
     header: 'Edition',
+  }),
+  columnHelper.accessor('id', {
+    cell: ({ getValue }) => {
+      const router = useRouter();
+      const id = getValue();
+
+      return (
+        <>
+          <Button
+            disabled
+            onClick={() => {
+              // apiRoutes.games.updateById(id);
+            }}
+          >
+            <EditIcon />
+          </Button>
+
+          <Button
+            onClick={() => {
+              apiRoutes.games.deleteById(id);
+              router.invalidate();
+            }}
+          >
+            <DeleteIcon />
+          </Button>
+        </>
+      );
+    },
+    header: '',
   }),
 ];
