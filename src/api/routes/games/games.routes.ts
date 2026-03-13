@@ -33,17 +33,6 @@ export const createSchema = zod.union([
   createIsNotSpecialEditionSchema,
 ]);
 
-// // TODO - move into page route logic
-// export const create = createServerFn({
-//   method: 'POST',
-// })
-//   .inputValidator(createSchema)
-//   .handler(async ({ data }) => {
-//     // TODO - ADD AUTHENTICATED USER ID LOGIC
-//     return createGame(data);
-//   });
-
-// export const create = createGame;
 
 export const getAll = createServerFn({
   method: 'GET',
@@ -130,5 +119,3 @@ export const getById = async (id: number) => {
     console.error(error.message);
   }
 };
-
-// export const updateById = updateGame;

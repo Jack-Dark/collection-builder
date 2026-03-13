@@ -2,7 +2,7 @@ import { like } from 'drizzle-orm';
 
 import type { NewUserRecordDef } from './users.types';
 
-import { db } from '../../index';
+import { db } from '../../db';
 import { usersTable } from './users.schema';
 
 export const getAllUsers = async () => {

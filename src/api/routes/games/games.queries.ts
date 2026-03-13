@@ -2,7 +2,7 @@ import { and, eq, isNull } from 'drizzle-orm';
 
 import type { NewGameRecordDef } from './games.types';
 
-import { db } from '../../index';
+import { db } from '../../db';
 import { gamesTable } from './games.schema';
 
 export const getAllGames = async () => {
@@ -19,7 +19,6 @@ export const getGameById = async (id: number) => {
 };
 
 export const createGame = async (game: NewGameRecordDef) => {
-  console.log('🚀 ~ QUERY createGame ~ game:', game);
   const [newGame] = await db
     .insert(gamesTable)
     .values(game)
