@@ -41,7 +41,7 @@ export const Layout = () => {
             />
             <Tab
               href={'/account' satisfies RouterPath}
-              label={'Account'}
+              label="Account"
               LinkComponent={(props) => {
                 return <Link {...props} to={props.href} />;
               }}
@@ -51,7 +51,7 @@ export const Layout = () => {
         </AppBar>
       </header>
 
-      <Box maxWidth={'1500px'}>
+      <Box maxWidth="1500px">
         <Outlet />
       </Box>
       <footer>

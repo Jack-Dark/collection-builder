@@ -1,8 +1,10 @@
 //  @ts-check
-import stylistic from '@stylistic/eslint-plugin';
-import unusedImports from 'eslint-plugin-unused-imports';
-import perfectionist from 'eslint-plugin-perfectionist';
+import pluginStylistic from '@stylistic/eslint-plugin';
+import pluginUnusedImports from 'eslint-plugin-unused-imports';
+import pluginPerfectionist from 'eslint-plugin-perfectionist';
+import pluginReact from 'eslint-plugin-react';
 import { tanstackConfig } from '@tanstack/eslint-config';
+import globals from 'globals';
 
 export default [
   ...tanstackConfig,
@@ -23,8 +25,41 @@ export default [
     },
   },
   {
+    files: ['**/*.{js,jsx,mjs,cjs,ts,tsx}'],
     plugins: {
-      '@stylistic': stylistic,
+      react: pluginReact,
+    },
+    languageOptions: {
+      parserOptions: {
+        ecmaFeatures: {
+          jsx: true,
+        },
+      },
+      globals: {
+        ...globals.browser,
+      },
+    },
+    rules: {
+      'react/jsx-curly-brace-presence': [
+        'warn',
+        {
+          props: 'never',
+          children: 'never',
+          propElementValues: 'always',
+        },
+      ],
+    },
+    // Workaround for eslint-plugin-react incompatibility with ESLint v10.
+    // eslint-plugin-react calls the removed context.getFilename() API for React
+    // version auto-detection. Explicitly setting the version bypasses that.
+    // Track: https://github.com/jsx-eslint/eslint-plugin-react/issues/3977
+    settings: {
+      react: { version: '19' },
+    },
+  },
+  {
+    plugins: {
+      '@stylistic': pluginStylistic,
     },
     rules: {
       '@stylistic/arrow-parens': ['warn', 'always'],
@@ -43,7 +78,7 @@ export default [
   },
   {
     plugins: {
-      'unused-imports': unusedImports,
+      'unused-imports': pluginUnusedImports,
     },
     rules: {
       'no-unused-vars': 'off',
@@ -62,7 +97,7 @@ export default [
   },
   {
     plugins: {
-      perfectionist: perfectionist,
+      perfectionist: pluginPerfectionist,
     },
     rules: {
       'jsx-sort-props': 'off',
