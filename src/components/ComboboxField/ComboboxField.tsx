@@ -65,12 +65,12 @@ export const ComboboxField = <TValue, TMultiple extends boolean>(
 
           <Combobox.Portal>
             <Combobox.Positioner align="start">
-              <Combobox.Popup className="bg-white">
-                <Combobox.Empty className="text-gray-500">
+              <Combobox.Popup className="bg-white text-black pv-2 rounded-sm shadow-lg max-h-100 overflow-auto">
+                <Combobox.Empty className="p-2 text-gray-500">
                   No matches
                 </Combobox.Empty>
 
-                <Combobox.List className="text-black pv-2 rounded-sm shadow-lg max-h-100 overflow-auto">
+                <Combobox.List className="">
                   {(region: string) => {
                     return (
                       <Combobox.Item

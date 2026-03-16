@@ -6,6 +6,7 @@ import { FieldWrapper } from '../FieldWrapper';
 
 export const InputField = (props: InputFieldProps) => {
   const {
+    autoFocus,
     className,
     defaultValue,
     description,
@@ -16,6 +17,7 @@ export const InputField = (props: InputFieldProps) => {
     name,
     onValueChange,
     placeholder,
+    ref,
     required,
     type,
     validationDebounceTime,
@@ -37,10 +39,12 @@ export const InputField = (props: InputFieldProps) => {
       validationMode={validationMode}
     >
       <Field.Control
+        autoFocus={autoFocus}
         className="input"
         defaultValue={defaultValue}
         onValueChange={onValueChange}
         placeholder={placeholder}
+        ref={ref}
         required={required}
         type={type}
         value={value}

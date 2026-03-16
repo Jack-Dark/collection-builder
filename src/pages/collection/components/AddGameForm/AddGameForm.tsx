@@ -7,6 +7,7 @@ import { CheckboxField } from '#/components/CheckboxField';
 import { ComboboxField } from '#/components/ComboboxField';
 import { InputField } from '#/components/InputField';
 import { authClient } from '#/utils/auth-client';
+import { useRef } from 'react';
 
 import { systemsList, defaultValues } from './constants';
 
@@ -21,6 +22,8 @@ export const AddGameForm = (props: AddGameFormProps) => {
 
   const { data: session } = authClient.useSession();
 
+  const nameInput = useRef<HTMLInputElement>(null);
+
   const form = useForm({
     defaultValues: {
       ...defaultValues,
@@ -34,7 +37,9 @@ export const AddGameForm = (props: AddGameFormProps) => {
         userId: session?.user?.id as string,
       });
       console.log('🚀 ~ AddGameForm ~ response:', response);
+      form.reset();
       router.invalidate();
+      nameInput?.current?.focus();
     },
     validationLogic: revalidateLogic({
       mode: 'submit',
@@ -71,10 +76,12 @@ export const AddGameForm = (props: AddGameFormProps) => {
 
                   return (
                     <InputField
+                      autoFocus
                       error={errorMsg}
                       label="Name"
                       name={field.name}
                       onValueChange={field.handleChange}
+                      ref={nameInput}
                       required
                       value={value}
                     />

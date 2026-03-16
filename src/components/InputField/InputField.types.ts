@@ -1,9 +1,11 @@
 import type { FieldControlProps } from '@base-ui/react';
+import type { Ref } from 'react';
 
 import type { FieldWrapperProps } from '../FieldWrapper/FieldWrapper.types';
 
 export type InputFieldProps = Pick<
   FieldControlProps,
+  | 'autoFocus'
   | 'defaultValue'
   | 'onValueChange'
   | 'placeholder'
@@ -11,4 +13,6 @@ export type InputFieldProps = Pick<
   | 'type'
   | 'value'
 > &
-  FieldWrapperProps;
+  FieldWrapperProps & {
+    ref?: Ref<HTMLElement>;
+  };
