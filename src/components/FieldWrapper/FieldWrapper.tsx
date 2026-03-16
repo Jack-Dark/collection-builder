@@ -21,21 +21,29 @@ export const FieldWrapper = (props: PropsWithChildren<FieldWrapperProps>) => {
 
   return (
     <Field.Root
-      className={className}
+      className={`grid grid-cols-1 gap-2 ${className}`}
       disabled={disabled}
       invalid={invalid}
       name={name}
       validationDebounceTime={validationDebounceTime}
       validationMode={validationMode}
     >
-      <Field.Label>
-        {label}
-        {required ? <span className="text-red-600">*</span> : undefined}
-      </Field.Label>
+      {label && (
+        <Field.Label className="cursor-pointer">
+          {label}
+          {required ? <span className="text-red-600">*</span> : undefined}
+        </Field.Label>
+      )}
+
       {children}
+
       <Field.Description>{description}</Field.Description>
-      <Field.Item />
+
+      {/* Groups individual items in a checkbox group or radio group with a label and description. Renders a <div> element. */}
+      {/* <Field.Item /> */}
+
       <Field.Error>{error}</Field.Error>
+
       <Field.Validity>
         {(props) => {
           // console.log('🚀 ~ Field.Validity ~ props:', props);

@@ -1,5 +1,7 @@
+import { Field } from '@base-ui/react';
 import { Checkbox } from '@base-ui/react/checkbox';
 import { CheckBox, CheckBoxOutlineBlank } from '@mui/icons-material';
+import { useCallback } from 'react';
 
 import type { CheckboxFieldProps } from './CheckboxField.types';
 
@@ -14,12 +16,22 @@ export const CheckboxField = (props: CheckboxFieldProps) => {
     error,
     invalid,
     label,
+    labelPosition = 'right',
     name,
     onCheckedChange,
     required,
     validationDebounceTime,
     validationMode,
   } = props;
+
+  const Label = useCallback(() => {
+    return label ? (
+      <Field.Label className="cursor-pointer">
+        {label}
+        {required ? <span className="text-red-600">*</span> : undefined}
+      </Field.Label>
+    ) : null;
+  }, [label, required]);
 
   return (
     <FieldWrapper
@@ -28,17 +40,24 @@ export const CheckboxField = (props: CheckboxFieldProps) => {
       disabled={disabled}
       error={error}
       invalid={invalid}
-      label={label}
       name={name}
       required={required}
       validationDebounceTime={validationDebounceTime}
       validationMode={validationMode}
     >
-      <Checkbox.Root checked={checked} onCheckedChange={onCheckedChange}>
-        <Checkbox.Indicator keepMounted>
-          {checked ? <CheckBox /> : <CheckBoxOutlineBlank />}
-        </Checkbox.Indicator>
-      </Checkbox.Root>
+      <div
+        className={`grid gap-1 items-center ${label && 'grid-cols-[max-content_1fr]'}`}
+      >
+        {labelPosition === 'left' && <Label />}
+
+        <Checkbox.Root checked={checked} onCheckedChange={onCheckedChange}>
+          <Checkbox.Indicator keepMounted>
+            {checked ? <CheckBox /> : <CheckBoxOutlineBlank />}
+          </Checkbox.Indicator>
+        </Checkbox.Root>
+
+        {labelPosition === 'right' && <Label />}
+      </div>
     </FieldWrapper>
   );
 };

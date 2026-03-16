@@ -93,10 +93,13 @@ export const AddGameForm: RouteComponent = () => {
                   return (
                     <ComboboxField
                       items={systemsList}
+                      label="System"
                       onValueChange={(value) => {
                         // @ts-expect-error
                         field.setValue(value!);
                       }}
+                      placeholder="Select a system..."
+                      required
                       value={value}
                     />
                   );

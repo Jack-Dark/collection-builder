@@ -6,4 +6,6 @@ export type CheckboxFieldProps = Pick<
   CheckboxRootProps,
   'checked' | 'onCheckedChange'
 > &
-  FieldWrapperProps;
+  FieldWrapperProps & {
+    labelPosition?: 'left' | 'right';
+  };
