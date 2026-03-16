@@ -1,8 +1,9 @@
 import type { RouteComponent } from '@tanstack/react-router';
 
-import { Button, TextField, Typography, Stack } from '@mui/material';
 import { useForm } from '@tanstack/react-form';
 import { useRouter } from '@tanstack/react-router';
+import { Button } from '#/components/Button';
+import { InputField } from '#/components/InputField';
 import { authClient } from '#/utils/auth-client';
 
 import { signUpFormSchema, defaultValues } from './schema';
@@ -55,12 +56,7 @@ export const SignUpForm: RouteComponent = () => {
         form.handleSubmit();
       }}
     >
-      <Stack
-        spacing={2}
-        sx={{
-          alignItems: 'flex-start',
-        }}
-      >
+      <div>
         <form.Subscribe
           selector={(state) => {
             return {
@@ -75,17 +71,16 @@ export const SignUpForm: RouteComponent = () => {
                   const errorMsg = errors?.[0]?.[field.name]?.[0]?.message;
 
                   return (
-                    <TextField
+                    <InputField
                       defaultValue={defaultValues[field.name]}
-                      error={!!errorMsg}
-                      helperText={errorMsg}
+                      error={errorMsg}
                       label="Name"
                       name={field.name}
-                      onChange={(e) => {
-                        field.handleChange(e.target.value);
+                      onValueChange={(value) => {
+                        field.handleChange(value);
                       }}
                       required
-                      sx={{ width: '100%' }}
+                      // valid={!!errorMsg}
                     />
                   );
                 }}
@@ -108,17 +103,16 @@ export const SignUpForm: RouteComponent = () => {
                   const errorMsg = errors?.[0]?.[field.name]?.[0]?.message;
 
                   return (
-                    <TextField
+                    <InputField
                       defaultValue={defaultValues[field.name]}
-                      error={!!errorMsg}
-                      helperText={errorMsg}
+                      error={errorMsg}
                       label="Email"
                       name={field.name}
-                      onChange={(e) => {
-                        field.handleChange(e.target.value);
+                      onValueChange={(value) => {
+                        field.handleChange(value);
                       }}
                       required
-                      sx={{ width: '100%' }}
+                      // valid={!!errorMsg}
                     />
                   );
                 }}
@@ -141,18 +135,17 @@ export const SignUpForm: RouteComponent = () => {
                   const errorMsg = errors?.[0]?.[field.name]?.[0]?.message;
 
                   return (
-                    <TextField
+                    <InputField
                       defaultValue={defaultValues[field.name]}
-                      error={!!errorMsg}
-                      helperText={errorMsg}
+                      error={errorMsg}
                       label="Password"
                       name={field.name}
-                      onChange={(e) => {
-                        field.handleChange(e.target.value);
+                      onValueChange={(value) => {
+                        field.handleChange(value);
                       }}
                       required
-                      sx={{ width: '100%' }}
                       type="password"
+                      // valid={!!errorMsg}
                     />
                   );
                 }}
@@ -175,18 +168,17 @@ export const SignUpForm: RouteComponent = () => {
                   const errorMsg = errors?.[0]?.[field.name]?.[0]?.message;
 
                   return (
-                    <TextField
+                    <InputField
                       defaultValue={defaultValues[field.name]}
-                      error={!!errorMsg}
-                      helperText={errorMsg}
+                      error={errorMsg}
                       label="Confirm password"
                       name={field.name}
-                      onChange={(e) => {
-                        field.handleChange(e.target.value);
+                      onValueChange={(value) => {
+                        field.handleChange(value);
                       }}
                       required
-                      sx={{ width: '100%' }}
                       type="password"
+                      // valid={!!errorMsg}
                     />
                   );
                 }}
@@ -199,20 +191,23 @@ export const SignUpForm: RouteComponent = () => {
           selector={(state) => {
             return {
               isFormValid: state.isFormValid,
+              values: state.values,
             };
           }}
         >
           {(state) => {
-            const { isFormValid } = state;
+            const { isFormValid, values } = state;
+            console.clear();
+            console.log('🚀 ~ AddGameForm ~ values:', values);
 
             return (
               <Button disabled={!isFormValid} type="submit">
-                <Typography>Submit</Typography>
+                Submit
               </Button>
             );
           }}
         </form.Subscribe>
-      </Stack>
+      </div>
     </form>
   );
 };

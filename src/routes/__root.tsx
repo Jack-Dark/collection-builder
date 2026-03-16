@@ -41,11 +41,11 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
   return (
     <html>
       <head>
-        <link href="/src/style.css" rel="stylesheet" />
+        <link href="/src/styles.css" rel="stylesheet" />
         <HeadContent />
       </head>
       <body>
-        {children}
+        <div className="root">{children}</div>
         <Scripts />
       </body>
     </html>

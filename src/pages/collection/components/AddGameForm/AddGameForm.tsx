@@ -1,19 +1,12 @@
 import type { RouteComponent } from '@tanstack/react-router';
 
-import {
-  Button,
-  Checkbox,
-  FormControlLabel,
-  FormGroup,
-  TextField,
-  Typography,
-  Stack,
-  Autocomplete,
-  FormControl,
-} from '@mui/material';
-import { useForm } from '@tanstack/react-form';
+import { revalidateLogic, useForm } from '@tanstack/react-form';
 import { useRouter } from '@tanstack/react-router';
 import { apiRoutes } from '#/api/routes';
+import { Button } from '#/components/Button';
+import { CheckboxField } from '#/components/CheckboxField';
+import { ComboboxField } from '#/components/ComboboxField';
+import { InputField } from '#/components/InputField';
 import { authClient } from '#/utils/auth-client';
 
 import { systemsList, defaultValues } from './constants';
@@ -34,6 +27,10 @@ export const AddGameForm: RouteComponent = () => {
       console.log('🚀 ~ AddGameForm ~ response:', response);
       router.invalidate();
     },
+    validationLogic: revalidateLogic({
+      mode: 'submit',
+      modeAfterSubmission: 'change',
+    }),
     validators: {
       onSubmit: apiRoutes.games.createSchema,
     },
@@ -47,12 +44,7 @@ export const AddGameForm: RouteComponent = () => {
         form.handleSubmit();
       }}
     >
-      <Stack
-        spacing={2}
-        sx={{
-          alignItems: 'flex-start',
-        }}
-      >
+      <div>
         <form.Subscribe
           selector={(state) => {
             return {
@@ -67,17 +59,16 @@ export const AddGameForm: RouteComponent = () => {
                   const errorMsg = errors?.[0]?.[field.name]?.[0]?.message;
 
                   return (
-                    <TextField
+                    <InputField
                       defaultValue={defaultValues[field.name]}
-                      error={!!errorMsg}
-                      helperText={errorMsg}
+                      error={errorMsg}
                       label="Name"
                       name={field.name}
-                      onChange={(e) => {
-                        field.handleChange(e.target.value);
+                      onValueChange={(value) => {
+                        field.handleChange(value);
                       }}
                       required
-                      sx={{ width: '100%' }}
+                      // valid={!!errorMsg}
                     />
                   );
                 }}
@@ -89,38 +80,25 @@ export const AddGameForm: RouteComponent = () => {
           selector={(state) => {
             return {
               errors: state.errors,
+              value: state.values.system,
             };
           }}
         >
-          {({ errors }) => {
+          {({ errors, value }) => {
             return (
               <form.Field name="system">
                 {(field) => {
                   const errorMsg = errors?.[0]?.[field.name]?.[0]?.message;
 
                   return (
-                    <FormControl fullWidth>
-                      <Autocomplete
-                        defaultValue={defaultValues[field.name]}
-                        onChange={(_e, value) => {
-                          field.setValue(value!);
-                        }}
-                        // disablePortal
-                        options={systemsList}
-                        renderInput={(params) => {
-                          return (
-                            <TextField
-                              {...params}
-                              error={!!errorMsg}
-                              helperText={errorMsg}
-                              label="System"
-                              name={field.name}
-                              required
-                            />
-                          );
-                        }}
-                      />
-                    </FormControl>
+                    <ComboboxField
+                      items={systemsList}
+                      onValueChange={(value) => {
+                        // @ts-expect-error
+                        field.setValue(value!);
+                      }}
+                      value={value}
+                    />
                   );
                 }}
               </form.Field>
@@ -128,37 +106,43 @@ export const AddGameForm: RouteComponent = () => {
           }}
         </form.Subscribe>
 
-        <form.Field
-          listeners={{
-            onChange: ({ value: isSpecialEdition }) => {
-              form.setFieldValue(
-                'editionDetails',
-                isSpecialEdition ? "Collector's Edition" : '',
-              );
-            },
+        <form.Subscribe
+          selector={(state) => {
+            return {
+              errors: state.errors,
+              value: state.values.isSpecialEdition,
+            };
           }}
-          name="isSpecialEdition"
         >
-          {(field) => {
+          {({ errors, value }) => {
             return (
-              <FormGroup>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      className="p-0"
-                      defaultChecked={defaultValues[field.name]}
-                      onChange={(e) => {
-                        field.handleChange(e.target.checked);
-                      }}
-                      sx={{ paddingBottom: 0, paddingTop: 0 }}
+              <form.Field
+                listeners={{
+                  onChange: ({ value: isSpecialEdition }) => {
+                    form.setFieldValue(
+                      'editionDetails',
+                      isSpecialEdition ? "Collector's Edition" : '',
+                    );
+                  },
+                }}
+                name="isSpecialEdition"
+              >
+                {(field) => {
+                  const errorMsg = errors?.[0]?.[field.name]?.[0]?.message;
+
+                  return (
+                    <CheckboxField
+                      checked={value}
+                      error={errorMsg}
+                      label="Is this a special edition?"
+                      onCheckedChange={field.handleChange}
                     />
-                  }
-                  label="Is this a special edition?"
-                />
-              </FormGroup>
+                  );
+                }}
+              </form.Field>
             );
           }}
-        </form.Field>
+        </form.Subscribe>
 
         <form.Subscribe
           selector={(state) => {
@@ -177,17 +161,15 @@ export const AddGameForm: RouteComponent = () => {
                     const errorMsg = errors?.[0]?.[field.name]?.[0]?.message;
 
                     return (
-                      <TextField
+                      <InputField
                         defaultValue={defaultValues[field.name]}
-                        error={!!errorMsg}
-                        helperText={errorMsg}
+                        error={errorMsg}
                         label="Edition details"
                         name={field.name}
-                        onChange={(e) => {
-                          field.handleChange(e.target.value);
+                        onValueChange={(value) => {
+                          field.handleChange(value);
                         }}
                         required
-                        value={editionDetails}
                       />
                     );
                   }}
@@ -201,20 +183,23 @@ export const AddGameForm: RouteComponent = () => {
           selector={(state) => {
             return {
               isFormValid: state.isFormValid,
+              values: state.values,
             };
           }}
         >
           {(state) => {
-            const { isFormValid } = state;
+            const { isFormValid, values } = state;
+            console.clear();
+            console.log('🚀 ~ AddGameForm ~ values:', values);
 
             return (
               <Button disabled={!isFormValid} type="submit">
-                <Typography>Submit</Typography>
+                Submit
               </Button>
             );
           }}
         </form.Subscribe>
-      </Stack>
+      </div>
     </form>
   );
 };

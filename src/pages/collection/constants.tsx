@@ -1,7 +1,7 @@
 import type { GameRecordDef } from '#/api/routes/games/server/types';
 
+import { Button } from '@base-ui/react/button';
 import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
-import { Button, Typography } from '@mui/material';
 import { useRouter } from '@tanstack/react-router';
 import { createColumnHelper } from '@tanstack/react-table';
 import { apiRoutes } from '#/api/routes';
@@ -12,13 +12,13 @@ const columnHelper = createColumnHelper<GameRecordDef>();
 export const collectionTableColumns = [
   columnHelper.accessor('name', {
     cell: ({ getValue }) => {
-      return <Typography>{getValue()}</Typography>;
+      return <p>{getValue()}</p>;
     },
     header: 'Name',
   }),
   columnHelper.accessor('system', {
     cell: ({ getValue }) => {
-      return <Typography>{getValue()}</Typography>;
+      return <p>{getValue()}</p>;
     },
     header: 'System',
   }),
@@ -26,7 +26,7 @@ export const collectionTableColumns = [
     cell: ({ getValue }) => {
       const text = getValue();
 
-      return text ? <Typography>{text}</Typography> : null;
+      return text ? <p>{text}</p> : null;
     },
     header: 'Edition',
   }),
@@ -35,9 +35,9 @@ export const collectionTableColumns = [
       const date = getValue();
 
       return date ? (
-        <Typography>
+        <p>
           {formatDate(date, `${masks.paddedShortDate} @ ${masks.shortTime}`)}
-        </Typography>
+        </p>
       ) : null;
     },
     header: 'Edition',

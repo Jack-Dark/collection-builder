@@ -1,4 +1,4 @@
-import { Box, Tab, Tabs } from '@mui/material';
+import { Tabs } from '@base-ui/react/tabs';
 import { Link, Outlet, useLocation, useNavigate } from '@tanstack/react-router';
 import { useState } from 'react';
 
@@ -6,13 +6,20 @@ import type { RouterPath } from './types';
 
 import { authClient } from './utils/auth-client';
 
+const navItems = [
+  { href: '/collection', label: 'Collection' },
+  { href: '/account', label: 'Account' },
+] satisfies {
+  href: RouterPath;
+  label: string;
+}[];
+
 export const Layout = () => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
 
-  const [activePage, setActivePage] = useState<RouterPath>(
-    pathname as RouterPath,
-  );
+  const defaultTab = pathname as RouterPath;
+  const [activePage, setActivePage] = useState<RouterPath>(defaultTab);
 
   const { data: session } = authClient.useSession();
 
@@ -22,36 +29,27 @@ export const Layout = () => {
     <>
       <header>
         <h1>Start tracking your game collection!</h1>
-        <Tabs
-          onChange={(_, value: RouterPath) => {
-            setActivePage(value);
-            navigate({ to: value });
-          }}
-          value={activePage}
-        >
-          <Tab
-            disabled={isLoggedOut}
-            href={'/collection' satisfies RouterPath}
-            label="Collection"
-            LinkComponent={(props) => {
-              return <Link {...props} to={props.href} />;
-            }}
-            value={'/collection' satisfies RouterPath}
-          />
-          <Tab
-            href={'/account' satisfies RouterPath}
-            label="Account"
-            LinkComponent={(props) => {
-              return <Link {...props} to={props.href} />;
-            }}
-            value={'/account' satisfies RouterPath}
-          />
-        </Tabs>
+
+        <Tabs.Root defaultValue={defaultTab}>
+          <Tabs.List>
+            {navItems.map(({ href, label }) => {
+              return (
+                <Tabs.Tab key={href} value={href}>
+                  <Link to={href}>
+                    <p>{label}</p>
+                  </Link>
+                </Tabs.Tab>
+              );
+            })}
+            <Tabs.Indicator />
+          </Tabs.List>
+          {/* <Tabs.Panel value={'/account' satisfies RouterPath} /> */}
+        </Tabs.Root>
       </header>
 
-      <Box maxWidth="1500px">
+      <div>
         <Outlet />
-      </Box>
+      </div>
       <footer>
         {/* 
           // TODO - CREATE FOOTER ?

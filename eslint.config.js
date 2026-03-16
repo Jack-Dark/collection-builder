@@ -25,6 +25,7 @@ export default [
     },
   },
   {
+    // REACT PLUGIN UPDATES ONLY
     files: ['**/*.{js,jsx,mjs,cjs,ts,tsx}'],
     plugins: {
       react: pluginReact,
@@ -40,6 +41,13 @@ export default [
       },
     },
     rules: {
+      'react/jsx-no-useless-fragment': [
+        'warn',
+        {
+          allowEmptyFragment: false,
+          allowExpressions: true,
+        },
+      ],
       'react/jsx-curly-brace-presence': [
         'warn',
         {
@@ -58,6 +66,7 @@ export default [
     },
   },
   {
+    // @STYLISTIC PLUGIN UPDATES ONLY
     plugins: {
       '@stylistic': pluginStylistic,
     },
@@ -77,6 +86,7 @@ export default [
     },
   },
   {
+    // UNUSED IMPORTS PLUGIN UPDATES ONLY
     plugins: {
       'unused-imports': pluginUnusedImports,
     },
@@ -96,6 +106,7 @@ export default [
     },
   },
   {
+    // PERFECTIONIST PLUGIN UPDATES ONLY
     plugins: {
       perfectionist: pluginPerfectionist,
     },
