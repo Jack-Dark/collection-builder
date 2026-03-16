@@ -44,8 +44,10 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
         <link href="/src/styles.css" rel="stylesheet" />
         <HeadContent />
       </head>
-      <body>
-        <div className="root">{children}</div>
+      <body className="bg-linear-to-b from-blue-900 to-emerald-900 text-white">
+        <div className="root grid min-h-dvh grid-rows-[max-content_1fr_max-content]">
+          {children}
+        </div>
         <Scripts />
       </body>
     </html>

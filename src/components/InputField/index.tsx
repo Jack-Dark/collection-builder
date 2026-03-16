@@ -55,9 +55,10 @@ export const InputField = (props: InputFieldProps) => {
     >
       <Field.Label>
         {label}
-        {required ? <span>*</span> : undefined}
+        {required ? <span className="text-red-600">*</span> : undefined}
       </Field.Label>
       <Field.Control
+        className="input"
         defaultValue={defaultValue}
         onValueChange={onValueChange}
         placeholder={placeholder}
