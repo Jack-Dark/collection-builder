@@ -1,17 +1,9 @@
-import type { CheckboxRootProps } from '@base-ui/react/checkbox';
-
 import { Checkbox } from '@base-ui/react/checkbox';
 import { CheckBox, CheckBoxOutlineBlank } from '@mui/icons-material';
 
-import type { FieldWrapperProps } from '../FieldWrapper';
+import type { CheckboxFieldProps } from './CheckboxField.types';
 
 import { FieldWrapper } from '../FieldWrapper';
-
-type CheckboxFieldProps = Pick<
-  CheckboxRootProps,
-  'checked' | 'onCheckedChange'
-> &
-  FieldWrapperProps;
 
 export const CheckboxField = (props: CheckboxFieldProps) => {
   const {

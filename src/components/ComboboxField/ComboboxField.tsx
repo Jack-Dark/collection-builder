@@ -1,18 +1,9 @@
-import type { ComboboxRootProps, ComboboxInputProps } from '@base-ui/react';
-
 import { Combobox } from '@base-ui/react';
 import { Check, ExpandMore } from '@mui/icons-material';
 
-import type { FieldWrapperProps } from '../FieldWrapper';
+import type { ComboboxFieldProps } from './ComboboxField.types';
 
 import { FieldWrapper } from '../FieldWrapper';
-
-type ComboboxFieldProps<TValue, TMultiple extends boolean> = Pick<
-  ComboboxRootProps<TValue, TMultiple>,
-  'items' | 'multiple' | 'name' | 'onValueChange' | 'required' | 'value'
-> &
-  Pick<ComboboxInputProps, 'placeholder'> &
-  FieldWrapperProps;
 
 export const ComboboxField = <TValue, TMultiple extends boolean>(
   props: ComboboxFieldProps<TValue, TMultiple>,

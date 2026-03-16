@@ -1,21 +1,8 @@
-import type { FieldControlProps } from '@base-ui/react';
-
 import { Field } from '@base-ui/react';
 
-import type { FieldWrapperProps } from '../FieldWrapper';
+import type { InputFieldProps } from './InputField.types';
 
 import { FieldWrapper } from '../FieldWrapper';
-
-type InputFieldProps = Pick<
-  FieldControlProps,
-  | 'defaultValue'
-  | 'onValueChange'
-  | 'placeholder'
-  | 'required'
-  | 'type'
-  | 'value'
-> &
-  FieldWrapperProps;
 
 export const InputField = (props: InputFieldProps) => {
   const {
