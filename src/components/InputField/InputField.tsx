@@ -1,29 +1,21 @@
-import type { FieldRootProps, FieldControlProps } from '@base-ui/react';
+import type { FieldControlProps } from '@base-ui/react';
 
 import { Field } from '@base-ui/react';
 
+import type { FieldWrapperProps } from '../FieldWrapper';
+
+import { FieldWrapper } from '../FieldWrapper';
+
 type InputFieldProps = Pick<
   FieldControlProps,
-  | 'value'
   | 'defaultValue'
-  | 'required'
   | 'onValueChange'
   | 'placeholder'
+  | 'required'
   | 'type'
+  | 'value'
 > &
-  Pick<
-    FieldRootProps,
-    | 'name'
-    | 'validationMode'
-    | 'validationDebounceTime'
-    | 'className'
-    | 'invalid'
-    | 'disabled'
-  > & {
-    label?: string;
-    description?: string;
-    error?: string;
-  };
+  FieldWrapperProps;
 
 export const InputField = (props: InputFieldProps) => {
   const {
@@ -45,18 +37,18 @@ export const InputField = (props: InputFieldProps) => {
   } = props;
 
   return (
-    <Field.Root
+    <FieldWrapper
       className={className}
+      description={description}
       disabled={disabled}
+      error={error}
       invalid={invalid}
+      label={label}
       name={name}
+      required={required}
       validationDebounceTime={validationDebounceTime}
       validationMode={validationMode}
     >
-      <Field.Label>
-        {label}
-        {required ? <span className="text-red-600">*</span> : undefined}
-      </Field.Label>
       <Field.Control
         className="input"
         defaultValue={defaultValue}
@@ -66,18 +58,6 @@ export const InputField = (props: InputFieldProps) => {
         type={type}
         value={value}
       />
-      <Field.Description>{description}</Field.Description>
-      <Field.Item
-      /* Groups individual items in a checkbox group or radio group with a label and description. Renders a <div> element. */
-      />
-      <Field.Error>{error}</Field.Error>
-      <Field.Validity>
-        {(props) => {
-          // console.log('🚀 ~ Field.Validity ~ props:', props);
-
-          return <p>{error}</p>;
-        }}
-      </Field.Validity>
-    </Field.Root>
+    </FieldWrapper>
   );
 };

@@ -1,42 +1,24 @@
-import type {
-  FieldRootProps,
-  ComboboxRootProps,
-  ComboboxInputProps,
-} from '@base-ui/react';
+import type { ComboboxRootProps, ComboboxInputProps } from '@base-ui/react';
 
-import { Combobox, Field } from '@base-ui/react';
+import { Combobox } from '@base-ui/react';
 import { Check, ExpandMore } from '@mui/icons-material';
+
+import type { FieldWrapperProps } from '../FieldWrapper';
+
+import { FieldWrapper } from '../FieldWrapper';
 
 type ComboboxFieldProps<TValue, TMultiple extends boolean> = Pick<
   ComboboxRootProps<TValue, TMultiple>,
-  | 'value'
-  | 'defaultValue'
-  | 'required'
-  | 'onValueChange'
-  | 'name'
-  | 'multiple'
-  | 'items'
+  'items' | 'multiple' | 'name' | 'onValueChange' | 'required' | 'value'
 > &
-  Pick<
-    FieldRootProps,
-    | 'validationMode'
-    | 'validationDebounceTime'
-    | 'className'
-    | 'invalid'
-    | 'disabled'
-  > &
-  Pick<ComboboxInputProps, 'placeholder'> & {
-    label?: string;
-    description?: string;
-    error?: string;
-  };
+  Pick<ComboboxInputProps, 'placeholder'> &
+  FieldWrapperProps;
 
 export const ComboboxField = <TValue, TMultiple extends boolean>(
   props: ComboboxFieldProps<TValue, TMultiple>,
 ) => {
   const {
     className,
-    defaultValue,
     description,
     disabled,
     error,
@@ -53,18 +35,18 @@ export const ComboboxField = <TValue, TMultiple extends boolean>(
   } = props;
 
   return (
-    <Field.Root
+    <FieldWrapper
       className={className}
+      description={description}
       disabled={disabled}
+      error={error}
       invalid={invalid}
+      label={label}
       name={name}
+      required={required}
       validationDebounceTime={validationDebounceTime}
       validationMode={validationMode}
     >
-      <Field.Label>
-        {label}
-        {required ? <span>*</span> : undefined}
-      </Field.Label>
       <Combobox.Root items={items} onValueChange={onValueChange} value={value}>
         <Combobox.Input placeholder={placeholder} />
         <Combobox.Clear />
@@ -92,19 +74,6 @@ export const ComboboxField = <TValue, TMultiple extends boolean>(
           </Combobox.Positioner>
         </Combobox.Portal>
       </Combobox.Root>
-
-      <Field.Description>{description}</Field.Description>
-      <Field.Item
-      /* Groups individual items in a checkbox group or radio group with a label and description. Renders a <div> element. */
-      />
-      <Field.Error>{error}</Field.Error>
-      <Field.Validity>
-        {(props) => {
-          // console.log('🚀 ~ Field.Validity ~ props:', props);
-
-          return <p>{error}</p>;
-        }}
-      </Field.Validity>
-    </Field.Root>
+    </FieldWrapper>
   );
 };
