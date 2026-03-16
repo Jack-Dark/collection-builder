@@ -1,5 +1,3 @@
-import type { RouteComponent } from '@tanstack/react-router';
-
 import SaveIcon from '@mui/icons-material/Save';
 import { revalidateLogic, useForm } from '@tanstack/react-form';
 import { useRouter } from '@tanstack/react-router';
@@ -12,13 +10,23 @@ import { authClient } from '#/utils/auth-client';
 
 import { systemsList, defaultValues } from './constants';
 
-export const AddGameForm: RouteComponent = () => {
+type AddGameFormProps = {
+  lastAddedSystem: string;
+};
+
+export const AddGameForm = (props: AddGameFormProps) => {
+  const { lastAddedSystem } = props;
+
   const router = useRouter();
 
   const { data: session } = authClient.useSession();
 
   const form = useForm({
-    defaultValues: defaultValues,
+    defaultValues: {
+      ...defaultValues,
+      // ? prefill system field with last-added game's system
+      system: lastAddedSystem || '',
+    },
     onSubmit: async ({ value }) => {
       const response = await apiRoutes.games.create({
         ...value,
@@ -50,26 +58,25 @@ export const AddGameForm: RouteComponent = () => {
           selector={(state) => {
             return {
               errors: state.errors,
+              value: state.values.name,
             };
           }}
         >
-          {({ errors }) => {
+          {({ errors, value }) => {
             return (
               <form.Field name="name">
                 {(field) => {
+                  // TODO - extract logic
                   const errorMsg = errors?.[0]?.[field.name]?.[0]?.message;
 
                   return (
                     <InputField
-                      defaultValue={defaultValues[field.name]}
                       error={errorMsg}
                       label="Name"
                       name={field.name}
-                      onValueChange={(value) => {
-                        field.handleChange(value);
-                      }}
+                      onValueChange={field.handleChange}
                       required
-                      // valid={!!errorMsg}
+                      value={value}
                     />
                   );
                 }}
@@ -93,9 +100,11 @@ export const AddGameForm: RouteComponent = () => {
 
                   return (
                     <ComboboxField
+                      error={errorMsg}
                       items={systemsList}
                       label="System"
                       onValueChange={(value) => {
+                        // TODO - FIX TYPE ERROR
                         // @ts-expect-error
                         field.setValue(value!);
                       }}
@@ -151,13 +160,13 @@ export const AddGameForm: RouteComponent = () => {
         <form.Subscribe
           selector={(state) => {
             return {
-              editionDetails: state.values.editionDetails,
               errors: state.errors,
               isSpecialEdition: state.values.isSpecialEdition,
+              value: state.values.editionDetails,
             };
           }}
         >
-          {({ editionDetails, errors, isSpecialEdition }) => {
+          {({ errors, isSpecialEdition, value }) => {
             return (
               isSpecialEdition && (
                 <form.Field name="editionDetails">
@@ -169,11 +178,9 @@ export const AddGameForm: RouteComponent = () => {
                         error={errorMsg}
                         label="Edition details"
                         name={field.name}
-                        onValueChange={(value) => {
-                          field.handleChange(value);
-                        }}
+                        onValueChange={field.handleChange}
                         required
-                        value={editionDetails}
+                        value={value}
                       />
                     );
                   }}

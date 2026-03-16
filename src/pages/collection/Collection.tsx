@@ -12,7 +12,9 @@ import { collectionTableColumns } from './constants';
 export const Collection: RouteComponent = () => {
   const [showAddForm, setShowAddForm] = useState<boolean>(false);
 
-  const games = useLoaderData({ from: '/_app/collection' });
+  const { games, lastAddedSystem } = useLoaderData({
+    from: '/_app/collection',
+  });
 
   const toggleForm = () => {
     setShowAddForm((prev) => {
@@ -41,7 +43,7 @@ export const Collection: RouteComponent = () => {
         </Button>
       )}
 
-      {showAddForm && <AddGameForm />}
+      {showAddForm && <AddGameForm lastAddedSystem={lastAddedSystem} />}
 
       <Table columns={collectionTableColumns} data={games} />
     </section>

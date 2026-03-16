@@ -12,6 +12,11 @@ export const Route = createFileRoute('/_app/collection')({
 
 const fetchAllGames = createServerFn({
   method: 'GET',
-}).handler(() => {
-  return gamesDbQueries.getAllGames();
+}).handler(async () => {
+  const [games, lastAddedGame] = await Promise.all([
+    gamesDbQueries.getAllGames(),
+    gamesDbQueries.getLastAddedGame(),
+  ]);
+
+  return { games, lastAddedSystem: lastAddedGame?.system };
 });

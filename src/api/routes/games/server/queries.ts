@@ -1,9 +1,11 @@
 import { db } from '#/api/db';
-import { and, eq, isNull } from 'drizzle-orm';
+import { and, desc, eq, isNull } from 'drizzle-orm';
 
 import type { NewGameRecordDef, UpdateGameRecordDef } from './types';
 
 import { games } from '../../../schema';
+
+// TODO - ADD QUERY BY USER ID VIA AUTH ENDPOINT
 
 export const getAllGames = async () => {
   return await db.select().from(games).where(isNull(games.deletedAt));
@@ -14,6 +16,16 @@ export const getGameById = async (id: number) => {
     .select()
     .from(games)
     .where(and(eq(games.id, id), isNull(games.deletedAt)));
+
+  return game;
+};
+export const getLastAddedGame = async () => {
+  const [game] = await db
+    .select()
+    .from(games)
+    .where(isNull(games.deletedAt))
+    .orderBy(desc(games.createdAt))
+    .limit(1);
 
   return game;
 };
