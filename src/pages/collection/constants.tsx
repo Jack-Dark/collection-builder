@@ -1,10 +1,10 @@
 import type { GameRecordDef } from '#/api/routes/games/server/types';
 
-import { Button } from '@base-ui/react/button';
 import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import { useRouter } from '@tanstack/react-router';
 import { createColumnHelper } from '@tanstack/react-table';
 import { apiRoutes } from '#/api/routes';
+import { Button } from '#/components/Button';
 import formatDate, { masks } from 'dateformat';
 
 const columnHelper = createColumnHelper<GameRecordDef>();
@@ -54,21 +54,25 @@ export const collectionTableColumns = [
             onClick={() => {
               // apiRoutes.games.updateById(id);
             }}
+            size="sm"
+            variant="ghost"
           >
             <EditIcon />
           </Button>
 
-          <Button
-            onClick={async () => {
-              await apiRoutes.games.deleteById(id);
-              router.invalidate();
-            }}
-          >
-            <DeleteIcon />
+          <Button size="sm" variant="ghost">
+            <DeleteIcon
+              className="text-red-700"
+              onClick={async () => {
+                await apiRoutes.games.deleteById(id);
+                router.invalidate();
+              }}
+            />
           </Button>
         </>
       );
     },
     header: '',
+    size: 0,
   }),
 ];

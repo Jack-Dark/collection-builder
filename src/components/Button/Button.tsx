@@ -4,7 +4,7 @@ import { Button as MuiButton } from '@base-ui/react';
 import { useMemo } from 'react';
 
 type ButtonProps = MuiButtonProps & {
-  variant?: 'primary' | 'secondary';
+  variant?: 'primary' | 'secondary' | 'ghost';
   size?: 'sm' | 'md' | 'lg' | 'xl' | '2x';
 };
 

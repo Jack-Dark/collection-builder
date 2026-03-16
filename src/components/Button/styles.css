@@ -10,9 +10,14 @@
     border-width: 1px;
   }
 
-
-  .btn:disabled {
+  .btn:disabled,
+  .btn:disabled:hover {
     cursor: not-allowed;
+    color: var(--color-gray-400);
+  }
+
+  .btn:disabled * {
+    pointer-events: none;
   }
 
   .btn-sm {
@@ -72,6 +77,20 @@
       @media (hover: hover) {
         background-color: var(--color-primary-900);
         color: var(--color-white);
+      }
+    }
+  }
+
+  .btn-ghost {
+    background-color: transparent;
+    border-color: transparent;
+    color: inherit;
+    box-shadow: none;
+
+    &:hover {
+      @media (hover: hover) {
+        background-color: transparent;
+        color: inherit;
       }
     }
   }

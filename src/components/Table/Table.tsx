@@ -38,7 +38,10 @@ export const Table = <T,>(props: TablePropsDef<T>) => {
             <tr key={hg.id}>
               {hg.headers.map((header) => {
                 return (
-                  <th className="text-left px-2 py-1" key={header.id}>
+                  <th
+                    className={`text-left px-2 py-1 w-[${header.getSize()}px]`}
+                    key={header.id}
+                  >
                     {flexRender(
                       header.column.columnDef.header,
                       header.getContext(),
@@ -65,6 +68,11 @@ export const Table = <T,>(props: TablePropsDef<T>) => {
           );
         })}
       </tbody>
+      <tfoot>
+        {/* 
+          // TODO - MOVE ADD-GAME FORM TO FOOTER
+        */}
+      </tfoot>
     </table>
   );
 };
