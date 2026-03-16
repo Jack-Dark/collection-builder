@@ -1,5 +1,6 @@
 import type { RouteComponent } from '@tanstack/react-router';
 
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { useLoaderData } from '@tanstack/react-router';
 import { Button } from '#/components/Button';
 import { Table } from '#/components/Table';
@@ -13,21 +14,35 @@ export const Collection: RouteComponent = () => {
 
   const games = useLoaderData({ from: '/_app/collection' });
 
+  const toggleForm = () => {
+    setShowAddForm((prev) => {
+      return !prev;
+    });
+  };
+
   return (
-    <section className="grid gap-4">
-      <Button
-        className="justify-self-start"
-        onClick={() => {
-          setShowAddForm((prev) => {
-            return !prev;
-          });
-        }}
-        variant={showAddForm ? 'secondary' : 'primary'}
-      >
-        <p>{showAddForm ? 'Hide Form' : 'Add Game'}</p>
-      </Button>
+    <section className="grid gap-8">
+      {showAddForm ? (
+        <Button
+          className="justify-self-start flex flex-nowrap gap-2"
+          onClick={toggleForm}
+          variant="secondary"
+        >
+          <VisibilityOffIcon />
+          <p>Hide Form</p>
+        </Button>
+      ) : (
+        <Button
+          className="justify-self-start"
+          onClick={toggleForm}
+          variant="primary"
+        >
+          <p>Add Game</p>
+        </Button>
+      )}
 
       {showAddForm && <AddGameForm />}
+
       <Table columns={collectionTableColumns} data={games} />
     </section>
   );

@@ -31,7 +31,7 @@ export const Table = <T,>(props: TablePropsDef<T>) => {
   });
 
   return (
-    <table>
+    <table className="table">
       <thead>
         {table.getHeaderGroups().map((hg) => {
           return (
@@ -56,7 +56,7 @@ export const Table = <T,>(props: TablePropsDef<T>) => {
             <tr key={row.id}>
               {row.getVisibleCells().map((cell) => {
                 return (
-                  <td className="border px-2 py-1" key={cell.id}>
+                  <td className="border-t px-2 py-1" key={cell.id}>
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
                 );

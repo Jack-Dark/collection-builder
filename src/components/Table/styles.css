@@ -1,0 +1,5 @@
+@layer components {
+  .table td {
+    border-color: var(--color-stone-300);
+  }
+}

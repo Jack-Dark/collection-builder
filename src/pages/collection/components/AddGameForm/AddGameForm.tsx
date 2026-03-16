@@ -1,5 +1,6 @@
 import type { RouteComponent } from '@tanstack/react-router';
 
+import SaveIcon from '@mui/icons-material/Save';
 import { revalidateLogic, useForm } from '@tanstack/react-form';
 import { useRouter } from '@tanstack/react-router';
 import { apiRoutes } from '#/api/routes';
@@ -165,7 +166,6 @@ export const AddGameForm: RouteComponent = () => {
 
                     return (
                       <InputField
-                        defaultValue={defaultValues[field.name]}
                         error={errorMsg}
                         label="Edition details"
                         name={field.name}
@@ -173,6 +173,7 @@ export const AddGameForm: RouteComponent = () => {
                           field.handleChange(value);
                         }}
                         required
+                        value={editionDetails}
                       />
                     );
                   }}
@@ -196,8 +197,13 @@ export const AddGameForm: RouteComponent = () => {
             console.log('🚀 ~ AddGameForm ~ values:', values);
 
             return (
-              <Button disabled={!isFormValid} type="submit">
-                Submit
+              <Button
+                className="flex flex-nowrap gap-2"
+                disabled={!isFormValid}
+                type="submit"
+              >
+                <SaveIcon />
+                Save
               </Button>
             );
           }}

@@ -74,7 +74,7 @@ export const ComboboxField = <TValue, TMultiple extends boolean>(
                   {(region: string) => {
                     return (
                       <Combobox.Item
-                        className="p-2 hover:bg-primary-50 data-selected:bg-primary-100 cursor-pointer"
+                        className="p-2 hover:bg-primary-50 data-selected:bg-primary-100 data-highlighted:bg-primary-50 cursor-pointer"
                         key={region}
                         value={region}
                       >
