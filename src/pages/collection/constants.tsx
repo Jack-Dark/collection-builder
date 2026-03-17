@@ -1,10 +1,9 @@
 import type { GameRecordDef } from '#/api/routes/games/server/types';
 
-import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import { useRouter } from '@tanstack/react-router';
 import { createColumnHelper } from '@tanstack/react-table';
 import { apiRoutes } from '#/api/routes';
-import { Button } from '#/components/Button';
+import { MoreMenu } from '#/components/MoreMenu';
 import formatDate, { masks } from 'dateformat';
 
 const columnHelper = createColumnHelper<GameRecordDef>();
@@ -40,35 +39,33 @@ export const collectionTableColumns = [
         </p>
       ) : null;
     },
-    header: 'Edition',
+    header: 'Added',
   }),
   columnHelper.accessor('id', {
     cell: ({ getValue }) => {
       const router = useRouter();
       const id = getValue();
 
-      // TODO - create Menu component that is toggled on a 3-dot icon (or SettingsIcon?)
       return (
         <div className="flex flex-nowrap gap-2 justify-end items-center">
-          <Button
-            disabled
-            onClick={() => {
-              // apiRoutes.games.updateById(id);
-            }}
-            size="xs"
-            variant="ghost"
-          >
-            <EditIcon />
-          </Button>
-          <Button size="xs" variant="ghost">
-            <DeleteIcon
-              className="text-red-700"
-              onClick={async () => {
-                await apiRoutes.games.deleteById(id);
-                router.invalidate();
-              }}
-            />
-          </Button>
+          <MoreMenu
+            items={[
+              {
+                disabled: true,
+                label: 'Edit',
+                onClick: () => {
+                  // apiRoutes.games.updateById(id);
+                },
+              },
+              {
+                label: 'Delete',
+                onClick: async () => {
+                  await apiRoutes.games.deleteById(id);
+                  router.invalidate();
+                },
+              },
+            ]}
+          />
         </div>
       );
     },
