@@ -1,18 +1,19 @@
 import { Menu } from '@base-ui/react';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import { getCursorClassName } from '#/helpers';
 
 import type { MoreMenuPropsDef } from './MoreMenu.types';
 
 import { MenuList } from './components/MenuList';
 
 export const MoreMenu = (props: MoreMenuPropsDef) => {
-  const { disabled: disabledMenu, open, ...rest } = props;
+  const { disabled: disabled, open, ...rest } = props;
 
   return (
-    <Menu.Root disabled={disabledMenu} open={open}>
+    <Menu.Root disabled={disabled} open={open}>
       <Menu.Trigger
-        className="flex items-center justify-center select-none cursor-pointer"
-        disabled={disabledMenu}
+        className={`flex items-center justify-center select-none ${getCursorClassName(disabled)}`}
+        disabled={disabled}
       >
         <MoreHorizIcon />
       </Menu.Trigger>

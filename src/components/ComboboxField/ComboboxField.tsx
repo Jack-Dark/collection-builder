@@ -70,7 +70,7 @@ export const ComboboxField = <TValue, TMultiple extends boolean>(
                   No matches
                 </Combobox.Empty>
 
-                <Combobox.List className="">
+                <Combobox.List>
                   {(region: string) => {
                     return (
                       <Combobox.Item

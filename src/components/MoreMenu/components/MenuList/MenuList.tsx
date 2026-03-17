@@ -1,5 +1,6 @@
 import { Menu } from '@base-ui/react';
 import { Link } from '@tanstack/react-router';
+import { getCursorClassName } from '#/helpers';
 import { Fragment } from 'react';
 
 import type { MoreMenuPropsDef } from '../../MoreMenu.types';
@@ -43,7 +44,7 @@ export const MenuList = (props: MoreMenuPropsDef) => {
               target,
             } = itemProps;
 
-            const menuItemClasses = `flex cursor-default py-2 pr-8 pl-4 text-sm leading-4 outline-hidden select-none ${disabled ? 'text-gray-400 cursor-not-allowed' : 'data-[highlighted]:relative data-[highlighted]:z-0 data-[highlighted]:before:absolute data-[highlighted]:before:inset-x-1 data-[highlighted]:before:inset-y-0 data-[highlighted]:before:z-[-1] data-[highlighted]:before:rounded-xs data-[highlighted]:before:bg-primary-50 cursor-pointer'}`;
+            const menuItemClasses = `flex cursor-default py-2 pr-8 pl-4 text-sm leading-4 outline-hidden select-none ${getCursorClassName(disabled)} ${disabled ? 'text-gray-400' : 'data-[highlighted]:relative data-[highlighted]:z-0 data-[highlighted]:before:absolute data-[highlighted]:before:inset-x-1 data-[highlighted]:before:inset-y-0 data-[highlighted]:before:z-[-1] data-[highlighted]:before:rounded-xs data-[highlighted]:before:bg-primary-50'}`;
 
             return (
               <Fragment key={typeof label === 'string' ? label : key}>
