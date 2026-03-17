@@ -53,12 +53,13 @@ const getCommonPinningStyles = <T,>(props: {
 type TablePropsDef<T> = Omit<TableOptions<T>, 'filterFns' | 'getCoreRowModel'> &
   Partial<Pick<TableOptions<T>, 'filterFns' | 'getCoreRowModel'>>;
 
-export const Table = <T,>(props: TablePropsDef<T>) => {
+export const Table = <T,>({ data = [], ...rest }: TablePropsDef<T>) => {
   const [makeColumnsSticky, setMakeColumnsSticky] = useState<boolean>(false);
 
   const tableRef = useRef<HTMLTableElement>(null);
 
   const table = useReactTable<T>({
+    data,
     filterFns: {
       fuzzy: fuzzyFilter,
     },
@@ -69,7 +70,7 @@ export const Table = <T,>(props: TablePropsDef<T>) => {
         right: ['actions'],
       },
     },
-    ...props,
+    ...rest,
   });
 
   const minTableSize = table.getTotalSize();
