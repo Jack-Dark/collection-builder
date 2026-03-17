@@ -2,6 +2,7 @@ import type { NewGameRecordDef } from '#/api/routes/games/server/types';
 
 import { createFileRoute } from '@tanstack/react-router';
 import { gamesDbQueries } from '#/api/routes/games/server';
+import { authMiddleware } from '#/utils/auth-middleware';
 
 export const Route = createFileRoute('/api/games/$id')({
   server: {
@@ -13,10 +14,13 @@ export const Route = createFileRoute('/api/games/$id')({
 
         return Response.json({ message: 'Game deleted successfully' });
       },
-      GET: async ({ params }) => {
+      GET: async ({ context, params }) => {
         const id = Number(params.id);
 
-        const updatedGame = await gamesDbQueries.getGameById(id);
+        const updatedGame = await gamesDbQueries.getGameById({
+          id,
+          userId: context.user.id,
+        });
 
         return Response.json(updatedGame);
       },
@@ -33,5 +37,6 @@ export const Route = createFileRoute('/api/games/$id')({
         return Response.json(updatedGame);
       },
     },
+    middleware: [authMiddleware],
   },
 });

@@ -1,7 +1,8 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, redirect } from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
 import { gamesDbQueries } from '#/api/routes/games/server';
 import { Collection } from '#/pages/Collection';
+import { authMiddleware } from '#/utils/auth-middleware';
 
 export const Route = createFileRoute('/_app/collection')({
   component: Collection,
@@ -12,11 +13,17 @@ export const Route = createFileRoute('/_app/collection')({
 
 const fetchAllGames = createServerFn({
   method: 'GET',
-}).handler(async () => {
-  const [games, lastAddedGame] = await Promise.all([
-    gamesDbQueries.getAllGames(),
-    gamesDbQueries.getLastAddedGame(),
-  ]);
+})
+  .middleware([authMiddleware])
+  .handler(async ({ context }) => {
+    if (!context.user.id) {
+      throw redirect({ to: '/sign-up' });
+    }
 
-  return { games, lastAddedSystem: lastAddedGame?.system };
-});
+    const [games, lastAddedGame] = await Promise.all([
+      gamesDbQueries.getAllGames(context.user.id),
+      gamesDbQueries.getLastAddedGame(context.user.id),
+    ]);
+
+    return { games, lastAddedSystem: lastAddedGame?.system };
+  });

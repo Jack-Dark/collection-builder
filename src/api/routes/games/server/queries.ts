@@ -7,27 +7,46 @@ import { games } from '../../../schema';
 
 // TODO - ADD QUERY BY USER ID VIA AUTH ENDPOINT
 
-export const getAllGames = async () => {
-  return await db.select().from(games).where(isNull(games.deletedAt));
+export const getAllGames = async (userId: string | undefined) => {
+  if (userId) {
+    return await db
+      .select()
+      .from(games)
+      .where(and(eq(games.userId, userId), isNull(games.deletedAt)));
+  }
 };
 
-export const getGameById = async (id: number) => {
-  const [game] = await db
-    .select()
-    .from(games)
-    .where(and(eq(games.id, id), isNull(games.deletedAt)));
+export const getGameById = async (props: {
+  userId: string | undefined;
+  id: number;
+}) => {
+  const { id, userId } = props;
+  if (userId) {
+    const [game] = await db
+      .select()
+      .from(games)
+      .where(
+        and(
+          eq(games.id, id),
+          eq(games.userId, userId),
+          isNull(games.deletedAt),
+        ),
+      );
 
-  return game;
+    return game;
+  }
 };
-export const getLastAddedGame = async () => {
-  const [game] = await db
-    .select()
-    .from(games)
-    .where(isNull(games.deletedAt))
-    .orderBy(desc(games.createdAt))
-    .limit(1);
+export const getLastAddedGame = async (userId: string | undefined) => {
+  if (userId) {
+    const [game] = await db
+      .select()
+      .from(games)
+      .where(and(eq(games.userId, userId), isNull(games.deletedAt)))
+      .orderBy(desc(games.createdAt))
+      .limit(1);
 
-  return game;
+    return game;
+  }
 };
 
 export const createGame = async (gameDetails: NewGameRecordDef) => {
