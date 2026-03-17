@@ -20,6 +20,13 @@
     pointer-events: none;
   }
 
+  .btn-xs {
+    padding-inline: --spacing(1);
+    padding-block: --spacing(1);
+    font-size: var(--text-sm);
+    line-height: var(--text-sm--line-height);
+  }
+
   .btn-sm {
     padding-inline: --spacing(3);
     padding-block: --spacing(1);

@@ -47,20 +47,20 @@ export const collectionTableColumns = [
       const router = useRouter();
       const id = getValue();
 
+      // TODO - create Menu component that is toggled on a 3-dot icon (or SettingsIcon?)
       return (
-        <>
+        <div className="flex flex-nowrap gap-2 justify-end items-center">
           <Button
             disabled
             onClick={() => {
               // apiRoutes.games.updateById(id);
             }}
-            size="sm"
+            size="xs"
             variant="ghost"
           >
             <EditIcon />
           </Button>
-
-          <Button size="sm" variant="ghost">
+          <Button size="xs" variant="ghost">
             <DeleteIcon
               className="text-red-700"
               onClick={async () => {
@@ -69,10 +69,13 @@ export const collectionTableColumns = [
               }}
             />
           </Button>
-        </>
+        </div>
       );
     },
-    header: '',
+    header: () => {
+      return <p className="text-right">Actions</p>;
+    },
+    id: 'actions',
     size: 0,
   }),
 ];

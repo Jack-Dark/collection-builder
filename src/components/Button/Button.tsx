@@ -5,7 +5,7 @@ import { useMemo } from 'react';
 
 type ButtonProps = MuiButtonProps & {
   variant?: 'primary' | 'secondary' | 'ghost';
-  size?: 'sm' | 'md' | 'lg' | 'xl' | '2x';
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2x';
 };
 
 export const Button = ({
