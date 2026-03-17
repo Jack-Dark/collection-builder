@@ -13,29 +13,46 @@ export type MoreMenuPropsDef = Pick<
 
 export type MoreMenuItemDef = {
   addSeparator?: boolean;
-  subMenu?: MoreMenuPropsDef;
   disabled?: boolean;
-} & (
-  | {
-      label: string;
-      key?: never;
-    }
-  | {
-      label: JSXElementConstructor<{}>;
-      key: Key;
-    }
-) &
+} & MenuItemLabelPropsDef &
   (
-    | {
-        href: RouterPath;
-        target?: string;
-        onClick?: never;
-      }
+    | (MenuItemBehaviorPropsDef & {
+        subMenu?: never;
+        group?: never;
+      })
+    | (MenuItemBehaviorPropsDef & {
+        subMenu?: MoreMenuPropsDef;
+        group?: never;
+      })
     | {
         href?: never;
         target?: never;
-        onClick: () => void | Promise<void>;
+        onClick?: never;
+        subMenu?: never;
+        group?: MenuItemGroupItemPropsDef[];
       }
   );
 
-export type MoreMenuSubMenuPropsDef = Omit<MoreMenuPropsDef, 'open'>;
+type MenuItemLabelPropsDef =
+  | {
+      label: string;
+      id?: never;
+    }
+  | {
+      label: JSXElementConstructor<{}>;
+      id: Key;
+    };
+
+type MenuItemBehaviorPropsDef =
+  | {
+      href: RouterPath;
+      target?: string;
+      onClick?: never;
+    }
+  | {
+      href?: never;
+      target?: never;
+      onClick: () => void | Promise<void>;
+    };
+
+type MenuItemGroupItemPropsDef = Omit<MoreMenuItemDef, 'subMenu' | 'group'>;

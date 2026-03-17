@@ -1,6 +1,7 @@
+import type { RouterPath } from '#/types';
+
 import { Menu } from '@base-ui/react';
 import { Link } from '@tanstack/react-router';
-import { getCursorClassName } from '#/helpers';
 import { Fragment } from 'react';
 
 import type { MoreMenuPropsDef } from '../../MoreMenu.types';
@@ -8,6 +9,7 @@ import type { MoreMenuPropsDef } from '../../MoreMenu.types';
 import { ConditionalWrapper } from '../../../ConditionalWrapper';
 import { ArrowSvg } from './components/ArrowSvg';
 import { MenuItemLabel } from './components/MenuItemLabel';
+import { getMenuItemClasses } from './MenuList.helpers';
 
 export const MenuList = (props: MoreMenuPropsDef) => {
   const {
@@ -36,25 +38,73 @@ export const MenuList = (props: MoreMenuPropsDef) => {
             const {
               addSeparator,
               disabled,
+              group,
               href,
-              key,
+              id,
               label,
               onClick,
               subMenu,
               target,
             } = itemProps;
 
-            const menuItemClasses = `flex cursor-default py-2 pr-8 pl-4 text-sm leading-4 outline-hidden select-none ${getCursorClassName(disabled)} ${disabled ? 'text-gray-400' : 'data-[highlighted]:relative data-[highlighted]:z-0 data-[highlighted]:before:absolute data-[highlighted]:before:inset-x-1 data-[highlighted]:before:inset-y-0 data-[highlighted]:before:z-[-1] data-[highlighted]:before:rounded-xs data-[highlighted]:before:bg-primary-50'}`;
-
             return (
-              <Fragment key={typeof label === 'string' ? label : key}>
-                {subMenu?.items?.length ? (
+              <Fragment key={typeof label === 'string' ? label : id}>
+                {group?.length ? (
+                  <Menu.Group>
+                    <Menu.GroupLabel
+                      className={getMenuItemClasses(disabled)}
+                      data-group-label=""
+                    >
+                      <MenuItemLabel label={label} />
+                    </Menu.GroupLabel>
+
+                    {group.map((groupProps) => {
+                      const {
+                        addSeparator,
+                        disabled,
+                        href,
+                        id,
+                        label,
+                        onClick,
+                        target,
+                      } = groupProps;
+
+                      return (
+                        <Fragment key={typeof label === 'string' ? label : id}>
+                          <Menu.Item
+                            className={getMenuItemClasses(disabled)}
+                            data-clickable={href || onClick ? '' : undefined}
+                            data-disabled={disabled ? '' : undefined}
+                            disabled={disabled}
+                            onClick={disabled ? undefined : onClick}
+                          >
+                            <ConditionalWrapper
+                              condition={!!href && !disabled}
+                              Wrapper={({ children }) => {
+                                return (
+                                  <Link target={target} to={href as RouterPath}>
+                                    {children}
+                                  </Link>
+                                );
+                              }}
+                            >
+                              <MenuItemLabel label={label} />
+                            </ConditionalWrapper>
+                          </Menu.Item>
+                          {addSeparator && (
+                            <Menu.Separator className="mx-4 my-1.5 h-px bg-gray-200" />
+                          )}
+                        </Fragment>
+                      );
+                    })}
+                  </Menu.Group>
+                ) : subMenu?.items?.length ? (
                   <Menu.SubmenuRoot
                     disabled={subMenu?.disabled}
                     open={subMenu?.open && !subMenu?.disabled}
                   >
                     <Menu.SubmenuTrigger
-                      className={menuItemClasses}
+                      className={getMenuItemClasses(disabled)}
                       disabled={disabled}
                     >
                       <ConditionalWrapper
@@ -82,7 +132,10 @@ export const MenuList = (props: MoreMenuPropsDef) => {
                   </Menu.SubmenuRoot>
                 ) : (
                   <Menu.Item
-                    className={menuItemClasses}
+                    className={getMenuItemClasses(disabled)}
+                    data-clickable={href || onClick ? '' : undefined}
+                    data-disabled={disabled ? '' : undefined}
+                    disabled={disabled}
                     onClick={disabled ? undefined : onClick}
                   >
                     <ConditionalWrapper
