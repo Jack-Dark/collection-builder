@@ -1,5 +1,6 @@
 import type { MenuPositionerProps } from '@base-ui/react';
-import type { JSXElementConstructor } from 'react';
+import type { RouterPath } from '#/types';
+import type { JSXElementConstructor, Key } from 'react';
 
 export type MoreMenuPropsDef = Pick<
   MenuPositionerProps,
@@ -11,21 +12,30 @@ export type MoreMenuPropsDef = Pick<
 };
 
 export type MoreMenuItemDef = {
-  label: string | JSXElementConstructor<{}>;
   addSeparator?: boolean;
-  subMenu?: MoreMenuSubMenuPropsDef;
+  subMenu?: MoreMenuPropsDef;
   disabled?: boolean;
 } & (
   | {
-      href: string;
-      target?: string;
-      onClick?: never;
+      label: string;
+      key?: never;
     }
   | {
-      href?: never;
-      target?: never;
-      onClick: () => void | Promise<void>;
+      label: JSXElementConstructor<{}>;
+      key: Key;
     }
-);
+) &
+  (
+    | {
+        href: RouterPath;
+        target?: string;
+        onClick?: never;
+      }
+    | {
+        href?: never;
+        target?: never;
+        onClick: () => void | Promise<void>;
+      }
+  );
 
 export type MoreMenuSubMenuPropsDef = Omit<MoreMenuPropsDef, 'open'>;
