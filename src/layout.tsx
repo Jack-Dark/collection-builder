@@ -53,7 +53,7 @@ export const Layout = () => {
         </div>
       </header>
 
-      <div className="grid justify-items-center">
+      <div className="grid justify-items-center px-4">
         <main className="w-full max-w-7xl px-4 py-12 bg-white text-black rounded-xl">
           <Outlet />
         </main>

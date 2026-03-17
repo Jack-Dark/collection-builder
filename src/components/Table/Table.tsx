@@ -30,49 +30,62 @@ export const Table = <T,>(props: TablePropsDef<T>) => {
     ...props,
   });
 
+  const getFirstColumnClasses = (index: number) => {
+    return index === 0 ? 'sticky left-0 bg-inherit' : '';
+  };
+
   return (
-    <table className="table">
-      <thead>
-        {table.getHeaderGroups().map((hg) => {
-          return (
-            <tr key={hg.id}>
-              {hg.headers.map((header) => {
-                return (
-                  <th
-                    className={`text-left px-2 py-1 w-[${header.getSize()}px]`}
-                    key={header.id}
-                  >
-                    {flexRender(
-                      header.column.columnDef.header,
-                      header.getContext(),
-                    )}
-                  </th>
-                );
-              })}
-            </tr>
-          );
-        })}
-      </thead>
-      <tbody>
-        {table.getRowModel().rows.map((row) => {
-          return (
-            <tr key={row.id}>
-              {row.getVisibleCells().map((cell) => {
-                return (
-                  <td className="border-t px-2 py-1" key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                );
-              })}
-            </tr>
-          );
-        })}
-      </tbody>
-      <tfoot>
-        {/* 
+    <div className="w-full overflow-auto">
+      <table className="table w-full">
+        <thead>
+          {table.getHeaderGroups().map((hg) => {
+            return (
+              <tr key={hg.id}>
+                {hg.headers.map((header, index) => {
+                  return (
+                    <th
+                      className={`text-left px-2 py-1 ${getFirstColumnClasses(index)}`}
+                      key={header.id}
+                      style={{ width: `${header.getSize()}px` }}
+                    >
+                      {flexRender(
+                        header.column.columnDef.header,
+                        header.getContext(),
+                      )}
+                    </th>
+                  );
+                })}
+              </tr>
+            );
+          })}
+        </thead>
+        <tbody>
+          {table.getRowModel().rows.map((row) => {
+            return (
+              <tr key={row.id}>
+                {row.getVisibleCells().map((cell, index) => {
+                  return (
+                    <td
+                      className={`border-t px-2 py-1 ${getFirstColumnClasses(index)}`}
+                      key={cell.id}
+                    >
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext(),
+                      )}
+                    </td>
+                  );
+                })}
+              </tr>
+            );
+          })}
+        </tbody>
+        <tfoot>
+          {/* 
           // TODO - MOVE ADD-GAME FORM TO FOOTER
         */}
-      </tfoot>
-    </table>
+        </tfoot>
+      </table>
+    </div>
   );
 };
