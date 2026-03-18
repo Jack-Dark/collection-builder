@@ -83,3 +83,14 @@ export const softDeleteGameById = async (props: {
     .set({ deletedAt: new Date() })
     .where(and(eq(games.id, id), getMatchesUserIdAndNotDeleted(userId)));
 };
+
+export const hardDeleteGameById = async (props: {
+  id: number;
+  userId: string | undefined;
+}) => {
+  const { id, userId } = props;
+
+  await db
+    .delete(games)
+    .where(and(eq(games.id, id), getMatchesUserIdAndNotDeleted(userId)));
+};
