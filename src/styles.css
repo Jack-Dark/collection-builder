@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "./components/Button/styles.css";
 @import "./components/InputField/styles.css";
+@import "./components/MoreMenu/components/MenuList/styles.css";
 @import "./components/Table/styles.css";
 
 @theme {
@@ -15,6 +16,20 @@
   --color-primary-800: var(--color-blue-800);
   --color-primary-900: var(--color-blue-900);
   --color-primary-950: var(--color-blue-950);
+
+  --color-secondary-50: var(--color-emerald-50);
+  --color-secondary-100: var(--color-emerald-100);
+  --color-secondary-200: var(--color-emerald-200);
+  --color-secondary-300: var(--color-emerald-300);
+  --color-secondary-400: var(--color-emerald-400);
+  --color-secondary-500: var(--color-emerald-500);
+  --color-secondary-600: var(--color-emerald-600);
+  --color-secondary-700: var(--color-emerald-700);
+  --color-secondary-800: var(--color-emerald-800);
+  --color-secondary-900: var(--color-emerald-900);
+  --color-secondary-950: var(--color-emerald-950);
+
+  --color-disabled: var(--color-gray-400) --color-divider: var(--color-gray-200)
 }
 
 .root {

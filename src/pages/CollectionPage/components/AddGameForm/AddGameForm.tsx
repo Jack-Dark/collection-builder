@@ -2,11 +2,11 @@ import SaveIcon from '@mui/icons-material/Save';
 import { revalidateLogic, useForm } from '@tanstack/react-form';
 import { useRouter } from '@tanstack/react-router';
 import { apiRoutes } from '#/api/routes';
+import { authClient } from '#/auth/auth-client';
 import { Button } from '#/components/Button';
 import { CheckboxField } from '#/components/CheckboxField';
 import { ComboboxField } from '#/components/ComboboxField';
 import { InputField } from '#/components/InputField';
-import { authClient } from '#/auth/auth-client';
 import { useRef } from 'react';
 
 import { systemsList, defaultValues } from './constants';
@@ -36,7 +36,6 @@ export const AddGameForm = (props: AddGameFormProps) => {
         // TODO - FIX
         userId: session?.user?.id as string,
       });
-      console.log('🚀 ~ AddGameForm ~ response:', response);
       form.reset();
       router.invalidate();
       nameInput?.current?.focus();
@@ -206,9 +205,7 @@ export const AddGameForm = (props: AddGameFormProps) => {
           }}
         >
           {(state) => {
-            const { isFormValid, values } = state;
-            console.clear();
-            console.log('🚀 ~ AddGameForm ~ values:', values);
+            const { isFormValid } = state;
 
             return (
               <Button

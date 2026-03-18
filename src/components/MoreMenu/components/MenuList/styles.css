@@ -1,0 +1,8 @@
+@theme {
+  --color-menu-primary-hover: var(--color-primary-50);
+  --color-menu-primary-selected: var(--color-primary-100);
+
+  --color-menu-secondary-hover: var(--color-secondary-50);
+  --color-menu-secondary-selected: var(--color-secondary-100);
+
+}

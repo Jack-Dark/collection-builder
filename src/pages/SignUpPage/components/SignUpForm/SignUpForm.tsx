@@ -38,10 +38,11 @@ export const SignUpForm: RouteComponent = () => {
         },
       );
 
-      console.log('🚀 ~ SignUpForm ~ error:', error);
-      console.log('🚀 ~ SignUpForm ~ data:', data);
-
-      router.invalidate();
+      if (data) {
+        router.invalidate();
+      } else {
+        throw new Error(error.message);
+      }
     },
     validators: {
       onSubmit: signUpFormSchema,
@@ -196,9 +197,7 @@ export const SignUpForm: RouteComponent = () => {
           }}
         >
           {(state) => {
-            const { isFormValid, values } = state;
-            console.clear();
-            console.log('🚀 ~ SignUpForm ~ values:', values);
+            const { isFormValid } = state;
 
             return (
               <Button disabled={!isFormValid} type="submit">

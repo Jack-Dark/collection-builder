@@ -46,7 +46,6 @@ export const FieldWrapper = (props: PropsWithChildren<FieldWrapperProps>) => {
 
       <Field.Validity>
         {(props) => {
-          // console.log('🚀 ~ Field.Validity ~ props:', props);
           return <p>{error}</p>;
         }}
       </Field.Validity>

@@ -4,14 +4,14 @@ import { Menu } from '@base-ui/react';
 import { Link } from '@tanstack/react-router';
 import { Fragment } from 'react';
 
-import type { MoreMenuPropsDef } from '../../MoreMenu.types';
+import type { MenuPropsDef } from '../../MoreMenu.types';
 
 import { ConditionalWrapper } from '../../../ConditionalWrapper';
-import { ArrowSvg } from './components/ArrowSvg';
+import { MenuArrowSvg } from './components/MenuArrowSvg';
 import { MenuItemLabel } from './components/MenuItemLabel';
 import { getMenuItemClasses } from './MenuList.helpers';
 
-export const MenuList = (props: MoreMenuPropsDef) => {
+export const MenuList = (props: MenuPropsDef) => {
   const {
     align = 'center',
     alignOffset,
@@ -31,7 +31,7 @@ export const MenuList = (props: MoreMenuPropsDef) => {
       >
         <Menu.Popup className="origin-(--transform-origin) rounded-md bg-[canvas] py-1 text-gray-900 shadow-lg shadow-gray-200 outline-1 outline-gray-200 transition-[transform,scale,opacity] data-ending-style:scale-90 data-[ending-style]:opacity-0 data-[starting-style]:scale-90 data-[starting-style]:opacity-0 dark:shadow-none dark:-outline-offset-1 dark:outline-gray-300">
           <Menu.Arrow className="data-[side=bottom]:top-[-8px] data-[side=left]:right-[-13px] data-[side=left]:rotate-90 data-[side=right]:left-[-13px] data-[side=right]:-rotate-90 data-[side=top]:bottom-[-8px] data-[side=top]:rotate-180">
-            <ArrowSvg />
+            <MenuArrowSvg />
           </Menu.Arrow>
 
           {items.map((itemProps) => {
@@ -92,7 +92,7 @@ export const MenuList = (props: MoreMenuPropsDef) => {
                             </ConditionalWrapper>
                           </Menu.Item>
                           {addSeparator && (
-                            <Menu.Separator className="mx-4 my-1.5 h-px bg-gray-200" />
+                            <Menu.Separator className="mx-4 my-1.5 h-px bg-divider" />
                           )}
                         </Fragment>
                       );
@@ -153,7 +153,7 @@ export const MenuList = (props: MoreMenuPropsDef) => {
                   </Menu.Item>
                 )}
                 {addSeparator && (
-                  <Menu.Separator className="mx-4 my-1.5 h-px bg-gray-200" />
+                  <Menu.Separator className="mx-4 my-1.5 h-px bg-divider" />
                 )}
               </Fragment>
             );

@@ -2,16 +2,16 @@ import type { MenuPositionerProps } from '@base-ui/react';
 import type { RouterPath } from '#/types';
 import type { JSXElementConstructor, Key } from 'react';
 
-export type MoreMenuPropsDef = Pick<
+export type MenuPropsDef = Pick<
   MenuPositionerProps,
   'align' | 'alignOffset' | 'side' | 'sideOffset'
 > & {
-  items: MoreMenuItemDef[];
+  items: MenuItemDef[];
   disabled?: boolean;
   open?: boolean;
 };
 
-export type MoreMenuItemDef = {
+export type MenuItemDef = {
   addSeparator?: boolean;
   disabled?: boolean;
 } & MenuItemLabelPropsDef &
@@ -21,7 +21,7 @@ export type MoreMenuItemDef = {
         group?: never;
       })
     | (MenuItemBehaviorPropsDef & {
-        subMenu?: MoreMenuPropsDef;
+        subMenu?: MenuPropsDef;
         group?: never;
       })
     | {
@@ -55,4 +55,4 @@ type MenuItemBehaviorPropsDef =
       onClick: () => void | Promise<void>;
     };
 
-type MenuItemGroupItemPropsDef = Omit<MoreMenuItemDef, 'subMenu' | 'group'>;
+type MenuItemGroupItemPropsDef = Omit<MenuItemDef, 'subMenu' | 'group'>;

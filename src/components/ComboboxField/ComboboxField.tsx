@@ -65,6 +65,7 @@ export const ComboboxField = <TValue, TMultiple extends boolean>(
 
           <Combobox.Portal>
             <Combobox.Positioner align="start">
+              // TODO - UPDATE TO USE SCROLLAREA
               <Combobox.Popup className="bg-white text-black pv-2 rounded-sm shadow-lg max-h-100 overflow-auto">
                 <Combobox.Empty className="p-2 text-gray-500">
                   No matches
@@ -74,7 +75,7 @@ export const ComboboxField = <TValue, TMultiple extends boolean>(
                   {(region: string) => {
                     return (
                       <Combobox.Item
-                        className="p-2 hover:bg-primary-50 data-selected:bg-primary-100 data-highlighted:bg-primary-50 cursor-pointer"
+                        className="p-2 hover:bg-menu-primary-hover data-selected:bg-menu-primary-selected data-highlighted:bg-menu-primary-hover cursor-pointer"
                         key={region}
                         value={region}
                       >

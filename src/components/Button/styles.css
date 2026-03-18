@@ -1,3 +1,11 @@
+@theme {
+  --color-btn-primary: var(--color-primary-900);
+  --color-btn-primary-hover: var(--color-primary-800);
+
+  --color-btn-secondary: var(--color-secondary-900);
+  --color-btn-secondary-hover: var(--color-secondary-800);
+}
+
 @layer components {
   .btn {
     border-radius: var(--radius-xs);
@@ -13,7 +21,7 @@
   .btn:disabled,
   .btn:disabled:hover {
     cursor: not-allowed;
-    color: var(--color-gray-400);
+    color: var(--color-disabled);
   }
 
   .btn:disabled * {
@@ -63,13 +71,13 @@
   }
 
   .btn-primary {
-    background-color: var(--color-primary-800);
-    border-color: var(--color-primary-800);
+    background-color: var(--color-btn-primary);
+    border-color: var(--color-btn-primary);
     color: var(--color-white);
 
     &:hover {
       @media (hover: hover) {
-        background-color: var(--color-primary-900);
+        background-color: var(--color-btn-primary-hover);
         color: var(--color-white);
       }
     }
@@ -77,12 +85,12 @@
 
   .btn-secondary {
     background-color: var(--color-white);
-    border-color: var(--color-primary-800);
-    color: var(--color-primary-800);
+    border-color: var(--color-btn-secondary);
+    color: var(--color-btn-secondary);
 
     &:hover {
       @media (hover: hover) {
-        background-color: var(--color-primary-900);
+        background-color: var(--color-btn-secondary-hover);
         color: var(--color-white);
       }
     }

@@ -1,4 +1,4 @@
-export const ArrowSvg = (props: React.ComponentProps<'svg'>) => {
+export const MenuArrowSvg = (props: React.ComponentProps<'svg'>) => {
   return (
     <svg fill="none" height="10" viewBox="0 0 20 10" width="20" {...props}>
       <path

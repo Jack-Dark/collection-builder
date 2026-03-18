@@ -1,55 +1,52 @@
-import { Tabs } from '@base-ui/react/tabs';
-import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
-import { Link, Outlet, useLocation, useNavigate } from '@tanstack/react-router';
-import { useState } from 'react';
+import type { RouteComponent } from '@tanstack/react-router';
 
-import type { RouterPath } from './types';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
+import { Outlet, useLocation } from '@tanstack/react-router';
+
+import type { NavMenuItem } from './components/NavMenu/NavMenu.types';
 
 import { authClient } from './auth/auth-client';
+import { NavMenu } from './components/NavMenu';
 
-const navItems = [
-  { href: '/collection', label: 'Collection' },
-  { href: '/account', label: 'Account' },
-] satisfies {
-  href: RouterPath;
-  label: string;
-}[];
-
-export const Layout = () => {
+export const Layout: RouteComponent = () => {
   const { pathname } = useLocation();
-  const navigate = useNavigate();
-
-  const defaultTab = pathname as RouterPath;
-  const [activePage, setActivePage] = useState<RouterPath>(defaultTab);
 
   const { data: session } = authClient.useSession();
 
   const isLoggedOut = !session?.user.id;
 
+  const navItems: NavMenuItem[] = [
+    { href: '/collection', label: 'Collection' },
+    {
+      href: '/account',
+      Icon: () => {
+        return <AccountCircleIcon />;
+      },
+      items: [
+        {
+          href: '/account/edit',
+          label: 'Edit',
+        },
+        {
+          href: '/account/update',
+          label: 'Update',
+        },
+      ],
+      label: 'Account',
+    },
+  ];
+
   return (
     <>
-      <header className="grid justify-items-center">
-        <div className="w-full max-w-7xl px-4 py-4">
+      <header className="grid justify-items-center px-4 py-4">
+        <div className="w-full max-w-7xl">
           <div className="flex items-center gap-4 mb-8">
             <SportsEsportsIcon className="text-4xl" fontSize="large" />
             <h1>Start tracking your game collection!</h1>
           </div>
 
-          <Tabs.Root defaultValue={defaultTab}>
-            <Tabs.List>
-              {navItems.map(({ href, label }) => {
-                return (
-                  <Tabs.Tab className="pv-2 px-3" key={href} value={href}>
-                    <Link to={href}>
-                      <p>{label}</p>
-                    </Link>
-                  </Tabs.Tab>
-                );
-              })}
-              <Tabs.Indicator />
-            </Tabs.List>
-            {/* <Tabs.Panel value={'/account' satisfies RouterPath} /> */}
-          </Tabs.Root>
+          <NavMenu items={navItems} />
         </div>
       </header>
 
@@ -58,8 +55,8 @@ export const Layout = () => {
           <Outlet />
         </main>
       </div>
-      <footer className="grid justify-items-center">
-        <div className="w-full max-w-7xl px-4 py-4">placeholder content</div>
+      <footer className="grid justify-items-center px-4 py-4">
+        <div className="w-full max-w-7xl">PLACEHOLDER FOOTER CONTENT</div>
       </footer>
     </>
   );

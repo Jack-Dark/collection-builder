@@ -2,11 +2,11 @@ import { Menu } from '@base-ui/react';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { getCursorClassName } from '#/helpers';
 
-import type { MoreMenuPropsDef } from './MoreMenu.types';
+import type { MenuPropsDef } from './MoreMenu.types';
 
 import { MenuList } from './components/MenuList';
 
-export const MoreMenu = (props: MoreMenuPropsDef) => {
+export const MoreMenu = (props: MenuPropsDef) => {
   const { disabled: disabled, open, ...rest } = props;
 
   return (
