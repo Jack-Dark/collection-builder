@@ -2,7 +2,7 @@ import type { RouteComponent } from '@tanstack/react-router';
 
 import { useForm } from '@tanstack/react-form';
 import { useRouter } from '@tanstack/react-router';
-import { authClient } from '#/auth';
+import { authClient } from '#/auth/auth-client';
 import { Button } from '#/components/Button';
 import { InputField } from '#/components/InputField';
 

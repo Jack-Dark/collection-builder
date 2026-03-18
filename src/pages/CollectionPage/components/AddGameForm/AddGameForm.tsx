@@ -2,11 +2,11 @@ import SaveIcon from '@mui/icons-material/Save';
 import { revalidateLogic, useForm } from '@tanstack/react-form';
 import { useRouter } from '@tanstack/react-router';
 import { apiRoutes } from '#/api/routes';
-import { authClient } from '#/auth';
 import { Button } from '#/components/Button';
 import { CheckboxField } from '#/components/CheckboxField';
 import { ComboboxField } from '#/components/ComboboxField';
 import { InputField } from '#/components/InputField';
+import { authClient } from '#/auth/auth-client';
 import { useRef } from 'react';
 
 import { systemsList, defaultValues } from './constants';

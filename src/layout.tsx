@@ -5,7 +5,7 @@ import { useState } from 'react';
 
 import type { RouterPath } from './types';
 
-import { authClient } from './auth';
+import { authClient } from './auth/auth-client';
 
 const navItems = [
   { href: '/collection', label: 'Collection' },

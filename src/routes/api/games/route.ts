@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { gamesDbQueries } from '#/api/routes/games/server';
-import { authErrorMiddleware } from '#/auth';
+import { authErrorMiddleware } from '#/auth/auth-middleware';
 
 export const Route = createFileRoute('/api/games')({
   server: {
