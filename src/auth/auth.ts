@@ -5,7 +5,7 @@ import { tanstackStartCookies } from 'better-auth/tanstack-start';
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
-    provider: 'pg', // or "mysql", "sqlite"
+    provider: 'pg',
   }),
   emailAndPassword: {
     enabled: true,

@@ -1,8 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
 import { gamesDbQueries } from '#/api/routes/games/server';
+import { authRedirectMiddleware } from '#/auth';
 import { Collection } from '#/pages/Collection';
-import { authRedirectMiddleware } from '#/utils/auth-middleware';
 
 export const Route = createFileRoute('/_app/collection')({
   component: Collection,

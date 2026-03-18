@@ -2,9 +2,9 @@ import type { RouteComponent } from '@tanstack/react-router';
 
 import { useForm } from '@tanstack/react-form';
 import { useRouter } from '@tanstack/react-router';
+import { authClient } from '#/auth';
 import { Button } from '#/components/Button';
 import { InputField } from '#/components/InputField';
-import { authClient } from '#/utils/auth-client';
 
 import { signUpFormSchema, defaultValues } from './schema';
 

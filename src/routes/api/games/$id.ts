@@ -2,7 +2,7 @@ import type { UpdateGameRecordDef } from '#/api/routes/games/server/types';
 
 import { createFileRoute } from '@tanstack/react-router';
 import { gamesDbQueries } from '#/api/routes/games/server';
-import { authErrorMiddleware } from '#/utils/auth-middleware';
+import { authErrorMiddleware } from '#/auth';
 
 export const Route = createFileRoute('/api/games/$id')({
   server: {
