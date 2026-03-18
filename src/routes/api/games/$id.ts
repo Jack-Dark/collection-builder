@@ -2,7 +2,7 @@ import type { UpdateGameRecordDef } from '#/api/routes/games/server/types';
 
 import { createFileRoute } from '@tanstack/react-router';
 import { gamesDbQueries } from '#/api/routes/games/server';
-import { authMiddleware } from '#/utils/auth-middleware';
+import { authErrorMiddleware } from '#/utils/auth-middleware';
 
 export const Route = createFileRoute('/api/games/$id')({
   server: {
@@ -40,6 +40,6 @@ export const Route = createFileRoute('/api/games/$id')({
         return Response.json(updatedGame);
       },
     },
-    middleware: [authMiddleware],
+    middleware: [authErrorMiddleware],
   },
 });

@@ -1,15 +1,15 @@
+import { redirect } from '@tanstack/react-router';
 import { createMiddleware } from '@tanstack/react-start';
 import { StatusCodes, getReasonPhrase } from 'http-status-codes';
 
 import { auth } from './auth';
 
-export const authMiddleware = createMiddleware().server(
+/** Use this middleware to authenticate protected API routes. */
+export const authErrorMiddleware = createMiddleware().server(
   async ({ next, request }) => {
-    const session = await auth.api.getSession({
-      headers: request.headers,
-    });
+    const user = await getUserContext(request);
 
-    if (!session) {
+    if (!user) {
       return new Response(
         JSON.stringify({ error: getReasonPhrase(StatusCodes.UNAUTHORIZED) }),
         { status: StatusCodes.UNAUTHORIZED },
@@ -18,12 +18,39 @@ export const authMiddleware = createMiddleware().server(
 
     return await next({
       context: {
-        user: {
-          id: session.user.id,
-          image: session.user.image,
-          name: session.user.name,
-        },
+        user,
       },
     });
   },
 );
+
+/** Use this middleware to authenticate protected page routes. */
+export const authRedirectMiddleware = createMiddleware().server(
+  async ({ next, request }) => {
+    const user = await getUserContext(request);
+
+    if (!user) {
+      throw redirect({ to: '/sign-up' });
+    }
+
+    return await next({
+      context: {
+        user,
+      },
+    });
+  },
+);
+
+const getUserContext = async (request: Request) => {
+  const session = await auth.api.getSession({
+    headers: request.headers,
+  });
+
+  if (session) {
+    return {
+      id: session?.user.id,
+      image: session?.user.image,
+      name: session?.user.name,
+    };
+  }
+};
