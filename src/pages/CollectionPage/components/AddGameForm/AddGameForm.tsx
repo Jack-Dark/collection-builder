@@ -12,7 +12,7 @@ import { useRef } from 'react';
 import { systemsList, defaultValues } from './constants';
 
 type AddGameFormProps = {
-  lastAddedSystem: string;
+  lastAddedSystem: string | undefined;
 };
 
 export const AddGameForm = (props: AddGameFormProps) => {

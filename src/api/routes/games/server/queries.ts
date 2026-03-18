@@ -18,6 +18,8 @@ export const getAllGames = async (userId: string | undefined) => {
       .from(games)
       .where(getMatchesUserIdAndNotDeleted(userId));
   }
+
+  return [];
 };
 
 export const getGameById = async (props: {

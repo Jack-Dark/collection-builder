@@ -2,10 +2,10 @@ import { createFileRoute } from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
 import { gamesDbQueries } from '#/api/routes/games/server';
 import { authRedirectMiddleware } from '#/auth';
-import { Collection } from '#/pages/Collection';
+import { CollectionPage } from '#/pages/CollectionPage';
 
 export const Route = createFileRoute('/_app/collection')({
-  component: Collection,
+  component: CollectionPage,
   loader: async () => {
     return fetchAllGames();
   },

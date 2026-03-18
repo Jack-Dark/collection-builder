@@ -9,7 +9,7 @@ import { useState } from 'react';
 import { AddGameForm } from './components/AddGameForm';
 import { collectionTableColumns } from './constants.columns';
 
-export const Collection: RouteComponent = () => {
+export const CollectionPage: RouteComponent = () => {
   const [showAddForm, setShowAddForm] = useState<boolean>(false);
 
   const { games, lastAddedSystem } = useLoaderData({
