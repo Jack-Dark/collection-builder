@@ -20,10 +20,10 @@ const fetchAllGames = createServerFn({
       throw redirect({ to: '/sign-up' });
     }
 
-    const [games, lastAddedGame] = await Promise.all([
+    const [games, lastAddedSystem] = await Promise.all([
       gamesDbQueries.getAllGames(context.user.id),
-      gamesDbQueries.getLastAddedGame(context.user.id),
+      gamesDbQueries.getLastAddedGamesSystem(context.user.id),
     ]);
 
-    return { games, lastAddedSystem: lastAddedGame?.system };
+    return { games, lastAddedSystem };
   });

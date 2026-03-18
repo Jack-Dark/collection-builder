@@ -18,11 +18,8 @@ export default [
       '@typescript-eslint/require-await': 'off',
       'pnpm/json-enforce-catalog': 'off',
       '@typescript-eslint/no-unnecessary-condition': 'off',
-    },
-  },
-  {
-    rules: {
       'arrow-body-style': ['warn', 'always'],
+      'object-shorthand': ['warn', 'properties'],
     },
   },
   {

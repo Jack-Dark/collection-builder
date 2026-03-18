@@ -36,16 +36,16 @@ export const getGameById = async (props: {
     return game;
   }
 };
-export const getLastAddedGame = async (userId: string | undefined) => {
+export const getLastAddedGamesSystem = async (userId: string | undefined) => {
   if (userId) {
     const [game] = await db
-      .select()
+      .select({ system: games.system })
       .from(games)
       .where(and(eq(games.userId, userId), isNull(games.deletedAt)))
       .orderBy(desc(games.createdAt))
       .limit(1);
 
-    return game;
+    return game?.system;
   }
 };
 
