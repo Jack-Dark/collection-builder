@@ -1,20 +1,29 @@
 import { createMiddleware } from '@tanstack/react-start';
-import { getRequestHeaders } from '@tanstack/react-start/server';
+import { StatusCodes, getReasonPhrase } from 'http-status-codes';
 
 import { auth } from './auth';
 
-export const authMiddleware = createMiddleware().server(async ({ next }) => {
-  const session = await auth.api.getSession({
-    headers: await getRequestHeaders(),
-  });
+export const authMiddleware = createMiddleware().server(
+  async ({ next, request }) => {
+    const session = await auth.api.getSession({
+      headers: request.headers,
+    });
 
-  return await next({
-    context: {
-      user: {
-        id: session?.user.id,
-        image: session?.user.image,
-        name: session?.user.name,
+    if (!session) {
+      return new Response(
+        JSON.stringify({ error: getReasonPhrase(StatusCodes.UNAUTHORIZED) }),
+        { status: StatusCodes.UNAUTHORIZED },
+      );
+    }
+
+    return await next({
+      context: {
+        user: {
+          id: session.user.id,
+          image: session.user.image,
+          name: session.user.name,
+        },
       },
-    },
-  });
-});
+    });
+  },
+);
