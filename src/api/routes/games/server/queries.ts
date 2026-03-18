@@ -7,12 +7,16 @@ import { games } from '../../../schema';
 
 // TODO - ADD QUERY BY USER ID VIA AUTH ENDPOINT
 
+const getMatchesUserIdAndNotDeleted = (userId: string | undefined) => {
+  return and(eq(games.userId, userId!), isNull(games.deletedAt));
+};
+
 export const getAllGames = async (userId: string | undefined) => {
   if (userId) {
     return await db
       .select()
       .from(games)
-      .where(and(eq(games.userId, userId), isNull(games.deletedAt)));
+      .where(getMatchesUserIdAndNotDeleted(userId));
   }
 };
 
@@ -25,13 +29,7 @@ export const getGameById = async (props: {
     const [game] = await db
       .select()
       .from(games)
-      .where(
-        and(
-          eq(games.id, id),
-          eq(games.userId, userId),
-          isNull(games.deletedAt),
-        ),
-      );
+      .where(and(eq(games.id, id), getMatchesUserIdAndNotDeleted(userId)));
 
     return game;
   }
@@ -41,7 +39,7 @@ export const getLastAddedGamesSystem = async (userId: string | undefined) => {
     const [game] = await db
       .select({ system: games.system })
       .from(games)
-      .where(and(eq(games.userId, userId), isNull(games.deletedAt)))
+      .where(getMatchesUserIdAndNotDeleted(userId))
       .orderBy(desc(games.createdAt))
       .limit(1);
 
@@ -59,20 +57,29 @@ export const createGame = async (gameDetails: NewGameRecordDef) => {
   return newGame;
 };
 
-export const updateGameById = async (
-  id: number,
-  game: Partial<UpdateGameRecordDef>,
-) => {
+export const updateGameById = async (props: {
+  game: UpdateGameRecordDef;
+  userId: string | undefined;
+}) => {
+  const { game, userId } = props;
   // TODO - PROBABLY HAVE TO MERGE OLD AND NEW DATA. GET GAME BY ID, IF NEEDED
   const [updatedGame] = await db
     .update(games)
     .set({ ...game, updatedAt: new Date() })
-    .where(and(eq(games.id, id), isNull(games.deletedAt)))
+    .where(and(eq(games.id, game.id), getMatchesUserIdAndNotDeleted(userId)))
     .returning();
 
   return updatedGame;
 };
 
-export const deleteGameById = async (id: number) => {
-  await db.update(games).set({ deletedAt: new Date() }).where(eq(games.id, id));
+export const softDeleteGameById = async (props: {
+  id: number;
+  userId: string | undefined;
+}) => {
+  const { id, userId } = props;
+
+  await db
+    .update(games)
+    .set({ deletedAt: new Date() })
+    .where(and(eq(games.id, id), getMatchesUserIdAndNotDeleted(userId)));
 };
