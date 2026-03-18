@@ -17,4 +17,5 @@ export type NavMenuItem = (
 ) & {
   label: string;
   Icon?: JSXElementConstructor<{}>;
+  hidden?: boolean;
 };

@@ -13,10 +13,10 @@ export const NavMenu = (props: { items: NavMenuItem[] }) => {
   return (
     <NavigationMenu.Root className="min-w-max rounded-lg bg-gray-50 p-1 text-gray-900">
       <NavigationMenu.List className="relative flex items-center gap-2">
-        {items.map(({ href, Icon, items, label }) => {
+        {items.map(({ hidden, href, Icon, items, label }) => {
           const hasSubMenu = !!items?.length;
 
-          return (
+          return hidden ? null : (
             <NavigationMenu.Item
               className={
                 (hasSubMenu ? '' : 'px-3 py-2 ') +
@@ -80,9 +80,9 @@ export const NavMenu = (props: { items: NavMenuItem[] }) => {
                   keepMounted
                 >
                   <ul className="grid list-none grid-cols-1 gap-2">
-                    {items?.map(({ href, items, label }) => {
+                    {items?.map(({ hidden, href, items, label }) => {
                       // TODO - UPDATE TO SUPPORT NESTED SUBMENUS
-                      return (
+                      return hidden ? null : (
                         <li key={href}>
                           <NavigationLinkWrapper href={href}>
                             <p className="m-0 text-sm leading-5 text-gray-500 hover:text-btn-primary-hover">

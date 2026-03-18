@@ -19,20 +19,11 @@ export const Layout: RouteComponent = () => {
   const navItems: NavMenuItem[] = [
     { href: '/collection', label: 'Collection' },
     {
+      hidden: isLoggedOut,
       href: '/account',
       Icon: () => {
         return <AccountCircleIcon />;
       },
-      items: [
-        {
-          href: '/account/edit',
-          label: 'Edit',
-        },
-        {
-          href: '/account/update',
-          label: 'Update',
-        },
-      ],
       label: 'Account',
     },
   ];
