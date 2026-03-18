@@ -32,7 +32,7 @@ export const Layout = () => {
         <div className="w-full max-w-7xl px-4 py-4">
           <div className="flex items-center gap-4 mb-8">
             <SportsEsportsIcon className="text-4xl" fontSize="large" />
-            <h1 className="text-4xl">Start tracking your game collection!</h1>
+            <h1>Start tracking your game collection!</h1>
           </div>
 
           <Tabs.Root defaultValue={defaultTab}>

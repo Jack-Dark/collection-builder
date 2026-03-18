@@ -24,3 +24,8 @@
 body {
   position: relative;
 }
+
+h1 {
+  font-size: var(--text-4xl);
+  line-height: var(--tw-leading, var(--text-4xl--line-height));
+}

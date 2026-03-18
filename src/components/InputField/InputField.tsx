@@ -8,7 +8,6 @@ export const InputField = (props: InputFieldProps) => {
   const {
     autoFocus,
     className,
-    defaultValue,
     description,
     disabled,
     error,
@@ -41,7 +40,6 @@ export const InputField = (props: InputFieldProps) => {
       <Field.Control
         autoFocus={autoFocus}
         className="input"
-        defaultValue={defaultValue}
         onValueChange={onValueChange}
         placeholder={placeholder}
         ref={ref}

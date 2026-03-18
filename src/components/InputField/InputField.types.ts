@@ -5,13 +5,7 @@ import type { FieldWrapperProps } from '../FieldWrapper/FieldWrapper.types';
 
 export type InputFieldProps = Pick<
   FieldControlProps,
-  | 'autoFocus'
-  | 'defaultValue'
-  | 'onValueChange'
-  | 'placeholder'
-  | 'required'
-  | 'type'
-  | 'value'
+  'autoFocus' | 'onValueChange' | 'placeholder' | 'required' | 'type' | 'value'
 > &
   FieldWrapperProps & {
     ref?: Ref<HTMLElement>;

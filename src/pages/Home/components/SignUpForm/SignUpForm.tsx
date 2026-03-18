@@ -12,7 +12,7 @@ export const SignUpForm: RouteComponent = () => {
   const router = useRouter();
 
   const form = useForm({
-    defaultValues: defaultValues,
+    defaultValues,
     onSubmit: async ({ value }) => {
       const { email, name, password } = value;
       const { data, error } = await authClient.signUp.email(
@@ -24,22 +24,22 @@ export const SignUpForm: RouteComponent = () => {
           password, // user password -> min 8 characters by default
         },
         {
-          onError: (ctx) => {
+          onError: (context) => {
             // display the error message
-            alert(ctx.error.message);
+            alert(context.error.message);
           },
-          onRequest: (ctx) => {
+          onRequest: (context) => {
             // show loading
           },
-          onSuccess: (ctx) => {
+          onSuccess: (context) => {
             // redirect to the dashboard or sign in page
             // router.navigate('/collection')
           },
         },
       );
 
-      console.log('🚀 ~ AddGameForm ~ error:', error);
-      console.log('🚀 ~ AddGameForm ~ data:', data);
+      console.log('🚀 ~ SignUpForm ~ error:', error);
+      console.log('🚀 ~ SignUpForm ~ data:', data);
 
       router.invalidate();
     },
@@ -49,165 +49,168 @@ export const SignUpForm: RouteComponent = () => {
   });
 
   return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        form.handleSubmit();
-      }}
-    >
-      <div>
-        <form.Subscribe
-          selector={(state) => {
-            return {
-              errors: state.errors,
-            };
-          }}
-        >
-          {({ errors }) => {
-            return (
-              <form.Field name="name">
-                {(field) => {
-                  const errorMsg = errors?.[0]?.[field.name]?.[0]?.message;
+    <div className="grid grid-cols-1 gap-8">
+      <h1>Sign Up!</h1>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          form.handleSubmit();
+        }}
+      >
+        <div>
+          <form.Subscribe
+            selector={(state) => {
+              return {
+                errors: state.errors,
+              };
+            }}
+          >
+            {({ errors }) => {
+              return (
+                <form.Field name="name">
+                  {(field) => {
+                    const errorMsg = errors?.[0]?.[field.name]?.[0]?.message;
 
-                  return (
-                    <InputField
-                      defaultValue={defaultValues[field.name]}
-                      error={errorMsg}
-                      label="Name"
-                      name={field.name}
-                      onValueChange={(value) => {
-                        field.handleChange(value);
-                      }}
-                      required
-                      // valid={!!errorMsg}
-                    />
-                  );
-                }}
-              </form.Field>
-            );
-          }}
-        </form.Subscribe>
+                    return (
+                      <InputField
+                        error={errorMsg}
+                        label="Name"
+                        name={field.name}
+                        onValueChange={(value) => {
+                          field.handleChange(value);
+                        }}
+                        required
+                        value={defaultValues[field.name]}
+                        // valid={!!errorMsg}
+                      />
+                    );
+                  }}
+                </form.Field>
+              );
+            }}
+          </form.Subscribe>
 
-        <form.Subscribe
-          selector={(state) => {
-            return {
-              errors: state.errors,
-            };
-          }}
-        >
-          {({ errors }) => {
-            return (
-              <form.Field name="email">
-                {(field) => {
-                  const errorMsg = errors?.[0]?.[field.name]?.[0]?.message;
+          <form.Subscribe
+            selector={(state) => {
+              return {
+                errors: state.errors,
+              };
+            }}
+          >
+            {({ errors }) => {
+              return (
+                <form.Field name="email">
+                  {(field) => {
+                    const errorMsg = errors?.[0]?.[field.name]?.[0]?.message;
 
-                  return (
-                    <InputField
-                      defaultValue={defaultValues[field.name]}
-                      error={errorMsg}
-                      label="Email"
-                      name={field.name}
-                      onValueChange={(value) => {
-                        field.handleChange(value);
-                      }}
-                      required
-                      // valid={!!errorMsg}
-                    />
-                  );
-                }}
-              </form.Field>
-            );
-          }}
-        </form.Subscribe>
+                    return (
+                      <InputField
+                        error={errorMsg}
+                        label="Email"
+                        name={field.name}
+                        onValueChange={(value) => {
+                          field.handleChange(value);
+                        }}
+                        required
+                        value={defaultValues[field.name]}
+                        // valid={!!errorMsg}
+                      />
+                    );
+                  }}
+                </form.Field>
+              );
+            }}
+          </form.Subscribe>
 
-        <form.Subscribe
-          selector={(state) => {
-            return {
-              errors: state.errors,
-            };
-          }}
-        >
-          {({ errors }) => {
-            return (
-              <form.Field name="password">
-                {(field) => {
-                  const errorMsg = errors?.[0]?.[field.name]?.[0]?.message;
+          <form.Subscribe
+            selector={(state) => {
+              return {
+                errors: state.errors,
+              };
+            }}
+          >
+            {({ errors }) => {
+              return (
+                <form.Field name="password">
+                  {(field) => {
+                    const errorMsg = errors?.[0]?.[field.name]?.[0]?.message;
 
-                  return (
-                    <InputField
-                      defaultValue={defaultValues[field.name]}
-                      error={errorMsg}
-                      label="Password"
-                      name={field.name}
-                      onValueChange={(value) => {
-                        field.handleChange(value);
-                      }}
-                      required
-                      type="password"
-                      // valid={!!errorMsg}
-                    />
-                  );
-                }}
-              </form.Field>
-            );
-          }}
-        </form.Subscribe>
+                    return (
+                      <InputField
+                        error={errorMsg}
+                        label="Password"
+                        name={field.name}
+                        onValueChange={(value) => {
+                          field.handleChange(value);
+                        }}
+                        required
+                        type="password"
+                        value={defaultValues[field.name]}
+                        // valid={!!errorMsg}
+                      />
+                    );
+                  }}
+                </form.Field>
+              );
+            }}
+          </form.Subscribe>
 
-        <form.Subscribe
-          selector={(state) => {
-            return {
-              errors: state.errors,
-            };
-          }}
-        >
-          {({ errors }) => {
-            return (
-              <form.Field name="confirmPassword">
-                {(field) => {
-                  const errorMsg = errors?.[0]?.[field.name]?.[0]?.message;
+          <form.Subscribe
+            selector={(state) => {
+              return {
+                errors: state.errors,
+              };
+            }}
+          >
+            {({ errors }) => {
+              return (
+                <form.Field name="confirmPassword">
+                  {(field) => {
+                    const errorMsg = errors?.[0]?.[field.name]?.[0]?.message;
 
-                  return (
-                    <InputField
-                      defaultValue={defaultValues[field.name]}
-                      error={errorMsg}
-                      label="Confirm password"
-                      name={field.name}
-                      onValueChange={(value) => {
-                        field.handleChange(value);
-                      }}
-                      required
-                      type="password"
-                      // valid={!!errorMsg}
-                    />
-                  );
-                }}
-              </form.Field>
-            );
-          }}
-        </form.Subscribe>
+                    return (
+                      <InputField
+                        error={errorMsg}
+                        label="Confirm password"
+                        name={field.name}
+                        onValueChange={(value) => {
+                          field.handleChange(value);
+                        }}
+                        required
+                        type="password"
+                        value={defaultValues[field.name]}
+                        // valid={!!errorMsg}
+                      />
+                    );
+                  }}
+                </form.Field>
+              );
+            }}
+          </form.Subscribe>
 
-        <form.Subscribe
-          selector={(state) => {
-            return {
-              isFormValid: state.isFormValid,
-              values: state.values,
-            };
-          }}
-        >
-          {(state) => {
-            const { isFormValid, values } = state;
-            console.clear();
-            console.log('🚀 ~ AddGameForm ~ values:', values);
+          <form.Subscribe
+            selector={(state) => {
+              return {
+                isFormValid: state.isFormValid,
+                values: state.values,
+              };
+            }}
+          >
+            {(state) => {
+              const { isFormValid, values } = state;
+              console.clear();
+              console.log('🚀 ~ SignUpForm ~ values:', values);
 
-            return (
-              <Button disabled={!isFormValid} type="submit">
-                Submit
-              </Button>
-            );
-          }}
-        </form.Subscribe>
-      </div>
-    </form>
+              return (
+                <Button disabled={!isFormValid} type="submit">
+                  Submit
+                </Button>
+              );
+            }}
+          </form.Subscribe>
+        </div>
+      </form>
+    </div>
   );
 };
