@@ -22,7 +22,7 @@ export const NavMenu = (props: { items: NavMenuItem[] }) => {
             <NavigationMenu.Item
               className={
                 (hasSubMenu ? '' : 'px-3 py-2 ') +
-                'rounded-md no-underline text-inherit ' +
+                'rounded-md no-underline text-black ' +
                 'hover:bg-btn-hover hover:text-white ' +
                 'data-[status="active"]:bg-btn hover:data-[status="active"]:bg-btn-hover data-[status="active"]:text-white'
               }
@@ -55,7 +55,10 @@ export const NavMenu = (props: { items: NavMenuItem[] }) => {
                   condition={!!href}
                   Wrapper={({ children }) => {
                     return (
-                      <NavigationLinkWrapper href={href}>
+                      <NavigationLinkWrapper
+                        className={'text-inherit'}
+                        href={href}
+                      >
                         {children}
                       </NavigationLinkWrapper>
                     );

@@ -13,7 +13,7 @@ export const CollectionPage: RouteComponent = () => {
   const [showAddForm, setShowAddForm] = useState<boolean>(false);
 
   const { games, lastAddedSystem } = useLoaderData({
-    from: '/_app/collection',
+    from: '/_protected/collection',
   });
 
   const toggleForm = () => {

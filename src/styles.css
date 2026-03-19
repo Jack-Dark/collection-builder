@@ -29,7 +29,10 @@
   --color-secondary-900: var(--color-emerald-900);
   --color-secondary-950: var(--color-emerald-950);
 
-  --color-disabled: var(--color-gray-400) --color-divider: var(--color-gray-200)
+  --color-disabled: var(--color-gray-400);
+  --color-divider: var(--color-gray-200);
+
+  --color-anchor: var(--color-primary-600)
 }
 
 .root {
