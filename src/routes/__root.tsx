@@ -1,13 +1,19 @@
-// src/routes/__root.tsx
 /// <reference types="vite/client" />
+
 import type { ReactNode } from 'react';
 
+import { TanStackDevtools } from '@tanstack/react-devtools';
+import { formDevtoolsPlugin } from '@tanstack/react-form-devtools';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtoolsPanel } from '@tanstack/react-query-devtools';
 import {
   Outlet,
   createRootRoute,
   HeadContent,
   Scripts,
 } from '@tanstack/react-router';
+import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
+import { StrictMode } from 'react';
 
 export const Route = createRootRoute({
   component: RootComponent,
@@ -29,11 +35,30 @@ export const Route = createRootRoute({
   },
 });
 
+const queryClient = new QueryClient();
+
 function RootComponent() {
   return (
-    <RootDocument>
-      <Outlet />
-    </RootDocument>
+    <StrictMode>
+      <QueryClientProvider client={queryClient}>
+        <RootDocument>
+          <Outlet />
+        </RootDocument>
+        <TanStackDevtools
+          plugins={[
+            formDevtoolsPlugin(),
+            {
+              name: 'TanStack Query',
+              render: <ReactQueryDevtoolsPanel />,
+            },
+            {
+              name: 'TanStack Router',
+              render: <TanStackRouterDevtoolsPanel />,
+            },
+          ]}
+        />
+      </QueryClientProvider>
+    </StrictMode>
   );
 }
 
