@@ -6,7 +6,7 @@ export const AccountPage = () => {
   const { data: session } = authClient.useSession();
   const user = session?.user;
 
-  // TODO - IMPLEMENT RESEND
+  // TODO - IMPLEMENT RESEND https://resend.com/docs/introduction
 
   return !user ? null : (
     <div className="grid gap-8">
@@ -30,14 +30,16 @@ export const AccountPage = () => {
             Edit
           </Button>
 
-          <Button
-            className="justify-self-start"
-            disabled
-            size="sm"
-            variant="secondary"
-          >
-            Resend verification email
-          </Button>
+          {!user.emailVerified && (
+            <Button
+              className="justify-self-start"
+              disabled
+              size="sm"
+              variant="secondary"
+            >
+              Resend verification email
+            </Button>
+          )}
         </div>
 
         <div className="col-span-2">
