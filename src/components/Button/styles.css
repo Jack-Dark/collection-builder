@@ -1,9 +1,6 @@
 @theme {
-  --color-btn-primary: var(--color-primary-900);
-  --color-btn-primary-hover: var(--color-primary-800);
-
-  --color-btn-secondary: var(--color-secondary-900);
-  --color-btn-secondary-hover: var(--color-secondary-800);
+  --color-btn: var(--color-primary-900);
+  --color-btn-hover: var(--color-primary-800);
 }
 
 @layer components {
@@ -71,13 +68,13 @@
   }
 
   .btn-primary {
-    background-color: var(--color-btn-primary);
-    border-color: var(--color-btn-primary);
+    background-color: var(--color-btn);
+    border-color: var(--color-btn);
     color: var(--color-white);
 
     &:hover {
       @media (hover: hover) {
-        background-color: var(--color-btn-primary-hover);
+        background-color: var(--color-btn-hover);
         color: var(--color-white);
       }
     }
@@ -85,12 +82,12 @@
 
   .btn-secondary {
     background-color: var(--color-white);
-    border-color: var(--color-btn-secondary);
-    color: var(--color-btn-secondary);
+    border-color: var(--color-btn);
+    color: var(--color-btn);
 
     &:hover {
       @media (hover: hover) {
-        background-color: var(--color-btn-secondary-hover);
+        background-color: var(--color-btn-hover);
         color: var(--color-white);
       }
     }

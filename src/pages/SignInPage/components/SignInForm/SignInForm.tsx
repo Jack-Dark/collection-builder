@@ -1,4 +1,3 @@
-import type { RouteComponent } from '@tanstack/react-router';
 import type { RouterPath } from '#/types';
 
 import { useForm } from '@tanstack/react-form';
@@ -7,22 +6,20 @@ import { authClient } from '#/auth/auth-client';
 import { Button } from '#/components/Button';
 import { InputField } from '#/components/InputField';
 
-import { signUpFormSchema, defaultValues } from './SignUpForm.schema';
+import { defaultValues, signInFormSchema } from './SignInForm.schema';
 
-export const SignUpForm: RouteComponent = () => {
+export const SignInForm = () => {
   const router = useRouter();
 
   const form = useForm({
     defaultValues,
     onSubmit: async ({ value }) => {
-      const { email, name, password } = value;
-      const { data, error } = await authClient.signUp.email(
+      const { email, password } = value;
+      const { data, error } = await authClient.signIn.email(
         {
-          // image, // User image URL (optional)
           callbackURL: '/collection' satisfies RouterPath, // A URL to redirect to after the user verifies their email (optional)
-          email, // user email address
-          name, // user display name
-          password, // user password -> min 8 characters by default
+          email,
+          password,
         },
         {
           onError: (context) => {
@@ -46,7 +43,7 @@ export const SignUpForm: RouteComponent = () => {
       }
     },
     validators: {
-      onSubmit: signUpFormSchema,
+      onSubmit: signInFormSchema,
     },
   });
 
@@ -59,38 +56,6 @@ export const SignUpForm: RouteComponent = () => {
       }}
     >
       <div>
-        <form.Subscribe
-          selector={(state) => {
-            return {
-              errors: state.errors,
-              value: state.values.name,
-            };
-          }}
-        >
-          {({ errors, value }) => {
-            return (
-              <form.Field name="name">
-                {(field) => {
-                  const errorMsg = errors?.[0]?.[field.name]?.[0]?.message;
-
-                  return (
-                    <InputField
-                      error={errorMsg}
-                      label="Name"
-                      name={field.name}
-                      onValueChange={(value) => {
-                        field.handleChange(value);
-                      }}
-                      required
-                      value={value}
-                    />
-                  );
-                }}
-              </form.Field>
-            );
-          }}
-        </form.Subscribe>
-
         <form.Subscribe
           selector={(state) => {
             return {
@@ -115,7 +80,6 @@ export const SignUpForm: RouteComponent = () => {
                       }}
                       required
                       value={value}
-                      // valid={!!errorMsg}
                     />
                   );
                 }}
@@ -142,39 +106,6 @@ export const SignUpForm: RouteComponent = () => {
                     <InputField
                       error={errorMsg}
                       label="Password"
-                      name={field.name}
-                      onValueChange={(value) => {
-                        field.handleChange(value);
-                      }}
-                      required
-                      type="password"
-                      value={value}
-                    />
-                  );
-                }}
-              </form.Field>
-            );
-          }}
-        </form.Subscribe>
-
-        <form.Subscribe
-          selector={(state) => {
-            return {
-              errors: state.errors,
-              value: state.values.confirmPassword,
-            };
-          }}
-        >
-          {({ errors, value }) => {
-            return (
-              <form.Field name="confirmPassword">
-                {(field) => {
-                  const errorMsg = errors?.[0]?.[field.name]?.[0]?.message;
-
-                  return (
-                    <InputField
-                      error={errorMsg}
-                      label="Confirm password"
                       name={field.name}
                       onValueChange={(value) => {
                         field.handleChange(value);

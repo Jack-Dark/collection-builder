@@ -2,15 +2,16 @@ import type { RouteComponent } from '@tanstack/react-router';
 
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
-import { Outlet, useLocation } from '@tanstack/react-router';
+import { Outlet, useRouter } from '@tanstack/react-router';
 
 import type { NavMenuItem } from './components/NavMenu/NavMenu.types';
+import type { RouterPath } from './types';
 
 import { authClient } from './auth/auth-client';
 import { NavMenu } from './components/NavMenu';
 
 export const Layout: RouteComponent = () => {
-  const { pathname } = useLocation();
+  const router = useRouter();
 
   const { data: session } = authClient.useSession();
 
@@ -19,11 +20,22 @@ export const Layout: RouteComponent = () => {
   const navItems: NavMenuItem[] = [
     { href: '/collection', label: 'Collection' },
     {
-      hidden: isLoggedOut,
-      href: '/account',
+      href: (isLoggedOut ? '/sign-in' : '/account') satisfies RouterPath,
       Icon: () => {
         return <AccountCircleIcon />;
       },
+      items: [
+        {
+          hidden: isLoggedOut,
+          href: '/sign-out',
+          label: 'Sign out',
+          onClick: async (e) => {
+            e.preventDefault();
+            await authClient.signOut();
+            router.navigate({ to: '/sign-in' });
+          },
+        },
+      ],
       label: 'Account',
     },
   ];

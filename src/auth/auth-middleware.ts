@@ -30,7 +30,7 @@ export const authRedirectMiddleware = createMiddleware().server(
     const user = await getUserContext(request);
 
     if (!user) {
-      throw redirect({ to: '/sign-up' });
+      throw redirect({ to: '/sign-in' });
     }
 
     return await next({

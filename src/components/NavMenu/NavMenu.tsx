@@ -13,18 +13,21 @@ export const NavMenu = (props: { items: NavMenuItem[] }) => {
   return (
     <NavigationMenu.Root className="min-w-max rounded-lg bg-gray-50 p-1 text-gray-900">
       <NavigationMenu.List className="relative flex items-center gap-2">
-        {items.map(({ hidden, href, Icon, items, label }) => {
-          const hasSubMenu = !!items?.length;
+        {items.map(({ hidden, href, Icon, items, label, onClick }) => {
+          const hasSubMenu = !!items?.filter(({ hidden }) => {
+            return !hidden;
+          })?.length;
 
           return hidden ? null : (
             <NavigationMenu.Item
               className={
                 (hasSubMenu ? '' : 'px-3 py-2 ') +
                 'rounded-md no-underline text-inherit ' +
-                'hover:bg-btn-primary-hover hover:text-white ' +
-                'data-[status="active"]:bg-btn-primary hover:data-[status="active"]:bg-btn-primary-hover data-[status="active"]:text-white'
+                'hover:bg-btn-hover hover:text-white ' +
+                'data-[status="active"]:bg-btn hover:data-[status="active"]:bg-btn-hover data-[status="active"]:text-white'
               }
               key={href || label}
+              onClick={onClick}
             >
               <ConditionalWrapper
                 condition={hasSubMenu}
@@ -80,14 +83,16 @@ export const NavMenu = (props: { items: NavMenuItem[] }) => {
                   keepMounted
                 >
                   <ul className="grid list-none grid-cols-1 gap-2">
-                    {items?.map(({ hidden, href, items, label }) => {
+                    {items?.map(({ hidden, href, items, label, onClick }) => {
                       // TODO - UPDATE TO SUPPORT NESTED SUBMENUS
                       return hidden ? null : (
-                        <li key={href}>
-                          <NavigationLinkWrapper href={href}>
-                            <p className="m-0 text-sm leading-5 text-gray-500 hover:text-btn-primary-hover">
-                              {label}
-                            </p>
+                        <li key={href || label}>
+                          <NavigationLinkWrapper
+                            className="text-gray-500 hover:text-btn-hover"
+                            href={href}
+                            onClick={onClick}
+                          >
+                            {label}
                           </NavigationLinkWrapper>
                         </li>
                       );

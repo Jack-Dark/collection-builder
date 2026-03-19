@@ -1,21 +1,11 @@
 import type { RouterPath } from '#/types';
-import type { JSXElementConstructor } from 'react';
+import type { JSXElementConstructor, MouseEventHandler } from 'react';
 
-export type NavMenuItem = (
-  | {
-      href: RouterPath | string;
-      items?: never;
-    }
-  | {
-      href?: never;
-      items: NavMenuItem[];
-    }
-  | {
-      href?: RouterPath | string;
-      items: NavMenuItem[];
-    }
-) & {
+export type NavMenuItem = {
   label: string;
   Icon?: JSXElementConstructor<{}>;
   hidden?: boolean;
+  href: RouterPath | string;
+  items?: NavMenuItem[];
+  onClick?: MouseEventHandler<HTMLElement>;
 };

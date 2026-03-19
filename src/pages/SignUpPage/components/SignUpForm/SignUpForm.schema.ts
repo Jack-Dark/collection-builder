@@ -21,7 +21,7 @@ const specialCharacters = '!@#$%^&*';
 const specialCharacterErrorMessage = `Must contain at least 1 special character (${specialCharacters})`;
 const passwordMismatchErrorMessage = 'Passwords do not match!';
 
-const passwordSchema = zod
+export const passwordSchema = zod
   .string()
   .min(minPasswordLength, { message: minLengthErrorMessage })
   .max(maxPasswordLength, { message: maxLengthErrorMessage })
