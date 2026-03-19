@@ -1,4 +1,6 @@
-import { Link, type RouteComponent } from '@tanstack/react-router';
+import type { RouteComponent } from '@tanstack/react-router';
+
+import { Link } from '@tanstack/react-router';
 
 import { SignInForm } from './components/SignInForm';
 
@@ -10,7 +12,7 @@ export const SignInPage: RouteComponent = () => {
 
       <p>
         Don't have an account yet?{' '}
-        <Link className="text-anchor" to={'/sign-up'}>
+        <Link className="text-anchor" to="/sign-up">
           Sign up!
         </Link>
       </p>

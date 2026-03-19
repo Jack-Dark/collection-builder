@@ -56,7 +56,7 @@ export const NavMenu = (props: { items: NavMenuItem[] }) => {
                   Wrapper={({ children }) => {
                     return (
                       <NavigationLinkWrapper
-                        className={'text-inherit'}
+                        className="text-inherit"
                         href={href}
                       >
                         {children}
@@ -91,7 +91,7 @@ export const NavMenu = (props: { items: NavMenuItem[] }) => {
                       return hidden ? null : (
                         <li key={href || label}>
                           <NavigationLinkWrapper
-                            className="text-black hover:text-btn-hover"
+                            className="text-black hover:text-anchor"
                             href={href}
                             onClick={onClick}
                           >

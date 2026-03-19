@@ -1,7 +1,7 @@
 import type { RouterPath } from '#/types';
 
 import { useForm } from '@tanstack/react-form';
-import { useRouter } from '@tanstack/react-router';
+import { useRouter, useSearch } from '@tanstack/react-router';
 import { authClient } from '#/auth/auth-client';
 import { Button } from '#/components/Button';
 import { InputField } from '#/components/InputField';
@@ -10,6 +10,9 @@ import { defaultValues, signInFormSchema } from './SignInForm.schema';
 
 export const SignInForm = () => {
   const router = useRouter();
+  const search: { redirect?: RouterPath } = useSearch({
+    strict: false,
+  });
 
   const form = useForm({
     defaultValues,
@@ -17,7 +20,6 @@ export const SignInForm = () => {
       const { email, password } = value;
       const { data, error } = await authClient.signIn.email(
         {
-          callbackURL: '/collection' satisfies RouterPath, // A URL to redirect to after the user verifies their email (optional)
           email,
           password,
         },
@@ -30,8 +32,7 @@ export const SignInForm = () => {
             // show loading
           },
           onSuccess: (context) => {
-            // redirect to the dashboard or sign in page
-            router.navigate({ to: '/collection' });
+            router.navigate({ to: search.redirect || '/collection' });
           },
         },
       );

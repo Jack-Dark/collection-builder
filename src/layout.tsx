@@ -20,7 +20,7 @@ export const Layout: RouteComponent = () => {
   const navItems: NavMenuItem[] = [
     { href: '/collection', label: 'Collection' },
     {
-      href: (isLoggedOut ? '/sign-in' : '/account') satisfies RouterPath,
+      href: '/account' satisfies RouterPath,
       Icon: () => {
         return <AccountCircleIcon />;
       },

@@ -1,4 +1,5 @@
 import { Link } from '@tanstack/react-router';
+
 import { SignUpForm } from './components/SignUpForm';
 
 export const SignUpPage = () => {
@@ -9,7 +10,7 @@ export const SignUpPage = () => {
 
       <p>
         Already have an account?{' '}
-        <Link className="text-anchor" to={'/sign-in'}>
+        <Link className="text-anchor" to="/sign-in">
           Sign in!
         </Link>
       </p>
