@@ -23,16 +23,6 @@ export default [
     },
   },
   {
-    plugins: ['@tanstack/query'],
-    rules: {
-      '@tanstack/query/exhaustive-deps': 'error',
-      '@tanstack/query/no-deprecated-options': 'error',
-      '@tanstack/query/prefer-query-object-syntax': 'error',
-      '@tanstack/query/stable-query-client': 'error',
-    },
-    extends: ['plugin:@tanstack/eslint-plugin-query/recommended'],
-  },
-  {
     // REACT PLUGIN UPDATES ONLY
     files: ['**/*.{js,jsx,mjs,cjs,ts,tsx}'],
     plugins: {
