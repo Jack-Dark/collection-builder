@@ -43,6 +43,7 @@
     "@stylistic/eslint-plugin": "^5.10.0",
     "@tanstack/devtools-vite": "^0.6.0",
     "@tanstack/eslint-config": "^0.4.0",
+    "@tanstack/eslint-plugin-query": "^5.91.5",
     "@types/dateformat": "^5.0.3",
     "@types/node": "^25.5.0",
     "@types/react": "^19.2.14",
@@ -66,6 +67,9 @@
     },
     "@tanstack/react-router-devtools": {
       "@tanstack/react-router": "^1.167.5"
+    },
+    "@tanstack/eslint-plugin-query": {
+      "eslint": ">=9"
     },
     "eslint-plugin-react": {
       "eslint": ">=9"
