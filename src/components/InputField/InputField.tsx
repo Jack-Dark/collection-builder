@@ -38,6 +38,7 @@ export const InputField = (props: InputFieldProps) => {
       validationMode={validationMode}
     >
       <Field.Control
+        autoComplete={type === 'password' ? 'off' : undefined}
         autoFocus={autoFocus}
         className="input"
         onValueChange={onValueChange}

@@ -5,8 +5,6 @@ import type { NewGameRecordDef, UpdateGameRecordDef } from './types';
 
 import { games } from '../../../schema';
 
-// TODO - ADD QUERY BY USER ID VIA AUTH ENDPOINT
-
 const getMatchesUserIdAndNotDeleted = (userId: string | undefined) => {
   return and(eq(games.userId, userId!), isNull(games.deletedAt));
 };

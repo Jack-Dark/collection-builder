@@ -88,7 +88,7 @@ export const NavMenu = (props: { items: NavMenuItem[] }) => {
                       return hidden ? null : (
                         <li key={href || label}>
                           <NavigationLinkWrapper
-                            className="text-gray-500 hover:text-btn-hover"
+                            className="text-black hover:text-btn-hover"
                             href={href}
                             onClick={onClick}
                           >

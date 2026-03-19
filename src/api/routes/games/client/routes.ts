@@ -49,7 +49,7 @@ export const create = async (game: NewGameRecordDef) => {
 
     return result;
   } catch (error) {
-    // TODO - fix
+    // TODO - FIX TS ERROR
     // @ts-expect-error
     console.error(error.message);
   }
@@ -72,7 +72,7 @@ export const updateById = async (
 
     return result;
   } catch (error) {
-    // TODO - fix
+    // TODO - FIX TS ERROR
     // @ts-expect-error
     console.error(error.message);
   }
@@ -89,7 +89,7 @@ export const deleteById = async (id: number) => {
       throw new Error(`Response status: ${response.status}`);
     }
   } catch (error) {
-    // TODO - fix
+    // TODO - FIX TS ERROR
     // @ts-expect-error
     console.error(error.message);
   }
@@ -107,7 +107,7 @@ export const getById = async (id: number) => {
 
     return result;
   } catch (error) {
-    // TODO - fix
+    // TODO - FIX TS ERROR
     // @ts-expect-error
     console.error(error.message);
   }

@@ -33,7 +33,6 @@ export const AddGameForm = (props: AddGameFormProps) => {
     onSubmit: async ({ value }) => {
       const response = await apiRoutes.games.create({
         ...value,
-        // TODO - FIX
         userId: session?.user?.id as string,
       });
       form.reset();
@@ -70,7 +69,7 @@ export const AddGameForm = (props: AddGameFormProps) => {
             return (
               <form.Field name="name">
                 {(field) => {
-                  // TODO - extract logic
+                  // TODO - EXTRACT ERROR MESSAGE (AND IDEALLY SUBSCRIBE) LOGIC
                   const errorMsg = errors?.[0]?.[field.name]?.[0]?.message;
 
                   return (
@@ -110,9 +109,12 @@ export const AddGameForm = (props: AddGameFormProps) => {
                       items={systemsList}
                       label="System"
                       onValueChange={(value) => {
-                        // TODO - FIX TYPE ERROR
-                        // @ts-expect-error
-                        field.setValue(value!);
+                        if (Array.isArray(value)) {
+                          const [system] = value;
+                          field.setValue(system);
+                        } else {
+                          field.setValue(value!);
+                        }
                       }}
                       placeholder="Select a system..."
                       required
