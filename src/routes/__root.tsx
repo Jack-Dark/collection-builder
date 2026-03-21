@@ -17,6 +17,9 @@ import { StrictMode } from 'react';
 
 export const Route = createRootRoute({
   component: RootComponent,
+  errorComponent: (p) => {
+    return <p>An Error Occurred</p>;
+  },
   head: () => {
     return {
       meta: [
@@ -32,6 +35,9 @@ export const Route = createRootRoute({
         },
       ],
     };
+  },
+  notFoundComponent: () => {
+    return <p>Not Found</p>;
   },
 });
 
