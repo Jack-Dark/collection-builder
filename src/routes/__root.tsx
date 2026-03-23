@@ -15,6 +15,8 @@ import {
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
 import { StrictMode } from 'react';
 
+import appCss from '../styles.css?url';
+
 export const Route = createRootRoute({
   component: RootComponent,
   errorComponent: (p) => {
@@ -22,6 +24,12 @@ export const Route = createRootRoute({
   },
   head: () => {
     return {
+      links: [
+        {
+          href: appCss,
+          rel: 'stylesheet',
+        },
+      ],
       meta: [
         {
           charSet: 'utf-8',
