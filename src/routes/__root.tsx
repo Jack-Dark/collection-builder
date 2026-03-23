@@ -80,7 +80,6 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
   return (
     <html>
       <head>
-        <link href="/src/styles.css" rel="stylesheet" />
         <HeadContent />
       </head>
       <body className="bg-linear-to-b from-primary-900 to-secondary-900 text-white">
