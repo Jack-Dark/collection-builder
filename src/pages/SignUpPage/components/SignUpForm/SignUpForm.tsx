@@ -34,7 +34,7 @@ export const SignUpForm: RouteComponent = () => {
             // show loading
           },
           onSuccess: (context) => {
-            router.navigate({ to: search.redirect || '/collection' });
+            router.navigate({ to: search.redirect || '/' });
           },
         },
       );

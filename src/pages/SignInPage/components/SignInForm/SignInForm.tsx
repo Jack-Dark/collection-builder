@@ -32,7 +32,7 @@ export const SignInForm = () => {
             // show loading
           },
           onSuccess: (context) => {
-            router.navigate({ to: search.redirect || '/collection' });
+            router.navigate({ to: search.redirect || '/' });
           },
         },
       );

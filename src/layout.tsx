@@ -18,12 +18,13 @@ export const Layout: RouteComponent = () => {
   const isLoggedOut = !session?.user.id;
 
   const navItems: NavMenuItem[] = [
-    { href: '/collection', label: 'Collection' },
+    {
+      href: '/collection' satisfies RouterPath,
+      label: 'Collection',
+    },
     {
       href: '/account' satisfies RouterPath,
-      Icon: () => {
-        return <AccountCircleIcon />;
-      },
+      Icon: AccountCircleIcon,
       items: [
         {
           hidden: isLoggedOut,
