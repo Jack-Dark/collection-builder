@@ -14,6 +14,7 @@ I chose to build a collection management tool as I wanted to build something I w
 | [Neon](https://neon.com/) - Postgres Database                                          | *Coming soon*                                                                                                                                                                                                                                                      |
 | [Drizzle](https://orm.drizzle.team/) - ORM for interfacing with DB                     | *Coming soon*                                                                                                                                                                                                                                                      |
 | [Zod](https://zod.dev/) - Schema validation                                            | I personally feel like [Yup](https://github.com/jquense/yup) is a better option for form validation, but it validates asynchronously which was causing issues with TanStack Form.                                                                                  |
+| [Swagger](https://swagger.io/) - API documentation                                     | *Coming soon*                                                                                                                                                                                                                                                      |
 | [Better-Auth](https://better-auth.com/) - User authentication                          | *Coming soon*                                                                                                                                                                                                                                                      |
 | [Resend](https://resend.com/docs/introduction) - Authentication emails                 | *Coming soon*                                                                                                                                                                                                                                                      |
 | [Material Base UI](https://base-ui.com/react/overview/about) - React Component Library | Overall a pretty solid UI component library. While it's certainly more work, I much prefer using the Base UI library with Tailwind over the full Material UI library which feels too restrictive.                                                                  |
@@ -51,6 +52,7 @@ I chose to build a collection management tool as I wanted to build something I w
 - [ ] Implement Resend for account validation.
 - [ ] Add password reset logic.
 - [ ] Add "notes" column to games table.
+- [ ] Add Swagger for API documentation
 - [ ] Move "add game" form into first row of collection table.
 - [ ] Implement "update game" logic.
 - [ ] Get feature request feedback.
