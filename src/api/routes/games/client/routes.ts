@@ -1,3 +1,5 @@
+import type { RouterPath } from '#/types';
+
 import * as zod from 'zod';
 
 import type {
@@ -33,7 +35,7 @@ export const createSchema = zod.union([
 ]);
 
 export const create = async (game: NewGameRecordDef) => {
-  const url = `/api/games`;
+  const url: RouterPath = `/api/games`;
 
   try {
     const response = await fetch(url, {
@@ -54,6 +56,42 @@ export const create = async (game: NewGameRecordDef) => {
     console.error(error.message);
   }
 };
+
+export const createMockGames = async (userId: string) => {
+  const url = `/api/games/mock-data/${userId}`;
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+    });
+
+    if (!response.ok) {
+      throw new Error(`Response status: ${response.status}`);
+    }
+  } catch (error) {
+    // TODO - FIX TS ERROR
+    // @ts-expect-error
+    console.error(error.message);
+  }
+};
+export const deleteAllGames = async (userId: string) => {
+  const url = `/api/games/mock-data/${userId}`;
+
+  try {
+    const response = await fetch(url, {
+      method: 'DELETE',
+    });
+
+    if (!response.ok) {
+      throw new Error(`Response status: ${response.status}`);
+    }
+  } catch (error) {
+    // TODO - FIX TS ERROR
+    // @ts-expect-error
+    console.error(error.message);
+  }
+};
+
 export const updateById = async (
   id: number,
   gameDetails: UpdateGameRecordDef,

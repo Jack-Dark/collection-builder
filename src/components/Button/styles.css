@@ -13,6 +13,7 @@
     cursor: pointer;
     font-size: medium;
     border-width: 1px;
+    min-width: 5rem;
   }
 
   .btn:disabled,
@@ -124,4 +125,22 @@
     color: var(--color-gray-400);
   }
 
+  .btn-alert {
+    background-color: var(--color-red-700);
+    border-color: var(--color-red-700);
+    color: var(--color-white);
+
+    &:not(:disabled):hover {
+      @media (hover: hover) {
+        background-color: var(--color-red-800);
+        color: var(--color-white);
+      }
+    }
+  }
+
+  .btn-alert:disabled {
+    background-color: var(--color-gray-400);
+    border-color: var(--color-gray-400);
+    color: var(--color-white);
+  }
 }

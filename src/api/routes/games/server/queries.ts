@@ -57,6 +57,10 @@ export const createGame = async (gameDetails: NewGameRecordDef) => {
   return newGame;
 };
 
+export const createMockGames = async (mockGames: NewGameRecordDef[]) => {
+  await db.insert(games).values(mockGames).onConflictDoNothing();
+};
+
 export const updateGameById = async (props: {
   game: UpdateGameRecordDef;
   userId: string | undefined;
@@ -93,4 +97,7 @@ export const hardDeleteGameById = async (props: {
   await db
     .delete(games)
     .where(and(eq(games.id, id), getMatchesUserIdAndNotDeleted(userId)));
+};
+export const hardDeleteAllGamesByUser = async (userId: string) => {
+  await db.delete(games).where(getMatchesUserIdAndNotDeleted(userId));
 };
