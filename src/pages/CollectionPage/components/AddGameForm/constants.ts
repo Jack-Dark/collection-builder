@@ -1,4 +1,4 @@
-import type { ObjectValues } from '#/pages/Home/types/common';
+import type { ObjectValues } from '#/types';
 
 import type { AddGameFormSchemaDef } from './types';
 

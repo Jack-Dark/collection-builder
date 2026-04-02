@@ -9,7 +9,7 @@ import * as schema from './schema.ts';
 export const db = drizzle({
   casing: 'snake_case',
   connection: configs.dbUrl,
-  schema: schema,
+  schema,
 });
 
 let client: NeonQueryFunction<boolean, boolean> | undefined;
