@@ -3,19 +3,20 @@ import { createServerFn } from '@tanstack/react-start';
 import { gamesDbQueries } from '#/api/routes/games/server';
 import { authApiRouteMiddleware } from '#/auth/auth-middleware';
 import { CollectionPage } from '#/pages/CollectionPage';
+import { fetchItemsByCollectionId } from '#/routes/api/collections/$id/route';
 
-import { fetchAllGames } from '../api/games/route';
-
-export const Route = createFileRoute('/_protected/collection')({
+export const Route = createFileRoute('/_protected/collections/$id')({
   component: CollectionPage,
-  loader: async () => {
-    const [games, lastAddedSystem] = await Promise.all([
-      await fetchAllGames(),
+  loader: async ({ params }) => {
+    const [items, lastAddedSystem] = await Promise.all([
+      await fetchItemsByCollectionId({
+        data: { collectionId: Number(params.id) },
+      }),
       await fetchLastAddedGameSystem(),
     ]);
 
     return {
-      games,
+      items,
       lastAddedSystem,
     };
   },

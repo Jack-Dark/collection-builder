@@ -14,12 +14,23 @@ CREATE TABLE "accounts" (
 	"user_id" text NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "games" (
+CREATE TABLE "collection-items" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
 	"system" text NOT NULL,
 	"is_special_edition" boolean NOT NULL,
 	"edition_details" text,
+	"notes" text,
+	"user_id" text NOT NULL,
+	"collection_id" serial NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	"deleted_at" timestamp
+);
+--> statement-breakpoint
+CREATE TABLE "collections" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"name" text NOT NULL,
 	"user_id" text NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
@@ -59,9 +70,13 @@ CREATE TABLE "verifications" (
 );
 --> statement-breakpoint
 ALTER TABLE "accounts" ADD CONSTRAINT "accounts_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "games" ADD CONSTRAINT "games_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "collection-items" ADD CONSTRAINT "collection-items_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "collection-items" ADD CONSTRAINT "collection-items_collection_id_collections_id_fk" FOREIGN KEY ("collection_id") REFERENCES "public"."collections"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "collections" ADD CONSTRAINT "collections_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "sessions" ADD CONSTRAINT "sessions_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 CREATE INDEX "accounts_userId_idx" ON "accounts" USING btree ("user_id");--> statement-breakpoint
-CREATE INDEX "games_userId_idx" ON "games" USING btree ("user_id");--> statement-breakpoint
+CREATE INDEX "collectionsItems_userId_idx" ON "collection-items" USING btree ("user_id");--> statement-breakpoint
+CREATE INDEX "collectionsItems_collectionId_idx" ON "collection-items" USING btree ("collection_id");--> statement-breakpoint
+CREATE INDEX "collections_userId_idx" ON "collections" USING btree ("user_id");--> statement-breakpoint
 CREATE INDEX "sessions_userId_idx" ON "sessions" USING btree ("user_id");--> statement-breakpoint
 CREATE INDEX "verifications_identifier_idx" ON "verifications" USING btree ("identifier");

@@ -2,11 +2,12 @@ import type { RouteComponent } from '@tanstack/react-router';
 
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { useMutation } from '@tanstack/react-query';
-import { useLoaderData, useRouter } from '@tanstack/react-router';
+import { useRouter } from '@tanstack/react-router';
 import { apiRoutes } from '#/api/routes';
 import { Button } from '#/components/Button';
 import { Table } from '#/components/Table';
 import { useGetUserId } from '#/hooks/useGetUserId';
+import { Route as CollectionsRoute } from '#/routes/_protected/collections/$id';
 import { useState } from 'react';
 
 import { AddGameForm } from './components/AddGameForm';
@@ -19,9 +20,7 @@ export const CollectionPage: RouteComponent = () => {
 
   const { validateUserToCallback } = useGetUserId();
 
-  const { games, lastAddedSystem } = useLoaderData({
-    from: '/_protected/collection',
-  });
+  const { items, lastAddedSystem } = CollectionsRoute.useLoaderData();
 
   const toggleForm = () => {
     setShowAddForm((prev) => {
@@ -97,7 +96,7 @@ export const CollectionPage: RouteComponent = () => {
 
       {showAddForm && <AddGameForm lastAddedSystem={lastAddedSystem} />}
 
-      <Table columns={collectionTableColumns} data={games.data} />
+      <Table columns={collectionTableColumns} data={items || []} />
     </section>
   );
 };

@@ -109,6 +109,26 @@ export const getGameById = async (props: {
   }
 };
 
+export const getItemsByCollectionId = async (props: {
+  collectionId: number;
+  userId: string | undefined;
+}) => {
+  const { collectionId, userId } = props;
+  if (userId) {
+    const items = await db
+      .select()
+      .from(collectionItemsTable)
+      .where(
+        and(
+          eq(collectionItemsTable.collectionId, collectionId),
+          getMatchesUserIdAndNotDeleted(userId),
+        ),
+      );
+
+    return items;
+  }
+};
+
 export const getLastAddedGamesSystem = async (userId: string | undefined) => {
   if (userId) {
     const [game] = await db
