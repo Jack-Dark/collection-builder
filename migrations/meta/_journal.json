@@ -8,6 +8,20 @@
       "when": 1773435009709,
       "tag": "0000_majestic_husk",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1776358986204,
+      "tag": "0001_calm_big_bertha",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1776359654473,
+      "tag": "0002_thick_nehzno",
+      "breakpoints": true
     }
   ]
 }

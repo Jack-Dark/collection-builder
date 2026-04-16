@@ -17,10 +17,13 @@ import type {
   GameRecordDef,
 } from './types';
 
-import { games } from '../../../schema';
+import { collectionItemsTable } from '../../../schema';
 
 const getMatchesUserIdAndNotDeleted = (userId: string | undefined) => {
-  return and(eq(games.userId, userId!), isNull(games.deletedAt));
+  return and(
+    eq(collectionItemsTable.userId, userId!),
+    isNull(collectionItemsTable.deletedAt),
+  );
 };
 
 const defaultParams = {
@@ -47,27 +50,31 @@ export const getAllGames = async (props: {
     const metadata = await getPaginationMetadataQuery({
       currentPage: page,
       pageSize: limit,
-      table: games,
+      table: collectionItemsTable,
     });
 
     const sortingField: GamesTableColumns =
-      sortField && games.hasOwnProperty(sortField) ? sortField : 'name';
+      sortField && collectionItemsTable.hasOwnProperty(sortField)
+        ? sortField
+        : 'name';
 
     const data = await db
       .select()
-      .from(games)
+      .from(collectionItemsTable)
       .where(
         and(
           getMatchesUserIdAndNotDeleted(userId),
-          search ? ilike(games.name, `%${search.toLowerCase()}%`) : undefined,
+          search
+            ? ilike(collectionItemsTable.name, `%${search.toLowerCase()}%`)
+            : undefined,
         ),
       )
       .limit(limit)
       .offset((page - 1) * limit)
       .orderBy(
         sortDirection === sortDirectionOptions.desc
-          ? desc(games[sortingField])
-          : asc(games[sortingField]),
+          ? desc(collectionItemsTable[sortingField])
+          : asc(collectionItemsTable[sortingField]),
       );
 
     return {
@@ -90,8 +97,13 @@ export const getGameById = async (props: {
   if (userId) {
     const [game] = await db
       .select()
-      .from(games)
-      .where(and(eq(games.id, id), getMatchesUserIdAndNotDeleted(userId)));
+      .from(collectionItemsTable)
+      .where(
+        and(
+          eq(collectionItemsTable.id, id),
+          getMatchesUserIdAndNotDeleted(userId),
+        ),
+      );
 
     return game;
   }
@@ -100,10 +112,10 @@ export const getGameById = async (props: {
 export const getLastAddedGamesSystem = async (userId: string | undefined) => {
   if (userId) {
     const [game] = await db
-      .select({ system: games.system })
-      .from(games)
+      .select({ system: collectionItemsTable.system })
+      .from(collectionItemsTable)
       .where(getMatchesUserIdAndNotDeleted(userId))
-      .orderBy(desc(games.createdAt))
+      .orderBy(desc(collectionItemsTable.createdAt))
       .limit(1);
 
     return game?.system;
@@ -112,7 +124,7 @@ export const getLastAddedGamesSystem = async (userId: string | undefined) => {
 
 export const createGame = async (gameDetails: NewGameRecordDef) => {
   const [newGame] = await db
-    .insert(games)
+    .insert(collectionItemsTable)
     .values(gameDetails)
     .onConflictDoNothing()
     .returning();
@@ -121,7 +133,7 @@ export const createGame = async (gameDetails: NewGameRecordDef) => {
 };
 
 export const createMockGames = async (mockGames: NewGameRecordDef[]) => {
-  await db.insert(games).values(mockGames).onConflictDoNothing();
+  await db.insert(collectionItemsTable).values(mockGames).onConflictDoNothing();
 };
 
 export const updateGameById = async (props: {
@@ -131,9 +143,14 @@ export const updateGameById = async (props: {
   const { game, userId } = props;
   // TODO - PROBABLY HAVE TO MERGE OLD AND NEW DATA. GET GAME BY ID, IF NEEDED
   const [updatedGame] = await db
-    .update(games)
+    .update(collectionItemsTable)
     .set({ ...game, updatedAt: new Date() })
-    .where(and(eq(games.id, game.id), getMatchesUserIdAndNotDeleted(userId)))
+    .where(
+      and(
+        eq(collectionItemsTable.id, game.id),
+        getMatchesUserIdAndNotDeleted(userId),
+      ),
+    )
     .returning();
 
   return updatedGame;
@@ -146,9 +163,14 @@ export const softDeleteGameById = async (props: {
   const { id, userId } = props;
 
   await db
-    .update(games)
+    .update(collectionItemsTable)
     .set({ deletedAt: new Date() })
-    .where(and(eq(games.id, id), getMatchesUserIdAndNotDeleted(userId)));
+    .where(
+      and(
+        eq(collectionItemsTable.id, id),
+        getMatchesUserIdAndNotDeleted(userId),
+      ),
+    );
 };
 
 export const hardDeleteGameById = async (props: {
@@ -158,10 +180,17 @@ export const hardDeleteGameById = async (props: {
   const { id, userId } = props;
 
   await db
-    .delete(games)
-    .where(and(eq(games.id, id), getMatchesUserIdAndNotDeleted(userId)));
+    .delete(collectionItemsTable)
+    .where(
+      and(
+        eq(collectionItemsTable.id, id),
+        getMatchesUserIdAndNotDeleted(userId),
+      ),
+    );
 };
 
 export const hardDeleteAllGamesByUser = async (userId: string) => {
-  await db.delete(games).where(getMatchesUserIdAndNotDeleted(userId));
+  await db
+    .delete(collectionItemsTable)
+    .where(getMatchesUserIdAndNotDeleted(userId));
 };

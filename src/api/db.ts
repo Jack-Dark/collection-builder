@@ -9,10 +9,16 @@ import * as schema from './schema.ts';
 export const db = drizzle({
   casing: 'snake_case',
   connection: configs.dbUrl,
-  schema,
+  schema: {
+    account: schema.accountsTable,
+    session: schema.sessionsTable,
+    user: schema.usersTable,
+    verification: schema.verificationsTable,
+  },
 });
 
 let client: NeonQueryFunction<boolean, boolean> | undefined;
+
 export async function getClient() {
   if (!configs.dbUrl) {
     return undefined;

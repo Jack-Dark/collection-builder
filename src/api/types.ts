@@ -1,8 +1,8 @@
-import type { timestamps, user } from './schema';
+import type { timestamps, usersTable } from './schema';
 
-export type UserRecordDef = typeof user.$inferSelect;
+export type UserRecordDef = typeof usersTable.$inferSelect;
 
-export type NewUserRecordDef = typeof user.$inferInsert;
+export type NewUserRecordDef = typeof usersTable.$inferInsert;
 
 export type UpdateUserRecordDef = Partial<
   Omit<UserRecordDef, 'id' | keyof TimestampsDef>

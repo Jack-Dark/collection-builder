@@ -21,7 +21,7 @@ export const timestamps = {
   /* eslint-enable perfectionist/sort-objects */
 };
 
-export const user = pgTable('users', {
+export const usersTable = pgTable('users', {
   createdAt: timestamp().defaultNow().notNull(),
   email: text().notNull().unique(),
   emailVerified: boolean().default(false).notNull(),
@@ -36,7 +36,7 @@ export const user = pgTable('users', {
     .notNull(),
 });
 
-export const session = pgTable(
+export const sessionsTable = pgTable(
   'sessions',
   {
     createdAt: timestamp().defaultNow().notNull(),
@@ -54,7 +54,7 @@ export const session = pgTable(
       .notNull()
       .references(
         () => {
-          return user.id;
+          return usersTable.id;
         },
         { onDelete: 'cascade' },
       ),
@@ -64,7 +64,7 @@ export const session = pgTable(
   },
 );
 
-export const account = pgTable(
+export const accountsTable = pgTable(
   'accounts',
   {
     accessToken: text(),
@@ -87,7 +87,7 @@ export const account = pgTable(
       .notNull()
       .references(
         () => {
-          return user.id;
+          return usersTable.id;
         },
         { onDelete: 'cascade' },
       ),
@@ -97,7 +97,7 @@ export const account = pgTable(
   },
 );
 
-export const verification = pgTable(
+export const verificationsTable = pgTable(
   'verifications',
   {
     createdAt: timestamp().defaultNow().notNull(),
@@ -117,8 +117,28 @@ export const verification = pgTable(
   },
 );
 
-export const games = pgTable(
-  'games',
+export const collectionsTable = pgTable(
+  'collections',
+  {
+    id: serial().primaryKey(),
+    name: text().notNull(),
+    userId: text()
+      .references(
+        () => {
+          return usersTable.id;
+        },
+        { onDelete: 'cascade' },
+      )
+      .notNull(),
+    ...timestamps,
+  },
+  (table) => {
+    return [index('collections_userId_idx').on(table.userId)];
+  },
+);
+
+export const collectionItemsTable = pgTable(
+  'collection-items',
   {
     /* eslint-disable perfectionist/sort-objects */
     id: serial().primaryKey(),
@@ -126,10 +146,19 @@ export const games = pgTable(
     system: text().notNull(),
     isSpecialEdition: boolean().notNull(),
     editionDetails: text(),
+    notes: text(),
     userId: text()
       .references(
         () => {
-          return user.id;
+          return usersTable.id;
+        },
+        { onDelete: 'cascade' },
+      )
+      .notNull(),
+    collectionId: serial()
+      .references(
+        () => {
+          return collectionsTable.id;
         },
         { onDelete: 'cascade' },
       )
@@ -138,32 +167,36 @@ export const games = pgTable(
     /* eslint-enable perfectionist/sort-objects */
   },
   (table) => {
-    return [index('games_userId_idx').on(table.userId)];
+    return [
+      index('collectionsItems_userId_idx').on(table.userId),
+      index('collectionsItems_collectionId_idx').on(table.collectionId),
+    ];
   },
 );
 
-export const userRelations = relations(user, ({ many }) => {
+export const usersRelations = relations(usersTable, ({ many }) => {
   return {
-    accounts: many(account),
-    games: many(games),
-    sessions: many(session),
+    accounts: many(accountsTable),
+    collections: many(collectionsTable),
+    collectionsItems: many(collectionItemsTable),
+    sessions: many(sessionsTable),
   };
 });
 
-export const sessionRelations = relations(session, ({ one }) => {
+export const sessionsRelations = relations(sessionsTable, ({ one }) => {
   return {
-    user: one(user, {
-      fields: [session.userId],
-      references: [user.id],
+    user: one(usersTable, {
+      fields: [sessionsTable.userId],
+      references: [usersTable.id],
     }),
   };
 });
 
-export const accountRelations = relations(account, ({ one }) => {
+export const accountsRelations = relations(accountsTable, ({ one }) => {
   return {
-    user: one(user, {
-      fields: [account.userId],
-      references: [user.id],
+    user: one(usersTable, {
+      fields: [accountsTable.userId],
+      references: [usersTable.id],
     }),
   };
 });
