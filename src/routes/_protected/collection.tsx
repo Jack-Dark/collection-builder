@@ -4,22 +4,27 @@ import { gamesDbQueries } from '#/api/routes/games/server';
 import { authApiRouteMiddleware } from '#/auth/auth-middleware';
 import { CollectionPage } from '#/pages/CollectionPage';
 
+import { fetchAllGames } from '../api/games/route';
+
 export const Route = createFileRoute('/_protected/collection')({
   component: CollectionPage,
   loader: async () => {
-    return fetchAllGames();
+    const [games, lastAddedSystem] = await Promise.all([
+      await fetchAllGames(),
+      await fetchLastAddedGameSystem(),
+    ]);
+
+    return {
+      games,
+      lastAddedSystem,
+    };
   },
 });
 
-const fetchAllGames = createServerFn({
+const fetchLastAddedGameSystem = createServerFn({
   method: 'GET',
 })
   .middleware([authApiRouteMiddleware])
   .handler(async ({ context }) => {
-    const [games, lastAddedSystem] = await Promise.all([
-      gamesDbQueries.getAllGames(context.user.id),
-      gamesDbQueries.getLastAddedGamesSystem(context.user.id),
-    ]);
-
-    return { games, lastAddedSystem };
+    return gamesDbQueries.getLastAddedGamesSystem(context.user.id);
   });

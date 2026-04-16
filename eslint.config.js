@@ -20,6 +20,8 @@ export default [
       '@typescript-eslint/no-unnecessary-condition': 'off',
       'arrow-body-style': ['warn', 'always'],
       'object-shorthand': ['warn', 'properties'],
+      '@typescript-eslint/naming-convention': 'warn',
+      'no-useless-rename': 'warn',
     },
   },
   {
@@ -72,7 +74,19 @@ export default [
       '@stylistic/arrow-parens': ['warn', 'always'],
       '@stylistic/padding-line-between-statements': [
         'warn',
-        { blankLine: 'always', prev: '*', next: 'return' },
+        {
+          blankLine: 'always',
+          prev: '*',
+          next: [
+            'return',
+            'export',
+            'class',
+            'case',
+            'type',
+            'interface',
+            'function',
+          ],
+        },
       ],
       '@stylistic/jsx-self-closing-comp': [
         'warn',
@@ -117,6 +131,8 @@ export default [
         },
       ],
       'perfectionist/sort-imports': 'warn',
+      'perfectionist/sort-interfaces': 'warn',
+      'perfectionist/sort-object-types': 'warn',
       'perfectionist/sort-objects': [
         'warn',
         {

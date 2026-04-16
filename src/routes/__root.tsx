@@ -8,9 +8,9 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtoolsPanel } from '@tanstack/react-query-devtools';
 import {
   Outlet,
-  createRootRoute,
   HeadContent,
   Scripts,
+  createRootRoute,
 } from '@tanstack/react-router';
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
 import { StrictMode } from 'react';
@@ -19,7 +19,7 @@ import appCss from '../styles.css?url';
 
 export const Route = createRootRoute({
   component: RootComponent,
-  errorComponent: (p) => {
+  errorComponent: () => {
     return <p>An Error Occurred</p>;
   },
   head: () => {

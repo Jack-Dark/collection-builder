@@ -1,5 +1,3 @@
-// npm i @apollo/client @apollo/client-integration-tanstack-start graphql rxjs
-
 import { faker } from '@faker-js/faker';
 import { systemsList } from '#/pages/CollectionPage/components/AddGameForm/constants';
 

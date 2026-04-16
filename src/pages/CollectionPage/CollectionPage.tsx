@@ -97,7 +97,7 @@ export const CollectionPage: RouteComponent = () => {
 
       {showAddForm && <AddGameForm lastAddedSystem={lastAddedSystem} />}
 
-      <Table columns={collectionTableColumns} data={games} />
+      <Table columns={collectionTableColumns} data={games.data} />
     </section>
   );
 };

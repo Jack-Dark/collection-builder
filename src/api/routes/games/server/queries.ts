@@ -1,7 +1,21 @@
-import { db } from '#/api/db';
-import { and, desc, eq, isNull } from 'drizzle-orm';
+import type {
+  PaginatedData,
+  PaginationParamsSchemaDef,
+} from '#/api/pagination/types';
 
-import type { NewGameRecordDef, UpdateGameRecordDef } from './types';
+import { db } from '#/api/db';
+import {
+  getPaginationMetadataDefaults,
+  sortDirectionOptions,
+} from '#/api/pagination/constants';
+import { getPaginationMetadataQuery } from '#/api/pagination/query';
+import { and, asc, desc, eq, ilike, isNull } from 'drizzle-orm';
+
+import type {
+  NewGameRecordDef,
+  UpdateGameRecordDef,
+  GameRecordDef,
+} from './types';
 
 import { games } from '../../../schema';
 
@@ -9,20 +23,68 @@ const getMatchesUserIdAndNotDeleted = (userId: string | undefined) => {
   return and(eq(games.userId, userId!), isNull(games.deletedAt));
 };
 
-export const getAllGames = async (userId: string | undefined) => {
+const defaultParams = {
+  limit: 100,
+  page: 1,
+} satisfies PaginationParamsSchemaDef<never>;
+
+type GamesTableColumns = keyof GameRecordDef;
+
+export const getAllGames = async (props: {
+  params?: PaginationParamsSchemaDef<keyof GameRecordDef>;
+  userId: string | undefined;
+}): Promise<PaginatedData<GameRecordDef>> => {
+  const { params = {}, userId } = props;
+  const {
+    limit = defaultParams.limit,
+    page = defaultParams.page,
+    search,
+    sortDirection = sortDirectionOptions.asc,
+    sortField = 'name',
+  } = params;
+
   if (userId) {
-    return await db
+    const metadata = await getPaginationMetadataQuery({
+      currentPage: page,
+      pageSize: limit,
+      table: games,
+    });
+
+    const sortingField: GamesTableColumns =
+      sortField && games.hasOwnProperty(sortField) ? sortField : 'name';
+
+    const data = await db
       .select()
       .from(games)
-      .where(getMatchesUserIdAndNotDeleted(userId));
+      .where(
+        and(
+          getMatchesUserIdAndNotDeleted(userId),
+          search ? ilike(games.name, `%${search.toLowerCase()}%`) : undefined,
+        ),
+      )
+      .limit(limit)
+      .offset((page - 1) * limit)
+      .orderBy(
+        sortDirection === sortDirectionOptions.desc
+          ? desc(games[sortingField])
+          : asc(games[sortingField]),
+      );
+
+    return {
+      data,
+      metadata,
+    };
   }
 
-  return [];
+  return {
+    data: [],
+    metadata: getPaginationMetadataDefaults(limit),
+  };
 };
 
 export const getGameById = async (props: {
-  userId: string | undefined;
   id: number;
+  userId: string | undefined;
 }) => {
   const { id, userId } = props;
   if (userId) {
@@ -34,6 +96,7 @@ export const getGameById = async (props: {
     return game;
   }
 };
+
 export const getLastAddedGamesSystem = async (userId: string | undefined) => {
   if (userId) {
     const [game] = await db
@@ -98,6 +161,7 @@ export const hardDeleteGameById = async (props: {
     .delete(games)
     .where(and(eq(games.id, id), getMatchesUserIdAndNotDeleted(userId)));
 };
+
 export const hardDeleteAllGamesByUser = async (userId: string) => {
   await db.delete(games).where(getMatchesUserIdAndNotDeleted(userId));
 };

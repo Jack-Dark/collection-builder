@@ -15,6 +15,7 @@ todos.json
 /.agents
 /.neon
 routeTree.gen.ts
+__generated__
 
 # Local Netlify folder
 .netlify

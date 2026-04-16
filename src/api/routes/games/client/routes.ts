@@ -51,9 +51,9 @@ export const create = async (game: NewGameRecordDef) => {
 
     return result;
   } catch (error) {
-    // TODO - FIX TS ERROR
-    // @ts-expect-error
-    console.error(error.message);
+    if (error instanceof Error) {
+      console.error(error.message);
+    }
   }
 };
 
@@ -69,9 +69,9 @@ export const createMockGames = async (userId: string) => {
       throw new Error(`Response status: ${response.status}`);
     }
   } catch (error) {
-    // TODO - FIX TS ERROR
-    // @ts-expect-error
-    console.error(error.message);
+    if (error instanceof Error) {
+      console.error(error.message);
+    }
   }
 };
 export const deleteAllGames = async (userId: string) => {
@@ -86,9 +86,9 @@ export const deleteAllGames = async (userId: string) => {
       throw new Error(`Response status: ${response.status}`);
     }
   } catch (error) {
-    // TODO - FIX TS ERROR
-    // @ts-expect-error
-    console.error(error.message);
+    if (error instanceof Error) {
+      console.error(error.message);
+    }
   }
 };
 
@@ -110,9 +110,9 @@ export const updateById = async (
 
     return result;
   } catch (error) {
-    // TODO - FIX TS ERROR
-    // @ts-expect-error
-    console.error(error.message);
+    if (error instanceof Error) {
+      console.error(error.message);
+    }
   }
 };
 
@@ -127,9 +127,9 @@ export const deleteById = async (id: number) => {
       throw new Error(`Response status: ${response.status}`);
     }
   } catch (error) {
-    // TODO - FIX TS ERROR
-    // @ts-expect-error
-    console.error(error.message);
+    if (error instanceof Error) {
+      console.error(error.message);
+    }
   }
 };
 
@@ -145,8 +145,8 @@ export const getById = async (id: number) => {
 
     return result;
   } catch (error) {
-    // TODO - FIX TS ERROR
-    // @ts-expect-error
-    console.error(error.message);
+    if (error instanceof Error) {
+      console.error(error.message);
+    }
   }
 };
