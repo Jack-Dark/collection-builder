@@ -1,8 +1,11 @@
-import type { GameRecordDef } from '#/api/routes/games/server/types';
+import type { GameRecordDef } from '#/api/routes/collection-items/server/types';
 
 import { useRouter } from '@tanstack/react-router';
 import { createColumnHelper } from '@tanstack/react-table';
-import { apiRoutes } from '#/api/routes';
+import {
+  useDeleteCollectionItem,
+  useUpdateCollectionItem,
+} from '#/api/routes/collection-items/client/hooks';
 import { MoreMenu } from '#/components/MoreMenu';
 import formatDate, { masks } from 'dateformat';
 
@@ -46,25 +49,35 @@ export const collectionItemsTableColumns = [
     header: 'Added',
   }),
   columnHelper.accessor('id', {
-    cell: ({ getValue }) => {
+    cell: ({ getValue, row }) => {
       const router = useRouter();
       const id = getValue();
+
+      const gameData = row.original;
+
+      const { isPending: isUpdatePending, onUpdateCollectionItem } =
+        useUpdateCollectionItem();
+
+      const { isPending: isDeletePending, onDeleteCollectionItem } =
+        useDeleteCollectionItem();
 
       return (
         <div className="flex flex-nowrap gap-2 justify-end items-center">
           <MoreMenu
             items={[
               {
-                disabled: true,
+                disabled: isUpdatePending || isDeletePending || true,
                 label: 'Edit',
-                onClick: () => {
+                onClick: async () => {
                   // apiRoutes.games.updateById(id);
+                  // await updateCollectionItem({ data: gameData });
                 },
               },
               {
+                disabled: isUpdatePending || isDeletePending,
                 label: 'Delete',
                 onClick: async () => {
-                  await apiRoutes.games.deleteById(id);
+                  await onDeleteCollectionItem({ data: id });
                   router.invalidate();
                 },
               },

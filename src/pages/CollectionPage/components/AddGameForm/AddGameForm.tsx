@@ -1,12 +1,12 @@
 import SaveIcon from '@mui/icons-material/Save';
 import { revalidateLogic, useForm } from '@tanstack/react-form';
 import { useRouter } from '@tanstack/react-router';
-import { apiRoutes } from '#/api/routes';
+import { useCreateCollectionItem } from '#/api/routes/collection-items/client/hooks';
+import { createCollectionItemSchema } from '#/api/routes/collection-items/server/serverFns';
 import { Button } from '#/components/Button';
 import { CheckboxField } from '#/components/CheckboxField';
 import { ComboboxField } from '#/components/ComboboxField';
 import { InputField } from '#/components/InputField';
-import { useGetUserId } from '#/hooks/useGetUserId';
 import { useRef } from 'react';
 
 import { systemsList, defaultValues } from './constants';
@@ -20,9 +20,9 @@ export const AddGameForm = (props: AddGameFormProps) => {
 
   const router = useRouter();
 
-  const { validateUserToCallback } = useGetUserId();
-
   const nameInput = useRef<HTMLInputElement>(null);
+
+  const { onCreateCollectionItem } = useCreateCollectionItem();
 
   const form = useForm({
     defaultValues: {
@@ -31,22 +31,22 @@ export const AddGameForm = (props: AddGameFormProps) => {
       system: lastAddedSystem || '',
     },
     onSubmit: async ({ value }) => {
-      validateUserToCallback(async (userId) => {
-        await apiRoutes.games.create({
-          ...value,
-          userId,
-        });
-        form.reset();
-        await router.invalidate();
-        nameInput?.current?.focus();
+      await onCreateCollectionItem({
+        data: value,
       });
+
+      form.reset();
+
+      await router.invalidate();
+
+      nameInput?.current?.focus();
     },
     validationLogic: revalidateLogic({
       mode: 'submit',
       modeAfterSubmission: 'change',
     }),
     validators: {
-      onSubmit: apiRoutes.games.createSchema,
+      onSubmit: createCollectionItemSchema,
     },
   });
 
@@ -114,8 +114,10 @@ export const AddGameForm = (props: AddGameFormProps) => {
                         if (Array.isArray(value)) {
                           const [system] = value;
                           field.setValue(system);
+                        } else if (value) {
+                          field.setValue(value);
                         } else {
-                          field.setValue(value!);
+                          field.setValue('');
                         }
                       }}
                       placeholder="Select a system..."

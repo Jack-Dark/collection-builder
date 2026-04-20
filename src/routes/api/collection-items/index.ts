@@ -1,10 +1,11 @@
-import type { GameRecordDef } from '#/api/routes/games/server/types';
+import type { GameRecordDef } from '#/api/routes/collection-items/server/types';
+import type { AddGameFormSchemaDef } from '#/pages/CollectionPage/components/AddGameForm/types';
 
 import { createFileRoute } from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
 import { getOptionalPaginationParamsSchema } from '#/api/pagination/schema';
-import { apiRoutes } from '#/api/routes';
-import { gamesDbQueries } from '#/api/routes/games/server';
+import { gamesDbQueries } from '#/api/routes/collection-items/server';
+import { createCollectionItemServerFn } from '#/api/routes/collection-items/server/serverFns';
 import { authApiRouteMiddleware } from '#/auth/auth-middleware';
 
 const allGamesSortFields = [
@@ -16,7 +17,7 @@ const allGamesSortFields = [
 const allGamesPaginationParamsSchema =
   getOptionalPaginationParamsSchema(allGamesSortFields);
 
-export const Route = createFileRoute('/api/games/')({
+export const Route = createFileRoute('/api/collection-items/')({
   server: {
     handlers: {
       GET: async () => {
@@ -27,13 +28,11 @@ export const Route = createFileRoute('/api/games/')({
         return Response.json(allGames);
       },
       POST: async ({ request }) => {
-        type CreateNewGameDataDef = Parameters<typeof createNewGame>[0]['data'];
+        const data: AddGameFormSchemaDef = await request.json();
 
-        const data: CreateNewGameDataDef = await request.json();
+        const result = await createCollectionItemServerFn({ data });
 
-        const createdGameRecord = await createNewGame({ data });
-
-        return Response.json(createdGameRecord);
+        return Response.json(result);
       },
     },
     middleware: [authApiRouteMiddleware],
@@ -49,18 +48,6 @@ export const fetchAllGames = createServerFn({
   .handler(async ({ context, data: params }) => {
     return gamesDbQueries.getAllGames({
       params,
-      userId: context.user.id,
-    });
-  });
-
-export const createNewGame = createServerFn({
-  method: 'POST',
-})
-  .middleware([authApiRouteMiddleware])
-  .inputValidator(apiRoutes.games.createSchema)
-  .handler(async ({ context, data: gameDetails }) => {
-    return gamesDbQueries.createGame({
-      ...gameDetails,
       userId: context.user.id,
     });
   });

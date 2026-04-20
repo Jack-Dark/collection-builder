@@ -9,4 +9,4 @@ export type NewGameRecordDef = typeof collectionItemsTable.$inferInsert;
 export type UpdateGameRecordDef = Partial<
   Omit<GameRecordDef, 'id' | 'userId' | keyof TimestampsDef>
 > &
-  Pick<GameRecordDef, 'id'>;
+  Pick<GameRecordDef, 'id' | 'userId'>;

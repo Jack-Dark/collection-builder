@@ -156,18 +156,15 @@ export const createMockGames = async (mockGames: NewGameRecordDef[]) => {
   await db.insert(collectionItemsTable).values(mockGames).onConflictDoNothing();
 };
 
-export const updateGameById = async (props: {
-  game: UpdateGameRecordDef;
-  userId: string | undefined;
-}) => {
-  const { game, userId } = props;
-  // TODO - PROBABLY HAVE TO MERGE OLD AND NEW DATA. GET GAME BY ID, IF NEEDED
+export const updateCollectionItem = async (props: UpdateGameRecordDef) => {
+  const { userId } = props;
+  // TODO - MAY HAVE TO MERGE OLD AND NEW DATA. GET GAME BY ID, IF NEEDED
   const [updatedGame] = await db
     .update(collectionItemsTable)
-    .set({ ...game, updatedAt: new Date() })
+    .set({ ...props, updatedAt: new Date() })
     .where(
       and(
-        eq(collectionItemsTable.id, game.id),
+        eq(collectionItemsTable.id, props.id),
         getMatchesUserIdAndNotDeleted(userId),
       ),
     )

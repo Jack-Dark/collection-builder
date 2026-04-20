@@ -1,12 +1,11 @@
 import SaveIcon from '@mui/icons-material/Save';
 import { revalidateLogic, useForm } from '@tanstack/react-form';
 import { useRouter } from '@tanstack/react-router';
-import { useServerFn } from '@tanstack/react-start';
-import { apiRoutes } from '#/api/routes';
+import { useCreateCollection } from '#/api/routes/collections/client/hooks';
+import { createCollectionSchema } from '#/api/routes/collections/server/serverFns';
 import { Button } from '#/components/Button';
 import { InputField } from '#/components/InputField';
 import { useGetUserId } from '#/hooks/useGetUserId';
-import { createNewCollection } from '#/routes/api/collections';
 import { useRef } from 'react';
 
 import { defaultValues } from './constants';
@@ -18,13 +17,13 @@ export const AddCollectionForm = () => {
 
   const nameInput = useRef<HTMLInputElement>(null);
 
-  const createCollection = useServerFn(createNewCollection);
+  const { onCreateCollection } = useCreateCollection();
 
   const form = useForm({
     defaultValues,
     onSubmit: async ({ value }) => {
       console.log('🚀 ~ AddCollectionForm ~ value:', value);
-      await createCollection({
+      await onCreateCollection({
         data: value,
       });
 
@@ -39,7 +38,7 @@ export const AddCollectionForm = () => {
       modeAfterSubmission: 'change',
     }),
     validators: {
-      onSubmit: apiRoutes.collections.createSchema,
+      onSubmit: createCollectionSchema,
     },
   });
 

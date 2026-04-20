@@ -1,6 +1,4 @@
-import type { apiRoutes } from '#/api/routes';
-import type * as zod from 'zod';
+import type { createCollectionItemSchema } from '#/api/routes/collection-items/server/serverFns';
+import type z from 'zod';
 
-export type AddGameFormSchemaDef = zod.Infer<
-  typeof apiRoutes.games.createSchema
->;
+export type AddGameFormSchemaDef = z.Infer<typeof createCollectionItemSchema>;

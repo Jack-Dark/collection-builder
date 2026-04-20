@@ -1,6 +1,7 @@
 import { authClient } from '#/auth/auth-client';
 import { ReasonPhrases } from 'http-status-codes';
 
+// TODO - REPLACE WITH SERVER FUNCTIONS AND DELETE
 export const useGetUserId = () => {
   const { data: session } = authClient.useSession();
 

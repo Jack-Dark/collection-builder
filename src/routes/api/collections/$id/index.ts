@@ -1,9 +1,9 @@
-import type { UpdateGameRecordDef } from '#/api/routes/games/server/types';
+import type { UpdateGameRecordDef } from '#/api/routes/collection-items/server/types';
 
 import { createFileRoute } from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
 import { collectionsDbQueries } from '#/api/routes/collections/server';
-import { gamesDbQueries } from '#/api/routes/games/server';
+import { gamesDbQueries } from '#/api/routes/collection-items/server';
 import { authApiRouteMiddleware } from '#/auth/auth-middleware';
 import z from 'zod';
 
@@ -36,7 +36,7 @@ export const Route = createFileRoute('/api/collections/$id/')({
         // Access the request body, for example, a JSON body
         const gameDetails: UpdateGameRecordDef = await request.json();
 
-        const updatedGame = await gamesDbQueries.updateGameById({
+        const updatedGame = await gamesDbQueries.updateCollectionItem({
           game: { ...gameDetails, id },
           userId: context.user.id,
         });

@@ -116,12 +116,9 @@ export const createCollection = async (data: NewCollectionRecordDef) => {
   return newCollection;
 };
 
-export const updateCollection = async (props: {
-  data: UpdateCollectionRecordDef;
-  userId: string | undefined;
-}) => {
-  const { data, userId } = props;
-  // TODO - PROBABLY HAVE TO MERGE OLD AND NEW DATA. GET COLLECTION BY ID, IF NEEDED
+export const updateCollection = async (data: UpdateCollectionRecordDef) => {
+  const { userId } = data;
+  // TODO - MAY HAVE TO MERGE OLD AND NEW DATA. GET COLLECTION BY ID, IF NEEDED
   const [record] = await db
     .update(collectionsTable)
     .set({ ...data, updatedAt: new Date() })
