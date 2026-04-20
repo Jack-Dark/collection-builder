@@ -11,8 +11,8 @@ import { PageWrapper } from '#/page-wrapper';
 import { Route as CollectionsRoute } from '#/routes/_protected/collections/$id';
 import { useState } from 'react';
 
+import { collectionTableColumns } from './columns';
 import { AddGameForm } from './components/AddGameForm';
-import { collectionTableColumns } from './constants.columns';
 
 export const CollectionPage: RouteComponent = () => {
   const [showAddForm, setShowAddForm] = useState<boolean>(false);
