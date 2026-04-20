@@ -39,7 +39,7 @@ export const Route = createRootRoute({
           name: 'viewport',
         },
         {
-          title: 'Game Collection Manager',
+          title: 'Collection Manager',
         },
       ],
     };
