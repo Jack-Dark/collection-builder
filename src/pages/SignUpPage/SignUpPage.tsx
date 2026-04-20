@@ -1,11 +1,11 @@
 import { Link } from '@tanstack/react-router';
+import { PageWrapper } from '#/page-wrapper';
 
 import { SignUpForm } from './components/SignUpForm';
 
 export const SignUpPage = () => {
   return (
-    <div className="grid grid-cols-1 gap-8">
-      <h1>Sign Up!</h1>
+    <PageWrapper title="Sign Up!">
       <SignUpForm />
 
       <p>
@@ -14,6 +14,6 @@ export const SignUpPage = () => {
           Sign in!
         </Link>
       </p>
-    </div>
+    </PageWrapper>
   );
 };

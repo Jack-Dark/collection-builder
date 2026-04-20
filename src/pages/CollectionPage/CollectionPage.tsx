@@ -7,6 +7,7 @@ import { apiRoutes } from '#/api/routes';
 import { Button } from '#/components/Button';
 import { Table } from '#/components/Table';
 import { useGetUserId } from '#/hooks/useGetUserId';
+import { PageWrapper } from '#/page-wrapper';
 import { Route as CollectionsRoute } from '#/routes/_protected/collections/$id';
 import { useState } from 'react';
 
@@ -20,7 +21,8 @@ export const CollectionPage: RouteComponent = () => {
 
   const { validateUserToCallback } = useGetUserId();
 
-  const { items, lastAddedSystem } = CollectionsRoute.useLoaderData();
+  const { collection, items, lastAddedSystem } =
+    CollectionsRoute.useLoaderData();
 
   const toggleForm = () => {
     setShowAddForm((prev) => {
@@ -53,50 +55,52 @@ export const CollectionPage: RouteComponent = () => {
     });
 
   return (
-    <section className="grid gap-8">
-      {showAddForm ? (
-        <Button
-          className="justify-self-start flex flex-nowrap gap-2"
-          onClick={toggleForm}
-          variant="secondary"
-        >
-          <VisibilityOffIcon />
-          <p>Hide Form</p>
-        </Button>
-      ) : (
+    <PageWrapper title={collection?.name || '-'}>
+      <section className="grid gap-8">
+        {showAddForm ? (
+          <Button
+            className="justify-self-start flex flex-nowrap gap-2"
+            onClick={toggleForm}
+            variant="secondary"
+          >
+            <VisibilityOffIcon />
+            <p>Hide Form</p>
+          </Button>
+        ) : (
+          <Button
+            className="justify-self-start"
+            onClick={toggleForm}
+            variant="primary"
+          >
+            Add Game
+          </Button>
+        )}
+
         <Button
           className="justify-self-start"
-          onClick={toggleForm}
-          variant="primary"
+          onClick={async () => {
+            await handleCreateMockGames();
+          }}
+          processing={isCreateMockGamesPending}
+          variant="secondary"
         >
-          Add Game
+          Add Mock Games Data
         </Button>
-      )}
+        <Button
+          className="justify-self-start"
+          onClick={async () => {
+            await handleDeleteAllGames();
+          }}
+          processing={isDeleteAllGamesPending}
+          variant="alert"
+        >
+          Delete All Games
+        </Button>
 
-      <Button
-        className="justify-self-start"
-        onClick={async () => {
-          await handleCreateMockGames();
-        }}
-        processing={isCreateMockGamesPending}
-        variant="secondary"
-      >
-        Add Mock Games Data
-      </Button>
-      <Button
-        className="justify-self-start"
-        onClick={async () => {
-          await handleDeleteAllGames();
-        }}
-        processing={isDeleteAllGamesPending}
-        variant="alert"
-      >
-        Delete All Games
-      </Button>
+        {showAddForm && <AddGameForm lastAddedSystem={lastAddedSystem} />}
 
-      {showAddForm && <AddGameForm lastAddedSystem={lastAddedSystem} />}
-
-      <Table columns={collectionTableColumns} data={items || []} />
-    </section>
+        <Table columns={collectionTableColumns} data={items || []} />
+      </section>
+    </PageWrapper>
   );
 };

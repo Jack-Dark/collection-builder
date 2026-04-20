@@ -11,6 +11,7 @@ import type { RouterPath } from './types';
 import { authClient } from './auth/auth-client';
 import { NavMenu } from './components/NavMenu';
 import { Route as CollectionsRoute } from './routes/_protected/collections/$id';
+import { Route as CollectionsAddRoute } from './routes/_protected/collections/add';
 import { fetchAllCollections } from './routes/api/collections/route';
 
 export const Layout: RouteComponent = () => {
@@ -33,7 +34,7 @@ export const Layout: RouteComponent = () => {
 
   const navItems: NavMenuItem[] = [
     {
-      href: CollectionsRoute.fullPath,
+      href: CollectionsAddRoute.fullPath,
       items: data.map((collection) => {
         return {
           href: CollectionsRoute.fullPath.replace('$id', String(collection.id)),
@@ -41,9 +42,6 @@ export const Layout: RouteComponent = () => {
         };
       }),
       label: 'Collections',
-      onClick: (e) => {
-        e.preventDefault();
-      },
     },
     {
       href: '/account' satisfies RouterPath,

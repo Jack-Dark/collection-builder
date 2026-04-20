@@ -1,13 +1,13 @@
 import type { RouteComponent } from '@tanstack/react-router';
 
 import { Link } from '@tanstack/react-router';
+import { PageWrapper } from '#/page-wrapper';
 
 import { SignInForm } from './components/SignInForm';
 
 export const SignInPage: RouteComponent = () => {
   return (
-    <div className="grid grid-cols-1 gap-8">
-      <h1>Sign In</h1>
+    <PageWrapper title="Sign In">
       <SignInForm />
 
       <p>
@@ -16,7 +16,7 @@ export const SignInPage: RouteComponent = () => {
           Sign up!
         </Link>
       </p>
-    </div>
+    </PageWrapper>
   );
   // TODO - ADD PASSWORD RESET
 };

@@ -1,6 +1,7 @@
 import VerifiedIcon from '@mui/icons-material/Verified';
 import { authClient } from '#/auth/auth-client';
 import { Button } from '#/components/Button';
+import { PageWrapper } from '#/page-wrapper';
 
 export const AccountPage = () => {
   const { data: session } = authClient.useSession();
@@ -9,9 +10,7 @@ export const AccountPage = () => {
   // TODO - IMPLEMENT RESEND https://resend.com/docs/introduction
 
   return !user ? null : (
-    <div className="grid gap-8">
-      <h1>Account</h1>
-
+    <PageWrapper title="Account">
       <div className="grid grid-cols-2 gap-2 items-center">
         <div className="col-span-2">{user.image}</div>
 
@@ -48,6 +47,6 @@ export const AccountPage = () => {
           </Button>
         </div>
       </div>
-    </div>
+    </PageWrapper>
   );
 };
