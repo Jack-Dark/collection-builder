@@ -23,11 +23,15 @@ export const collectionTableColumns = [
   }),
   columnHelper.accessor('editionDetails', {
     cell: ({ getValue }) => {
-      const text = getValue();
-
-      return text ? <p>{text}</p> : null;
+      return <p>{getValue() || '-'}</p>;
     },
     header: 'Edition',
+  }),
+  columnHelper.accessor('notes', {
+    cell: ({ getValue }) => {
+      return <p>{getValue() || '-'}</p>;
+    },
+    header: 'Notes',
   }),
   columnHelper.accessor('createdAt', {
     cell: ({ getValue }) => {
