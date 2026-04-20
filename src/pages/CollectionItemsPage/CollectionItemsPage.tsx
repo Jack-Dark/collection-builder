@@ -55,52 +55,50 @@ export const CollectionPage: RouteComponent = () => {
     });
 
   return (
-    <PageWrapper title={collection?.name || '-'}>
-      <section className="grid gap-8">
-        {showAddForm ? (
-          <Button
-            className="justify-self-start flex flex-nowrap gap-2"
-            onClick={toggleForm}
-            variant="secondary"
-          >
-            <VisibilityOffIcon />
-            <p>Hide Form</p>
-          </Button>
-        ) : (
-          <Button
-            className="justify-self-start"
-            onClick={toggleForm}
-            variant="primary"
-          >
-            Add Game
-          </Button>
-        )}
-
+    <PageWrapper childrenClassName="grid gap-8" title={collection?.name || '-'}>
+      {showAddForm ? (
         <Button
-          className="justify-self-start"
-          onClick={async () => {
-            await handleCreateMockGames();
-          }}
-          processing={isCreateMockGamesPending}
+          className="justify-self-start flex flex-nowrap gap-2"
+          onClick={toggleForm}
           variant="secondary"
         >
-          Add Mock Games Data
+          <VisibilityOffIcon />
+          <p>Hide Form</p>
         </Button>
+      ) : (
         <Button
           className="justify-self-start"
-          onClick={async () => {
-            await handleDeleteAllGames();
-          }}
-          processing={isDeleteAllGamesPending}
-          variant="alert"
+          onClick={toggleForm}
+          variant="primary"
         >
-          Delete All Games
+          Add Game
         </Button>
+      )}
 
-        {showAddForm && <AddGameForm lastAddedSystem={lastAddedSystem} />}
+      <Button
+        className="justify-self-start"
+        onClick={async () => {
+          await handleCreateMockGames();
+        }}
+        processing={isCreateMockGamesPending}
+        variant="secondary"
+      >
+        Add Mock Games Data
+      </Button>
+      <Button
+        className="justify-self-start"
+        onClick={async () => {
+          await handleDeleteAllGames();
+        }}
+        processing={isDeleteAllGamesPending}
+        variant="alert"
+      >
+        Delete All Games
+      </Button>
 
-        <Table columns={collectionTableColumns} data={items || []} />
-      </section>
+      {showAddForm && <AddGameForm lastAddedSystem={lastAddedSystem} />}
+
+      <Table columns={collectionTableColumns} data={items || []} />
     </PageWrapper>
   );
 };
