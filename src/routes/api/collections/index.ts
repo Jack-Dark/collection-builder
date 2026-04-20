@@ -16,7 +16,7 @@ const allCollectionsPaginationParamsSchema = getOptionalPaginationParamsSchema(
   allCollectionsSortFields,
 );
 
-export const Route = createFileRoute('/api/collections')({
+export const Route = createFileRoute('/api/collections/')({
   server: {
     handlers: {
       GET: async () => {

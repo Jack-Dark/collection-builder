@@ -8,10 +8,10 @@ import { Button } from '#/components/Button';
 import { Table } from '#/components/Table';
 import { useGetUserId } from '#/hooks/useGetUserId';
 import { PageWrapper } from '#/page-wrapper';
-import { Route as CollectionsRoute } from '#/routes/_protected/collections/$id';
+import { Route as CollectionRoute } from '#/routes/_protected/collections/$id';
 import { useState } from 'react';
 
-import { collectionTableColumns } from './columns';
+import { collectionItemsTableColumns } from './columns';
 import { AddGameForm } from './components/AddGameForm';
 
 export const CollectionPage: RouteComponent = () => {
@@ -22,7 +22,7 @@ export const CollectionPage: RouteComponent = () => {
   const { validateUserToCallback } = useGetUserId();
 
   const { collection, items, lastAddedSystem } =
-    CollectionsRoute.useLoaderData();
+    CollectionRoute.useLoaderData();
 
   const toggleForm = () => {
     setShowAddForm((prev) => {
@@ -98,7 +98,7 @@ export const CollectionPage: RouteComponent = () => {
 
       {showAddForm && <AddGameForm lastAddedSystem={lastAddedSystem} />}
 
-      <Table columns={collectionTableColumns} data={items || []} />
+      <Table columns={collectionItemsTableColumns} data={items || []} />
     </PageWrapper>
   );
 };

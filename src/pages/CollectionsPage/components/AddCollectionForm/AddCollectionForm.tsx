@@ -6,7 +6,7 @@ import { apiRoutes } from '#/api/routes';
 import { Button } from '#/components/Button';
 import { InputField } from '#/components/InputField';
 import { useGetUserId } from '#/hooks/useGetUserId';
-import { createNewCollection } from '#/routes/api/collections/route';
+import { createNewCollection } from '#/routes/api/collections';
 import { useRef } from 'react';
 
 import { defaultValues } from './constants';
@@ -27,8 +27,11 @@ export const AddCollectionForm = () => {
       await createCollection({
         data: value,
       });
+
       form.reset();
+
       await router.invalidate();
+
       nameInput?.current?.focus();
     },
     validationLogic: revalidateLogic({

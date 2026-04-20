@@ -1,4 +1,4 @@
-import { createNewCollection } from '#/routes/api/collections/route';
+import { createNewCollection } from '#/routes/api/collections';
 import * as zod from 'zod';
 
 import type {

@@ -7,7 +7,7 @@ import { gamesDbQueries } from '#/api/routes/games/server';
 import { authApiRouteMiddleware } from '#/auth/auth-middleware';
 import z from 'zod';
 
-export const Route = createFileRoute('/api/collections/$id')({
+export const Route = createFileRoute('/api/collections/$id/')({
   server: {
     handlers: {
       DELETE: async ({ context, params }) => {

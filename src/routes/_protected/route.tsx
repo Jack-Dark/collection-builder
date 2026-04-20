@@ -2,20 +2,26 @@ import { createFileRoute, isRedirect } from '@tanstack/react-router';
 import { getUserContext } from '#/auth/auth.functions';
 import { Layout } from '#/layout';
 
-import { fetchAllCollections } from '../api/collections/route';
+import { fetchAllCollections } from '../api/collections';
 
 export const Route = createFileRoute('/_protected')({
   beforeLoad: async ({ location }) => {
+    const redirectToSignIn = () => {
+      return Route.redirect({
+        search: { redirect: location.href },
+        to: '/sign-in',
+      });
+    };
+
     try {
       const user = await getUserContext();
       if (!user) {
-        throw Route.redirect({
-          search: { redirect: location.href },
-          to: '/sign-in',
-        });
+        throw redirectToSignIn();
       }
 
-      return { user };
+      const collections = await fetchAllCollections();
+
+      return { collections, user };
     } catch (error) {
       // Re-throw redirects (they're intentional, not errors)
       if (isRedirect(error)) {
@@ -23,18 +29,8 @@ export const Route = createFileRoute('/_protected')({
       }
 
       // Auth check failed (network error, etc.) - redirect to login
-      throw Route.redirect({
-        search: { redirect: location.href },
-        to: '/sign-in',
-      });
+      throw redirectToSignIn();
     }
   },
   component: Layout,
-  loader: async () => {
-    const collections = await fetchAllCollections();
-
-    return {
-      collections,
-    };
-  },
 });

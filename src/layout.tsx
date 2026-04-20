@@ -2,7 +2,6 @@ import type { RouteComponent } from '@tanstack/react-router';
 
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
-import { useQuery } from '@tanstack/react-query';
 import { Outlet, useRouter } from '@tanstack/react-router';
 
 import type { NavMenuItem } from './components/NavMenu/NavMenu.types';
@@ -10,34 +9,25 @@ import type { RouterPath } from './types';
 
 import { authClient } from './auth/auth-client';
 import { NavMenu } from './components/NavMenu';
-import { Route as CollectionsRoute } from './routes/_protected/collections/$id';
-import { Route as CollectionsAddRoute } from './routes/_protected/collections/add';
-import { fetchAllCollections } from './routes/api/collections/route';
+import { Route as CollectionsRoute } from './routes/_protected/collections';
+import { Route as CollectionRoute } from './routes/_protected/collections/$id';
+import { Route as ProtectedRoute } from './routes/_protected/route';
 
 export const Layout: RouteComponent = () => {
   const router = useRouter();
 
   const { data: session } = authClient.useSession();
 
-  const { data } = useQuery({
-    enabled: true,
-    initialData: [],
-    queryFn: async () => {
-      const { data } = await fetchAllCollections();
-
-      return data;
-    },
-    queryKey: ['fetch-all-collections'],
-  });
+  const { collections } = ProtectedRoute.useRouteContext();
 
   const isLoggedOut = !session?.user.id;
 
   const navItems: NavMenuItem[] = [
     {
-      href: CollectionsAddRoute.fullPath,
-      items: data.map((collection) => {
+      href: CollectionsRoute.fullPath,
+      items: collections.data.map((collection) => {
         return {
-          href: CollectionsRoute.fullPath.replace('$id', String(collection.id)),
+          href: CollectionRoute.fullPath.replace('$id', String(collection.id)),
           label: collection.name,
         };
       }),
@@ -53,6 +43,7 @@ export const Layout: RouteComponent = () => {
           label: 'Sign out',
           onClick: async (e) => {
             e.preventDefault();
+
             await authClient.signOut();
             router.navigate({ to: '/sign-in' });
           },

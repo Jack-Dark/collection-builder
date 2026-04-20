@@ -8,7 +8,7 @@ import formatDate, { masks } from 'dateformat';
 
 const columnHelper = createColumnHelper<GameRecordDef>();
 
-export const collectionTableColumns = [
+export const collectionItemsTableColumns = [
   columnHelper.accessor('name', {
     cell: ({ getValue }) => {
       return <p>{getValue()}</p>;

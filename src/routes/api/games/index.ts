@@ -16,7 +16,7 @@ const allGamesSortFields = [
 const allGamesPaginationParamsSchema =
   getOptionalPaginationParamsSchema(allGamesSortFields);
 
-export const Route = createFileRoute('/api/games')({
+export const Route = createFileRoute('/api/games/')({
   server: {
     handlers: {
       GET: async () => {

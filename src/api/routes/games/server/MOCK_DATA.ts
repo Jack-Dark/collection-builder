@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker';
-import { systemsList } from '#/pages/CollectionItemsPage/components/AddGameForm/constants';
+import { systemsList } from '#/pages/CollectionPage/components/AddGameForm/constants';
 
 import type { NewGameRecordDef } from './types';
 
