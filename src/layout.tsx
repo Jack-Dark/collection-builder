@@ -3,6 +3,7 @@ import type { RouteComponent } from '@tanstack/react-router';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import { Outlet, useRouter } from '@tanstack/react-router';
+import { ErrorBoundary } from 'react-error-boundary';
 
 import type { NavMenuItem } from './components/NavMenu/NavMenu.types';
 import type { RouterPath } from './types';
@@ -68,7 +69,13 @@ export const Layout: RouteComponent = () => {
 
       <div className="grid justify-items-center px-4">
         <main className="w-full max-w-7xl px-4 py-12 bg-white text-black rounded-xl">
-          <Outlet />
+          <ErrorBoundary
+            FallbackComponent={() => {
+              return <p>An error occurred...</p>;
+            }}
+          >
+            <Outlet />
+          </ErrorBoundary>
         </main>
       </div>
       <footer className="grid justify-items-center px-4 py-4">
