@@ -7,7 +7,7 @@ import type { MenuPropsDef } from './MoreMenu.types';
 import { MenuList } from './components/MenuList';
 
 export const MoreMenu = (props: MenuPropsDef) => {
-  const { disabled: disabled, open, ...rest } = props;
+  const { disabled, open, ...rest } = props;
 
   return (
     <Menu.Root disabled={disabled} open={open}>

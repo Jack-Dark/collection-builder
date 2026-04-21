@@ -5,7 +5,8 @@ import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { tanstackStartCookies } from 'better-auth/tanstack-start';
 import { Resend } from 'resend';
 
-const resend = new Resend(configs.resendApiKey);
+// @ts-expect-error
+const _resend = new Resend(configs.resendApiKey);
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {

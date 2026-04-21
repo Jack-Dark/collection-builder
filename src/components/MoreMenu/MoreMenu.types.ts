@@ -1,13 +1,13 @@
 import type { MenuPositionerProps } from '@base-ui/react';
-import type { RouterPath } from '#/types';
+import type { LinkProps } from '@tanstack/react-router';
 import type { JSXElementConstructor, Key } from 'react';
 
 export type MenuPropsDef = Pick<
   MenuPositionerProps,
   'align' | 'alignOffset' | 'side' | 'sideOffset'
 > & {
-  items: MenuItemDef[];
   disabled?: boolean;
+  items: MenuItemDef[];
   open?: boolean;
 };
 
@@ -17,42 +17,42 @@ export type MenuItemDef = {
 } & MenuItemLabelPropsDef &
   (
     | (MenuItemBehaviorPropsDef & {
-        subMenu?: never;
         group?: never;
+        subMenu?: never;
       })
     | (MenuItemBehaviorPropsDef & {
-        subMenu?: MenuPropsDef;
         group?: never;
+        subMenu?: MenuPropsDef;
       })
     | {
+        group?: MenuItemGroupItemPropsDef[];
         href?: never;
-        target?: never;
         onClick?: never;
         subMenu?: never;
-        group?: MenuItemGroupItemPropsDef[];
+        target?: never;
       }
   );
 
 type MenuItemLabelPropsDef =
   | {
-      label: string;
       id?: never;
+      label: string;
     }
   | {
-      label: JSXElementConstructor<{}>;
       id: Key;
+      label: JSXElementConstructor<{}>;
     };
 
 type MenuItemBehaviorPropsDef =
   | {
-      href: RouterPath;
-      target?: string;
+      href: LinkProps['to'];
       onClick?: never;
+      target?: string;
     }
   | {
       href?: never;
-      target?: never;
       onClick: () => void | Promise<void>;
+      target?: never;
     };
 
 type MenuItemGroupItemPropsDef = Omit<MenuItemDef, 'subMenu' | 'group'>;

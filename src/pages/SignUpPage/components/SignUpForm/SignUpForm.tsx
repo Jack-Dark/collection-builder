@@ -1,4 +1,5 @@
 import type { RouteComponent } from '@tanstack/react-router';
+import type { RouterPath } from '#/types';
 
 import { useForm } from '@tanstack/react-form';
 import { useRouter, useSearch } from '@tanstack/react-router';
@@ -11,7 +12,7 @@ import { signUpFormSchema, defaultValues } from './SignUpForm.schema';
 export const SignUpForm: RouteComponent = () => {
   const router = useRouter();
 
-  const search: { redirect?: string } = useSearch({
+  const search: { redirect?: RouterPath } = useSearch({
     strict: false,
   });
 
@@ -30,10 +31,10 @@ export const SignUpForm: RouteComponent = () => {
             // display the error message
             alert(context.error.message);
           },
-          onRequest: (context) => {
+          onRequest: () => {
             // show loading
           },
-          onSuccess: (context) => {
+          onSuccess: () => {
             router.navigate({ to: search.redirect || '/' });
           },
         },

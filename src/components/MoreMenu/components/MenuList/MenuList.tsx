@@ -1,5 +1,3 @@
-import type { RouterPath } from '#/types';
-
 import { Menu } from '@base-ui/react';
 import { Link } from '@tanstack/react-router';
 import { Fragment } from 'react';
@@ -82,7 +80,7 @@ export const MenuList = (props: MenuPropsDef) => {
                               condition={!!href && !disabled}
                               Wrapper={({ children }) => {
                                 return (
-                                  <Link target={target} to={href as RouterPath}>
+                                  <Link target={target} to={href}>
                                     {children}
                                   </Link>
                                 );
@@ -111,7 +109,7 @@ export const MenuList = (props: MenuPropsDef) => {
                         condition={!!href && !disabled}
                         Wrapper={({ children }) => {
                           return (
-                            <Link target={target} to={href!}>
+                            <Link target={target} to={href}>
                               {children}
                             </Link>
                           );
@@ -142,7 +140,7 @@ export const MenuList = (props: MenuPropsDef) => {
                       condition={!!href && !disabled}
                       Wrapper={({ children }) => {
                         return (
-                          <Link target={target} to={href!}>
+                          <Link target={target} to={href}>
                             {children}
                           </Link>
                         );

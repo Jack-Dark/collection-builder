@@ -1,10 +1,10 @@
-import type ZodTypes from 'node_modules/zod/v4/classic/external.d.cts';
+import type z from 'zod';
 
 import type { getRequiredPaginationParamsSchema } from './schema';
 
 export type PaginationParamsSchemaDef<TSortField extends string | undefined> =
   Omit<
-    ZodTypes.Infer<ReturnType<typeof getRequiredPaginationParamsSchema>>,
+    z.Infer<ReturnType<typeof getRequiredPaginationParamsSchema>>,
     'sortField'
   > & {
     sortField?: TSortField;

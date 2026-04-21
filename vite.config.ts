@@ -12,9 +12,9 @@ const config = defineConfig({
     devtools(),
     tsconfigPaths({ projects: ['./tsconfig.json'] }),
     checker({
-      // eslint: {
-      //   lintCommand: 'eslint "./src/**/*.{ts,tsx}"',
-      // },
+      eslint: {
+        lintCommand: 'eslint "./src/**/*.{ts,tsx}"',
+      },
       typescript: true,
     }),
     tailwindcss(),

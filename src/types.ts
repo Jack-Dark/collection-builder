@@ -1,6 +1,6 @@
-import type { FileRoutesByFullPath } from './routeTree.gen';
+import type { LinkProps } from '@tanstack/react-router';
 
-export type RouterPath = keyof FileRoutesByFullPath;
+export type RouterPath = LinkProps['to'];
 
 /**
  * Usage:

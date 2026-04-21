@@ -18,7 +18,7 @@ export const SignInForm = () => {
     defaultValues,
     onSubmit: async ({ value }) => {
       const { email, password } = value;
-      const { data, error } = await authClient.signIn.email(
+      const { data } = await authClient.signIn.email(
         {
           email,
           password,
@@ -28,10 +28,10 @@ export const SignInForm = () => {
             // display the error message
             alert(context.error.message);
           },
-          onRequest: (context) => {
+          onRequest: () => {
             // show loading
           },
-          onSuccess: (context) => {
+          onSuccess: () => {
             router.navigate({ to: search.redirect || '/' });
           },
         },

@@ -53,8 +53,6 @@ export const collectionItemsTableColumns = [
       const router = useRouter();
       const id = getValue();
 
-      const gameData = row.original;
-
       const { isPending: isUpdatePending, onUpdateCollectionItem } =
         useUpdateCollectionItem();
 
@@ -69,8 +67,7 @@ export const collectionItemsTableColumns = [
                 disabled: isUpdatePending || isDeletePending || true,
                 label: 'Edit',
                 onClick: async () => {
-                  // apiRoutes.games.updateById(id);
-                  // await updateCollectionItem({ data: gameData });
+                  await onUpdateCollectionItem({ data: row.original });
                 },
               },
               {

@@ -24,8 +24,8 @@ const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
 // Apply styles like this using your CSS strategy of choice with this kind of logic to head cells, data cells, footer cells, etc.
 // View the index.css file for more needed styles such as border-collapse: separate
 const getCommonPinningStyles = <T,>(props: {
-  makeColumnsSticky: boolean;
   column: Column<T>;
+  makeColumnsSticky: boolean;
 }): CSSProperties => {
   const { column, makeColumnsSticky } = props;
 

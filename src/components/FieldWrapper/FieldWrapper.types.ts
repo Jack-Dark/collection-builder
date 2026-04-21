@@ -9,8 +9,8 @@ export type FieldWrapperProps = Pick<
   | 'disabled'
   | 'name'
 > & {
-  label?: string;
   description?: string;
   error?: string;
+  label?: string;
   required?: boolean;
 };

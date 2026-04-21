@@ -12,7 +12,6 @@ const userIdSchema = zod.string().describe('User ID').min(1);
 
 export const createCollectionSchema = zod.object({
   name: nameSchema,
-  userId: userIdSchema,
 });
 
 export const updateCollectionSchema = zod.object({

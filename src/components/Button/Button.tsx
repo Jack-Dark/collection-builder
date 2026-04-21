@@ -1,14 +1,13 @@
 import type { ButtonProps as MuiButtonProps } from '@base-ui/react';
 
 import { Button as MuiButton } from '@base-ui/react';
-// import HourglassBottomIcon from '@mui/icons-material/HourglassBottom';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useMemo } from 'react';
 
 type ButtonProps = MuiButtonProps & {
-  variant?: 'primary' | 'secondary' | 'ghost' | 'alert';
-  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2x';
   processing?: boolean;
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2x';
+  variant?: 'primary' | 'secondary' | 'ghost' | 'alert';
 };
 
 export const Button = ({

@@ -5,15 +5,12 @@ import { useCreateCollection } from '#/api/routes/collections/client/hooks';
 import { createCollectionSchema } from '#/api/routes/collections/server/serverFns';
 import { Button } from '#/components/Button';
 import { InputField } from '#/components/InputField';
-import { useGetUserId } from '#/hooks/useGetUserId';
 import { useRef } from 'react';
 
 import { defaultValues } from './constants';
 
 export const AddCollectionForm = () => {
   const router = useRouter();
-
-  const { validateUserToCallback } = useGetUserId();
 
   const nameInput = useRef<HTMLInputElement>(null);
 
@@ -22,7 +19,6 @@ export const AddCollectionForm = () => {
   const form = useForm({
     defaultValues,
     onSubmit: async ({ value }) => {
-      console.log('🚀 ~ AddCollectionForm ~ value:', value);
       await onCreateCollection({
         data: value,
       });

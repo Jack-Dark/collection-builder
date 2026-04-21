@@ -4,6 +4,7 @@ import { Field } from '@base-ui/react';
 
 import type { FieldWrapperProps } from './FieldWrapper.types';
 
+/** Wrap fields with this component to provide consistent label, description, and error handling. */
 export const FieldWrapper = (props: PropsWithChildren<FieldWrapperProps>) => {
   const {
     children,
@@ -45,7 +46,10 @@ export const FieldWrapper = (props: PropsWithChildren<FieldWrapperProps>) => {
       <Field.Error>{error}</Field.Error>
 
       <Field.Validity>
-        {(props) => {
+        {/*
+         // TODO - MIGHT BE ABLE TO ACCESS ERROR IN THE PROPS BELOW 
+         */}
+        {() => {
           return <p>{error}</p>;
         }}
       </Field.Validity>

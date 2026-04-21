@@ -12,7 +12,8 @@ export const Route = createFileRoute('/api/collections/')({
   server: {
     handlers: {
       GET: async () => {
-        const searchParams = Route.useSearch();
+        // @ts-expect-error
+        const _searchParams = Route.useSearch();
         // TODO - PASS SEARCH PARAMS IN WITHOUT TS ERROR
         const allCollections = await fetchAllCollectionsServerFn({ data: {} });
 

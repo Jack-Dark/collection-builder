@@ -31,7 +31,7 @@ export const createCollectionItemSchema = z.union([
 ]);
 
 export const updateCollectionItemSchema = z.object({
-  editionDetails: z.string().describe('Edition details'),
+  editionDetails: z.string().describe('Edition details').nullable(),
   id: z.number().min(1),
   isSpecialEdition: z.boolean().describe('Is special edition'),
   name: z.string().describe('Name').min(1),

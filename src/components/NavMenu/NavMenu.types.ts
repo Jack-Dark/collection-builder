@@ -2,10 +2,10 @@ import type { RouterPath } from '#/types';
 import type { JSXElementConstructor, MouseEventHandler } from 'react';
 
 export type NavMenuItem = {
-  label: string;
-  Icon?: JSXElementConstructor<{}>;
   hidden?: boolean;
   href: RouterPath | string;
+  Icon?: JSXElementConstructor<{}>;
   items?: NavMenuItem[];
+  label: string;
   onClick?: MouseEventHandler<HTMLElement>;
 };

@@ -86,8 +86,8 @@ export const NavMenu = (props: { items: NavMenuItem[] }) => {
                   keepMounted
                 >
                   <ul className="grid list-none grid-cols-1 gap-2">
-                    {items?.map(({ hidden, href, items, label, onClick }) => {
-                      // TODO - UPDATE TO SUPPORT NESTED SUBMENUS
+                    {items?.map(({ hidden, href, label, onClick }) => {
+                      // TODO - UPDATE TO SUPPORT NESTED SUBMENUS (items prop)
                       return hidden ? null : (
                         <li key={href || label}>
                           <NavigationLinkWrapper
