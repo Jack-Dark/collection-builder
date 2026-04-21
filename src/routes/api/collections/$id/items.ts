@@ -29,7 +29,7 @@ export const fetchItemsByCollectionId = createServerFn({
   .middleware([authApiRouteMiddleware])
   .inputValidator(z.object({ collectionId: z.number() }))
   .handler(async ({ context, data: params }) => {
-    return gamesDbQueries.getItemsByCollectionId({
+    return gamesDbQueries.getItemsByCollectionIdQuery({
       collectionId: params.collectionId,
       userId: context.user.id,
     });

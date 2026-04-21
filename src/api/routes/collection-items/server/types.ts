@@ -2,11 +2,12 @@ import type { TimestampsDef } from '#/api/types';
 
 import type { collectionItemsTable } from '../../../schema';
 
-export type GameRecordDef = typeof collectionItemsTable.$inferSelect;
+export type CollectionItemRecordDef = typeof collectionItemsTable.$inferSelect;
 
-export type NewGameRecordDef = typeof collectionItemsTable.$inferInsert;
+export type NewCollectionItemRecordDef =
+  typeof collectionItemsTable.$inferInsert;
 
-export type UpdateGameRecordDef = Partial<
-  Omit<GameRecordDef, 'id' | 'userId' | keyof TimestampsDef>
+export type UpdateCollectionItemRecordDef = Partial<
+  Omit<CollectionItemRecordDef, keyof TimestampsDef>
 > &
-  Pick<GameRecordDef, 'id' | 'userId'>;
+  Pick<CollectionItemRecordDef, 'id' | 'userId'>;

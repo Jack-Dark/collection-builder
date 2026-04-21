@@ -1,5 +1,5 @@
-import type { GameRecordDef } from '#/api/routes/collection-items/server/types';
-import type { AddGameFormSchemaDef } from '#/pages/CollectionPage/components/AddGameForm/types';
+import type { CollectionItemRecordDef } from '#/api/routes/collection-items/server/types';
+import type { AddCollectionItemFormSchemaDef } from '#/pages/CollectionPage/components/AddCollectionItemForm/types';
 
 import { createFileRoute } from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
@@ -8,14 +8,14 @@ import { gamesDbQueries } from '#/api/routes/collection-items/server';
 import { createCollectionItemServerFn } from '#/api/routes/collection-items/server/serverFns';
 import { authApiRouteMiddleware } from '#/auth/auth-middleware';
 
-const allGamesSortFields = [
+const allCollectionItemsSortFields = [
   'name',
   'createdAt',
   'system',
-] satisfies (keyof GameRecordDef)[];
+] satisfies (keyof CollectionItemRecordDef)[];
 
-const allGamesPaginationParamsSchema =
-  getOptionalPaginationParamsSchema(allGamesSortFields);
+const allCollectionItemsPaginationParamsSchema =
+  getOptionalPaginationParamsSchema(allCollectionItemsSortFields);
 
 export const Route = createFileRoute('/api/collection-items/')({
   server: {
@@ -23,12 +23,12 @@ export const Route = createFileRoute('/api/collection-items/')({
       GET: async () => {
         const searchParams = Route.useSearch();
         // TODO - PASS SEARCH PARAMS IN WITHOUT TS ERROR
-        const allGames = await fetchAllGames({ data: {} });
+        const allRecords = await fetchAllCollectionItems({ data: {} });
 
-        return Response.json(allGames);
+        return Response.json(allRecords);
       },
       POST: async ({ request }) => {
-        const data: AddGameFormSchemaDef = await request.json();
+        const data: AddCollectionItemFormSchemaDef = await request.json();
 
         const result = await createCollectionItemServerFn({ data });
 
@@ -37,16 +37,16 @@ export const Route = createFileRoute('/api/collection-items/')({
     },
     middleware: [authApiRouteMiddleware],
   },
-  validateSearch: allGamesPaginationParamsSchema,
+  validateSearch: allCollectionItemsPaginationParamsSchema,
 });
 
-export const fetchAllGames = createServerFn({
+export const fetchAllCollectionItems = createServerFn({
   method: 'GET',
 })
   .middleware([authApiRouteMiddleware])
-  .inputValidator(allGamesPaginationParamsSchema)
+  .inputValidator(allCollectionItemsPaginationParamsSchema)
   .handler(async ({ context, data: params }) => {
-    return gamesDbQueries.getAllGames({
+    return gamesDbQueries.getAllCollectionItemsQuery({
       params,
       userId: context.user.id,
     });

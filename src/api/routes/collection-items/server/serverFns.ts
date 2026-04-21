@@ -45,7 +45,7 @@ export const createCollectionItemServerFn = createServerFn({
   .middleware([authApiRouteMiddleware])
   .inputValidator(createCollectionItemSchema)
   .handler(async ({ context, data }) => {
-    return gamesDbQueries.createGame({
+    return gamesDbQueries.createCollectionItemQuery({
       ...data,
       userId: context.user.id,
     });
@@ -57,7 +57,10 @@ export const getCollectionItemServerFn = createServerFn({
   .middleware([authApiRouteMiddleware])
   .inputValidator(z.number())
   .handler(async ({ context, data: id }) => {
-    return gamesDbQueries.getGameById({ id, userId: context.user.id });
+    return gamesDbQueries.getCollectionItemByIdQuery({
+      id,
+      userId: context.user.id,
+    });
   });
 
 export const updateCollectionItemSeverFn = createServerFn({
@@ -67,7 +70,7 @@ export const updateCollectionItemSeverFn = createServerFn({
   .middleware([authApiRouteMiddleware])
   .inputValidator(updateCollectionItemSchema)
   .handler(async ({ data }) => {
-    return gamesDbQueries.updateCollectionItem(data);
+    return gamesDbQueries.updateCollectionItemQuery(data);
   });
 
 export const deleteCollectionItemServerFn = createServerFn({
@@ -77,5 +80,8 @@ export const deleteCollectionItemServerFn = createServerFn({
   .middleware([authApiRouteMiddleware])
   .inputValidator(z.number())
   .handler(async ({ context, data: id }) => {
-    return gamesDbQueries.softDeleteGameById({ id, userId: context.user.id });
+    return gamesDbQueries.softDeleteCollectionItemByIdQuery({
+      id,
+      userId: context.user.id,
+    });
   });

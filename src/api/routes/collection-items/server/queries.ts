@@ -12,9 +12,9 @@ import { getPaginationMetadataQuery } from '#/api/pagination/query';
 import { and, asc, desc, eq, ilike, isNull } from 'drizzle-orm';
 
 import type {
-  NewGameRecordDef,
-  UpdateGameRecordDef,
-  GameRecordDef,
+  NewCollectionItemRecordDef,
+  UpdateCollectionItemRecordDef,
+  CollectionItemRecordDef,
 } from './types';
 
 import { collectionItemsTable } from '../../../schema';
@@ -31,12 +31,12 @@ const defaultParams = {
   page: 1,
 } satisfies PaginationParamsSchemaDef<never>;
 
-type GamesTableColumns = keyof GameRecordDef;
+type CollectionItemsTableColumns = keyof CollectionItemRecordDef;
 
-export const getAllGames = async (props: {
-  params?: PaginationParamsSchemaDef<keyof GameRecordDef>;
+export const getAllCollectionItemsQuery = async (props: {
+  params?: PaginationParamsSchemaDef<keyof CollectionItemRecordDef>;
   userId: string | undefined;
-}): Promise<PaginatedData<GameRecordDef>> => {
+}): Promise<PaginatedData<CollectionItemRecordDef>> => {
   const { params = {}, userId } = props;
   const {
     limit = defaultParams.limit,
@@ -53,7 +53,7 @@ export const getAllGames = async (props: {
       table: collectionItemsTable,
     });
 
-    const sortingField: GamesTableColumns =
+    const sortingField: CollectionItemsTableColumns =
       sortField && collectionItemsTable.hasOwnProperty(sortField)
         ? sortField
         : 'name';
@@ -89,7 +89,7 @@ export const getAllGames = async (props: {
   };
 };
 
-export const getGameById = async (props: {
+export const getCollectionItemByIdQuery = async (props: {
   id: number;
   userId: string | undefined;
 }) => {
@@ -109,7 +109,7 @@ export const getGameById = async (props: {
   }
 };
 
-export const getItemsByCollectionId = async (props: {
+export const getItemsByCollectionIdQuery = async (props: {
   collectionId: number;
   userId: string | undefined;
 }) => {
@@ -129,7 +129,9 @@ export const getItemsByCollectionId = async (props: {
   }
 };
 
-export const getLastAddedGamesSystem = async (userId: string | undefined) => {
+export const getLastAddedCollectionItemSystemQuery = async (
+  userId: string | undefined,
+) => {
   if (userId) {
     const [game] = await db
       .select({ system: collectionItemsTable.system })
@@ -142,24 +144,24 @@ export const getLastAddedGamesSystem = async (userId: string | undefined) => {
   }
 };
 
-export const createGame = async (gameDetails: NewGameRecordDef) => {
-  const [newGame] = await db
+export const createCollectionItemQuery = async (
+  gameDetails: NewCollectionItemRecordDef,
+) => {
+  const [newRecord] = await db
     .insert(collectionItemsTable)
     .values(gameDetails)
     .onConflictDoNothing()
     .returning();
 
-  return newGame;
+  return newRecord;
 };
 
-export const createMockGames = async (mockGames: NewGameRecordDef[]) => {
-  await db.insert(collectionItemsTable).values(mockGames).onConflictDoNothing();
-};
-
-export const updateCollectionItem = async (props: UpdateGameRecordDef) => {
+export const updateCollectionItemQuery = async (
+  props: UpdateCollectionItemRecordDef,
+) => {
   const { userId } = props;
   // TODO - MAY HAVE TO MERGE OLD AND NEW DATA. GET GAME BY ID, IF NEEDED
-  const [updatedGame] = await db
+  const [updatedRecord] = await db
     .update(collectionItemsTable)
     .set({ ...props, updatedAt: new Date() })
     .where(
@@ -170,10 +172,10 @@ export const updateCollectionItem = async (props: UpdateGameRecordDef) => {
     )
     .returning();
 
-  return updatedGame;
+  return updatedRecord;
 };
 
-export const softDeleteGameById = async (props: {
+export const softDeleteCollectionItemByIdQuery = async (props: {
   id: number;
   userId: string | undefined;
 }) => {
@@ -190,7 +192,7 @@ export const softDeleteGameById = async (props: {
     );
 };
 
-export const hardDeleteGameById = async (props: {
+export const hardDeleteCollectionItemByIdQuery = async (props: {
   id: number;
   userId: string | undefined;
 }) => {
@@ -206,7 +208,9 @@ export const hardDeleteGameById = async (props: {
     );
 };
 
-export const hardDeleteAllGamesByUser = async (userId: string) => {
+export const hardDeleteAllCollectionItemsByUserQuery = async (
+  userId: string,
+) => {
   await db
     .delete(collectionItemsTable)
     .where(getMatchesUserIdAndNotDeleted(userId));

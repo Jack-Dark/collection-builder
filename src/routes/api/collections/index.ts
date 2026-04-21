@@ -1,4 +1,4 @@
-import type { AddGameFormSchemaDef } from '#/pages/CollectionsPage/components/AddCollectionForm/types';
+import type { AddCollectionFormSchemaDef } from '#/pages/CollectionsPage/components/AddCollectionForm/types';
 
 import { createFileRoute } from '@tanstack/react-router';
 import {
@@ -19,11 +19,11 @@ export const Route = createFileRoute('/api/collections/')({
         return Response.json(allCollections);
       },
       POST: async ({ request }) => {
-        const data: AddGameFormSchemaDef = await request.json();
+        const data: AddCollectionFormSchemaDef = await request.json();
 
-        const createdGameRecord = await createCollectionServerFn({ data });
+        const newRecord = await createCollectionServerFn({ data });
 
-        return Response.json(createdGameRecord);
+        return Response.json(newRecord);
       },
     },
     middleware: [authApiRouteMiddleware],

@@ -1,14 +1,25 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useServerFn } from '@tanstack/react-start';
+import { queryKeys } from '#/api/queryKeys';
 
 import {
   createCollectionServerFn,
   deleteCollectionServerFn,
+  fetchAllCollectionsServerFn,
   getCollectionServerFn,
   updateCollectionSeverFn,
 } from '../server/serverFns';
 
-const queryKey = 'get-collection-item';
+export const useGetAllCollections = (id: number) => {
+  const queryFn = useServerFn(fetchAllCollectionsServerFn);
+
+  return useQuery({
+    queryFn: () => {
+      return queryFn();
+    },
+    queryKey: [queryKeys.getCollection, { id }],
+  });
+};
 
 export const useGetCollection = (id: number) => {
   const queryFn = useServerFn(getCollectionServerFn);
@@ -17,7 +28,7 @@ export const useGetCollection = (id: number) => {
     queryFn: () => {
       return queryFn({ data: id });
     },
-    queryKey: [queryKey, { id }],
+    queryKey: [queryKeys.getCollection, { id }],
   });
 };
 
@@ -26,7 +37,7 @@ const useInvalidateGetCollection = (id: number) => {
 
   return () => {
     return queryClient.invalidateQueries({
-      queryKey: [queryKey, { id }],
+      queryKey: [queryKeys.getCollection, { id }],
     });
   };
 };

@@ -1,4 +1,4 @@
-import type { GameRecordDef } from '#/api/routes/collection-items/server/types';
+import type { CollectionItemRecordDef } from '#/api/routes/collection-items/server/types';
 
 import { useRouter } from '@tanstack/react-router';
 import { createColumnHelper } from '@tanstack/react-table';
@@ -9,7 +9,7 @@ import {
 import { MoreMenu } from '#/components/MoreMenu';
 import formatDate, { masks } from 'dateformat';
 
-const columnHelper = createColumnHelper<GameRecordDef>();
+const columnHelper = createColumnHelper<CollectionItemRecordDef>();
 
 export const collectionItemsTableColumns = [
   columnHelper.accessor('name', {

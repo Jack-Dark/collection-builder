@@ -1,5 +1,5 @@
-import type { AddGameFormSchemaDef } from './types';
+import type { AddCollectionFormSchemaDef } from './types';
 
-export const defaultValues: AddGameFormSchemaDef = {
+export const defaultValues: AddCollectionFormSchemaDef = {
   name: '',
 };

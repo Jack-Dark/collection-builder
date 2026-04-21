@@ -8,7 +8,7 @@ import { Route as CollectionRoute } from '#/routes/_protected/collections/$id';
 import { useState } from 'react';
 
 import { collectionItemsTableColumns } from './columns';
-import { AddGameForm } from './components/AddGameForm';
+import { AddCollectionItemForm } from './components/AddCollectionItemForm';
 
 export const CollectionPage: RouteComponent = () => {
   const [showAddForm, setShowAddForm] = useState<boolean>(false);
@@ -39,11 +39,13 @@ export const CollectionPage: RouteComponent = () => {
           onClick={toggleForm}
           variant="primary"
         >
-          Add Game
+          Add Collection
         </Button>
       )}
 
-      {showAddForm && <AddGameForm lastAddedSystem={lastAddedSystem} />}
+      {showAddForm && (
+        <AddCollectionItemForm lastAddedSystem={lastAddedSystem} />
+      )}
 
       <Table columns={collectionItemsTableColumns} data={items || []} />
     </PageWrapper>

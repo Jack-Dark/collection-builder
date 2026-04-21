@@ -20,16 +20,18 @@ export const Route = createFileRoute('/api/collection-items/$id')({
           data: id,
         });
 
-        return Response.json({ message: 'Game deleted successfully' });
+        return Response.json({
+          message: 'Item deleted successfully',
+        });
       },
       GET: async ({ params }) => {
         const id = Number(params.id);
 
-        const updatedGame = await getCollectionItemServerFn({
+        const updatedRecord = await getCollectionItemServerFn({
           data: id,
         });
 
-        return Response.json(updatedGame);
+        return Response.json(updatedRecord);
       },
       PUT: async ({ params, request }) => {
         const id = Number(params.id);
@@ -38,11 +40,11 @@ export const Route = createFileRoute('/api/collection-items/$id')({
           await request.json();
 
         if (id === gameDetails.id) {
-          const updatedGame = await updateCollectionItemSeverFn({
+          const updatedRecord = await updateCollectionItemSeverFn({
             data: gameDetails,
           });
 
-          return Response.json(updatedGame);
+          return Response.json(updatedRecord);
         }
         throw new Error(ReasonPhrases.CONFLICT, {
           cause: 'This submitted ID does not match the record ID.',

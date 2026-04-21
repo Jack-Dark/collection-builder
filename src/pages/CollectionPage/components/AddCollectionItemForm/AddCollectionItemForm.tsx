@@ -11,11 +11,11 @@ import { useRef } from 'react';
 
 import { systemsList, defaultValues } from './constants';
 
-type AddGameFormProps = {
+type AddCollectionItemFormPropsDef = {
   lastAddedSystem: string | undefined;
 };
 
-export const AddGameForm = (props: AddGameFormProps) => {
+export const AddCollectionItemForm = (props: AddCollectionItemFormPropsDef) => {
   const { lastAddedSystem } = props;
 
   const router = useRouter();
