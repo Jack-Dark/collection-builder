@@ -19,12 +19,12 @@ export const collectionTableColumns = [
     },
     header: 'Name',
   }),
-  // columnHelper.accessor('notes', {
-  //   cell: ({ getValue }) => {
-  //     return <p>{getValue() || '-'}</p>;
-  //   },
-  //   header: 'Notes',
-  // }),
+  columnHelper.accessor('notes', {
+    cell: ({ getValue }) => {
+      return <p>{getValue() || '-'}</p>;
+    },
+    header: 'Notes',
+  }),
   columnHelper.accessor('createdAt', {
     cell: ({ getValue }) => {
       const date = getValue();

@@ -6,8 +6,9 @@ import {
   useDeleteCollectionItem,
   useUpdateCollectionItem,
 } from '#/api/routes/collection-items/client/hooks';
-import { MoreMenu } from '#/components/MoreMenu';
 import formatDate, { masks } from 'dateformat';
+
+import { TableCellActionsMenu } from '../../components/TableCellActionsMenu';
 
 const columnHelper = createColumnHelper<CollectionItemRecordDef>();
 
@@ -49,9 +50,8 @@ export const collectionItemsTableColumns = [
     header: 'Added',
   }),
   columnHelper.accessor('id', {
-    cell: ({ getValue, row }) => {
+    cell: ({ row }) => {
       const router = useRouter();
-      const id = getValue();
 
       const { isPending: isUpdatePending, onUpdateCollectionItem } =
         useUpdateCollectionItem();
@@ -59,28 +59,21 @@ export const collectionItemsTableColumns = [
       const { isPending: isDeletePending, onDeleteCollectionItem } =
         useDeleteCollectionItem();
 
+      const isProcessing = isUpdatePending || isDeletePending;
+
       return (
-        <div className="flex flex-nowrap gap-2 justify-end items-center">
-          <MoreMenu
-            items={[
-              {
-                disabled: isUpdatePending || isDeletePending || true,
-                label: 'Edit',
-                onClick: async () => {
-                  await onUpdateCollectionItem({ data: row.original });
-                },
-              },
-              {
-                disabled: isUpdatePending || isDeletePending,
-                label: 'Delete',
-                onClick: async () => {
-                  await onDeleteCollectionItem({ data: id });
-                  router.invalidate();
-                },
-              },
-            ]}
-          />
-        </div>
+        <TableCellActionsMenu
+          deleteIsDisabled={isProcessing}
+          deleteOnClick={async (data) => {
+            await onDeleteCollectionItem({ data: data.id });
+            router.invalidate();
+          }}
+          editIsDisabled={isProcessing}
+          editOnClick={async (data) => {
+            await onUpdateCollectionItem({ data });
+          }}
+          row={row}
+        />
       );
     },
     header: () => {

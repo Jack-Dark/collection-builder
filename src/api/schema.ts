@@ -120,8 +120,15 @@ export const verificationsTable = pgTable(
 export const collectionsTable = pgTable(
   'collections',
   {
+    customField1Enabled: boolean().default(false),
+    customField1Label: text(),
+    customField2Enabled: boolean().default(false),
+    customField2Label: text(),
+    customField3Enabled: boolean().default(false),
+    customField3Label: text(),
     id: serial().primaryKey(),
     name: text().notNull(),
+    notes: text(),
     userId: text()
       .references(
         () => {

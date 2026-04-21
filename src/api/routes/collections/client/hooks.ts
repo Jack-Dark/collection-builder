@@ -1,23 +1,25 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useServerFn } from '@tanstack/react-start';
+import { getPaginationMetadataDefaults } from '#/api/pagination/constants';
 import { queryKeys } from '#/api/queryKeys';
 
 import {
   createCollectionServerFn,
   deleteCollectionServerFn,
-  fetchAllCollectionsServerFn,
+  getAllCollectionsServerFn,
   getCollectionServerFn,
   updateCollectionSeverFn,
 } from '../server/serverFns';
 
-export const useGetAllCollections = (id: number) => {
-  const queryFn = useServerFn(fetchAllCollectionsServerFn);
+export const useGetAllCollections = () => {
+  const queryFn = useServerFn(getAllCollectionsServerFn);
 
   return useQuery({
+    initialData: { data: [], metadata: getPaginationMetadataDefaults(10) },
     queryFn: () => {
       return queryFn();
     },
-    queryKey: [queryKeys.getCollection, { id }],
+    queryKey: [queryKeys.getCollection],
   });
 };
 

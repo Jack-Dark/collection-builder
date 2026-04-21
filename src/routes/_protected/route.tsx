@@ -1,5 +1,4 @@
 import { createFileRoute, isRedirect } from '@tanstack/react-router';
-import { fetchAllCollectionsServerFn } from '#/api/routes/collections/server/serverFns';
 import { getUserContext } from '#/auth/auth.functions';
 import { Layout } from '#/layout';
 
@@ -18,9 +17,7 @@ export const Route = createFileRoute('/_protected')({
         throw redirectToSignIn();
       }
 
-      const collections = await fetchAllCollectionsServerFn();
-
-      return { collections, user };
+      return { user };
     } catch (error) {
       // Re-throw redirects (they're intentional, not errors)
       if (isRedirect(error)) {

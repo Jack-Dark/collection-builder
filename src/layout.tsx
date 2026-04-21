@@ -8,18 +8,18 @@ import { ErrorBoundary } from 'react-error-boundary';
 import type { NavMenuItem } from './components/NavMenu/NavMenu.types';
 import type { RouterPath } from './types';
 
+import { useGetAllCollections } from './api/routes/collections/client/hooks';
 import { authClient } from './auth/auth-client';
 import { NavMenu } from './components/NavMenu';
 import { Route as CollectionsRoute } from './routes/_protected/collections';
 import { Route as CollectionRoute } from './routes/_protected/collections/$id';
-import { Route as ProtectedRoute } from './routes/_protected/route';
 
 export const Layout: RouteComponent = () => {
   const router = useRouter();
 
   const { data: session } = authClient.useSession();
 
-  const { collections } = ProtectedRoute.useRouteContext();
+  const { data: collections } = useGetAllCollections();
 
   const isLoggedOut = !session?.user.id;
 

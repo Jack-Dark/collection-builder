@@ -2,13 +2,13 @@ import type { RouteComponent } from '@tanstack/react-router';
 
 import { Table } from '#/components/Table';
 import { PageWrapper } from '#/page-wrapper';
-import { Route as ProtectedRoute } from '#/routes/_protected/route';
+import { Route } from '#/routes/_protected/collections';
 
 import { collectionTableColumns } from './columns';
 import { AddCollectionForm } from './components/AddCollectionForm';
 
 export const CollectionsPage: RouteComponent = () => {
-  const { collections } = ProtectedRoute.useRouteContext();
+  const collections = Route.useLoaderData();
 
   return (
     <PageWrapper title="Collections">

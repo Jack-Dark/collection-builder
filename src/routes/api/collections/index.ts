@@ -4,7 +4,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import {
   allCollectionsPaginationParamsSchema,
   createCollectionServerFn,
-  fetchAllCollectionsServerFn,
+  getAllCollectionsServerFn,
 } from '#/api/routes/collections/server/serverFns';
 import { authApiRouteMiddleware } from '#/auth/auth-middleware';
 
@@ -15,7 +15,7 @@ export const Route = createFileRoute('/api/collections/')({
         // @ts-expect-error
         const _searchParams = Route.useSearch();
         // TODO - PASS SEARCH PARAMS IN WITHOUT TS ERROR
-        const allCollections = await fetchAllCollectionsServerFn({ data: {} });
+        const allCollections = await getAllCollectionsServerFn({ data: {} });
 
         return Response.json(allCollections);
       },

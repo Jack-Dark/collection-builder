@@ -28,7 +28,7 @@ const allCollectionsSortFields = [
 export const allCollectionsPaginationParamsSchema =
   getOptionalPaginationParamsSchema(allCollectionsSortFields);
 
-export const fetchAllCollectionsServerFn = createServerFn({
+export const getAllCollectionsServerFn = createServerFn({
   method: 'GET',
 })
   .middleware([authApiRouteMiddleware])
