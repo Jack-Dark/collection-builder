@@ -17,7 +17,7 @@ export const collectionTableColumns = [
     cell: ({ getValue, row }) => {
       const { id } = row.original;
       const value = getValue();
-      const isEditing = row.getIsSelected();
+      // const isEditing = row.getIsSelected();
 
       return (
         <Link params={{ id: String(id) }} to="/collections/$id">
@@ -28,9 +28,9 @@ export const collectionTableColumns = [
     header: 'Name',
   }),
   columnHelper.accessor('notes', {
-    cell: ({ getValue, row }) => {
+    cell: ({ getValue }) => {
       const value = getValue();
-      const isEditing = row.getIsSelected();
+      // const isEditing = row.getIsSelected();
 
       return <p>{value || '-'}</p>;
     },

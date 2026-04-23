@@ -12,7 +12,8 @@ import { AddCollectionForm } from './components/AddCollectionForm';
 const defaultValues = {
   isEditingRowId: '',
 };
-const useAddOrEditCollection = create<{
+
+export const useAddOrEditCollection = create<{
   isEditingRowId: string;
   resetIsEditingRowId: () => void;
   setIsEditingRowId: (value: string) => void;
