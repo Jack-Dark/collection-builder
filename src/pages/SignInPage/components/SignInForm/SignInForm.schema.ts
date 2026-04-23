@@ -1,7 +1,8 @@
 import type * as zodTypes from 'zod';
 
-import { passwordSchema } from '#/pages/SignUpPage/components/SignUpForm/SignUpForm.schema';
 import * as zod from 'zod';
+
+import { passwordSchema } from '#/pages/SignUpPage/components/SignUpForm/SignUpForm.schema';
 
 export const defaultValues: SignUpFormSchemaDef = {
   email: '',

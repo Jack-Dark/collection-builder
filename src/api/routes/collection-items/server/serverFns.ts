@@ -1,6 +1,7 @@
 import { createServerFn } from '@tanstack/react-start';
-import { authApiRouteMiddleware } from '#/auth/auth-middleware';
 import z from 'zod';
+
+import { authApiRouteMiddleware } from '#/auth/auth-middleware';
 
 import { gamesDbQueries } from '.';
 

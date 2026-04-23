@@ -1,13 +1,14 @@
 import SaveIcon from '@mui/icons-material/Save';
 import { revalidateLogic, useForm } from '@tanstack/react-form';
 import { useRouter } from '@tanstack/react-router';
+import { useRef } from 'react';
+
 import { useCreateCollectionItem } from '#/api/routes/collection-items/client/hooks';
 import { createCollectionItemSchema } from '#/api/routes/collection-items/server/serverFns';
 import { Button } from '#/components/Button';
 import { CheckboxField } from '#/components/CheckboxField';
 import { ComboboxField } from '#/components/ComboboxField';
 import { InputField } from '#/components/InputField';
-import { useRef } from 'react';
 
 import { systemsList, defaultValues } from './constants';
 

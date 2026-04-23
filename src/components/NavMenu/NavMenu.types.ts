@@ -1,5 +1,6 @@
-import type { RouterPath } from '#/types';
 import type { JSXElementConstructor, MouseEventHandler } from 'react';
+
+import type { RouterPath } from '#/types';
 
 export type NavMenuItem = {
   hidden?: boolean;

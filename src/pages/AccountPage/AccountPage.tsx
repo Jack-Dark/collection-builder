@@ -1,4 +1,5 @@
 import VerifiedIcon from '@mui/icons-material/Verified';
+
 import { authClient } from '#/auth/auth-client';
 import { Button } from '#/components/Button';
 import { PageWrapper } from '#/page-wrapper';

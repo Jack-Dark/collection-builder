@@ -1,9 +1,10 @@
-import { db } from '#/api/db';
-import { configs } from '#/configs';
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { tanstackStartCookies } from 'better-auth/tanstack-start';
 import { Resend } from 'resend';
+
+import { db } from '#/api/db';
+import { configs } from '#/configs';
 
 // @ts-expect-error
 const _resend = new Resend(configs.resendApiKey);

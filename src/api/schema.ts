@@ -120,15 +120,15 @@ export const verificationsTable = pgTable(
 export const collectionsTable = pgTable(
   'collections',
   {
-    customField1Enabled: boolean().default(false),
+    customField1Enabled: boolean().notNull().default(false),
     customField1Label: text(),
-    customField2Enabled: boolean().default(false),
+    customField2Enabled: boolean().notNull().default(false),
     customField2Label: text(),
-    customField3Enabled: boolean().default(false),
+    customField3Enabled: boolean().notNull().default(false),
     customField3Label: text(),
     id: serial().primaryKey(),
     name: text().notNull(),
-    notes: text(),
+    notes: text().notNull(),
     userId: text()
       .references(
         () => {
@@ -154,6 +154,9 @@ export const collectionItemsTable = pgTable(
     isSpecialEdition: boolean().notNull(),
     editionDetails: text(),
     notes: text(),
+    customField1Value: text(),
+    customField2Value: text(),
+    customField3Value: text(),
     userId: text()
       .references(
         () => {

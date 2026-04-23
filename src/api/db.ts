@@ -1,8 +1,9 @@
 import type { NeonQueryFunction } from '@neondatabase/serverless';
 
 import { neon } from '@neondatabase/serverless';
-import { configs } from '#/configs.ts';
 import { drizzle } from 'drizzle-orm/node-postgres';
+
+import { configs } from '#/configs.ts';
 
 import * as schema from './schema.ts';
 

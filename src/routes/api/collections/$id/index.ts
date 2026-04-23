@@ -1,11 +1,12 @@
-import type { UpdateCollectionItemRecordDef } from '#/api/routes/collection-items/server/types';
-
 import { createFileRoute } from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
+import z from 'zod';
+
+import type { UpdateCollectionItemRecordDef } from '#/api/routes/collection-items/server/types';
+
 import { gamesDbQueries } from '#/api/routes/collection-items/server';
 import { collectionsDbQueries } from '#/api/routes/collections/server';
 import { authApiRouteMiddleware } from '#/auth/auth-middleware';
-import z from 'zod';
 
 export const Route = createFileRoute('/api/collections/$id/')({
   server: {

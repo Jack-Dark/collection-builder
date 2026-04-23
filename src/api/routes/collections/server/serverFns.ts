@@ -1,22 +1,26 @@
 import { createServerFn } from '@tanstack/react-start';
+import * as zod from 'zod';
+
 import { getOptionalPaginationParamsSchema } from '#/api/pagination/schema';
 import { authApiRouteMiddleware } from '#/auth/auth-middleware';
-import * as zod from 'zod';
 
 import type { CollectionRecordDef } from './types';
 
 import { collectionsDbQueries } from '.';
 
 const nameSchema = zod.string().describe('Name').min(1);
+const notesSchema = zod.string().describe('Notes');
 const userIdSchema = zod.string().describe('User ID').min(1);
 
 export const createCollectionSchema = zod.object({
   name: nameSchema,
+  notes: notesSchema,
 });
 
 export const updateCollectionSchema = zod.object({
   id: zod.number().describe('ID').min(1),
   name: nameSchema,
+  notes: notesSchema,
   userId: userIdSchema,
 });
 

@@ -1,5 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
+import z from 'zod';
+
 import { gamesDbQueries } from '#/api/routes/collection-items/server';
 import { authApiRouteMiddleware } from '#/auth/auth-middleware';
 import { CollectionPage } from '#/pages/CollectionPage';
@@ -14,16 +16,16 @@ export const Route = createFileRoute('/_protected/collections/$id')({
   },
   loader: async ({ params }) => {
     const collectionId = Number(params.id);
-    const [collection, items, lastAddedSystem] = await Promise.all([
+    const [collection, items, customFields] = await Promise.all([
       await getCollectionById({ data: { id: collectionId } }),
       await getItemsByCollectionId({ data: { collectionId } }),
-      await fetchLastAddedCollectionItemSystem(),
+      await fetchLastAddedCollectionItemSystem({ data: { collectionId } }),
     ]);
 
     return {
       collection,
+      customFields,
       items,
-      lastAddedSystem,
     };
   },
 });
@@ -32,8 +34,10 @@ const fetchLastAddedCollectionItemSystem = createServerFn({
   method: 'GET',
 })
   .middleware([authApiRouteMiddleware])
-  .handler(async ({ context }) => {
-    return gamesDbQueries.getLastAddedCollectionItemSystemQuery(
-      context.user.id,
-    );
+  .inputValidator(z.object({ collectionId: z.number() }))
+  .handler(async ({ context, data }) => {
+    return gamesDbQueries.getCustomFieldsForCollectionIdQuery({
+      collectionId: data.collectionId,
+      userId: context.user.id,
+    });
   });

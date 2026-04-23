@@ -1,4 +1,5 @@
 import { Link } from '@tanstack/react-router';
+
 import { PageWrapper } from '#/page-wrapper';
 
 import { SignUpForm } from './components/SignUpForm';

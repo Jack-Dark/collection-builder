@@ -1,8 +1,14 @@
-import type { CollectionRecordDef } from '#/api/routes/collections/server/types';
-
-import { Link } from '@tanstack/react-router';
+import { Link, useRouter } from '@tanstack/react-router';
 import { createColumnHelper } from '@tanstack/react-table';
 import formatDate, { masks } from 'dateformat';
+
+import type { CollectionRecordDef } from '#/api/routes/collections/server/types';
+
+import {
+  useDeleteCollection,
+  useUpdateCollection,
+} from '#/api/routes/collections/client/hooks';
+import { TableCellActionsMenu } from '#/components/TableCellActionsMenu';
 
 const columnHelper = createColumnHelper<CollectionRecordDef>();
 
@@ -10,18 +16,23 @@ export const collectionTableColumns = [
   columnHelper.accessor('name', {
     cell: ({ getValue, row }) => {
       const { id } = row.original;
+      const value = getValue();
+      const isEditing = row.getIsSelected();
 
       return (
         <Link params={{ id: String(id) }} to="/collections/$id">
-          <p>{getValue()}</p>
+          <p>{value}</p>
         </Link>
       );
     },
     header: 'Name',
   }),
   columnHelper.accessor('notes', {
-    cell: ({ getValue }) => {
-      return <p>{getValue() || '-'}</p>;
+    cell: ({ getValue, row }) => {
+      const value = getValue();
+      const isEditing = row.getIsSelected();
+
+      return <p>{value || '-'}</p>;
     },
     header: 'Notes',
   }),
@@ -36,5 +47,38 @@ export const collectionTableColumns = [
       ) : null;
     },
     header: 'Added',
+  }),
+  columnHelper.accessor('id', {
+    cell: ({ row }) => {
+      const router = useRouter();
+
+      const { isPending: isUpdatePending, onUpdateCollection } =
+        useUpdateCollection();
+
+      const { isPending: isDeletePending, onDeleteCollection } =
+        useDeleteCollection();
+
+      const isProcessing = isUpdatePending || isDeletePending;
+
+      return (
+        <TableCellActionsMenu
+          deleteIsDisabled={isProcessing}
+          deleteOnClick={async (data) => {
+            await onDeleteCollection({ data: data.id });
+            router.invalidate();
+          }}
+          editIsDisabled={isProcessing}
+          editOnClick={async (data) => {
+            await onUpdateCollection({ data });
+          }}
+          row={row}
+        />
+      );
+    },
+    header: () => {
+      return <p className="text-right">Actions</p>;
+    },
+    id: 'actions',
+    size: 0,
   }),
 ];

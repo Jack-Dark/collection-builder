@@ -1,14 +1,16 @@
-import type { updateCollectionItemSchema } from '#/api/routes/collection-items/server/serverFns';
 import type z from 'zod';
 
 import { createFileRoute } from '@tanstack/react-router';
+import { ReasonPhrases } from 'http-status-codes';
+
+import type { updateCollectionItemSchema } from '#/api/routes/collection-items/server/serverFns';
+
 import {
   deleteCollectionItemServerFn,
   getCollectionItemServerFn,
   updateCollectionItemSeverFn,
 } from '#/api/routes/collection-items/server/serverFns';
 import { authApiRouteMiddleware } from '#/auth/auth-middleware';
-import { ReasonPhrases } from 'http-status-codes';
 
 export const Route = createFileRoute('/api/collection-items/$id')({
   server: {

@@ -1,6 +1,7 @@
+import { createFileRoute } from '@tanstack/react-router';
+
 import type { AddCollectionFormSchemaDef } from '#/pages/CollectionsPage/components/AddCollectionForm/types';
 
-import { createFileRoute } from '@tanstack/react-router';
 import {
   allCollectionsPaginationParamsSchema,
   createCollectionServerFn,

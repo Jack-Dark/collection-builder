@@ -1,8 +1,9 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
+import z from 'zod';
+
 import { gamesDbQueries } from '#/api/routes/collection-items/server';
 import { authApiRouteMiddleware } from '#/auth/auth-middleware';
-import z from 'zod';
 
 export const Route = createFileRoute('/api/collections/$id/items')({
   server: {

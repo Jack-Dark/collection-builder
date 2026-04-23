@@ -1,11 +1,12 @@
 import type { RouteComponent } from '@tanstack/react-router';
 
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import { useState } from 'react';
+
 import { Button } from '#/components/Button';
 import { Table } from '#/components/Table';
 import { PageWrapper } from '#/page-wrapper';
 import { Route as CollectionRoute } from '#/routes/_protected/collections/$id';
-import { useState } from 'react';
 
 import { collectionItemsTableColumns } from './columns';
 import { AddCollectionItemForm } from './components/AddCollectionItemForm';
@@ -13,8 +14,8 @@ import { AddCollectionItemForm } from './components/AddCollectionItemForm';
 export const CollectionPage: RouteComponent = () => {
   const [showAddForm, setShowAddForm] = useState<boolean>(false);
 
-  const { collection, items, lastAddedSystem } =
-    CollectionRoute.useLoaderData();
+  const { collection, customFields, items } = CollectionRoute.useLoaderData();
+  console.log('🚀 ~ CollectionPage ~ customFields:', customFields);
 
   const toggleForm = () => {
     setShowAddForm((prev) => {
@@ -43,9 +44,7 @@ export const CollectionPage: RouteComponent = () => {
         </Button>
       )}
 
-      {showAddForm && (
-        <AddCollectionItemForm lastAddedSystem={lastAddedSystem} />
-      )}
+      {showAddForm && <AddCollectionItemForm lastAddedSystem="" />}
 
       <Table columns={collectionItemsTableColumns} data={items || []} />
     </PageWrapper>

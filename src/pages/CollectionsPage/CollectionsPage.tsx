@@ -1,11 +1,36 @@
 import type { RouteComponent } from '@tanstack/react-router';
 
+import { create } from 'zustand';
+
 import { Table } from '#/components/Table';
 import { PageWrapper } from '#/page-wrapper';
 import { Route } from '#/routes/_protected/collections';
 
 import { collectionTableColumns } from './columns';
 import { AddCollectionForm } from './components/AddCollectionForm';
+
+const defaultValues = {
+  isEditingRowId: '',
+};
+const useAddOrEditCollection = create<{
+  isEditingRowId: string;
+  resetIsEditingRowId: () => void;
+  setIsEditingRowId: (value: string) => void;
+}>((set) => {
+  return {
+    isEditingRowId: defaultValues.isEditingRowId,
+    resetIsEditingRowId: () => {
+      set({
+        isEditingRowId: defaultValues.isEditingRowId,
+      });
+    },
+    setIsEditingRowId: (value) => {
+      set({
+        isEditingRowId: value,
+      });
+    },
+  };
+});
 
 export const CollectionsPage: RouteComponent = () => {
   const collections = Route.useLoaderData();

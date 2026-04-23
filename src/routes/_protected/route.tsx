@@ -1,4 +1,5 @@
 import { createFileRoute, isRedirect } from '@tanstack/react-router';
+
 import { getUserContext } from '#/auth/auth.functions';
 import { Layout } from '#/layout';
 

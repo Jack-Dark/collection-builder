@@ -1,5 +1,6 @@
 import type { AddCollectionFormSchemaDef } from './types';
 
-export const defaultValues = {
+export const defaultValues: AddCollectionFormSchemaDef = {
   name: '',
-} satisfies Partial<AddCollectionFormSchemaDef>;
+  notes: '',
+};

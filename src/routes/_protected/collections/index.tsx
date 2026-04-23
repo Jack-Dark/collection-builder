@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
+
 import { getAllCollectionsServerFn } from '#/api/routes/collections/server/serverFns';
 import { CollectionsPage } from '#/pages/CollectionsPage';
 

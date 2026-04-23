@@ -1,5 +1,6 @@
 import { Menu } from '@base-ui/react';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+
 import { getCursorClassName } from '#/helpers';
 
 import type { MenuPropsDef } from './MoreMenu.types';

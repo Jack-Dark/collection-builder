@@ -1,7 +1,8 @@
-import type { RouterPath } from '#/types';
-
 import { useForm } from '@tanstack/react-form';
 import { useRouter, useSearch } from '@tanstack/react-router';
+
+import type { RouterPath } from '#/types';
+
 import { authClient } from '#/auth/auth-client';
 import { Button } from '#/components/Button';
 import { InputField } from '#/components/InputField';
