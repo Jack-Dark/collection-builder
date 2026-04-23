@@ -16,6 +16,7 @@ export const db = drizzle({
     user: schema.usersTable,
     verification: schema.verificationsTable,
   },
+  sql: getClient(),
 });
 
 let client: NeonQueryFunction<boolean, boolean> | undefined;
