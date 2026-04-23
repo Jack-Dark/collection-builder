@@ -1,5 +1,5 @@
 {
-  "id": "d662bab8-e8be-41d9-9ab7-f23bfefb6141",
+  "id": "30b34bab-3bba-4ab5-8b5d-6f2fe89c951b",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -126,8 +126,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.collection-items": {
-      "name": "collection-items",
+    "public.collection_items": {
+      "name": "collection_items",
       "schema": "",
       "columns": {
         "id": {
@@ -138,12 +138,6 @@
         },
         "name": {
           "name": "name",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "system": {
-          "name": "system",
           "type": "text",
           "primaryKey": false,
           "notNull": true
@@ -162,6 +156,24 @@
         },
         "notes": {
           "name": "notes",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "custom_field1_value": {
+          "name": "custom_field1_value",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "custom_field2_value": {
+          "name": "custom_field2_value",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "custom_field3_value": {
+          "name": "custom_field3_value",
           "type": "text",
           "primaryKey": false,
           "notNull": false
@@ -232,9 +244,9 @@
         }
       },
       "foreignKeys": {
-        "collection-items_user_id_users_id_fk": {
-          "name": "collection-items_user_id_users_id_fk",
-          "tableFrom": "collection-items",
+        "collection_items_user_id_users_id_fk": {
+          "name": "collection_items_user_id_users_id_fk",
+          "tableFrom": "collection_items",
           "tableTo": "users",
           "columnsFrom": [
             "user_id"
@@ -245,9 +257,9 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "collection-items_collection_id_collections_id_fk": {
-          "name": "collection-items_collection_id_collections_id_fk",
-          "tableFrom": "collection-items",
+        "collection_items_collection_id_collections_id_fk": {
+          "name": "collection_items_collection_id_collections_id_fk",
+          "tableFrom": "collection_items",
           "tableTo": "collections",
           "columnsFrom": [
             "collection_id"
@@ -269,6 +281,45 @@
       "name": "collections",
       "schema": "",
       "columns": {
+        "custom_field1_enabled": {
+          "name": "custom_field1_enabled",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "custom_field1_label": {
+          "name": "custom_field1_label",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "custom_field2_enabled": {
+          "name": "custom_field2_enabled",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "custom_field2_label": {
+          "name": "custom_field2_label",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "custom_field3_enabled": {
+          "name": "custom_field3_enabled",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "custom_field3_label": {
+          "name": "custom_field3_label",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
         "id": {
           "name": "id",
           "type": "serial",
@@ -277,6 +328,12 @@
         },
         "name": {
           "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "notes": {
+          "name": "notes",
           "type": "text",
           "primaryKey": false,
           "notNull": true

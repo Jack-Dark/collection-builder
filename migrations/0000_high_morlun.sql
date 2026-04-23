@@ -14,13 +14,15 @@ CREATE TABLE "accounts" (
 	"user_id" text NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "collection-items" (
+CREATE TABLE "collection_items" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
-	"system" text NOT NULL,
 	"is_special_edition" boolean NOT NULL,
 	"edition_details" text,
 	"notes" text,
+	"custom_field1_value" text,
+	"custom_field2_value" text,
+	"custom_field3_value" text,
 	"user_id" text NOT NULL,
 	"collection_id" serial NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
@@ -29,8 +31,15 @@ CREATE TABLE "collection-items" (
 );
 --> statement-breakpoint
 CREATE TABLE "collections" (
+	"custom_field1_enabled" boolean DEFAULT false NOT NULL,
+	"custom_field1_label" text,
+	"custom_field2_enabled" boolean DEFAULT false NOT NULL,
+	"custom_field2_label" text,
+	"custom_field3_enabled" boolean DEFAULT false NOT NULL,
+	"custom_field3_label" text,
 	"id" serial PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
+	"notes" text NOT NULL,
 	"user_id" text NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
@@ -70,13 +79,13 @@ CREATE TABLE "verifications" (
 );
 --> statement-breakpoint
 ALTER TABLE "accounts" ADD CONSTRAINT "accounts_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "collection-items" ADD CONSTRAINT "collection-items_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "collection-items" ADD CONSTRAINT "collection-items_collection_id_collections_id_fk" FOREIGN KEY ("collection_id") REFERENCES "public"."collections"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "collection_items" ADD CONSTRAINT "collection_items_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "collection_items" ADD CONSTRAINT "collection_items_collection_id_collections_id_fk" FOREIGN KEY ("collection_id") REFERENCES "public"."collections"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "collections" ADD CONSTRAINT "collections_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "sessions" ADD CONSTRAINT "sessions_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 CREATE INDEX "accounts_userId_idx" ON "accounts" USING btree ("user_id");--> statement-breakpoint
-CREATE INDEX "collectionsItems_userId_idx" ON "collection-items" USING btree ("user_id");--> statement-breakpoint
-CREATE INDEX "collectionsItems_collectionId_idx" ON "collection-items" USING btree ("collection_id");--> statement-breakpoint
+CREATE INDEX "collectionsItems_userId_idx" ON "collection_items" USING btree ("user_id");--> statement-breakpoint
+CREATE INDEX "collectionsItems_collectionId_idx" ON "collection_items" USING btree ("collection_id");--> statement-breakpoint
 CREATE INDEX "collections_userId_idx" ON "collections" USING btree ("user_id");--> statement-breakpoint
 CREATE INDEX "sessions_userId_idx" ON "sessions" USING btree ("user_id");--> statement-breakpoint
 CREATE INDEX "verifications_identifier_idx" ON "verifications" USING btree ("identifier");

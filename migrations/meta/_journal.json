@@ -5,29 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1776360288807,
-      "tag": "0000_tearful_mongu",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1776797730839,
-      "tag": "0001_violet_talkback",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1776904613189,
-      "tag": "0002_many_tyger_tiger",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1776907789630,
-      "tag": "0003_youthful_wrecking_crew",
+      "when": 1776909499190,
+      "tag": "0000_high_morlun",
       "breakpoints": true
     }
   ]
