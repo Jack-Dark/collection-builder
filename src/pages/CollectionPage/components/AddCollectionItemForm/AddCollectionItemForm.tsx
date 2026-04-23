@@ -29,7 +29,7 @@ export const AddCollectionItemForm = (props: AddCollectionItemFormPropsDef) => {
     defaultValues: {
       ...defaultValues,
       // ? prefill system field with last-added game's system
-      system: lastAddedSystem || '',
+      customField1Value: lastAddedSystem || '',
     },
     onSubmit: async ({ value }) => {
       await onCreateCollectionItem({
@@ -96,13 +96,13 @@ export const AddCollectionItemForm = (props: AddCollectionItemFormPropsDef) => {
           selector={(state) => {
             return {
               errors: state.errors,
-              value: state.values.system,
+              value: state.values.customField1Value,
             };
           }}
         >
           {({ errors, value }) => {
             return (
-              <form.Field name="system">
+              <form.Field name="customField1Value">
                 {(field) => {
                   const errorMsg = errors?.[0]?.[field.name]?.[0]?.message;
 

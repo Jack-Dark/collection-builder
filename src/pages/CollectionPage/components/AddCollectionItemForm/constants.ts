@@ -33,8 +33,8 @@ export const systemsList: ObjectValues<typeof systems>[] =
   Object.values(systems).sort();
 
 export const defaultValues: AddCollectionItemFormSchemaDef = {
+  customField1Value: '',
   editionDetails: '',
   isSpecialEdition: false,
   name: '',
-  system: '',
 };

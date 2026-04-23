@@ -145,12 +145,11 @@ export const collectionsTable = pgTable(
 );
 
 export const collectionItemsTable = pgTable(
-  'collection-items',
+  'collection_items',
   {
     /* eslint-disable perfectionist/sort-objects */
     id: serial().primaryKey(),
     name: text().notNull(),
-    system: text().notNull(),
     isSpecialEdition: boolean().notNull(),
     editionDetails: text(),
     notes: text(),

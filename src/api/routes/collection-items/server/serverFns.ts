@@ -6,10 +6,10 @@ import { authApiRouteMiddleware } from '#/auth/auth-middleware';
 import { gamesDbQueries } from '.';
 
 const createCollectionItemBaseSchema = z.object({
+  customField1Value: z.string().describe('System').min(1),
   editionDetails: z.string().describe('Edition details'),
   isSpecialEdition: z.boolean().describe('Is special edition'),
   name: z.string().describe('Name').min(1),
-  system: z.string().describe('System').min(1),
 });
 
 const createCollectionItemIsSpecialEditionSchema = z.object({
@@ -32,11 +32,11 @@ export const createCollectionItemSchema = z.union([
 ]);
 
 export const updateCollectionItemSchema = z.object({
+  customField1Value: z.string().describe('System').min(1).nullable(),
   editionDetails: z.string().describe('Edition details').nullable(),
   id: z.number().min(1),
   isSpecialEdition: z.boolean().describe('Is special edition'),
   name: z.string().describe('Name').min(1),
-  system: z.string().describe('System').min(1),
   userId: z.string(),
 });
 

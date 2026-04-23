@@ -20,7 +20,7 @@ export const collectionItemsTableColumns = [
     },
     header: 'Name',
   }),
-  columnHelper.accessor('system', {
+  columnHelper.accessor('customField1Value', {
     cell: ({ getValue }) => {
       return <p>{getValue()}</p>;
     },
