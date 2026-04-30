@@ -10,28 +10,28 @@ import {
 
 export const timestamps = {
   /* eslint-disable perfectionist/sort-objects */
-  createdAt: timestamp().notNull().defaultNow(),
-  updatedAt: timestamp()
+  createdAt: timestamp({ mode: 'string' }).notNull().defaultNow(),
+  updatedAt: timestamp({ mode: 'string' })
     .defaultNow()
     .$onUpdate(() => /* @__PURE__ */ {
-      return new Date();
+      return new Date().toDateString();
     })
     .notNull(),
-  deletedAt: timestamp(),
+  deletedAt: timestamp({ mode: 'string' }),
   /* eslint-enable perfectionist/sort-objects */
 };
 
 export const usersTable = pgTable('users', {
-  createdAt: timestamp().defaultNow().notNull(),
+  createdAt: timestamp({ mode: 'string' }).defaultNow().notNull(),
   email: text().notNull().unique(),
   emailVerified: boolean().default(false).notNull(),
   id: text().primaryKey(),
   image: text(),
   name: text().notNull(),
-  updatedAt: timestamp()
+  updatedAt: timestamp({ mode: 'string' })
     .defaultNow()
     .$onUpdate(() => /* @__PURE__ */ {
-      return new Date();
+      return new Date().toDateString();
     })
     .notNull(),
 });
@@ -39,14 +39,14 @@ export const usersTable = pgTable('users', {
 export const sessionsTable = pgTable(
   'sessions',
   {
-    createdAt: timestamp().defaultNow().notNull(),
-    expiresAt: timestamp().notNull(),
+    createdAt: timestamp({ mode: 'string' }).defaultNow().notNull(),
+    expiresAt: timestamp({ mode: 'string' }).notNull(),
     id: text().primaryKey(),
     ipAddress: text(),
     token: text().notNull().unique(),
-    updatedAt: timestamp()
+    updatedAt: timestamp({ mode: 'string' })
       .$onUpdate(() => /* @__PURE__ */ {
-        return new Date();
+        return new Date().toDateString();
       })
       .notNull(),
     userAgent: text(),
@@ -68,19 +68,19 @@ export const accountsTable = pgTable(
   'accounts',
   {
     accessToken: text(),
-    accessTokenExpiresAt: timestamp(),
+    accessTokenExpiresAt: timestamp({ mode: 'string' }),
     accountId: text().notNull(),
-    createdAt: timestamp().defaultNow().notNull(),
+    createdAt: timestamp({ mode: 'string' }).defaultNow().notNull(),
     id: text(),
     idToken: text(),
     password: text(),
     providerId: text().notNull(),
     refreshToken: text(),
-    refreshTokenExpiresAt: timestamp(),
+    refreshTokenExpiresAt: timestamp({ mode: 'string' }),
     scope: text(),
-    updatedAt: timestamp()
+    updatedAt: timestamp({ mode: 'string' })
       .$onUpdate(() => /* @__PURE__ */ {
-        return new Date();
+        return new Date().toDateString();
       })
       .notNull(),
     userId: text()
@@ -100,14 +100,14 @@ export const accountsTable = pgTable(
 export const verificationsTable = pgTable(
   'verifications',
   {
-    createdAt: timestamp().defaultNow().notNull(),
-    expiresAt: timestamp().notNull(),
+    createdAt: timestamp({ mode: 'string' }).defaultNow().notNull(),
+    expiresAt: timestamp({ mode: 'string' }).notNull(),
     id: text().primaryKey(),
     identifier: text().notNull(),
-    updatedAt: timestamp()
+    updatedAt: timestamp({ mode: 'string' })
       .defaultNow()
       .$onUpdate(() => /* @__PURE__ */ {
-        return new Date();
+        return new Date().toDateString();
       })
       .notNull(),
     value: text('value').notNull(),
@@ -122,10 +122,13 @@ export const collectionsTable = pgTable(
   {
     customField1Enabled: boolean().notNull().default(false),
     customField1Label: text(),
+    customField1Required: boolean().notNull().default(false),
     customField2Enabled: boolean().notNull().default(false),
     customField2Label: text(),
+    customField2Required: boolean().notNull().default(false),
     customField3Enabled: boolean().notNull().default(false),
     customField3Label: text(),
+    customField3Required: boolean().notNull().default(false),
     id: serial().primaryKey(),
     name: text().notNull(),
     notes: text().notNull(),

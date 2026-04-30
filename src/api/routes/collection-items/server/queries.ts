@@ -15,8 +15,9 @@ import type {
   CollectionItemRecordDef,
 } from './types';
 
-import { collectionItemsTable, collectionsTable } from '../../../schema';
+import { collectionItemsTable } from '../../../schema';
 
+// TODO - DELETE
 const getMatchesUserIdAndNotDeleted = (userId: string) => {
   return and(
     eq(collectionItemsTable.userId, userId),
@@ -32,7 +33,8 @@ const getMatchesCollectionIdAndUserIdAndNotDeleted = (props: {
 
   return and(
     eq(collectionItemsTable.collectionId, collectionId),
-    getMatchesUserIdAndNotDeleted(userId),
+    eq(collectionItemsTable.userId, userId),
+    isNull(collectionItemsTable.deletedAt),
   );
 };
 
@@ -94,17 +96,17 @@ export const getAllCollectionItemsQuery = async (props: {
 };
 
 export const getCollectionItemByIdQuery = async (props: {
-  id: number;
+  collectionItemId: number;
   userId: string;
 }) => {
-  const { id, userId } = props;
+  const { collectionItemId, userId } = props;
 
   const [game] = await db
     .select()
     .from(collectionItemsTable)
     .where(
       and(
-        eq(collectionItemsTable.id, id),
+        eq(collectionItemsTable.id, collectionItemId),
         getMatchesUserIdAndNotDeleted(userId),
       ),
     );
@@ -131,28 +133,24 @@ export const getItemsByCollectionIdQuery = async (props: {
   return items;
 };
 
-export const getCustomFieldsForCollectionIdQuery = async (props: {
+export const getLastAddedCollectionItemQuery = async (props: {
   collectionId: number;
   userId: string;
 }) => {
   const { collectionId, userId } = props;
-
-  const [record] = await db
-    .select({
-      customField1Enabled: collectionsTable.customField1Enabled,
-      customField1Label: collectionsTable.customField1Label,
-      customField2Enabled: collectionsTable.customField2Enabled,
-      customField2Label: collectionsTable.customField2Label,
-      customField3Enabled: collectionsTable.customField3Enabled,
-      customField3Label: collectionsTable.customField3Label,
-    })
-    .from(collectionsTable)
+  const [lastAddedItem] = await db
+    .select()
+    .from(collectionItemsTable)
     .where(
-      getMatchesCollectionIdAndUserIdAndNotDeleted({ collectionId, userId }),
+      and(
+        eq(collectionItemsTable.collectionId, collectionId),
+        getMatchesUserIdAndNotDeleted(userId),
+      ),
     )
+    .orderBy(desc(collectionItemsTable.createdAt))
     .limit(1);
 
-  return record;
+  return lastAddedItem;
 };
 
 export const getCustomFieldsSetsForCollectionIdQuery = async (props: {
@@ -161,7 +159,7 @@ export const getCustomFieldsSetsForCollectionIdQuery = async (props: {
 }) => {
   const { collectionId, userId } = props;
 
-  const foo = await db
+  const customFields = await db
     .selectDistinct({
       customField1Value: collectionItemsTable.customField1Value,
       customField2Value: collectionItemsTable.customField2Value,
@@ -175,9 +173,32 @@ export const getCustomFieldsSetsForCollectionIdQuery = async (props: {
       ),
     );
 
-  console.log('🚀 ~ getCustomFieldsSetsForCollectionIdQuery ~ foo:', foo);
+  const filteredFields = customFields.reduce(
+    (acc, { customField1Value, customField2Value, customField3Value }) => {
+      if (customField1Value) {
+        acc.customField1Values.add(customField1Value);
+      }
+      if (customField2Value) {
+        acc.customField2Values.add(customField2Value);
+      }
+      if (customField3Value) {
+        acc.customField3Values.add(customField3Value);
+      }
 
-  return foo;
+      return acc;
+    },
+    {
+      customField1Values: new Set<string>(),
+      customField2Values: new Set<string>(),
+      customField3Values: new Set<string>(),
+    },
+  );
+
+  return {
+    customField1Values: Array.from(filteredFields.customField1Values).sort(),
+    customField2Values: Array.from(filteredFields.customField2Values).sort(),
+    customField3Values: Array.from(filteredFields.customField3Values).sort(),
+  };
 };
 
 export const createCollectionItemQuery = async (
@@ -199,7 +220,7 @@ export const updateCollectionItemQuery = async (
   // TODO - MAY HAVE TO MERGE OLD AND NEW DATA. GET GAME BY ID, IF NEEDED
   const [updatedRecord] = await db
     .update(collectionItemsTable)
-    .set({ ...props, updatedAt: new Date() })
+    .set({ ...props, updatedAt: new Date().toDateString() })
     .where(
       and(
         eq(collectionItemsTable.id, props.id),
@@ -219,7 +240,7 @@ export const softDeleteCollectionItemByIdQuery = async (props: {
 
   await db
     .update(collectionItemsTable)
-    .set({ deletedAt: new Date() })
+    .set({ deletedAt: new Date().toDateString() })
     .where(
       and(
         eq(collectionItemsTable.id, id),

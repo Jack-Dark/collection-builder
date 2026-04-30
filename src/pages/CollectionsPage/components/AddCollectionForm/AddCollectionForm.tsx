@@ -6,6 +6,7 @@ import { useRef } from 'react';
 import { useCreateCollection } from '#/api/routes/collections/client/hooks';
 import { createCollectionSchema } from '#/api/routes/collections/server/serverFns';
 import { Button } from '#/components/Button';
+import { CheckboxField } from '#/components/CheckboxField';
 import { InputField } from '#/components/InputField';
 
 import { defaultValues } from './constants';
@@ -98,12 +99,10 @@ export const AddCollectionForm = () => {
 
                   return (
                     <InputField
-                      autoFocus
                       error={errorMsg}
                       label="Notes"
                       name={field.name}
                       onValueChange={field.handleChange}
-                      required
                       value={value}
                     />
                   );
@@ -112,6 +111,116 @@ export const AddCollectionForm = () => {
             );
           }}
         </form.Subscribe>
+        {([1, 2, 3] as const).map((num) => {
+          return (
+            <div className="grid grid-cols-1 gap-2 py-4" key={num}>
+              <h4>Custom Field {num}</h4>
+              <div className="grid grid-cols-1 gap-2">
+                <form.Subscribe
+                  selector={(state) => {
+                    return {
+                      errors: state.errors,
+                      value: state.values[`customField${num}Enabled`],
+                    };
+                  }}
+                >
+                  {({ errors, value }) => {
+                    return (
+                      <form.Field name={`customField${num}Enabled`}>
+                        {(field) => {
+                          // TODO - EXTRACT ERROR MESSAGE (AND IDEALLY SUBSCRIBE) LOGIC
+                          const errorMsg =
+                            errors?.[0]?.[field.name]?.[0]?.message;
+
+                          return (
+                            <CheckboxField
+                              checked={value}
+                              error={errorMsg}
+                              label="Enable"
+                              name={field.name}
+                              onCheckedChange={field.handleChange}
+                            />
+                          );
+                        }}
+                      </form.Field>
+                    );
+                  }}
+                </form.Subscribe>
+
+                <form.Subscribe
+                  selector={(state) => {
+                    return {
+                      errors: state.errors,
+                      show: state.values[`customField${num}Enabled`],
+                      value: state.values[`customField${num}Label`],
+                    };
+                  }}
+                >
+                  {({ errors, show, value }) => {
+                    return (
+                      show && (
+                        <form.Field name={`customField${num}Label`}>
+                          {(field) => {
+                            // TODO - EXTRACT ERROR MESSAGE (AND IDEALLY SUBSCRIBE) LOGIC
+                            const errorMsg =
+                              errors?.[0]?.[field.name]?.[0]?.message;
+
+                            return (
+                              <InputField
+                                className="pl-7"
+                                error={errorMsg}
+                                label="Label"
+                                name={field.name}
+                                onValueChange={field.handleChange}
+                                required
+                                value={value || ''}
+                              />
+                            );
+                          }}
+                        </form.Field>
+                      )
+                    );
+                  }}
+                </form.Subscribe>
+                <form.Subscribe
+                  selector={(state) => {
+                    return {
+                      errors: state.errors,
+                      show: state.values[`customField${num}Enabled`],
+                      value: state.values[`customField${num}Required`],
+                    };
+                  }}
+                >
+                  {({ errors, show, value }) => {
+                    return (
+                      show && (
+                        <form.Field name={`customField${num}Required`}>
+                          {(field) => {
+                            // TODO - EXTRACT ERROR MESSAGE (AND IDEALLY SUBSCRIBE) LOGIC
+                            const errorMsg =
+                              errors?.[0]?.[field.name]?.[0]?.message;
+
+                            return (
+                              <CheckboxField
+                                checked={value}
+                                className="pl-7"
+                                error={errorMsg}
+                                label="Require"
+                                name={field.name}
+                                onCheckedChange={field.handleChange}
+                              />
+                            );
+                          }}
+                        </form.Field>
+                      )
+                    );
+                  }}
+                </form.Subscribe>
+              </div>
+            </div>
+          );
+        })}
+
         <form.Subscribe
           selector={(state) => {
             return {
@@ -139,101 +248,3 @@ export const AddCollectionForm = () => {
     </form>
   );
 };
-
-// const ReactiveInputField = <
-//   TFormData,
-//   TOnMount extends FormValidateOrFn<TFormData>,
-//   TOnChange extends FormValidateOrFn<TFormData>,
-//   TOnChangeAsync extends FormAsyncValidateOrFn<TFormData>,
-//   TOnBlur extends FormValidateOrFn<TFormData>,
-//   TOnBlurAsync extends FormAsyncValidateOrFn<TFormData>,
-//   TOnSubmit extends FormValidateOrFn<TFormData>,
-//   TOnSubmitAsync extends FormAsyncValidateOrFn<TFormData>,
-//   TOnDynamic extends FormValidateOrFn<TFormData>,
-//   TOnDynamicAsync extends FormAsyncValidateOrFn<TFormData>,
-//   TOnServer extends FormAsyncValidateOrFn<TFormData>,
-//   TSubmitMeta,
-// >(props: {
-//   form: ReactFormExtendedApi<
-//     TFormData,
-//     TOnMount,
-//     TOnChange,
-//     TOnChangeAsync,
-//     TOnBlur,
-//     TOnBlurAsync,
-//     TOnSubmit,
-//     TOnSubmitAsync,
-//     TOnDynamic,
-//     TOnDynamicAsync,
-//     TOnServer,
-//     TSubmitMeta
-//   >;
-//   getValueFromState: <TValue = string | number | readonly string[] | undefined>(
-//     state: NoInfer<
-//       FormState<
-//         TFormData,
-//         TOnMount,
-//         TOnChange,
-//         TOnChangeAsync,
-//         TOnBlur,
-//         TOnBlurAsync,
-//         TOnSubmit,
-//         TOnSubmitAsync,
-//         TOnDynamic,
-//         TOnDynamicAsync,
-//         TOnServer
-//       >
-//     >,
-//   ) => {
-//     errors: (typeof state)['errors'][];
-//     value: TValue;
-//   };
-//   label?: string;
-//   name: DeepKeys<TFormData>;
-//   ref?: React.Ref<HTMLElement>;
-// }) => {
-//   const { form, getValueFromState, label, name, ref } = props;
-
-//   return (
-//     <form.Subscribe
-//       selector={(state) => {
-//         const result = getValueFromState(state);
-
-//         return result;
-
-//         // return {
-//         //   errors: state.errors,
-//         //   value: eval(`state.values.${name}`),
-//         // };
-//       }}
-//     >
-//       {({ errors, value }) => {
-//         return (
-//           <form.Field name={name}>
-//             {(field) => {
-//               // TODO - EXTRACT ERROR MESSAGE (AND IDEALLY SUBSCRIBE) LOGIC
-//               const errorMsg = eval(
-//                 `${errors}?.[0]?.[${field.name}]?.[0]?.message`,
-//               );
-
-//               return (
-//                 <InputField
-//                   autoFocus
-//                   error={errorMsg}
-//                   label={label}
-//                   name={field.name}
-//                   onValueChange={(value, eventDetails) => {
-//                     return field.handleChange(value);
-//                   }}
-//                   ref={ref}
-//                   required
-//                   value={value}
-//                 />
-//               );
-//             }}
-//           </form.Field>
-//         );
-//       }}
-//     </form.Subscribe>
-//   );
-// };

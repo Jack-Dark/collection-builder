@@ -3,10 +3,14 @@ import z from 'zod';
 
 import { authApiRouteMiddleware } from '#/auth/auth-middleware';
 
-import { gamesDbQueries } from '.';
+import { collectionItemsDbQueries } from '.';
+import { requireCollectionIdSchema } from '../../collections/server/serverFns';
 
 const createCollectionItemBaseSchema = z.object({
-  customField1Value: z.string().describe('System').min(1),
+  collectionId: z.number().describe('Collection ID'),
+  customField1Value: z.string().describe('[customField1Value] placeholder'),
+  customField2Value: z.string().describe('[customField2Value] placeholder'),
+  customField3Value: z.string().describe('[customField3Value] placeholder'),
   editionDetails: z.string().describe('Edition details'),
   isSpecialEdition: z.boolean().describe('Is special edition'),
   name: z.string().describe('Name').min(1),
@@ -24,6 +28,10 @@ const createCollectionItemIsNotSpecialEditionSchema = z.object({
   ...createCollectionItemBaseSchema.shape,
   editionDetails: z.literal('').describe('Edition details'),
   isSpecialEdition: z.literal(false).describe('Is special edition'),
+});
+
+const requireCollectionItemIdSchema = z.object({
+  collectionItemId: z.number(),
 });
 
 export const createCollectionItemSchema = z.union([
@@ -46,7 +54,7 @@ export const createCollectionItemServerFn = createServerFn({
   .middleware([authApiRouteMiddleware])
   .inputValidator(createCollectionItemSchema)
   .handler(async ({ context, data }) => {
-    return gamesDbQueries.createCollectionItemQuery({
+    return collectionItemsDbQueries.createCollectionItemQuery({
       ...data,
       userId: context.user.id,
     });
@@ -56,10 +64,22 @@ export const getCollectionItemServerFn = createServerFn({
   method: 'GET',
 })
   .middleware([authApiRouteMiddleware])
-  .inputValidator(z.number())
-  .handler(async ({ context, data: id }) => {
-    return gamesDbQueries.getCollectionItemByIdQuery({
-      id,
+  .inputValidator(requireCollectionItemIdSchema)
+  .handler(async ({ context, data: { collectionItemId } }) => {
+    return collectionItemsDbQueries.getCollectionItemByIdQuery({
+      collectionItemId,
+      userId: context.user.id,
+    });
+  });
+
+export const getCustomFieldsSetsForCollectionIdServerFn = createServerFn({
+  method: 'GET',
+})
+  .middleware([authApiRouteMiddleware])
+  .inputValidator(requireCollectionIdSchema)
+  .handler(async ({ context, data: { collectionId } }) => {
+    return collectionItemsDbQueries.getCustomFieldsSetsForCollectionIdQuery({
+      collectionId,
       userId: context.user.id,
     });
   });
@@ -71,7 +91,7 @@ export const updateCollectionItemSeverFn = createServerFn({
   .middleware([authApiRouteMiddleware])
   .inputValidator(updateCollectionItemSchema)
   .handler(async ({ data }) => {
-    return gamesDbQueries.updateCollectionItemQuery(data);
+    return collectionItemsDbQueries.updateCollectionItemQuery(data);
   });
 
 export const deleteCollectionItemServerFn = createServerFn({
@@ -79,10 +99,10 @@ export const deleteCollectionItemServerFn = createServerFn({
   method: 'POST',
 })
   .middleware([authApiRouteMiddleware])
-  .inputValidator(z.number())
-  .handler(async ({ context, data: id }) => {
-    return gamesDbQueries.softDeleteCollectionItemByIdQuery({
-      id,
+  .inputValidator(requireCollectionItemIdSchema)
+  .handler(async ({ context, data: { collectionItemId } }) => {
+    return collectionItemsDbQueries.softDeleteCollectionItemByIdQuery({
+      id: collectionItemId,
       userId: context.user.id,
     });
   });

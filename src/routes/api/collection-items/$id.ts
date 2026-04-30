@@ -16,10 +16,10 @@ export const Route = createFileRoute('/api/collection-items/$id')({
   server: {
     handlers: {
       DELETE: async ({ params }) => {
-        const id = Number(params.id);
+        const collectionItemId = Number(params.id);
 
         await deleteCollectionItemServerFn({
-          data: id,
+          data: { collectionItemId },
         });
 
         return Response.json({
@@ -27,10 +27,10 @@ export const Route = createFileRoute('/api/collection-items/$id')({
         });
       },
       GET: async ({ params }) => {
-        const id = Number(params.id);
+        const collectionItemId = Number(params.id);
 
         const updatedRecord = await getCollectionItemServerFn({
-          data: id,
+          data: { collectionItemId },
         });
 
         return Response.json(updatedRecord);

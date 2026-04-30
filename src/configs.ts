@@ -1,3 +1,7 @@
+import { config } from 'dotenv';
+
+config({ path: '.env' });
+
 export const configs = {
   authSecret: process.env.BETTER_AUTH_SECRET!,
   dbUrl: process.env.DATABASE_URL!,

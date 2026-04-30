@@ -26,7 +26,7 @@ export const Layout: RouteComponent = () => {
   const navItems: NavMenuItem[] = [
     {
       href: CollectionsRoute.fullPath,
-      items: collections.data.map((collection) => {
+      items: collections?.data?.map((collection) => {
         return {
           href: CollectionRoute.fullPath.replace('$id', String(collection.id)),
           label: collection.name,
@@ -63,7 +63,13 @@ export const Layout: RouteComponent = () => {
             <h1>Start tracking your game collection!</h1>
           </div>
 
-          <NavMenu items={navItems} />
+          <ErrorBoundary
+            FallbackComponent={() => {
+              return <p>An error occurred...</p>;
+            }}
+          >
+            <NavMenu items={navItems} />
+          </ErrorBoundary>
         </div>
       </header>
 

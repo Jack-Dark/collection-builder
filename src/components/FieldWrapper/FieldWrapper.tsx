@@ -22,7 +22,7 @@ export const FieldWrapper = (props: PropsWithChildren<FieldWrapperProps>) => {
 
   return (
     <Field.Root
-      className={`grid grid-cols-1 gap-2 ${className}`}
+      className={`grid grid-cols-1 gap-2 ${className || ''}`}
       disabled={disabled}
       invalid={invalid}
       name={name}
@@ -38,21 +38,25 @@ export const FieldWrapper = (props: PropsWithChildren<FieldWrapperProps>) => {
 
       {children}
 
-      <Field.Description>{description}</Field.Description>
+      {description && <Field.Description>{description}</Field.Description>}
 
       {/* Groups individual items in a checkbox group or radio group with a label and description. Renders a <div> element. */}
       {/* <Field.Item /> */}
 
-      <Field.Error>{error}</Field.Error>
+      {error && (
+        <>
+          <Field.Error>{error}</Field.Error>
 
-      <Field.Validity>
-        {/*
+          <Field.Validity>
+            {/*
          // TODO - MIGHT BE ABLE TO ACCESS ERROR IN THE PROPS BELOW 
          */}
-        {() => {
-          return <p>{error}</p>;
-        }}
-      </Field.Validity>
+            {() => {
+              return <p>{error}</p>;
+            }}
+          </Field.Validity>
+        </>
+      )}
     </Field.Root>
   );
 };

@@ -1,11 +1,11 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
-import z from 'zod';
 
 import type { UpdateCollectionItemRecordDef } from '#/api/routes/collection-items/server/types';
 
-import { gamesDbQueries } from '#/api/routes/collection-items/server';
+import { collectionItemsDbQueries } from '#/api/routes/collection-items/server';
 import { collectionsDbQueries } from '#/api/routes/collections/server';
+import { requireCollectionIdSchema } from '#/api/routes/collections/server/serverFns';
 import { authApiRouteMiddleware } from '#/auth/auth-middleware';
 
 export const Route = createFileRoute('/api/collections/$id/')({
@@ -14,7 +14,7 @@ export const Route = createFileRoute('/api/collections/$id/')({
       DELETE: async ({ context, params }) => {
         const id = Number(params.id);
 
-        await gamesDbQueries.softDeleteCollectionItemByIdQuery({
+        await collectionItemsDbQueries.softDeleteCollectionItemByIdQuery({
           id,
           userId: context.user.id,
         });
@@ -24,7 +24,7 @@ export const Route = createFileRoute('/api/collections/$id/')({
       GET: async ({ params }) => {
         const id = Number(params.id);
 
-        const data = await getCollectionById({ data: { id } });
+        const data = await getCollectionById({ data: { collectionId: id } });
 
         if (!data) {
           return Response.json({});
@@ -37,11 +37,12 @@ export const Route = createFileRoute('/api/collections/$id/')({
         // Access the request body, for example, a JSON body
         const gameDetails: UpdateCollectionItemRecordDef = await request.json();
 
-        const updatedRecord = await gamesDbQueries.updateCollectionItemQuery({
-          ...gameDetails,
-          id,
-          userId: context.user.id,
-        });
+        const updatedRecord =
+          await collectionItemsDbQueries.updateCollectionItemQuery({
+            ...gameDetails,
+            id,
+            userId: context.user.id,
+          });
 
         return Response.json(updatedRecord);
       },
@@ -54,10 +55,10 @@ export const getCollectionById = createServerFn({
   method: 'GET',
 })
   .middleware([authApiRouteMiddleware])
-  .inputValidator(z.object({ id: z.number() }))
-  .handler(async ({ context, data: params }) => {
+  .inputValidator(requireCollectionIdSchema)
+  .handler(async ({ context, data: { collectionId } }) => {
     return collectionsDbQueries.getCollectionById({
-      id: params.id,
+      id: collectionId,
       userId: context.user.id,
     });
   });
@@ -66,10 +67,10 @@ export const getItemsByCollectionId = createServerFn({
   method: 'GET',
 })
   .middleware([authApiRouteMiddleware])
-  .inputValidator(z.object({ collectionId: z.number() }))
-  .handler(async ({ context, data: params }) => {
-    return gamesDbQueries.getItemsByCollectionIdQuery({
-      collectionId: params.collectionId,
+  .inputValidator(requireCollectionIdSchema)
+  .handler(async ({ context, data: { collectionId } }) => {
+    return collectionItemsDbQueries.getItemsByCollectionIdQuery({
+      collectionId,
       userId: context.user.id,
     });
   });

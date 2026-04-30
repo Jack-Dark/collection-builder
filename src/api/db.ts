@@ -7,18 +7,6 @@ import { configs } from '#/configs.ts';
 
 import * as schema from './schema.ts';
 
-export const db = drizzle({
-  casing: 'snake_case',
-  connection: configs.dbUrl,
-  schema: {
-    account: schema.accountsTable,
-    session: schema.sessionsTable,
-    user: schema.usersTable,
-    verification: schema.verificationsTable,
-  },
-  sql: getClient(),
-});
-
 let client: NeonQueryFunction<boolean, boolean> | undefined;
 
 export async function getClient() {
@@ -32,3 +20,15 @@ export async function getClient() {
 
   return client;
 }
+
+export const db = drizzle({
+  casing: 'snake_case',
+  connection: configs.dbUrl,
+  schema: {
+    account: schema.accountsTable,
+    session: schema.sessionsTable,
+    user: schema.usersTable,
+    verification: schema.verificationsTable,
+  },
+  sql: getClient(),
+});

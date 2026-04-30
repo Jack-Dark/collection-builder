@@ -20,9 +20,22 @@ import type {
 
 import { collectionsTable } from '../../../schema';
 
-const getMatchesUserIdAndNotDeleted = (userId: string | undefined) => {
+const getMatchesUserIdAndNotDeleted = (userId: string) => {
   return and(
-    eq(collectionsTable.userId, userId!),
+    eq(collectionsTable.userId, userId),
+    isNull(collectionsTable.deletedAt),
+  );
+};
+
+const getMatchesCollectionIdAndUserIdAndNotDeleted = (props: {
+  collectionId: number;
+  userId: string;
+}) => {
+  const { collectionId, userId } = props;
+
+  return and(
+    eq(collectionsTable.id, collectionId),
+    eq(collectionsTable.userId, userId),
     isNull(collectionsTable.deletedAt),
   );
 };
@@ -36,7 +49,7 @@ type CollectionsTableColumns = keyof CollectionRecordDef;
 
 export const getAllCollections = async (props: {
   params?: PaginationParamsSchemaDef<keyof CollectionRecordDef>;
-  userId: string | undefined;
+  userId: string;
 }): Promise<PaginatedData<CollectionRecordDef>> => {
   const { params = {}, userId } = props;
   const {
@@ -92,19 +105,42 @@ export const getAllCollections = async (props: {
 
 export const getCollectionById = async (props: {
   id: number;
-  userId: string | undefined;
+  userId: string;
 }) => {
   const { id, userId } = props;
-  if (userId) {
-    const [game] = await db
-      .select()
-      .from(collectionsTable)
-      .where(
-        and(eq(collectionsTable.id, id), getMatchesUserIdAndNotDeleted(userId)),
-      );
 
-    return game;
-  }
+  const [game] = await db
+    .select()
+    .from(collectionsTable)
+    .where(
+      and(eq(collectionsTable.id, id), getMatchesUserIdAndNotDeleted(userId)),
+    );
+
+  return game;
+};
+
+export const getCustomFieldsForCollectionIdQuery = async (props: {
+  collectionId: number;
+  userId: string;
+}) => {
+  const { collectionId, userId } = props;
+
+  const [record] = await db
+    .select({
+      customField1Enabled: collectionsTable.customField1Enabled,
+      customField1Label: collectionsTable.customField1Label,
+      customField2Enabled: collectionsTable.customField2Enabled,
+      customField2Label: collectionsTable.customField2Label,
+      customField3Enabled: collectionsTable.customField3Enabled,
+      customField3Label: collectionsTable.customField3Label,
+    })
+    .from(collectionsTable)
+    .where(
+      getMatchesCollectionIdAndUserIdAndNotDeleted({ collectionId, userId }),
+    )
+    .limit(1);
+
+  return record;
 };
 
 export const createCollection = async (data: NewCollectionRecordDef) => {
@@ -122,7 +158,7 @@ export const updateCollection = async (data: UpdateCollectionRecordDef) => {
   // TODO - MAY HAVE TO MERGE OLD AND NEW DATA. GET COLLECTION BY ID, IF NEEDED
   const [record] = await db
     .update(collectionsTable)
-    .set({ ...data, updatedAt: new Date() })
+    .set({ ...data, updatedAt: new Date().toDateString() })
     .where(
       and(
         eq(collectionsTable.id, data.id),
@@ -136,13 +172,13 @@ export const updateCollection = async (data: UpdateCollectionRecordDef) => {
 
 export const softDeleteCollection = async (props: {
   id: number;
-  userId: string | undefined;
+  userId: string;
 }) => {
   const { id, userId } = props;
 
   await db
     .update(collectionsTable)
-    .set({ deletedAt: new Date() })
+    .set({ deletedAt: new Date().toDateString() })
     .where(
       and(eq(collectionsTable.id, id), getMatchesUserIdAndNotDeleted(userId)),
     );
@@ -150,7 +186,7 @@ export const softDeleteCollection = async (props: {
 
 export const hardDeleteCollection = async (props: {
   id: number;
-  userId: string | undefined;
+  userId: string;
 }) => {
   const { id, userId } = props;
 

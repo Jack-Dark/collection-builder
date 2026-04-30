@@ -10,14 +10,14 @@ import {
   updateCollectionItemSeverFn,
 } from '../server/serverFns';
 
-export const useGetCollectionItem = (id: number) => {
+export const useGetCollectionItem = (collectionItemId: number) => {
   const queryFn = useServerFn(getCollectionItemServerFn);
 
   return useQuery({
     queryFn: () => {
-      return queryFn({ data: id });
+      return queryFn({ data: { collectionItemId } });
     },
-    queryKey: [queryKeys.getCollectionItems, { id }],
+    queryKey: [queryKeys.getCollectionItems, { collectionItemId }],
   });
 };
 

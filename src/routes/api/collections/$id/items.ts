@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
 import z from 'zod';
 
-import { gamesDbQueries } from '#/api/routes/collection-items/server';
+import { collectionItemsDbQueries } from '#/api/routes/collection-items/server';
 import { authApiRouteMiddleware } from '#/auth/auth-middleware';
 
 export const Route = createFileRoute('/api/collections/$id/items')({
@@ -30,7 +30,7 @@ export const fetchItemsByCollectionId = createServerFn({
   .middleware([authApiRouteMiddleware])
   .inputValidator(z.object({ collectionId: z.number() }))
   .handler(async ({ context, data: params }) => {
-    return gamesDbQueries.getItemsByCollectionIdQuery({
+    return collectionItemsDbQueries.getItemsByCollectionIdQuery({
       collectionId: params.collectionId,
       userId: context.user.id,
     });

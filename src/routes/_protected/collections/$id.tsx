@@ -1,9 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { createServerFn } from '@tanstack/react-start';
-import z from 'zod';
 
-import { gamesDbQueries } from '#/api/routes/collection-items/server';
-import { authApiRouteMiddleware } from '#/auth/auth-middleware';
+import { getCustomFieldsSetsForCollectionIdServerFn } from '#/api/routes/collection-items/server/serverFns';
+import { getLastAddedItemInCollectionIdServerFn } from '#/api/routes/collections/server/serverFns';
 import { CollectionPage } from '#/pages/CollectionPage';
 import {
   getCollectionById,
@@ -11,33 +9,26 @@ import {
 } from '#/routes/api/collections/$id';
 
 export const Route = createFileRoute('/_protected/collections/$id')({
-  component: (props) => {
-    return <CollectionPage {...props} />;
-  },
+  component: CollectionPage,
   loader: async ({ params }) => {
     const collectionId = Number(params.id);
-    const [collection, items, customFields] = await Promise.all([
-      await getCollectionById({ data: { id: collectionId } }),
+    const [collection, items, customFields, lastAddedItem] = await Promise.all([
+      await getCollectionById({ data: { collectionId } }),
       await getItemsByCollectionId({ data: { collectionId } }),
-      await fetchLastAddedCollectionItemSystem({ data: { collectionId } }),
+      await getCustomFieldsSetsForCollectionIdServerFn({
+        data: { collectionId },
+      }),
+      await getLastAddedItemInCollectionIdServerFn({
+        data: { collectionId },
+      }),
     ]);
 
     return {
       collection,
+      collectionId,
       customFields,
       items,
+      lastAddedItem,
     };
   },
 });
-
-const fetchLastAddedCollectionItemSystem = createServerFn({
-  method: 'GET',
-})
-  .middleware([authApiRouteMiddleware])
-  .inputValidator(z.object({ collectionId: z.number() }))
-  .handler(async ({ context, data }) => {
-    return gamesDbQueries.getCustomFieldsForCollectionIdQuery({
-      collectionId: data.collectionId,
-      userId: context.user.id,
-    });
-  });

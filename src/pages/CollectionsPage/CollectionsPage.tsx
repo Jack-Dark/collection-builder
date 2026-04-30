@@ -9,29 +9,105 @@ import { Route } from '#/routes/_protected/collections';
 import { collectionTableColumns } from './columns';
 import { AddCollectionForm } from './components/AddCollectionForm';
 
-const defaultValues = {
-  isEditingRowId: '',
-};
+/**
+ * @example
+ *
+ * ```tsx
+ * const useIsEditingRowIds = getUseIsEditingRowIds<string>();
+ *
+ * const ExampleComponent = ({ id }: { id: string }) => {
+ *   const { addToIsEditingRowIds, getIsEditingRowId, removeFromIsEditingRowIds } =
+ *     useIsEditingRowIds();
+ *
+ *   return (
+ *     <input
+ *       data-is-editing={getIsEditingRowId(id)}
+ *       onClick={(e) => {
+ *         const { checked } = e.currentTarget;
+ *
+ *         if (checked) {
+ *           addToIsEditingRowIds(id);
+ *         } else {
+ *           removeFromIsEditingRowIds(id);
+ *         }
+ *       }}
+ *       type="checkbox"
+ *     />
+ *   );
+ * };
+ * ```
+ */
+export const getUseIsEditingRowIds = <TData extends string | number>(
+  defaultValue: TData[] = [],
+) => {
+  return create<{
+    addToIsEditingRowIds: (value: TData | TData[]) => void;
+    getIsEditingRowId: (value: TData) => boolean;
+    isEditingRowIds: TData[];
+    removeFromIsEditingRowIds: (value: TData | TData[]) => void;
+    resetIsEditingRowIds: () => void;
+    setIsEditingRowIds: (
+      value: TData[] | ((prevValues: TData[]) => TData[]),
+    ) => void;
+  }>((set, get) => {
+    return {
+      addToIsEditingRowIds: (value) => {
+        const isArray = Array.isArray(value);
 
-export const useAddOrEditCollection = create<{
-  isEditingRowId: string;
-  resetIsEditingRowId: () => void;
-  setIsEditingRowId: (value: string) => void;
-}>((set) => {
-  return {
-    isEditingRowId: defaultValues.isEditingRowId,
-    resetIsEditingRowId: () => {
-      set({
-        isEditingRowId: defaultValues.isEditingRowId,
-      });
-    },
-    setIsEditingRowId: (value) => {
-      set({
-        isEditingRowId: value,
-      });
-    },
-  };
-});
+        const { setIsEditingRowIds } = get();
+
+        setIsEditingRowIds((prev) => {
+          if (isArray) {
+            return [...prev, ...value];
+          } else {
+            return [...prev, value];
+          }
+        });
+      },
+      getIsEditingRowId: (value) => {
+        const { isEditingRowIds } = get();
+
+        return isEditingRowIds.includes(value);
+      },
+      isEditingRowIds: defaultValue,
+      removeFromIsEditingRowIds: (value) => {
+        const isArray = Array.isArray(value);
+
+        const { setIsEditingRowIds } = get();
+
+        setIsEditingRowIds((prev) => {
+          return prev.filter((prevValue) => {
+            if (isArray) {
+              const isInPrevValues = value.includes(prevValue);
+
+              return !isInPrevValues;
+            } else {
+              const isInPrevValues = value === prevValue;
+
+              return !isInPrevValues;
+            }
+          });
+        });
+      },
+      resetIsEditingRowIds: () => {
+        set({
+          isEditingRowIds: defaultValue,
+        });
+      },
+      setIsEditingRowIds: (value) => {
+        if (typeof value === 'function') {
+          const { isEditingRowIds } = get();
+
+          const newValue = value(isEditingRowIds);
+
+          set({ isEditingRowIds: newValue });
+        } else {
+          set({ isEditingRowIds: value });
+        }
+      },
+    };
+  });
+};
 
 export const CollectionsPage: RouteComponent = () => {
   const collections = Route.useLoaderData();

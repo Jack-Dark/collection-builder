@@ -1,1 +1,1 @@
-export * as gamesDbQueries from './queries';
+export * as collectionItemsDbQueries from './queries';

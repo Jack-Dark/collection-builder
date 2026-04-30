@@ -8,14 +8,14 @@ import { Table } from '#/components/Table';
 import { PageWrapper } from '#/page-wrapper';
 import { Route as CollectionRoute } from '#/routes/_protected/collections/$id';
 
-import { collectionItemsTableColumns } from './columns';
+import { getCollectionItemsTableColumns } from './columns';
 import { AddCollectionItemForm } from './components/AddCollectionItemForm';
 
 export const CollectionPage: RouteComponent = () => {
   const [showAddForm, setShowAddForm] = useState<boolean>(false);
 
-  const { collection, customFields, items } = CollectionRoute.useLoaderData();
-  console.log('🚀 ~ CollectionPage ~ customFields:', customFields);
+  const { collection, customFields, items, lastAddedItem } =
+    CollectionRoute.useLoaderData();
 
   const toggleForm = () => {
     setShowAddForm((prev) => {
@@ -40,13 +40,28 @@ export const CollectionPage: RouteComponent = () => {
           onClick={toggleForm}
           variant="primary"
         >
-          Add Collection
+          Add Item
         </Button>
       )}
 
-      {showAddForm && <AddCollectionItemForm lastAddedSystem="" />}
+      {showAddForm && (
+        <AddCollectionItemForm
+          collectionId={collection.id}
+          customField1Enabled={collection.customField1Enabled}
+          customField1Label={collection.customField1Label || ''}
+          customField2Enabled={collection.customField2Enabled}
+          customField2Label={collection.customField2Label || ''}
+          customField3Enabled={collection.customField3Enabled}
+          customField3Label={collection.customField3Label || ''}
+          customFields={customFields}
+          lastAddedItem={lastAddedItem}
+        />
+      )}
 
-      <Table columns={collectionItemsTableColumns} data={items || []} />
+      <Table
+        columns={getCollectionItemsTableColumns(collection)}
+        data={items || []}
+      />
     </PageWrapper>
   );
 };

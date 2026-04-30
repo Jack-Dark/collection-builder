@@ -8,8 +8,8 @@
     "dev": "vite dev",
     "build": "vite build",
     "preview": "vite preview",
-    "generate": "drizzle-kit generate",
-    "migrate": "drizzle-kit migrate"
+    "db-generate": "drizzle-kit generate",
+    "db-migrate": "tsx ./src/migrate.ts"
   },
   "keywords": [],
   "author": "",

@@ -41,6 +41,7 @@ export default [
       },
     },
     rules: {
+      'react/jsx-key': 'error',
       'react/jsx-no-useless-fragment': [
         'warn',
         {

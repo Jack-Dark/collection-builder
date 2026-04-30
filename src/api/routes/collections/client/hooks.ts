@@ -24,14 +24,14 @@ export const useGetAllCollections = () => {
   });
 };
 
-export const useGetCollection = (id: number) => {
+export const useGetCollection = (collectionId: number) => {
   const queryFn = useServerFn(getCollectionServerFn);
 
   return useQuery({
     queryFn: () => {
-      return queryFn({ data: id });
+      return queryFn({ data: { collectionId } });
     },
-    queryKey: [queryKeys.getCollection, { id }],
+    queryKey: [queryKeys.getCollection, { id: collectionId }],
   });
 };
 

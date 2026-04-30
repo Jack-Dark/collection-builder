@@ -27,6 +27,31 @@ export const collectionTableColumns = [
     },
     header: 'Name',
   }),
+
+  columnHelper.accessor('customField1Label', {
+    cell: ({ getValue, row }) => {
+      return (
+        <p>{row.original.customField1Enabled ? (getValue() ?? '') : '-'}</p>
+      );
+    },
+    header: 'Custom Field 1',
+  }),
+  columnHelper.accessor('customField2Label', {
+    cell: ({ getValue, row }) => {
+      return (
+        <p>{row.original.customField2Enabled ? (getValue() ?? '') : '-'}</p>
+      );
+    },
+    header: 'Custom Field 2',
+  }),
+  columnHelper.accessor('customField3Label', {
+    cell: ({ getValue, row }) => {
+      return (
+        <p>{row.original.customField3Enabled ? (getValue() ?? '') : '-'}</p>
+      );
+    },
+    header: 'Custom Field 3',
+  }),
   columnHelper.accessor('notes', {
     cell: ({ getValue }) => {
       const value = getValue();
@@ -64,7 +89,7 @@ export const collectionTableColumns = [
         <TableCellActionsMenu
           deleteIsDisabled={isProcessing}
           deleteOnClick={async (data) => {
-            await onDeleteCollection({ data: data.id });
+            await onDeleteCollection({ data: { collectionId: data.id } });
             router.invalidate();
           }}
           editIsDisabled={isProcessing}

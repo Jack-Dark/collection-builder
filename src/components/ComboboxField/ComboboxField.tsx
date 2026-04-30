@@ -1,22 +1,31 @@
 import { Combobox } from '@base-ui/react';
+import AddIcon from '@mui/icons-material/Add';
 import ClearIcon from '@mui/icons-material/Clear';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { useMemo, useState } from 'react';
 
-import type { ComboboxFieldProps } from './ComboboxField.types';
+import type {
+  ComboboxFieldItemProps,
+  ComboboxFieldProps,
+} from './ComboboxField.types';
 
 import { FieldWrapper } from '../FieldWrapper';
 
-export const ComboboxField = <TValue, TMultiple extends boolean>(
-  props: ComboboxFieldProps<TValue, TMultiple>,
+export const ComboboxField = <TValue extends Record<string, any>>(
+  props: ComboboxFieldProps<TValue>,
 ) => {
   const {
+    allowCreatable,
     className,
+    defaultValue,
     description,
     disabled,
     error,
+    idProperty = 'id',
     invalid,
-    items,
+    items: originalItems,
     label,
+    labelProperty = 'label',
     name,
     onValueChange,
     placeholder,
@@ -25,6 +34,49 @@ export const ComboboxField = <TValue, TMultiple extends boolean>(
     validationMode,
     value,
   } = props;
+
+  const [query, setQuery] = useState('');
+
+  const formattedItems = useMemo<ComboboxFieldItemProps[]>(() => {
+    return originalItems.reduce<ComboboxFieldItemProps[]>((acc, item) => {
+      const formattedItem: ComboboxFieldItemProps = {
+        id: item[idProperty],
+        label: item[labelProperty],
+      };
+
+      return [...acc, formattedItem];
+    }, [] satisfies ComboboxFieldItemProps[]);
+  }, [originalItems]);
+
+  const queryNotFound = useMemo<boolean>(() => {
+    const queryRegExp = RegExp(query.trim(), 'i');
+
+    if (!query) {
+      return false;
+    }
+
+    const matchFound = formattedItems.some((item) => {
+      const transformedLabel = String(item.label).trim();
+
+      return queryRegExp.test(transformedLabel);
+    });
+
+    return !matchFound;
+  }, [query, formattedItems]);
+
+  const itemsForView = useMemo<ComboboxFieldItemProps[]>(() => {
+    if (queryNotFound) {
+      return [
+        {
+          id: query,
+          isCreatable: true,
+          label: `Add "${query}" to ${label} options`,
+        },
+      ] satisfies ComboboxFieldItemProps[];
+    } else {
+      return formattedItems;
+    }
+  }, [formattedItems, queryNotFound, query]);
 
   return (
     <FieldWrapper
@@ -41,8 +93,18 @@ export const ComboboxField = <TValue, TMultiple extends boolean>(
     >
       <div>
         <Combobox.Root
-          items={items}
-          onValueChange={onValueChange}
+          defaultValue={defaultValue}
+          items={itemsForView}
+          onInputValueChange={setQuery}
+          onValueChange={(id) => {
+            const selected = itemsForView.find((item) => {
+              return item.id === id;
+            });
+
+            if (allowCreatable || queryNotFound) {
+              return onValueChange?.(selected);
+            }
+          }}
           value={value}
         >
           <div className="relative">
@@ -65,21 +127,35 @@ export const ComboboxField = <TValue, TMultiple extends boolean>(
 
           <Combobox.Portal>
             <Combobox.Positioner align="start">
-              // TODO - UPDATE TO USE SCROLLAREA
-              <Combobox.Popup className="bg-white text-black pv-2 rounded-sm shadow-lg max-h-100 overflow-auto">
-                <Combobox.Empty className="p-2 text-gray-500">
-                  No matches
-                </Combobox.Empty>
+              {/*
+               // TODO - UPDATE TO USE SCROLLAREA? 
+              */}
+              <Combobox.Popup className="bg-white text-black py-2 rounded-sm shadow-lg max-h-100 overflow-auto">
+                {!itemsForView.length && !allowCreatable && (
+                  <Combobox.Empty className="p-2 text-gray-500">
+                    No matches
+                  </Combobox.Empty>
+                )}
 
                 <Combobox.List>
-                  {(region: string) => {
+                  {({ id, isCreatable, label }: ComboboxFieldItemProps) => {
                     return (
                       <Combobox.Item
-                        className="p-2 hover:bg-menu-primary-hover data-selected:bg-menu-primary-selected data-highlighted:bg-menu-primary-hover cursor-pointer"
-                        key={region}
-                        value={region}
+                        className="p-2 hover:bg-menu-primary-hover data-selected:bg-menu-primary-selected data-highlighted:bg-menu-primary-hover cursor-pointer
+                        flex align-items-center"
+                        key={id}
+                        onClick={
+                          isCreatable
+                            ? (e) => {
+                                e.preventDefault();
+                                onValueChange({ id, label });
+                              }
+                            : undefined
+                        }
+                        value={id}
                       >
-                        {region}
+                        {label}
+                        {isCreatable && <AddIcon className="ml-4" />}
                       </Combobox.Item>
                     );
                   }}
