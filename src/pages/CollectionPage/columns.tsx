@@ -13,6 +13,7 @@ import {
 } from '#/api/routes/collection-items/client/hooks';
 
 import { TableCellActionsMenu } from '../../components/TableCellActionsMenu';
+import { useEditingCollectionItemsRowIds } from '../CollectionsPage/hooks/use-editing-collections-row-ids';
 
 const columnHelper = createColumnHelper<CollectionItemRecordDef>();
 
@@ -79,16 +80,25 @@ export const getCollectionItemsTableColumns = (props: CollectionRecordDef) => {
       header: 'Added',
     }),
     columnHelper.accessor('id', {
-      cell: ({ row }) => {
+      cell: ({ getValue, row }) => {
         const router = useRouter();
 
-        const { isPending: isUpdatePending, onUpdateCollectionItem } =
-          useUpdateCollectionItem();
+        const {
+          isPending: isUpdatePending,
+          // onUpdateCollectionItem
+        } = useUpdateCollectionItem();
 
         const { isPending: isDeletePending, onDeleteCollectionItem } =
           useDeleteCollectionItem();
 
         const isProcessing = isUpdatePending || isDeletePending;
+
+        const rowId = getValue();
+
+        const { getIsEditingRowId, resetEditingRowIds, setEditingRowIds } =
+          useEditingCollectionItemsRowIds();
+
+        const isEditingRow = getIsEditingRowId(rowId);
 
         return (
           <TableCellActionsMenu
@@ -101,7 +111,12 @@ export const getCollectionItemsTableColumns = (props: CollectionRecordDef) => {
             }}
             editIsDisabled={isProcessing}
             editOnClick={async (data) => {
-              await onUpdateCollectionItem({ data });
+              // await onUpdateCollectionItem({ data });
+              setEditingRowIds([data.id]);
+            }}
+            isEditing={isEditingRow}
+            onCancelEdit={() => {
+              resetEditingRowIds();
             }}
             row={row}
           />

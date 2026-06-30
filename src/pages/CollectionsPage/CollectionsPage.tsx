@@ -1,124 +1,150 @@
 import type { RouteComponent } from '@tanstack/react-router';
 
+import { revalidateLogic } from '@tanstack/react-form';
+import { useRouter } from '@tanstack/react-router';
 import { create } from 'zustand';
 
+import {
+  useCreateCollection,
+  useUpdateCollection,
+} from '#/api/routes/collections/client/hooks';
+import { createCollectionSchema } from '#/api/routes/collections/server/serverFns';
+import { Button } from '#/components/Button';
 import { Table } from '#/components/Table';
 import { PageWrapper } from '#/page-wrapper';
 import { Route } from '#/routes/_protected/collections';
 
-import { collectionTableColumns } from './columns';
-import { AddCollectionForm } from './components/AddCollectionForm';
+import type { AddCollectionFormSchemaDef } from './components/AddCollectionForm/types';
 
-/**
- * @example
- *
- * ```tsx
- * const useIsEditingRowIds = getUseIsEditingRowIds<string>();
- *
- * const ExampleComponent = ({ id }: { id: string }) => {
- *   const { addToIsEditingRowIds, getIsEditingRowId, removeFromIsEditingRowIds } =
- *     useIsEditingRowIds();
- *
- *   return (
- *     <input
- *       data-is-editing={getIsEditingRowId(id)}
- *       onClick={(e) => {
- *         const { checked } = e.currentTarget;
- *
- *         if (checked) {
- *           addToIsEditingRowIds(id);
- *         } else {
- *           removeFromIsEditingRowIds(id);
- *         }
- *       }}
- *       type="checkbox"
- *     />
- *   );
- * };
- * ```
- */
-export const getUseIsEditingRowIds = <TData extends string | number>(
-  defaultValue: TData[] = [],
-) => {
-  return create<{
-    addToIsEditingRowIds: (value: TData | TData[]) => void;
-    getIsEditingRowId: (value: TData) => boolean;
-    isEditingRowIds: TData[];
-    removeFromIsEditingRowIds: (value: TData | TData[]) => void;
-    resetIsEditingRowIds: () => void;
-    setIsEditingRowIds: (
-      value: TData[] | ((prevValues: TData[]) => TData[]),
-    ) => void;
-  }>((set, get) => {
-    return {
-      addToIsEditingRowIds: (value) => {
-        const isArray = Array.isArray(value);
+import { getCollectionTableColumns } from './columns';
+import { AddCollectionFormTableRow } from './components/AddCollectionForm';
+import {
+  addCollectionFormDefaultValues,
+  useAddCollectionForm,
+} from './components/AddCollectionForm/constants';
+import { useEditingCollectionsRowIds } from './hooks/use-editing-collections-row-ids';
 
-        const { setIsEditingRowIds } = get();
-
-        setIsEditingRowIds((prev) => {
-          if (isArray) {
-            return [...prev, ...value];
-          } else {
-            return [...prev, value];
-          }
-        });
-      },
-      getIsEditingRowId: (value) => {
-        const { isEditingRowIds } = get();
-
-        return isEditingRowIds.includes(value);
-      },
-      isEditingRowIds: defaultValue,
-      removeFromIsEditingRowIds: (value) => {
-        const isArray = Array.isArray(value);
-
-        const { setIsEditingRowIds } = get();
-
-        setIsEditingRowIds((prev) => {
-          return prev.filter((prevValue) => {
-            if (isArray) {
-              const isInPrevValues = value.includes(prevValue);
-
-              return !isInPrevValues;
-            } else {
-              const isInPrevValues = value === prevValue;
-
-              return !isInPrevValues;
-            }
-          });
-        });
-      },
-      resetIsEditingRowIds: () => {
-        set({
-          isEditingRowIds: defaultValue,
-        });
-      },
-      setIsEditingRowIds: (value) => {
-        if (typeof value === 'function') {
-          const { isEditingRowIds } = get();
-
-          const newValue = value(isEditingRowIds);
-
-          set({ isEditingRowIds: newValue });
-        } else {
-          set({ isEditingRowIds: value });
-        }
-      },
-    };
-  });
-};
+export const useCollectionsFormStore = create<{
+  collectionFormValues: AddCollectionFormSchemaDef;
+  resetCollectionFormValues: () => void;
+  setCollectionFormValues: (values: AddCollectionFormSchemaDef) => void;
+}>((set) => {
+  return {
+    collectionFormValues: addCollectionFormDefaultValues,
+    resetCollectionFormValues: () => {
+      set({
+        collectionFormValues: addCollectionFormDefaultValues,
+      });
+    },
+    setCollectionFormValues: (values) => {
+      set({
+        collectionFormValues: values,
+      });
+    },
+  };
+});
 
 export const CollectionsPage: RouteComponent = () => {
   const collections = Route.useLoaderData();
 
+  const router = useRouter();
+
+  const { collectionFormValues, resetCollectionFormValues } =
+    useCollectionsFormStore();
+
+  const { onCreateCollection } = useCreateCollection({
+    onSuccess: () => {
+      resetCollectionFormValues();
+    },
+  });
+
+  const { onUpdateCollection } = useUpdateCollection({
+    onSuccess: () => {
+      resetCollectionFormValues();
+    },
+  });
+
+  const form = useAddCollectionForm({
+    defaultValues: collectionFormValues,
+    onSubmit: async ({ value }) => {
+      if (!!value?.id && !!value?.userId) {
+        await onUpdateCollection({
+          data: {
+            ...value,
+            // id and userId added long-hand to solve type errors
+            id: value.id,
+            userId: value.userId,
+          },
+        });
+      } else {
+        await onCreateCollection({
+          data: value,
+        });
+      }
+
+      form.reset();
+
+      await router.invalidate();
+
+      // nameInputRef?.current?.focus();
+    },
+    validationLogic: revalidateLogic({
+      mode: 'submit',
+      modeAfterSubmission: 'change',
+    }),
+    validators: {
+      onSubmit: createCollectionSchema,
+    },
+  });
+
+  const { isEditing, resetEditingRowIds } = useEditingCollectionsRowIds();
+
+  const columns = getCollectionTableColumns();
+
   return (
     <PageWrapper title="Collections">
       <div className="grid grid-cols-1 gap-4">
-        <h3>Add Collection</h3>
-        <AddCollectionForm />
+        {!isEditing && (
+          <div>
+            <Button
+              onClick={() => {
+                // TODO - RESET NOT APPLICABLE HERE
+                resetEditingRowIds();
+              }}
+            >
+              Add New Collection
+            </Button>
+          </div>
+        )}
       </div>
-      <Table columns={collectionTableColumns} data={collections.data} />
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          form.handleSubmit();
+        }}
+      >
+        <Table
+          BodyTopRow={
+            isEditing
+              ? (props) => {
+                  return (
+                    <AddCollectionFormTableRow
+                      form={form}
+                      onCancel={() => {
+                        resetEditingRowIds();
+                      }}
+                      // tdClassNames={`${tdClassNames} align-items-center min-h-[501px]`}
+                      {...props}
+                    />
+                  );
+                }
+              : undefined
+          }
+          columns={columns}
+          data={collections.data}
+        />
+      </form>
     </PageWrapper>
   );
 };

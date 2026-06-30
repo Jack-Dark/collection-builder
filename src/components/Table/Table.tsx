@@ -1,5 +1,5 @@
 import type { Column, FilterFn, TableOptions } from '@tanstack/react-table';
-import type { CSSProperties } from 'react';
+import type { CSSProperties, JSXElementConstructor } from 'react';
 
 import { rankItem } from '@tanstack/match-sorter-utils';
 import {
@@ -50,10 +50,21 @@ const getCommonPinningStyles = <T,>(props: {
   };
 };
 
-type TablePropsDef<T> = Omit<TableOptions<T>, 'filterFns' | 'getCoreRowModel'> &
-  Partial<Pick<TableOptions<T>, 'filterFns' | 'getCoreRowModel'>>;
+export type BodyTopRowPropsDef = {
+  numColumns: number;
+  tdClassNames: string;
+};
 
-export const Table = <T,>({ data = [], ...rest }: TablePropsDef<T>) => {
+type TablePropsDef<T> = Omit<TableOptions<T>, 'filterFns' | 'getCoreRowModel'> &
+  Partial<Pick<TableOptions<T>, 'filterFns' | 'getCoreRowModel'>> & {
+    BodyTopRow?: JSXElementConstructor<BodyTopRowPropsDef>;
+  };
+
+export const Table = <T,>({
+  BodyTopRow,
+  data = [],
+  ...rest
+}: TablePropsDef<T>) => {
   const [makeColumnsSticky, setMakeColumnsSticky] = useState<boolean>(false);
 
   const tableRef = useRef<HTMLTableElement>(null);
@@ -125,6 +136,12 @@ export const Table = <T,>({ data = [], ...rest }: TablePropsDef<T>) => {
           })}
         </thead>
         <tbody>
+          {BodyTopRow && (
+            <BodyTopRow
+              numColumns={table.getAllColumns().length}
+              tdClassNames="border-t px-2 py-1"
+            />
+          )}
           {table.getRowModel().rows.map((row) => {
             return (
               <tr key={row.id}>
@@ -156,8 +173,8 @@ export const Table = <T,>({ data = [], ...rest }: TablePropsDef<T>) => {
         </tbody>
         <tfoot>
           {/* 
-          // TODO - MOVE ADD-GAME FORM TO FOOTER
-        */}
+            // TODO - MOVE ADD-GAME FORM TO FOOTER
+          */}
         </tfoot>
       </table>
     </div>

@@ -7,5 +7,7 @@ export interface TableCellActionsMenuPropsDef<TData extends RowData> {
   editIsDisabled?: boolean;
   editLabel?: string;
   editOnClick: (data: TData) => void | Promise<void>;
+  isEditing: boolean;
+  onCancelEdit: (data: TData) => void;
   row: Row<TData>;
 }

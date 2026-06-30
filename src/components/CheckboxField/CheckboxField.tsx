@@ -1,6 +1,7 @@
 import { Field } from '@base-ui/react';
 import { Checkbox } from '@base-ui/react/checkbox';
-import { CheckBox, CheckBoxOutlineBlank } from '@mui/icons-material';
+import CheckBox from '@mui/icons-material/CheckBox';
+import CheckBoxOutlineBlank from '@mui/icons-material/CheckBoxOutlineBlank';
 import { useCallback } from 'react';
 
 import type { CheckboxFieldProps } from './CheckboxField.types';

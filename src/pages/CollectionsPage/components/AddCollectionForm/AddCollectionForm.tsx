@@ -1,250 +1,201 @@
 import SaveIcon from '@mui/icons-material/Save';
-import { revalidateLogic, useForm } from '@tanstack/react-form';
-import { useRouter } from '@tanstack/react-router';
-import { useRef } from 'react';
 
-import { useCreateCollection } from '#/api/routes/collections/client/hooks';
-import { createCollectionSchema } from '#/api/routes/collections/server/serverFns';
 import { Button } from '#/components/Button';
 import { CheckboxField } from '#/components/CheckboxField';
-import { InputField } from '#/components/InputField';
 
-import { defaultValues } from './constants';
+import {
+  addCollectionFormDefaultValues,
+  withAddCollectionForm,
+} from './constants';
 
-export const AddCollectionForm = () => {
-  const router = useRouter();
+export const AddCollectionFormTableRow = withAddCollectionForm({
+  /** These values are only used for type-checking, and are not used at runtime */
+  defaultValues: addCollectionFormDefaultValues,
+  props: {
+    onCancel: () => {},
+    tdClassNames: '',
+  },
+  render: ({ form, onCancel, tdClassNames }) => {
+    return (
+      <tr className="align-top">
+        <td className={tdClassNames}>
+          <form.AppField name="name">
+            {(field) => {
+              return (
+                <form.Subscribe
+                  selector={(state) => {
+                    return {
+                      errors: state.errors,
+                      value: state.values.name,
+                    };
+                  }}
+                >
+                  {({ errors: _errors, value }) => {
+                    // TODO - EXTRACT ERROR MESSAGE (AND IDEALLY SUBSCRIBE) LOGIC
+                    // const errorMsg = errors?.[0]?.[field.name]?.[0]?.message;
 
-  const nameInputRef = useRef<HTMLInputElement>(null);
+                    return (
+                      <field.InputField
+                        autoFocus
+                        name={field.name}
+                        onValueChange={field.handleChange}
+                        // error={errorMsg}
+                        placeholder="Input name..."
+                        required
+                        value={value}
+                      />
+                    );
+                  }}
+                </form.Subscribe>
+              );
+            }}
+          </form.AppField>
+        </td>
 
-  const { onCreateCollection } = useCreateCollection();
-
-  const form = useForm({
-    defaultValues,
-    onSubmit: async ({ value }) => {
-      await onCreateCollection({
-        data: value,
-      });
-
-      form.reset();
-
-      await router.invalidate();
-
-      nameInputRef?.current?.focus();
-    },
-    validationLogic: revalidateLogic({
-      mode: 'submit',
-      modeAfterSubmission: 'change',
-    }),
-    validators: {
-      onSubmit: createCollectionSchema,
-    },
-  });
-
-  return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        form.handleSubmit();
-      }}
-    >
-      <div>
-        <form.Subscribe
-          selector={(state) => {
-            return {
-              errors: state.errors,
-              value: state.values.name,
-            };
-          }}
-        >
-          {({ errors, value }) => {
-            return (
-              <form.Field name="name">
-                {(field) => {
-                  // TODO - EXTRACT ERROR MESSAGE (AND IDEALLY SUBSCRIBE) LOGIC
-                  const errorMsg = errors?.[0]?.[field.name]?.[0]?.message;
-
-                  return (
-                    <InputField
-                      autoFocus
-                      error={errorMsg}
-                      label="Name"
-                      name={field.name}
-                      onValueChange={field.handleChange}
-                      ref={nameInputRef}
-                      required
-                      value={value}
-                    />
-                  );
-                }}
-              </form.Field>
-            );
-          }}
-        </form.Subscribe>
-
-        <form.Subscribe
-          selector={(state) => {
-            return {
-              errors: state.errors,
-              value: state.values.notes,
-            };
-          }}
-        >
-          {({ errors, value }) => {
-            return (
-              <form.Field name="notes">
-                {(field) => {
-                  // TODO - EXTRACT ERROR MESSAGE (AND IDEALLY SUBSCRIBE) LOGIC
-                  const errorMsg = errors?.[0]?.[field.name]?.[0]?.message;
-
-                  return (
-                    <InputField
-                      error={errorMsg}
-                      label="Notes"
-                      name={field.name}
-                      onValueChange={field.handleChange}
-                      value={value}
-                    />
-                  );
-                }}
-              </form.Field>
-            );
-          }}
-        </form.Subscribe>
         {([1, 2, 3] as const).map((num) => {
           return (
-            <div className="grid grid-cols-1 gap-2 py-4" key={num}>
-              <h4>Custom Field {num}</h4>
+            <td className={tdClassNames} key={num}>
               <div className="grid grid-cols-1 gap-2">
                 <form.Subscribe
                   selector={(state) => {
                     return {
                       errors: state.errors,
-                      value: state.values[`customField${num}Enabled`],
+                      isEnabled: state.values[`customField${num}Enabled`],
+                      isRequired: state.values[`customField${num}Required`],
+                      label: state.values[`customField${num}Label`] || '',
                     };
                   }}
                 >
-                  {({ errors, value }) => {
+                  {({ errors: _errors, isEnabled, isRequired, label }) => {
                     return (
-                      <form.Field name={`customField${num}Enabled`}>
-                        {(field) => {
-                          // TODO - EXTRACT ERROR MESSAGE (AND IDEALLY SUBSCRIBE) LOGIC
-                          const errorMsg =
-                            errors?.[0]?.[field.name]?.[0]?.message;
-
-                          return (
-                            <CheckboxField
-                              checked={value}
-                              error={errorMsg}
-                              label="Enable"
-                              name={field.name}
-                              onCheckedChange={field.handleChange}
-                            />
-                          );
-                        }}
-                      </form.Field>
-                    );
-                  }}
-                </form.Subscribe>
-
-                <form.Subscribe
-                  selector={(state) => {
-                    return {
-                      errors: state.errors,
-                      show: state.values[`customField${num}Enabled`],
-                      value: state.values[`customField${num}Label`],
-                    };
-                  }}
-                >
-                  {({ errors, show, value }) => {
-                    return (
-                      show && (
-                        <form.Field name={`customField${num}Label`}>
+                      <>
+                        <form.AppField name={`customField${num}Enabled`}>
                           {(field) => {
                             // TODO - EXTRACT ERROR MESSAGE (AND IDEALLY SUBSCRIBE) LOGIC
-                            const errorMsg =
-                              errors?.[0]?.[field.name]?.[0]?.message;
-
-                            return (
-                              <InputField
-                                className="pl-7"
-                                error={errorMsg}
-                                label="Label"
-                                name={field.name}
-                                onValueChange={field.handleChange}
-                                required
-                                value={value || ''}
-                              />
-                            );
-                          }}
-                        </form.Field>
-                      )
-                    );
-                  }}
-                </form.Subscribe>
-                <form.Subscribe
-                  selector={(state) => {
-                    return {
-                      errors: state.errors,
-                      show: state.values[`customField${num}Enabled`],
-                      value: state.values[`customField${num}Required`],
-                    };
-                  }}
-                >
-                  {({ errors, show, value }) => {
-                    return (
-                      show && (
-                        <form.Field name={`customField${num}Required`}>
-                          {(field) => {
-                            // TODO - EXTRACT ERROR MESSAGE (AND IDEALLY SUBSCRIBE) LOGIC
-                            const errorMsg =
-                              errors?.[0]?.[field.name]?.[0]?.message;
+                            // const errorMsg =
+                            //   errors?.[0]?.[field.name]?.[0]?.message;
 
                             return (
                               <CheckboxField
-                                checked={value}
-                                className="pl-7"
-                                error={errorMsg}
-                                label="Require"
+                                checked={isEnabled}
+                                // error={errorMsg}
+                                label="Enable"
                                 name={field.name}
                                 onCheckedChange={field.handleChange}
                               />
                             );
                           }}
-                        </form.Field>
-                      )
+                        </form.AppField>
+
+                        {isEnabled && (
+                          <>
+                            <form.AppField name={`customField${num}Label`}>
+                              {(field) => {
+                                return (
+                                  <field.InputField
+                                    onValueChange={field.handleChange}
+                                    // error={errorMsg}
+                                    placeholder="Input label..."
+                                    required
+                                    value={label}
+                                  />
+                                );
+                              }}
+                            </form.AppField>
+
+                            <form.AppField name={`customField${num}Required`}>
+                              {(field) => {
+                                // TODO - EXTRACT ERROR MESSAGE (AND IDEALLY SUBSCRIBE) LOGIC
+                                // const errorMsg =
+                                //   errors?.[0]?.[field.name]?.[0]?.message;
+
+                                return (
+                                  <CheckboxField
+                                    checked={isRequired}
+                                    // error={errorMsg}
+                                    label="Require"
+                                    name={field.name}
+                                    onCheckedChange={field.handleChange}
+                                  />
+                                );
+                              }}
+                            </form.AppField>
+                          </>
+                        )}
+                      </>
                     );
                   }}
                 </form.Subscribe>
               </div>
-            </div>
+            </td>
           );
         })}
+        <td className={tdClassNames}>
+          <form.AppField name="notes">
+            {(field) => {
+              return (
+                <form.Subscribe
+                  selector={(state) => {
+                    return {
+                      errors: state.errors,
+                      value: state.values.notes,
+                    };
+                  }}
+                >
+                  {({ errors: _errors, value }) => {
+                    // TODO - EXTRACT ERROR MESSAGE (AND IDEALLY SUBSCRIBE) LOGIC
+                    // const errorMsg = errors?.[0]?.[field.name]?.[0]?.message;
 
-        <form.Subscribe
-          selector={(state) => {
-            return {
-              isFormValid: state.isFormValid,
-              values: state.values,
-            };
-          }}
-        >
-          {(state) => {
-            const { isFormValid } = state;
+                    return (
+                      <field.TextAreaField
+                        // error={errorMsg}
+                        name={field.name}
+                        onValueChange={field.handleChange}
+                        placeholder="Input notes..."
+                        value={value}
+                      />
+                    );
+                  }}
+                </form.Subscribe>
+              );
+            }}
+          </form.AppField>
+        </td>
+        <td className={tdClassNames} colSpan={2}>
+          <div className="flex align-items-center gap-2 justify-end">
+            <Button onClick={onCancel} variant="secondary">
+              Cancel
+            </Button>
 
-            return (
-              <Button
-                className="flex flex-nowrap gap-2"
-                disabled={!isFormValid}
-                type="submit"
+            <form.AppForm>
+              <form.Subscribe
+                selector={(state) => {
+                  return {
+                    isFormValid: state.isFormValid,
+                    values: state.values,
+                  };
+                }}
               >
-                <SaveIcon />
-                Save
-              </Button>
-            );
-          }}
-        </form.Subscribe>
-      </div>
-    </form>
-  );
-};
+                {(state) => {
+                  const { isFormValid } = state;
+
+                  return (
+                    <form.Button
+                      className="flex flex-nowrap gap-2"
+                      disabled={!isFormValid}
+                      processing={form.state.isSubmitting}
+                      type="submit"
+                    >
+                      <SaveIcon />
+                      Save
+                    </form.Button>
+                  );
+                }}
+              </form.Subscribe>
+            </form.AppForm>
+          </div>
+        </td>
+      </tr>
+    );
+  },
+});

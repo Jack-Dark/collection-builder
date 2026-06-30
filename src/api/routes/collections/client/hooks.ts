@@ -45,24 +45,38 @@ const useInvalidateGetCollection = (id: number) => {
   };
 };
 
-export const useCreateCollection = () => {
+export const useCreateCollection = (
+  props?: Omit<Parameters<typeof useMutation>[0], 'mutationFn'>,
+) => {
   const mutationFn = useServerFn(createCollectionServerFn);
 
   const { mutate: onCreateCollection, ...rest } = useMutation({
     mutationFn,
+    ...props,
+    onSuccess: async (data, ...rest) => {
+      const { id } = data;
+      const invalidateQuery = useInvalidateGetCollection(id);
+      await invalidateQuery();
+      props?.onSuccess?.(data, ...rest);
+    },
   });
 
   return { onCreateCollection, ...rest };
 };
 
-export const useUpdateCollection = () => {
+export const useUpdateCollection = (
+  props?: Omit<Parameters<typeof useMutation>[0], 'mutationFn'>,
+) => {
   const mutationFn = useServerFn(updateCollectionSeverFn);
 
   const { mutate: onUpdateCollection, ...rest } = useMutation({
     mutationFn,
-    onSuccess: async ({ id }) => {
+    ...props,
+    onSuccess: async (data, ...rest) => {
+      const { id } = data;
       const invalidateQuery = useInvalidateGetCollection(id);
       await invalidateQuery();
+      props?.onSuccess?.(data, ...rest);
     },
   });
 

@@ -1,0 +1,14 @@
+@layer components {
+  .input {
+    border-width: 1px;
+    border-radius: var(--radius-xs);
+    border-color: var(--color-stone-400);
+    padding: calc(var(--spacing) * 1);
+  }
+
+  .input:focus {
+    outline-width: 1px;
+    outline-color: var(--color-primary-600);
+  }
+
+}

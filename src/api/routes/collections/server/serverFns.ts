@@ -23,7 +23,7 @@ const getCustomFieldRequiredSchema = (num: number) => {
   return z.boolean().describe(`Custom Field ${num} Required`);
 };
 
-export const createCollectionSchema = z.object({
+export const baseCollectionSchema = z.object({
   customField1Enabled: getCustomFieldEnabledSchema(1),
   customField1Label: getCustomFieldLabelSchema(1),
   customField1Required: getCustomFieldRequiredSchema(1),
@@ -37,19 +37,13 @@ export const createCollectionSchema = z.object({
   notes: notesSchema,
 });
 
-export const updateCollectionSchema = z.object({
-  customField1Enabled: getCustomFieldEnabledSchema(1),
-  customField1Label: getCustomFieldLabelSchema(1),
-  customField1Required: getCustomFieldRequiredSchema(1),
-  customField2Enabled: getCustomFieldEnabledSchema(2),
-  customField2Label: getCustomFieldLabelSchema(2),
-  customField2Required: getCustomFieldRequiredSchema(2),
-  customField3Enabled: getCustomFieldEnabledSchema(3),
-  customField3Label: getCustomFieldLabelSchema(3),
-  customField3Required: getCustomFieldRequiredSchema(3),
+export const createCollectionSchema = baseCollectionSchema.extend({
+  id: z.number().optional(),
+  userId: z.string().optional(),
+});
+
+export const updateCollectionSchema = createCollectionSchema.extend({
   id: z.number().describe('ID').min(1),
-  name: nameSchema,
-  notes: notesSchema,
   userId: userIdSchema,
 });
 

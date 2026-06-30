@@ -1,10 +1,8 @@
-import type { RowData } from '@tanstack/react-table';
-
 import { MoreMenu } from '#/components/MoreMenu';
 
 import type { TableCellActionsMenuPropsDef } from './types';
 
-export const TableCellActionsMenu = <TData extends RowData>(
+export const TableCellActionsMenu = <TData extends { id: number | string }>(
   props: TableCellActionsMenuPropsDef<TData>,
 ) => {
   const {
@@ -14,10 +12,10 @@ export const TableCellActionsMenu = <TData extends RowData>(
     editIsDisabled,
     editLabel = 'Edit',
     editOnClick,
+    isEditing,
+    onCancelEdit,
     row,
   } = props;
-
-  const isEditing = row.getIsSelected();
 
   return (
     <div className="flex flex-nowrap gap-2 justify-end items-center">
@@ -28,14 +26,13 @@ export const TableCellActionsMenu = <TData extends RowData>(
                 disabled: editIsDisabled,
                 label: `Cancel ${editLabel}`,
                 onClick: async () => {
-                  row.toggleSelected(false);
+                  onCancelEdit?.(row.original);
                 },
               }
             : {
                 disabled: editIsDisabled,
                 label: editLabel,
                 onClick: async () => {
-                  row.toggleSelected(true);
                   await editOnClick(row.original);
                 },
               },
