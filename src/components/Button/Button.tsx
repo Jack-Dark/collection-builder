@@ -5,16 +5,19 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { useMemo } from 'react';
 
 type ButtonProps = MuiButtonProps & {
+  disabled?: boolean;
   processing?: boolean;
-  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2x';
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  /** Set to `'submit'` for form submission. */
+  type?: 'button' | 'submit';
   variant?: 'primary' | 'secondary' | 'ghost' | 'alert';
 };
 
 export const Button = ({
   children,
   className,
-  disabled,
-  processing,
+  disabled = false,
+  processing = false,
   size = 'md',
   type = 'button',
   variant = 'primary',

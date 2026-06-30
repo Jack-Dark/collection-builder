@@ -55,7 +55,10 @@ export type BodyTopRowPropsDef = {
   tdClassNames: string;
 };
 
-type TablePropsDef<T> = Omit<TableOptions<T>, 'filterFns' | 'getCoreRowModel'> &
+export type TablePropsDef<T> = Omit<
+  TableOptions<T>,
+  'filterFns' | 'getCoreRowModel'
+> &
   Partial<Pick<TableOptions<T>, 'filterFns' | 'getCoreRowModel'>> & {
     BodyTopRow?: JSXElementConstructor<BodyTopRowPropsDef>;
   };

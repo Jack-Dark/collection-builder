@@ -35,6 +35,10 @@
   --color-anchor: var(--color-primary-700)
 }
 
+.text-disabled {
+  color: var(--color-disabled);
+}
+
 .root {
   isolation: isolate;
 }

@@ -13,7 +13,7 @@ export const MoreMenu = (props: MenuPropsDef) => {
   return (
     <Menu.Root disabled={disabled} open={open}>
       <Menu.Trigger
-        className={`flex items-center justify-center select-none ${getCursorClassName(disabled)}`}
+        className={`flex items-center justify-center select-none ${getCursorClassName(disabled)} ${disabled ? 'text-disabled' : ''}`}
         disabled={disabled}
       >
         <MoreHorizIcon />

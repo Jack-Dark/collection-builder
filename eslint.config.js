@@ -1,3 +1,6 @@
+// For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
+import storybook from "eslint-plugin-storybook";
+
 //  @ts-check
 import pluginStylistic from '@stylistic/eslint-plugin';
 import pluginUnusedImports from 'eslint-plugin-unused-imports';
@@ -6,143 +9,135 @@ import pluginReact from 'eslint-plugin-react';
 import { tanstackConfig } from '@tanstack/eslint-config';
 import globals from 'globals';
 
-export default [
-  ...tanstackConfig,
-  {
-    rules: {
-      'import/no-cycle': 'off',
-      'import/order': 'off',
-      'sort-imports': 'off',
-      'no-shadow': 'off',
-      '@typescript-eslint/array-type': 'off',
-      '@typescript-eslint/require-await': 'off',
-      'pnpm/json-enforce-catalog': 'off',
-      '@typescript-eslint/no-unnecessary-condition': 'off',
-      'arrow-body-style': ['warn', 'always'],
-      'object-shorthand': ['warn', 'properties'],
-      '@typescript-eslint/naming-convention': 'warn',
-      'no-useless-rename': 'warn',
-    },
+export default [...tanstackConfig, {
+  rules: {
+    'import/no-cycle': 'off',
+    'import/order': 'off',
+    'sort-imports': 'off',
+    'no-shadow': 'off',
+    '@typescript-eslint/array-type': 'off',
+    '@typescript-eslint/require-await': 'off',
+    'pnpm/json-enforce-catalog': 'off',
+    '@typescript-eslint/no-unnecessary-condition': 'off',
+    'arrow-body-style': ['warn', 'always'],
+    'object-shorthand': ['warn', 'properties'],
+    '@typescript-eslint/naming-convention': 'warn',
+    'no-useless-rename': 'warn',
   },
-  {
-    // REACT PLUGIN UPDATES ONLY
-    files: ['**/*.{js,jsx,mjs,cjs,ts,tsx}'],
-    plugins: {
-      react: pluginReact,
-    },
-    languageOptions: {
-      parserOptions: {
-        ecmaFeatures: {
-          jsx: true,
-        },
-      },
-      globals: {
-        ...globals.browser,
+}, {
+  // REACT PLUGIN UPDATES ONLY
+  files: ['**/*.{js,jsx,mjs,cjs,ts,tsx}'],
+  plugins: {
+    react: pluginReact,
+  },
+  languageOptions: {
+    parserOptions: {
+      ecmaFeatures: {
+        jsx: true,
       },
     },
-    rules: {
-      'react/jsx-key': 'error',
-      'react/jsx-no-useless-fragment': [
-        'warn',
-        {
-          allowEmptyFragment: false,
-          allowExpressions: true,
-        },
-      ],
-      'react/jsx-curly-brace-presence': [
-        'warn',
-        {
-          props: 'never',
-          children: 'never',
-          propElementValues: 'always',
-        },
-      ],
-    },
-    // Workaround for eslint-plugin-react incompatibility with ESLint v10.
-    // eslint-plugin-react calls the removed context.getFilename() API for React
-    // version auto-detection. Explicitly setting the version bypasses that.
-    // Track: https://github.com/jsx-eslint/eslint-plugin-react/issues/3977
-    settings: {
-      react: { version: '19' },
+    globals: {
+      ...globals.browser,
     },
   },
-  {
-    // @STYLISTIC PLUGIN UPDATES ONLY
-    plugins: {
-      '@stylistic': pluginStylistic,
-    },
-    rules: {
-      '@stylistic/arrow-parens': ['warn', 'always'],
-      '@stylistic/padding-line-between-statements': [
-        'warn',
-        {
-          blankLine: 'always',
-          prev: '*',
-          next: [
-            'return',
-            'export',
-            'class',
-            'case',
-            'type',
-            'interface',
-            'function',
-          ],
-        },
-      ],
-      '@stylistic/jsx-self-closing-comp': [
-        'warn',
-        {
-          component: true,
-          html: true,
-        },
-      ],
-    },
+  rules: {
+    'react/jsx-key': 'error',
+    'react/jsx-no-useless-fragment': [
+      'warn',
+      {
+        allowEmptyFragment: false,
+        allowExpressions: true,
+      },
+    ],
+    'react/jsx-curly-brace-presence': [
+      'warn',
+      {
+        props: 'never',
+        children: 'never',
+        propElementValues: 'always',
+      },
+    ],
   },
-  {
-    // UNUSED IMPORTS PLUGIN UPDATES ONLY
-    plugins: {
-      'unused-imports': pluginUnusedImports,
-    },
-    rules: {
-      'no-unused-vars': 'off',
-      '@typescript-eslint/no-unused-vars': 'off',
-      'unused-imports/no-unused-imports': 'warn',
-      'unused-imports/no-unused-vars': [
-        'warn',
-        {
-          vars: 'all',
-          varsIgnorePattern: '^_',
-          args: 'after-used',
-          argsIgnorePattern: '^_',
-        },
-      ],
-    },
+  // Workaround for eslint-plugin-react incompatibility with ESLint v10.
+  // eslint-plugin-react calls the removed context.getFilename() API for React
+  // version auto-detection. Explicitly setting the version bypasses that.
+  // Track: https://github.com/jsx-eslint/eslint-plugin-react/issues/3977
+  settings: {
+    react: { version: '19' },
   },
-  {
-    // PERFECTIONIST PLUGIN UPDATES ONLY
-    plugins: {
-      perfectionist: pluginPerfectionist,
-    },
-    rules: {
-      'jsx-sort-props': 'off',
-      'perfectionist/sort-jsx-props': [
-        'warn',
-        {
-          type: 'natural',
-        },
-      ],
-      'perfectionist/sort-imports': 'warn',
-      'perfectionist/sort-interfaces': 'warn',
-      'perfectionist/sort-object-types': 'warn',
-      'perfectionist/sort-objects': [
-        'warn',
-        {
-          type: 'natural',
-        },
-      ],
-    },
+}, {
+  // @STYLISTIC PLUGIN UPDATES ONLY
+  plugins: {
+    '@stylistic': pluginStylistic,
   },
-  {
-    ignores: ['eslint.config.js', 'prettier.config.js'],
+  rules: {
+    '@stylistic/arrow-parens': ['warn', 'always'],
+    '@stylistic/padding-line-between-statements': [
+      'warn',
+      {
+        blankLine: 'always',
+        prev: '*',
+        next: [
+          'return',
+          'export',
+          'class',
+          'case',
+          'type',
+          'interface',
+          'function',
+        ],
+      },
+    ],
+    '@stylistic/jsx-self-closing-comp': [
+      'warn',
+      {
+        component: true,
+        html: true,
+      },
+    ],
   },
-];
+}, {
+  // UNUSED IMPORTS PLUGIN UPDATES ONLY
+  plugins: {
+    'unused-imports': pluginUnusedImports,
+  },
+  rules: {
+    'no-unused-vars': 'off',
+    '@typescript-eslint/no-unused-vars': 'off',
+    'unused-imports/no-unused-imports': 'warn',
+    'unused-imports/no-unused-vars': [
+      'warn',
+      {
+        vars: 'all',
+        varsIgnorePattern: '^_',
+        args: 'after-used',
+        argsIgnorePattern: '^_',
+      },
+    ],
+  },
+}, {
+  // PERFECTIONIST PLUGIN UPDATES ONLY
+  plugins: {
+    perfectionist: pluginPerfectionist,
+  },
+  rules: {
+    'jsx-sort-props': 'off',
+    'perfectionist/sort-jsx-props': [
+      'warn',
+      {
+        type: 'natural',
+      },
+    ],
+    'perfectionist/sort-imports': 'warn',
+    'perfectionist/sort-interfaces': 'warn',
+    'perfectionist/sort-object-types': 'warn',
+    'perfectionist/sort-objects': [
+      'warn',
+      {
+        type: 'natural',
+      },
+    ],
+  },
+}, {
+  ignores: ['eslint.config.js', 'prettier.config.js'],
+}, ...storybook.configs["flat/recommended"]];

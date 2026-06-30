@@ -19,3 +19,6 @@ __generated__
 
 # Local Netlify folder
 .netlify
+
+*storybook.log
+storybook-static
