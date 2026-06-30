@@ -86,7 +86,7 @@ export const AddCollectionItemForm = (props: AddCollectionItemFormPropsDef) => {
         form.handleSubmit();
       }}
     >
-      <div>
+      <div className="grid gap-4">
         <form.Subscribe
           selector={(state) => {
             return {
@@ -315,7 +315,7 @@ export const AddCollectionItemForm = (props: AddCollectionItemFormPropsDef) => {
 
             return (
               <Button
-                className="flex flex-nowrap gap-2"
+                className="flex flex-nowrap gap-2 justify-self-start"
                 disabled={!isFormValid}
                 type="submit"
               >

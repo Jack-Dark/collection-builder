@@ -1,6 +1,5 @@
 import type { RouteComponent } from '@tanstack/react-router';
 
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { useState } from 'react';
 
 import { Button } from '#/components/Button';
@@ -26,14 +25,27 @@ export const CollectionPage: RouteComponent = () => {
   return (
     <PageWrapper childrenClassName="grid gap-8" title={collection?.name || '-'}>
       {showAddForm ? (
-        <Button
-          className="justify-self-start flex flex-nowrap gap-2"
-          onClick={toggleForm}
-          variant="secondary"
-        >
-          <VisibilityOffIcon />
-          <p>Hide Form</p>
-        </Button>
+        <div className="grid gap-4">
+          <Button
+            className="justify-self-start flex flex-nowrap gap-2"
+            onClick={toggleForm}
+            variant="secondary"
+          >
+            <p>Cancel</p>
+          </Button>
+
+          <AddCollectionItemForm
+            collectionId={collection.id}
+            customField1Enabled={collection.customField1Enabled}
+            customField1Label={collection.customField1Label || ''}
+            customField2Enabled={collection.customField2Enabled}
+            customField2Label={collection.customField2Label || ''}
+            customField3Enabled={collection.customField3Enabled}
+            customField3Label={collection.customField3Label || ''}
+            customFields={customFields}
+            lastAddedItem={lastAddedItem}
+          />
+        </div>
       ) : (
         <Button
           className="justify-self-start"
@@ -42,20 +54,6 @@ export const CollectionPage: RouteComponent = () => {
         >
           Add Item
         </Button>
-      )}
-
-      {showAddForm && (
-        <AddCollectionItemForm
-          collectionId={collection.id}
-          customField1Enabled={collection.customField1Enabled}
-          customField1Label={collection.customField1Label || ''}
-          customField2Enabled={collection.customField2Enabled}
-          customField2Label={collection.customField2Label || ''}
-          customField3Enabled={collection.customField3Enabled}
-          customField3Label={collection.customField3Label || ''}
-          customFields={customFields}
-          lastAddedItem={lastAddedItem}
-        />
       )}
 
       <Table
