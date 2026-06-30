@@ -52,7 +52,7 @@ export const createCollectionItemServerFn = createServerFn({
   method: 'POST',
 })
   .middleware([authApiRouteMiddleware])
-  .inputValidator(createCollectionItemSchema)
+  .validator(createCollectionItemSchema)
   .handler(async ({ context, data }) => {
     return collectionItemsDbQueries.createCollectionItemQuery({
       ...data,
@@ -64,7 +64,7 @@ export const getCollectionItemServerFn = createServerFn({
   method: 'GET',
 })
   .middleware([authApiRouteMiddleware])
-  .inputValidator(requireCollectionItemIdSchema)
+  .validator(requireCollectionItemIdSchema)
   .handler(async ({ context, data: { collectionItemId } }) => {
     return collectionItemsDbQueries.getCollectionItemByIdQuery({
       collectionItemId,
@@ -76,7 +76,7 @@ export const getCustomFieldsSetsForCollectionIdServerFn = createServerFn({
   method: 'GET',
 })
   .middleware([authApiRouteMiddleware])
-  .inputValidator(requireCollectionIdSchema)
+  .validator(requireCollectionIdSchema)
   .handler(async ({ context, data: { collectionId } }) => {
     return collectionItemsDbQueries.getCustomFieldsSetsForCollectionIdQuery({
       collectionId,
@@ -89,7 +89,7 @@ export const updateCollectionItemSeverFn = createServerFn({
   method: 'POST',
 })
   .middleware([authApiRouteMiddleware])
-  .inputValidator(updateCollectionItemSchema)
+  .validator(updateCollectionItemSchema)
   .handler(async ({ data }) => {
     return collectionItemsDbQueries.updateCollectionItemQuery(data);
   });
@@ -99,7 +99,7 @@ export const deleteCollectionItemServerFn = createServerFn({
   method: 'POST',
 })
   .middleware([authApiRouteMiddleware])
-  .inputValidator(requireCollectionItemIdSchema)
+  .validator(requireCollectionItemIdSchema)
   .handler(async ({ context, data: { collectionItemId } }) => {
     return collectionItemsDbQueries.softDeleteCollectionItemByIdQuery({
       id: collectionItemId,

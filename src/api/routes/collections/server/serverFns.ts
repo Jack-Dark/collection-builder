@@ -69,7 +69,7 @@ export const getAllCollectionsServerFn = createServerFn({
   method: 'GET',
 })
   .middleware([authApiRouteMiddleware])
-  .inputValidator(allCollectionsPaginationParamsSchema)
+  .validator(allCollectionsPaginationParamsSchema)
   .handler(async ({ context, data: params }) => {
     return collectionsDbQueries.getAllCollections({
       params,
@@ -81,7 +81,7 @@ export const createCollectionServerFn = createServerFn({
   method: 'POST',
 })
   .middleware([authApiRouteMiddleware])
-  .inputValidator(createCollectionSchema)
+  .validator(createCollectionSchema)
   .handler(async ({ context, data }) => {
     return collectionsDbQueries.createCollection({
       ...data,
@@ -93,7 +93,7 @@ export const getCollectionServerFn = createServerFn({
   method: 'GET',
 })
   .middleware([authApiRouteMiddleware])
-  .inputValidator(requireCollectionIdSchema)
+  .validator(requireCollectionIdSchema)
   .handler(async ({ context, data: { collectionId } }) => {
     return collectionsDbQueries.getCollectionById({
       id: collectionId,
@@ -105,7 +105,7 @@ export const getLastAddedItemInCollectionIdServerFn = createServerFn({
   method: 'GET',
 })
   .middleware([authApiRouteMiddleware])
-  .inputValidator(requireCollectionIdSchema)
+  .validator(requireCollectionIdSchema)
   .handler(async ({ context, data: { collectionId } }) => {
     return collectionItemsDbQueries.getLastAddedCollectionItemQuery({
       collectionId,
@@ -118,7 +118,7 @@ export const updateCollectionSeverFn = createServerFn({
   method: 'POST',
 })
   .middleware([authApiRouteMiddleware])
-  .inputValidator(updateCollectionSchema)
+  .validator(updateCollectionSchema)
   .handler(async ({ data }) => {
     return collectionsDbQueries.updateCollection(data);
   });
@@ -128,7 +128,7 @@ export const deleteCollectionServerFn = createServerFn({
   method: 'POST',
 })
   .middleware([authApiRouteMiddleware])
-  .inputValidator(requireCollectionIdSchema)
+  .validator(requireCollectionIdSchema)
   .handler(async ({ context, data: { collectionId } }) => {
     return collectionsDbQueries.softDeleteCollection({
       id: collectionId,

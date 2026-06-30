@@ -55,7 +55,7 @@ export const getCollectionById = createServerFn({
   method: 'GET',
 })
   .middleware([authApiRouteMiddleware])
-  .inputValidator(requireCollectionIdSchema)
+  .validator(requireCollectionIdSchema)
   .handler(async ({ context, data: { collectionId } }) => {
     return collectionsDbQueries.getCollectionById({
       id: collectionId,
@@ -67,7 +67,7 @@ export const getItemsByCollectionId = createServerFn({
   method: 'GET',
 })
   .middleware([authApiRouteMiddleware])
-  .inputValidator(requireCollectionIdSchema)
+  .validator(requireCollectionIdSchema)
   .handler(async ({ context, data: { collectionId } }) => {
     return collectionItemsDbQueries.getItemsByCollectionIdQuery({
       collectionId,
