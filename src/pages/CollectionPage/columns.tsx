@@ -13,7 +13,7 @@ import {
 } from '#/api/routes/collection-items/client/hooks';
 
 import { TableCellActionsMenu } from '../../components/TableCellActionsMenu';
-import { useEditingCollectionItemsRowIds } from '../CollectionsPage/hooks/use-editing-collections-row-ids';
+import { useEditingCollectionItemsRowIds } from '../CollectionsListPage/hooks/use-editing-collections-row-ids';
 
 const columnHelper = createColumnHelper<CollectionItemRecordDef>();
 

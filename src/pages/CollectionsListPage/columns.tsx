@@ -8,7 +8,7 @@ import type { CollectionRecordDef } from '#/api/routes/collections/server/types'
 import { useDeleteCollection } from '#/api/routes/collections/client/hooks';
 import { TableCellActionsMenu } from '#/components/TableCellActionsMenu';
 
-import { useCollectionsFormStore } from './CollectionsPage';
+import { useCollectionsListFormStore } from './CollectionsListPage';
 import { useEditingCollectionsRowIds } from './hooks/use-editing-collections-row-ids';
 
 const columnHelper = createColumnHelper<CollectionRecordDef>();
@@ -33,7 +33,7 @@ const CustomFieldCell = <TNum extends 1 | 2 | 3>(props: {
   );
 };
 
-export const getCollectionTableColumns = () => {
+export const getCollectionsListTableColumns = () => {
   return [
     columnHelper.accessor('name', {
       cell: ({ getValue, row }) => {
@@ -91,7 +91,7 @@ export const getCollectionTableColumns = () => {
           useDeleteCollection();
 
         const { resetCollectionFormValues, setCollectionFormValues } =
-          useCollectionsFormStore();
+          useCollectionsListFormStore();
 
         const rowId = getValue();
 

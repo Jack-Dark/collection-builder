@@ -16,7 +16,7 @@ import { Route } from '#/routes/_protected/collections';
 
 import type { AddCollectionFormSchemaDef } from './components/AddCollectionForm/types';
 
-import { getCollectionTableColumns } from './columns';
+import { getCollectionsListTableColumns } from './columns';
 import { AddCollectionFormTableRow } from './components/AddCollectionForm';
 import {
   addCollectionFormDefaultValues,
@@ -24,7 +24,7 @@ import {
 } from './components/AddCollectionForm/constants';
 import { useEditingCollectionsRowIds } from './hooks/use-editing-collections-row-ids';
 
-export const useCollectionsFormStore = create<{
+export const useCollectionsListFormStore = create<{
   collectionFormValues: AddCollectionFormSchemaDef;
   resetCollectionFormValues: () => void;
   setCollectionFormValues: (values: AddCollectionFormSchemaDef) => void;
@@ -44,13 +44,13 @@ export const useCollectionsFormStore = create<{
   };
 });
 
-export const CollectionsPage: RouteComponent = () => {
+export const CollectionsListPage: RouteComponent = () => {
   const collections = Route.useLoaderData();
 
   const router = useRouter();
 
   const { collectionFormValues, resetCollectionFormValues } =
-    useCollectionsFormStore();
+    useCollectionsListFormStore();
 
   const { onCreateCollection } = useCreateCollection({
     onSuccess: () => {
@@ -99,7 +99,7 @@ export const CollectionsPage: RouteComponent = () => {
 
   const { isEditing, resetEditingRowIds } = useEditingCollectionsRowIds();
 
-  const columns = getCollectionTableColumns();
+  const columns = getCollectionsListTableColumns();
 
   return (
     <PageWrapper title="Collections">

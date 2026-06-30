@@ -1,11 +1,11 @@
 import { createFileRoute } from '@tanstack/react-router';
 
 import { getAllCollectionsServerFn } from '#/api/routes/collections/server/serverFns';
-import { CollectionsPage } from '#/pages/CollectionsPage';
+import { CollectionsListPage } from '#/pages/CollectionsListPage';
 
 export const Route = createFileRoute('/_protected/collections/')({
   component: (props) => {
-    return <CollectionsPage {...props} />;
+    return <CollectionsListPage {...props} />;
   },
   loader: async () => {
     return getAllCollectionsServerFn();
