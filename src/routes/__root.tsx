@@ -86,10 +86,8 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
       </head>
 
       <DialogProvider>
-        <body className="bg-linear-to-b from-primary-900 to-secondary-900 text-white">
-          <div className="root grid min-h-dvh grid-rows-[max-content_1fr_max-content]">
-            {children}
-          </div>
+        <body className="bg-linear-to-b from-primary-900 to-secondary-900 root grid min-h-dvh grid-rows-[max-content_1fr_max-content]">
+          {children}
           <Scripts />
         </body>
       </DialogProvider>

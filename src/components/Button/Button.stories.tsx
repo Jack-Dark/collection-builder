@@ -44,6 +44,12 @@ export const Secondary: Story = {
   },
 };
 
+export const Monochromatic: Story = {
+  args: {
+    variant: 'mono',
+  },
+};
+
 export const Ghost: Story = {
   args: {
     variant: 'ghost',

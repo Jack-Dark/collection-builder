@@ -18,11 +18,12 @@ export const Dialog = (props: DialogPropsDef) => {
       className={`fixed inset-0 flex md:items-center md:justify-center overflow-hidden ${isFullScreen ? '' : 'md:p-6'}`}
     >
       <MuiDialog.Popup
-        className={`relative flex w-full h-full max-h-full max-w-full min-h-0 ${isFullScreen ? '' : 'md:w-[min(40rem,calc(100vw-2rem))] md:max-h-200'} flex-col bg-white duration-100 ease-out`}
+        className={`relative flex w-full h-full max-h-full max-w-full min-h-0 ${isFullScreen ? '' : `md:w-120 md:h-auto md:max-h-200`} flex-col bg-white duration-100 ease-out`}
       >
         <div
-          className={`flex ${Header ? 'justify-between' : 'justify-end'} items-center gap-2 p-2 border-b`}
+          className={`flex ${Header ? 'justify-between' : 'justify-end'} items-center gap-2 px-4 py-2 border-b border-gray-400`}
         >
+          <CloseIcon className="opacity-0" />
           {Header &&
             (typeof Header === 'string' ? (
               <MuiDialog.Title>{Header}</MuiDialog.Title>
@@ -36,10 +37,10 @@ export const Dialog = (props: DialogPropsDef) => {
           )}
         </div>
 
-        <div className="overflow-y-auto p-2">{children}</div>
+        <div className="overflow-y-auto py-8 px-4">{children}</div>
 
         {Footer && (
-          <div className="grid grid-flow-col gap-2 p-2 border-t">
+          <div className="grid grid-flow-col gap-2 p-2 border-t border-gray-400">
             <Footer />
           </div>
         )}

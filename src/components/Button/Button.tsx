@@ -14,7 +14,7 @@ type ButtonProps = MuiButtonProps & {
   text?: string;
   /** Set to `'submit'` for form submission. */
   type?: 'button' | 'submit';
-  variant?: 'primary' | 'secondary' | 'ghost' | 'alert';
+  variant?: 'primary' | 'secondary' | 'mono' | 'ghost' | 'alert';
 };
 
 const iconPositions = {

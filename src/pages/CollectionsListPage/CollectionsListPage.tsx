@@ -97,7 +97,8 @@ export const CollectionsListPage: RouteComponent = () => {
     },
   });
 
-  const { isEditing, resetEditingRowIds } = useEditingCollectionsRowIds();
+  const { addToEditingRowIds, isEditing, resetEditingRowIds } =
+    useEditingCollectionsRowIds();
 
   const columns = getCollectionsListTableColumns();
 
@@ -109,7 +110,7 @@ export const CollectionsListPage: RouteComponent = () => {
             <Button
               onClick={() => {
                 // TODO - RESET NOT APPLICABLE HERE
-                resetEditingRowIds();
+                addToEditingRowIds('');
               }}
               text="Add New Collection"
             />
