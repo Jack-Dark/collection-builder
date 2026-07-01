@@ -51,7 +51,7 @@ const meta = {
       },
     ],
   },
-  // More on argTypes: https://storybook.js.org/docs/api/argtypes
+  // More on argTypes: https://storybook.js.org/docs/api/arg-types#argtypes
   argTypes: {},
   component: Table,
   parameters: {

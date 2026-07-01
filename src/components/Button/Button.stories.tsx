@@ -11,7 +11,7 @@ const meta = {
     children: <>Button</>,
     onClick: fn(),
   },
-  // More on argTypes: https://storybook.js.org/docs/api/argtypes
+  // More on argTypes: https://storybook.js.org/docs/api/arg-types#argtypes
   argTypes: {
     type: {
       control: 'inline-radio',

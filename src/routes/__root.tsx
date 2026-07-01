@@ -15,6 +15,8 @@ import {
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
 import { StrictMode } from 'react';
 
+import { DialogProvider } from '#/components/Dialog/Dialog.Provider';
+
 import appCss from '../styles.css?url';
 
 export const Route = createRootRoute({
@@ -82,12 +84,15 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
       <head>
         <HeadContent />
       </head>
-      <body className="bg-linear-to-b from-primary-900 to-secondary-900 text-white">
-        <div className="root grid min-h-dvh grid-rows-[max-content_1fr_max-content]">
-          {children}
-        </div>
-        <Scripts />
-      </body>
+
+      <DialogProvider>
+        <body className="bg-linear-to-b from-primary-900 to-secondary-900 text-white">
+          <div className="root grid min-h-dvh grid-rows-[max-content_1fr_max-content]">
+            {children}
+          </div>
+          <Scripts />
+        </body>
+      </DialogProvider>
     </html>
   );
 }

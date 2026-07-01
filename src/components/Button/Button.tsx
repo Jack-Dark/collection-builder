@@ -8,6 +8,7 @@ type ButtonProps = MuiButtonProps & {
   disabled?: boolean;
   processing?: boolean;
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  text?: string;
   /** Set to `'submit'` for form submission. */
   type?: 'button' | 'submit';
   variant?: 'primary' | 'secondary' | 'ghost' | 'alert';
@@ -19,6 +20,7 @@ export const Button = ({
   disabled = false,
   processing = false,
   size = 'md',
+  text = '',
   type = 'button',
   variant = 'primary',
   ...rest
@@ -47,6 +49,7 @@ export const Button = ({
       {processing && (
         <CircularProgress color="inherit" enableTrackSlot size="1rem" />
       )}
+      {text && <p>{text}</p>}
       {children}
     </MuiButton>
   );
