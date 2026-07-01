@@ -18,9 +18,7 @@ export const AccountPage = () => {
       <div className="col-span-2">{user.image}</div>
 
       <p>{user.name}</p>
-      <Button className="justify-self-start" disabled size="sm">
-        Edit
-      </Button>
+      <Button className="justify-self-start" disabled size="sm" text="Edit" />
 
       <p>
         {user.email}
@@ -28,26 +26,26 @@ export const AccountPage = () => {
         {user.emailVerified && <VerifiedIcon />}
       </p>
       <div className="flex items-center gap-2">
-        <Button className="justify-self-start" disabled size="sm">
-          Edit
-        </Button>
+        <Button className="justify-self-start" disabled size="sm" text="Edit" />
 
         {!user.emailVerified && (
           <Button
             className="justify-self-start"
             disabled
             size="sm"
+            text="Resend verification email"
             variant="secondary"
-          >
-            Resend verification email
-          </Button>
+          />
         )}
       </div>
 
       <div className="col-span-2">
-        <Button className="justify-self-start" disabled size="sm">
-          Update Password
-        </Button>
+        <Button
+          className="justify-self-start"
+          disabled
+          size="sm"
+          text="Update Password"
+        />
       </div>
     </PageWrapper>
   );

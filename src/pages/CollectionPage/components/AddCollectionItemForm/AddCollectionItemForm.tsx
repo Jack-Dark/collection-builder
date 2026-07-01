@@ -317,11 +317,10 @@ export const AddCollectionItemForm = (props: AddCollectionItemFormPropsDef) => {
               <Button
                 className="flex flex-nowrap gap-2 justify-self-start"
                 disabled={!isFormValid}
+                Icon={SaveIcon}
+                text="Save"
                 type="submit"
-              >
-                <SaveIcon />
-                Save
-              </Button>
+              />
             );
           }}
         </form.Subscribe>

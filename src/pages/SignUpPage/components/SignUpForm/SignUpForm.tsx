@@ -205,9 +205,7 @@ export const SignUpForm: RouteComponent = () => {
             const { isFormValid } = state;
 
             return (
-              <Button disabled={!isFormValid} type="submit">
-                Submit
-              </Button>
+              <Button disabled={!isFormValid} text="Submit" type="submit" />
             );
           }}
         </form.Subscribe>

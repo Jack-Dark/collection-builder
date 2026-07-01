@@ -163,9 +163,7 @@ export const AddCollectionFormTableRow = withAddCollectionForm({
         </td>
         <td className={tdClassNames} colSpan={2}>
           <div className="flex align-items-center gap-2 justify-end">
-            <Button onClick={onCancel} variant="secondary">
-              Cancel
-            </Button>
+            <Button onClick={onCancel} text="Cancel" variant="secondary" />
 
             <form.AppForm>
               <form.Subscribe

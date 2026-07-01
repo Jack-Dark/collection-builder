@@ -1,4 +1,5 @@
 import type { ButtonProps as MuiButtonProps } from '@base-ui/react';
+import type { JSXElementConstructor } from 'react';
 
 import { Button as MuiButton } from '@base-ui/react';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -6,6 +7,8 @@ import { useMemo } from 'react';
 
 type ButtonProps = MuiButtonProps & {
   disabled?: boolean;
+  Icon?: JSXElementConstructor<{}>;
+  iconPosition?: (typeof iconPositions)[keyof typeof iconPositions];
   processing?: boolean;
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   text?: string;
@@ -14,10 +17,17 @@ type ButtonProps = MuiButtonProps & {
   variant?: 'primary' | 'secondary' | 'ghost' | 'alert';
 };
 
+const iconPositions = {
+  left: 'left',
+  right: 'right',
+} as const;
+
 export const Button = ({
   children,
   className,
   disabled = false,
+  Icon,
+  iconPosition = iconPositions.left,
   processing = false,
   size = 'md',
   text = '',
@@ -46,11 +56,21 @@ export const Button = ({
       className={classNameString}
       type={type}
     >
-      {processing && (
-        <CircularProgress color="inherit" enableTrackSlot size="1rem" />
-      )}
-      {text && <p>{text}</p>}
-      {children}
+      {iconPosition === iconPositions.left &&
+        (processing ? (
+          <CircularProgress color="inherit" enableTrackSlot size="1rem" />
+        ) : (
+          Icon && <Icon />
+        ))}
+
+      {children ? children : <p>{text}</p>}
+
+      {iconPosition === iconPositions.right &&
+        (processing ? (
+          <CircularProgress color="inherit" enableTrackSlot size="1rem" />
+        ) : (
+          Icon && <Icon />
+        ))}
     </MuiButton>
   );
 };

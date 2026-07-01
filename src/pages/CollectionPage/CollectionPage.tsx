@@ -29,10 +29,9 @@ export const CollectionPage: RouteComponent = () => {
           <Button
             className="justify-self-start flex flex-nowrap gap-2"
             onClick={toggleForm}
+            text="Cancel"
             variant="secondary"
-          >
-            <p>Cancel</p>
-          </Button>
+          />
 
           <AddCollectionItemForm
             collectionId={collection.id}
@@ -50,10 +49,9 @@ export const CollectionPage: RouteComponent = () => {
         <Button
           className="justify-self-start"
           onClick={toggleForm}
+          text="Add Item"
           variant="primary"
-        >
-          Add Item
-        </Button>
+        />
       )}
 
       <Table

@@ -111,9 +111,8 @@ export const CollectionsListPage: RouteComponent = () => {
                 // TODO - RESET NOT APPLICABLE HERE
                 resetEditingRowIds();
               }}
-            >
-              Add New Collection
-            </Button>
+              text="Add New Collection"
+            />
           </div>
         )}
       </div>
