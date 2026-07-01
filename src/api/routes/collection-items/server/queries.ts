@@ -45,7 +45,7 @@ const defaultParams = {
 
 type CollectionItemsTableColumns = keyof CollectionItemRecordDef;
 
-export const getAllCollectionItemsQuery = async (props: {
+export const getItemsByCollectionIdQuery = async (props: {
   collectionId: number;
   params?: PaginationParamsSchemaDef<keyof CollectionItemRecordDef>;
   userId: string;
@@ -114,24 +114,6 @@ export const getCollectionItemByIdQuery = async (props: {
   return game;
 };
 
-export const getItemsByCollectionIdQuery = async (props: {
-  collectionId: number;
-  userId: string;
-}) => {
-  const { collectionId, userId } = props;
-
-  const items = await db
-    .select()
-    .from(collectionItemsTable)
-    .where(
-      and(
-        eq(collectionItemsTable.collectionId, collectionId),
-        getMatchesUserIdAndNotDeleted(userId),
-      ),
-    );
-
-  return items;
-};
 
 export const getLastAddedCollectionItemQuery = async (props: {
   collectionId: number;

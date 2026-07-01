@@ -32,6 +32,10 @@ export const fetchItemsByCollectionId = createServerFn({
   .handler(async ({ context, data: params }) => {
     return collectionItemsDbQueries.getItemsByCollectionIdQuery({
       collectionId: params.collectionId,
+      params: {
+        sortDirection: 'ASC',
+        sortField: 'name',
+      },
       userId: context.user.id,
     });
   });
