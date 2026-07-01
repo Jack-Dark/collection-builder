@@ -40,7 +40,7 @@ export const Dialog = (props: DialogPropsDef) => {
         <div className="overflow-y-auto py-8 px-4">{children}</div>
 
         {Footer && (
-          <div className="grid grid-flow-col gap-2 p-2 border-t border-gray-400">
+          <div className="grid grid-flow-col gap-1 p-1 border-t border-gray-400">
             <Footer />
           </div>
         )}

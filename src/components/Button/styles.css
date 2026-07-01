@@ -32,25 +32,25 @@
   }
 
   .btn-md {
-    padding: --spacing(2) --spacing(5);
+    padding: --spacing(1.5) --spacing(4);
     font-size: var(--text-base);
     line-height: var(--text-base--line-height);
   }
 
   .btn-lg {
-    padding: --spacing(3) --spacing(7);
+    padding: --spacing(2) --spacing(5);
     font-size: var(--text-lg);
     line-height: var(--text-lg--line-height);
   }
 
   .btn-xl {
-    padding: --spacing(4) --spacing(9);
+    padding: --spacing(3) --spacing(6);
     font-size: var(--text-xl);
     line-height: var(--text-xl--line-height);
   }
 
   .btn-2xl {
-    padding: --spacing(5) --spacing(11);
+    padding: --spacing(4) --spacing(8);
     font-size: var(--text-2xl);
     line-height: var(--text-2xl--line-height);
   }
@@ -101,13 +101,13 @@
 
   .btn-mono {
     background-color: var(--color-white);
-    border-color: var(--color-gray-500);
-    color: var(--color-gray-600);
+    border-color: var(--color-black);
+    color: var(--color-black);
 
     &:not(:disabled):hover {
       @media (hover: hover) {
-        background-color: var(--color-gray-600);
-        border-color: var(--color-gray-600);
+        background-color: var(--color-gray-700);
+        border-color: var(--color-gray-700);
         color: var(--color-white);
       }
     }

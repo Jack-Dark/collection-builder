@@ -61,3 +61,21 @@ export const Alert: Story = {
     variant: 'alert',
   },
 };
+
+export const Sizes: Story = {
+  args: {},
+  decorators: [
+    (_Story, { args: props }) => {
+      return (
+        <div className="flex gap-2 items-center">
+          <Button {...props} size="xs" text="xs size" />
+          <Button {...props} size="sm" text="sm size" />
+          <Button {...props} size="md" text="md size" />
+          <Button {...props} size="lg" text="lg size" />
+          <Button {...props} size="xl" text="xl size" />
+          <Button {...props} size="2xl" text="2xl size" />
+        </div>
+      );
+    },
+  ],
+};

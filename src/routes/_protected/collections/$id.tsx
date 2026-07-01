@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router';
 
 import { getCustomFieldsSetsForCollectionIdServerFn } from '#/api/routes/collection-items/server/serverFns';
 import { getLastAddedItemInCollectionIdServerFn } from '#/api/routes/collections/server/serverFns';
-import { CollectionPage } from '#/pages/CollectionPage';
+import { CollectionPage } from '#/pages/CollectionItemsPage';
 import {
   getCollectionById,
   getItemsByCollectionId,

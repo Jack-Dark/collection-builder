@@ -1,5 +1,6 @@
 import type { RouteComponent } from '@tanstack/react-router';
 
+import ControlPointIcon from '@mui/icons-material/ControlPoint';
 import { revalidateLogic } from '@tanstack/react-form';
 import { useRouter } from '@tanstack/react-router';
 import { create } from 'zustand';
@@ -106,13 +107,15 @@ export const CollectionsListPage: RouteComponent = () => {
     <PageWrapper title="Collections">
       <div className="grid grid-cols-1 gap-4">
         {!isEditing && (
-          <div>
+          <div className="flex justify-end">
             <Button
+              Icon={ControlPointIcon}
               onClick={() => {
                 // TODO - RESET NOT APPLICABLE HERE
                 addToEditingRowIds('');
               }}
-              text="Add New Collection"
+              text="Add New"
+              variant="secondary"
             />
           </div>
         )}
