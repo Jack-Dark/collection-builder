@@ -47,6 +47,11 @@ body {
   position: relative;
 }
 
+[data-base-ui-portal] {
+  position: relative;
+  z-index: 99;
+}
+
 h1 {
   font-size: var(--text-4xl);
   line-height: var(--tw-leading, var(--text-4xl--line-height));
