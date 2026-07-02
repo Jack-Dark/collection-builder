@@ -9,7 +9,7 @@ import {
   useCreateCollection,
   useUpdateCollection,
 } from '#/api/routes/collections/client/hooks';
-import { createCollectionSchema } from '#/api/routes/collections/server/serverFns';
+import { collectionFormSchema } from '#/api/routes/collections/server/serverFns';
 import { Button } from '#/components/Button';
 import { Table } from '#/components/Table';
 import { PageWrapper } from '#/page-wrapper';
@@ -68,33 +68,34 @@ export const CollectionsListPage: RouteComponent = () => {
   const form = useAddCollectionForm({
     defaultValues: collectionFormValues,
     onSubmit: async ({ value }) => {
-      if (!!value?.id && !!value?.userId) {
+      if (value.id) {
         await onUpdateCollection({
-          data: {
-            ...value,
-            // id and userId added long-hand to solve type errors
-            id: value.id,
-            userId: value.userId,
-          },
+          data: value,
         });
+
+        resetEditingRowIds();
       } else {
         await onCreateCollection({
-          data: value,
+          data: {
+            // undefined values added long-hand to resolve type errors
+            ...value,
+            createdAt: undefined,
+            id: undefined,
+            userId: undefined,
+          },
         });
       }
 
       form.reset();
 
       await router.invalidate();
-
-      // nameInputRef?.current?.focus();
     },
     validationLogic: revalidateLogic({
       mode: 'submit',
       modeAfterSubmission: 'change',
     }),
     validators: {
-      onSubmit: createCollectionSchema,
+      onSubmit: collectionFormSchema,
     },
   });
 
@@ -111,7 +112,6 @@ export const CollectionsListPage: RouteComponent = () => {
             <Button
               Icon={ControlPointIcon}
               onClick={() => {
-                // TODO - RESET NOT APPLICABLE HERE
                 addToEditingRowIds('');
               }}
               text="Add New"
@@ -136,6 +136,8 @@ export const CollectionsListPage: RouteComponent = () => {
                       form={form}
                       onCancel={() => {
                         resetEditingRowIds();
+                        resetCollectionFormValues();
+                        form.reset();
                       }}
                       // tdClassNames={`${tdClassNames} align-items-center min-h-[501px]`}
                       {...props}

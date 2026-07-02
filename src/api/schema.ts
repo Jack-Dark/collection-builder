@@ -154,12 +154,14 @@ export const collectionItemsTable = pgTable(
     id: serial().primaryKey(),
     name: text().notNull(),
     isSpecialEdition: boolean().notNull(),
-    editionDetails: text(),
-    notes: text(),
-    customField1Value: text(),
-    customField2Value: text(),
-    customField3Value: text(),
+    editionDetails: text().notNull().default(''),
+    notes: text().notNull().default(''),
+    customField1Value: text().notNull().default(''),
+    customField2Value: text().notNull().default(''),
+    customField3Value: text().notNull().default(''),
     userId: text()
+      .notNull()
+      .default('')
       .references(
         () => {
           return usersTable.id;

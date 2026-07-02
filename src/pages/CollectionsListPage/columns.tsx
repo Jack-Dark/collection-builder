@@ -93,23 +93,23 @@ export const getCollectionsListTableColumns = () => {
         const { resetCollectionFormValues, setCollectionFormValues } =
           useCollectionsListFormStore();
 
-        const rowId = getValue();
+        const collectionId = getValue();
 
         const { getIsEditingRowId, resetEditingRowIds, setEditingRowIds } =
           useEditingCollectionsRowIds();
 
-        const isEditingRow = getIsEditingRowId(rowId);
+        const isEditingRow = getIsEditingRowId(collectionId);
 
         return (
           <TableCellActionsMenu
             deleteIsDisabled={isDeletePending}
             deleteOnClick={async () => {
-              await onDeleteCollection({ data: { collectionId: rowId } });
+              await onDeleteCollection({ data: { collectionId } });
               router.invalidate();
             }}
             editIsDisabled={isDeletePending}
             editOnClick={async (row) => {
-              setEditingRowIds([rowId]);
+              setEditingRowIds([collectionId]);
               setCollectionFormValues(row);
             }}
             isEditing={isEditingRow}

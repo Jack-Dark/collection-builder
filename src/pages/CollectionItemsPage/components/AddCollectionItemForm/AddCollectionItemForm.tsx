@@ -1,43 +1,32 @@
 import SaveIcon from '@mui/icons-material/Save';
-import { revalidateLogic, useForm } from '@tanstack/react-form';
-import { useRouter } from '@tanstack/react-router';
-import { useRef } from 'react';
 
-import type { CollectionItemRecordDef } from '#/api/routes/collection-items/server/types';
-
-import { useCreateCollectionItem } from '#/api/routes/collection-items/client/hooks';
-import { createCollectionItemSchema } from '#/api/routes/collection-items/server/serverFns';
 import { Button } from '#/components/Button';
-import { CheckboxField } from '#/components/CheckboxField';
-import { ComboboxField } from '#/components/ComboboxField';
-import { InputField } from '#/components/InputField';
 
 import {
   addCollectionItemFormDefaultValues,
   withAddCollectionItemForm,
 } from './constants';
 
-type AddCollectionItemFormPropsDef = {
-  collectionId: number;
-  customField1Enabled: boolean | undefined;
-  customField1Label: string | undefined;
-  customField2Enabled: boolean | undefined;
-  customField2Label: string | undefined;
-  customField3Enabled: boolean | undefined;
-  customField3Label: string | undefined;
-  customFields: {
-    customField1Values: string[];
-    customField2Values: string[];
-    customField3Values: string[];
-  };
-  lastAddedItem: CollectionItemRecordDef | undefined;
-};
+// type AddCollectionItemFormPropsDef = {
+//   collectionId: number;
+//   customField1Enabled: boolean | undefined;
+//   customField1Label: string | undefined;
+//   customField2Enabled: boolean | undefined;
+//   customField2Label: string | undefined;
+//   customField3Enabled: boolean | undefined;
+//   customField3Label: string | undefined;
+//   customFields: {
+//     customField1Values: string[];
+//     customField2Values: string[];
+//     customField3Values: string[];
+//   };
+//   lastAddedItem: CollectionItemRecordDef | undefined;
+// };
 
 export const AddCollectionItemFormTableRow = withAddCollectionItemForm({
   /** These values are only used for type-checking, and are not used at runtime */
   defaultValues: addCollectionItemFormDefaultValues,
   props: {
-    collectionId: 0,
     customField1Enabled: false,
     customField1Label: '',
     customField2Enabled: false,
@@ -49,19 +38,16 @@ export const AddCollectionItemFormTableRow = withAddCollectionItemForm({
       customField2Values: [''],
       customField3Values: [''],
     },
-    lastAddedItem: {},
     onCancel: () => {},
     tdClassNames: '',
   },
-  render: ({
-    collectionId,
-    customFields,
-    form,
-    lastAddedItem,
-    onCancel,
-    tdClassNames,
-    ...rest
-  }) => {
+  render: ({ customFields, form, onCancel, tdClassNames, ...rest }) => {
+    const enabledFieldNums = [
+      rest.customField1Enabled && 1,
+      rest.customField2Enabled && 2,
+      rest.customField3Enabled && 3,
+    ].filter(Boolean) as (1 | 2 | 3)[];
+
     return (
       <tr className="align-top">
         <td className={tdClassNames}>
@@ -83,9 +69,10 @@ export const AddCollectionItemFormTableRow = withAddCollectionItemForm({
                     return (
                       <field.InputField
                         autoFocus
+                        error={field.state.meta.errors.join(',')}
                         name={field.name}
+
                         onValueChange={field.handleChange}
-                        // error={errorMsg}
                         placeholder="Input name..."
                         required
                         value={value}
@@ -98,33 +85,35 @@ export const AddCollectionItemFormTableRow = withAddCollectionItemForm({
           </form.AppField>
         </td>
 
-        {([1, 2, 3] as const).map((num) => {
+        {enabledFieldNums.map((num) => {
           const isFieldEnabled = rest[`customField${num}Enabled`];
           const fieldLabel = rest[`customField${num}Label`];
+          const fieldName = `customField${num}Value` as const;
 
           return (
-            <td className={tdClassNames} key={num}>
-              {isFieldEnabled && (
-                <form.Subscribe
-                  selector={(state) => {
-                    return {
-                      errors: state.errors,
-                      value: state.values[`customField${num}Value`],
-                    };
-                  }}
-                >
-                  {({ errors, value }) => {
-                    return (
-                      <form.Field name={`customField${num}Value`}>
-                        {(field) => {
-                          // const errorMsg =
-                          // errors?.[0]?.[field.name]?.[0]?.message;
+            <form.AppField key={fieldName} name={fieldName}>
+              {(field) => {
+                // const errorMsg =
+                // errors?.[0]?.[field.name]?.[0]?.message;
 
+                return (
+                  <td className={tdClassNames}>
+                    {isFieldEnabled && (
+                      <form.Subscribe
+                        selector={(state) => {
+                          return {
+                            errors: state.errors,
+                            value: state.values[`customField${num}Value`],
+                          };
+                        }}
+                      >
+                        {({ errors: _errors, value }) => {
                           return (
-                            <ComboboxField
+                            <field.ComboboxField
                               defaultValue={{ id: value, label: value }}
+                              error={field.state.meta.errors.join(',')}
+
                               hideLabel
-                              // error={errorMsg}
                               items={customFields[
                                 `customField${num}Values`
                               ].map((label) => {
@@ -139,14 +128,88 @@ export const AddCollectionItemFormTableRow = withAddCollectionItemForm({
                             />
                           );
                         }}
-                      </form.Field>
+                      </form.Subscribe>
+                    )}
+                  </td>
+                );
+              }}
+            </form.AppField>
+          );
+        })}
+
+        <td className={tdClassNames}>
+          <form.AppField
+            listeners={{
+              onChange: ({ value: isSpecialEdition }) => {
+                form.setFieldValue(
+                  'editionDetails',
+                  isSpecialEdition ? "Collector's Edition" : '',
+                );
+              },
+            }}
+            name="isSpecialEdition"
+          >
+            {(field) => {
+              return (
+                <form.Subscribe
+                  selector={(state) => {
+                    return {
+                      errors: state.errors,
+                      value: state.values.isSpecialEdition,
+                    };
+                  }}
+                >
+                  {({ errors: _errors, value }) => {
+                    // TODO - EXTRACT ERROR MESSAGE (AND IDEALLY SUBSCRIBE) LOGIC
+                    // const errorMsg = errors?.[0]?.[field.name]?.[0]?.message;
+
+                    return (
+                      <field.CheckboxField
+                        checked={value}
+                        error={field.state.meta.errors.join(',')}
+                        label="Is this a special edition?"
+                        onCheckedChange={field.handleChange}
+                      />
                     );
                   }}
                 </form.Subscribe>
-              )}
-            </td>
-          );
-        })}
+              );
+            }}
+          </form.AppField>
+          <form.AppField name="editionDetails">
+            {(field) => {
+              return (
+                <form.Subscribe
+                  selector={(state) => {
+                    return {
+                      errors: state.errors,
+                      isSpecialEdition: state.values.isSpecialEdition,
+                      value: state.values.editionDetails,
+                    };
+                  }}
+                >
+                  {({ errors: _errors, isSpecialEdition, value }) => {
+                    // TODO - EXTRACT ERROR MESSAGE (AND IDEALLY SUBSCRIBE) LOGIC
+                    // const errorMsg = errors?.[0]?.[field.name]?.[0]?.message;
+
+                    return (
+                      isSpecialEdition && (
+                        <field.TextAreaField
+                          error={field.state.meta.errors.join(',')}
+                          label="Edition details"
+                          name={field.name}
+                          onValueChange={field.handleChange}
+                          required
+                          value={value}
+                        />
+                      )
+                    );
+                  }}
+                </form.Subscribe>
+              );
+            }}
+          </form.AppField>
+        </td>
 
         <td className={tdClassNames}>
           <form.AppField name="notes">
@@ -166,7 +229,7 @@ export const AddCollectionItemFormTableRow = withAddCollectionItemForm({
 
                     return (
                       <field.TextAreaField
-                        // error={errorMsg}
+                        error={field.state.meta.errors.join(',')}
                         name={field.name}
                         onValueChange={field.handleChange}
                         placeholder="Input notes..."
@@ -186,30 +249,15 @@ export const AddCollectionItemFormTableRow = withAddCollectionItemForm({
             <Button onClick={onCancel} text="Cancel" variant="mono" />
 
             <form.AppForm>
-              <form.Subscribe
-                selector={(state) => {
-                  return {
-                    isFormValid: state.isFormValid,
-                    values: state.values,
-                  };
-                }}
+              <form.Button
+                className="flex flex-nowrap gap-2"
+                disabled={!form.state.isFormValid}
+                processing={form.state.isSubmitting}
+                type="submit"
               >
-                {(state) => {
-                  const { isFormValid } = state;
-
-                  return (
-                    <form.Button
-                      className="flex flex-nowrap gap-2"
-                      disabled={!isFormValid}
-                      processing={form.state.isSubmitting}
-                      type="submit"
-                    >
-                      <SaveIcon />
-                      Save
-                    </form.Button>
-                  );
-                }}
-              </form.Subscribe>
+                <SaveIcon />
+                Save
+              </form.Button>
             </form.AppForm>
           </div>
         </td>
@@ -217,302 +265,3 @@ export const AddCollectionItemFormTableRow = withAddCollectionItemForm({
     );
   },
 });
-
-export const AddCollectionItemForm = (props: AddCollectionItemFormPropsDef) => {
-  const {
-    collectionId,
-    customField1Enabled,
-    customField1Label,
-    customField2Enabled,
-    customField2Label,
-    customField3Enabled,
-    customField3Label,
-    customFields,
-    lastAddedItem,
-  } = props;
-
-  const router = useRouter();
-
-  const nameInput = useRef<HTMLInputElement>(null);
-
-  const { onCreateCollectionItem } = useCreateCollectionItem();
-
-  const form = useForm({
-    defaultValues: {
-      ...addCollectionItemFormDefaultValues,
-      collectionId,
-      // ? prefill system field with last-added game's system
-      customField1Value: lastAddedItem?.customField1Value || '',
-      customField2Value: lastAddedItem?.customField2Value || '',
-      customField3Value: lastAddedItem?.customField3Value || '',
-    },
-    onSubmit: async ({ value }) => {
-      await onCreateCollectionItem({
-        data: value,
-      });
-
-      form.reset();
-
-      await router.invalidate();
-
-      nameInput?.current?.focus();
-    },
-    validationLogic: revalidateLogic({
-      mode: 'submit',
-      modeAfterSubmission: 'change',
-    }),
-    validators: {
-      onSubmit: createCollectionItemSchema,
-    },
-  });
-
-  return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        form.handleSubmit();
-      }}
-    >
-      <div className="grid gap-4">
-        <form.Subscribe
-          selector={(state) => {
-            return {
-              errors: state.errors,
-              value: state.values.name,
-            };
-          }}
-        >
-          {({ errors, value }) => {
-            return (
-              <form.Field name="name">
-                {(field) => {
-                  // TODO - EXTRACT ERROR MESSAGE (AND IDEALLY SUBSCRIBE) LOGIC
-                  const errorMsg = errors?.[0]?.[field.name]?.[0]?.message;
-
-                  return (
-                    <InputField
-                      autoFocus
-                      error={errorMsg}
-                      label="Name"
-                      name={field.name}
-                      onValueChange={field.handleChange}
-                      ref={nameInput}
-                      required
-                      value={value}
-                    />
-                  );
-                }}
-              </form.Field>
-            );
-          }}
-        </form.Subscribe>
-
-        {customField1Enabled && (
-          <form.Subscribe
-            selector={(state) => {
-              return {
-                errors: state.errors,
-                value: state.values.customField1Value,
-              };
-            }}
-          >
-            {({ errors, value }) => {
-              return (
-                <form.Field name="customField1Value">
-                  {(field) => {
-                    const errorMsg = errors?.[0]?.[field.name]?.[0]?.message;
-
-                    return (
-                      <ComboboxField
-                        defaultValue={{ id: value, label: value }}
-                        error={errorMsg}
-                        items={customFields.customField1Values.map((label) => {
-                          return { id: label, label };
-                        })}
-                        label={customField1Label}
-                        onValueChange={(value) => {
-                          field.setValue(String(value?.id));
-                        }}
-                        placeholder={`Select a ${customField1Label?.toLowerCase() || ''}...`}
-                        required
-                      />
-                    );
-                  }}
-                </form.Field>
-              );
-            }}
-          </form.Subscribe>
-        )}
-
-        {customField2Enabled && (
-          <form.Subscribe
-            selector={(state) => {
-              return {
-                errors: state.errors,
-                value: state.values.customField2Value,
-              };
-            }}
-          >
-            {({ errors, value }) => {
-              return (
-                <form.Field name="customField2Value">
-                  {(field) => {
-                    const errorMsg = errors?.[0]?.[field.name]?.[0]?.message;
-
-                    return (
-                      <ComboboxField
-                        defaultValue={{ id: value, label: value }}
-                        error={errorMsg}
-                        items={customFields.customField2Values.map((label) => {
-                          return { id: label, label };
-                        })}
-                        label={customField2Label}
-                        onValueChange={(value) => {
-                          field.setValue(String(value?.id));
-                        }}
-                        placeholder={`Select a ${customField2Label?.toLowerCase() || ''}...`}
-                        required
-                      />
-                    );
-                  }}
-                </form.Field>
-              );
-            }}
-          </form.Subscribe>
-        )}
-
-        {customField3Enabled && (
-          <form.Subscribe
-            selector={(state) => {
-              return {
-                errors: state.errors,
-                value: state.values.customField3Value,
-              };
-            }}
-          >
-            {({ errors, value }) => {
-              return (
-                <form.Field name="customField3Value">
-                  {(field) => {
-                    const errorMsg = errors?.[0]?.[field.name]?.[0]?.message;
-
-                    return (
-                      <ComboboxField
-                        defaultValue={{ id: value, label: value }}
-                        error={errorMsg}
-                        items={customFields.customField3Values.map((label) => {
-                          return { id: label, label };
-                        })}
-                        label={customField3Label}
-                        onValueChange={(value) => {
-                          field.setValue(String(value?.id));
-                        }}
-                        placeholder={`Select a ${customField3Label?.toLowerCase() || ''}...`}
-                        required
-                      />
-                    );
-                  }}
-                </form.Field>
-              );
-            }}
-          </form.Subscribe>
-        )}
-
-        <form.Subscribe
-          selector={(state) => {
-            return {
-              errors: state.errors,
-              value: state.values.isSpecialEdition,
-            };
-          }}
-        >
-          {({ errors, value }) => {
-            return (
-              <form.Field
-                listeners={{
-                  onChange: ({ value: isSpecialEdition }) => {
-                    form.setFieldValue(
-                      'editionDetails',
-                      isSpecialEdition ? "Collector's Edition" : '',
-                    );
-                  },
-                }}
-                name="isSpecialEdition"
-              >
-                {(field) => {
-                  const errorMsg = errors?.[0]?.[field.name]?.[0]?.message;
-
-                  return (
-                    <CheckboxField
-                      checked={value}
-                      error={errorMsg}
-                      label="Is this a special edition?"
-                      onCheckedChange={field.handleChange}
-                    />
-                  );
-                }}
-              </form.Field>
-            );
-          }}
-        </form.Subscribe>
-
-        <form.Subscribe
-          selector={(state) => {
-            return {
-              errors: state.errors,
-              isSpecialEdition: state.values.isSpecialEdition,
-              value: state.values.editionDetails,
-            };
-          }}
-        >
-          {({ errors, isSpecialEdition, value }) => {
-            return (
-              isSpecialEdition && (
-                <form.Field name="editionDetails">
-                  {(field) => {
-                    const errorMsg = errors?.[0]?.[field.name]?.[0]?.message;
-
-                    return (
-                      <InputField
-                        error={errorMsg}
-                        label="Edition details"
-                        name={field.name}
-                        onValueChange={field.handleChange}
-                        required
-                        value={value}
-                      />
-                    );
-                  }}
-                </form.Field>
-              )
-            );
-          }}
-        </form.Subscribe>
-
-        <form.Subscribe
-          selector={(state) => {
-            return {
-              isFormValid: state.isFormValid,
-              values: state.values,
-            };
-          }}
-        >
-          {(state) => {
-            const { isFormValid } = state;
-
-            return (
-              <Button
-                className="flex flex-nowrap gap-2 justify-self-start"
-                disabled={!isFormValid}
-                Icon={SaveIcon}
-                text="Save"
-                type="submit"
-              />
-            );
-          }}
-        </form.Subscribe>
-      </div>
-    </form>
-  );
-};

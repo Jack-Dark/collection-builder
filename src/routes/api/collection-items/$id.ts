@@ -8,7 +8,7 @@ import type { updateCollectionItemSchema } from '#/api/routes/collection-items/s
 import {
   deleteCollectionItemServerFn,
   getCollectionItemServerFn,
-  updateCollectionItemSeverFn,
+  updateCollectionItemServerFn,
 } from '#/api/routes/collection-items/server/serverFns';
 import { authApiRouteMiddleware } from '#/auth/auth-middleware';
 
@@ -42,7 +42,7 @@ export const Route = createFileRoute('/api/collection-items/$id')({
           await request.json();
 
         if (id === gameDetails.id) {
-          const updatedRecord = await updateCollectionItemSeverFn({
+          const updatedRecord = await updateCollectionItemServerFn({
             data: gameDetails,
           });
 

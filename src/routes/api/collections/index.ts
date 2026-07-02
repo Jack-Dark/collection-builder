@@ -1,11 +1,15 @@
 import { createFileRoute } from '@tanstack/react-router';
 
-import type { AddCollectionFormSchemaDef } from '#/pages/CollectionsListPage/components/AddCollectionFormTableRow/types';
+import type {
+  CreateCollectionSchemaDef,
+  UpdateCollectionSchemaDef,
+} from '#/api/routes/collections/server/types';
 
 import {
   allCollectionsPaginationParamsSchema,
   createCollectionServerFn,
   getAllCollectionsServerFn,
+  updateCollectionServerFn,
 } from '#/api/routes/collections/server/serverFns';
 import { authApiRouteMiddleware } from '#/auth/auth-middleware';
 
@@ -21,9 +25,16 @@ export const Route = createFileRoute('/api/collections/')({
         return Response.json(allCollections);
       },
       POST: async ({ request }) => {
-        const data: AddCollectionFormSchemaDef = await request.json();
+        const data: CreateCollectionSchemaDef = await request.json();
 
         const newRecord = await createCollectionServerFn({ data });
+
+        return Response.json(newRecord);
+      },
+      PUT: async ({ request }) => {
+        const data: UpdateCollectionSchemaDef = await request.json();
+
+        const newRecord = await updateCollectionServerFn({ data });
 
         return Response.json(newRecord);
       },

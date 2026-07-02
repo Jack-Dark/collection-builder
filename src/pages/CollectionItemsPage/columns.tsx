@@ -7,13 +7,11 @@ import formatDate, { masks } from 'dateformat';
 import type { CollectionItemRecordDef } from '#/api/routes/collection-items/server/types';
 import type { CollectionRecordDef } from '#/api/routes/collections/server/types';
 
-import {
-  useDeleteCollectionItem,
-  useUpdateCollectionItem,
-} from '#/api/routes/collection-items/client/hooks';
+import { useDeleteCollectionItem } from '#/api/routes/collection-items/client/hooks';
 
 import { TableCellActionsMenu } from '../../components/TableCellActionsMenu';
 import { useEditingCollectionItemsRowIds } from '../CollectionsListPage/hooks/use-editing-collections-row-ids';
+import { useCollectionItemsFormStore } from './CollectionItemsPage';
 
 const columnHelper = createColumnHelper<CollectionItemRecordDef>();
 
@@ -83,40 +81,37 @@ export const getCollectionItemsTableColumns = (props: CollectionRecordDef) => {
       cell: ({ getValue, row }) => {
         const router = useRouter();
 
-        const {
-          isPending: isUpdatePending,
-          // onUpdateCollectionItem
-        } = useUpdateCollectionItem();
-
         const { isPending: isDeletePending, onDeleteCollectionItem } =
           useDeleteCollectionItem();
 
-        const isProcessing = isUpdatePending || isDeletePending;
+        const { resetCollectionItemFormValues, setCollectionItemFormValues } =
+          useCollectionItemsFormStore();
 
-        const rowId = getValue();
+        const collectionItemId = getValue();
 
         const { getIsEditingRowId, resetEditingRowIds, setEditingRowIds } =
           useEditingCollectionItemsRowIds();
 
-        const isEditingRow = getIsEditingRowId(rowId);
+        const isEditingRow = getIsEditingRowId(collectionItemId);
 
         return (
           <TableCellActionsMenu
-            deleteIsDisabled={isProcessing}
-            deleteOnClick={async (data) => {
+            deleteIsDisabled={isDeletePending}
+            deleteOnClick={async () => {
               await onDeleteCollectionItem({
-                data: { collectionItemId: data.id },
+                data: { collectionItemId },
               });
               router.invalidate();
             }}
-            editIsDisabled={isProcessing}
-            editOnClick={async (data) => {
-              // await onUpdateCollectionItem({ data });
-              setEditingRowIds([data.id]);
+            editIsDisabled={isDeletePending}
+            editOnClick={async (row) => {
+              setEditingRowIds([collectionItemId]);
+              setCollectionItemFormValues(row);
             }}
             isEditing={isEditingRow}
             onCancelEdit={() => {
               resetEditingRowIds();
+              resetCollectionItemFormValues();
             }}
             row={row}
           />

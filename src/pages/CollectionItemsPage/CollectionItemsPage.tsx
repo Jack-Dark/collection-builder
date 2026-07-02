@@ -1,102 +1,145 @@
 import type { RouteComponent } from '@tanstack/react-router';
 
+import ControlPointIcon from '@mui/icons-material/ControlPoint';
 import { revalidateLogic } from '@tanstack/react-form';
-import { useState } from 'react';
+import { useRouter } from '@tanstack/react-router';
+import { useEffect } from 'react';
+import { create } from 'zustand';
 
-import { createCollectionItemSchema } from '#/api/routes/collection-items/server/serverFns';
+import {
+  useCreateCollectionItem,
+  useUpdateCollectionItem,
+} from '#/api/routes/collection-items/client/hooks';
+import { collectionItemFormSchema } from '#/api/routes/collection-items/server/serverFns';
 import { Button } from '#/components/Button';
 import { Table } from '#/components/Table';
 import { PageWrapper } from '#/page-wrapper';
 import { Route as CollectionRoute } from '#/routes/_protected/collections/$id';
 
+import type { AddCollectionItemFormSchemaDef } from './components/AddCollectionItemForm/types';
+
 import { useEditingCollectionItemsRowIds } from '../CollectionsListPage/hooks/use-editing-collections-row-ids';
 import { getCollectionItemsTableColumns } from './columns';
-import {
-  AddCollectionItemForm,
-  AddCollectionItemFormTableRow,
-} from './components/AddCollectionItemForm';
+import { AddCollectionItemFormTableRow } from './components/AddCollectionItemForm';
 import {
   addCollectionItemFormDefaultValues,
   useAddCollectionItemForm,
 } from './components/AddCollectionItemForm/constants';
 
-export const CollectionPage: RouteComponent = () => {
-  const [showAddForm, setShowAddForm] = useState<boolean>(false);
+export const useCollectionItemsFormStore = create<{
+  collectionItemFormValues: AddCollectionItemFormSchemaDef;
+  resetCollectionItemFormValues: () => void;
+  setCollectionItemFormValues: (values: AddCollectionItemFormSchemaDef) => void;
+}>((set) => {
+  return {
+    collectionItemFormValues: addCollectionItemFormDefaultValues,
+    resetCollectionItemFormValues: () => {
+      set({
+        collectionItemFormValues: addCollectionItemFormDefaultValues,
+      });
+    },
+    setCollectionItemFormValues: (values) => {
+      set({
+        collectionItemFormValues: values,
+      });
+    },
+  };
+});
 
+export const CollectionItemsPage: RouteComponent = () => {
   const { collection, customFields, items, lastAddedItem } =
     CollectionRoute.useLoaderData();
 
-  const toggleForm = () => {
-    setShowAddForm((prev) => {
-      return !prev;
-    });
-  };
+  const router = useRouter();
 
-  const form = useAddCollectionItemForm({
-    defaultValues: addCollectionItemFormDefaultValues,
-    onSubmit: async ({ value }) => {
-      // if (!!value?.id && !!value?.userId) {
-      //   await onUpdateCollection({
-      //     data: {
-      //       ...value,
-      //       // id and userId added long-hand to solve type errors
-      //       id: value.id,
-      //       userId: value.userId,
-      //     },
-      //   });
-      // } else {
-      //   await onCreateCollection({
-      //     data: value,
-      //   });
-      // }
-      // form.reset();
-      // await router.invalidate();
-      // nameInputRef?.current?.focus();
+  const {
+    collectionItemFormValues,
+    resetCollectionItemFormValues,
+    setCollectionItemFormValues,
+  } = useCollectionItemsFormStore();
+
+  const { onCreateCollectionItem } = useCreateCollectionItem({
+    onSuccess: () => {
+      resetCollectionItemFormValues();
     },
-    validationLogic: revalidateLogic({
-      mode: 'submit',
-      modeAfterSubmission: 'change',
-    }),
-    validators: {
-      onSubmit: createCollectionItemSchema,
+  });
+
+  const { onUpdateCollectionItem } = useUpdateCollectionItem({
+    onSuccess: () => {
+      resetCollectionItemFormValues();
     },
   });
 
   const { addToEditingRowIds, isEditing, resetEditingRowIds } =
     useEditingCollectionItemsRowIds();
 
+  const form = useAddCollectionItemForm({
+    defaultValues: collectionItemFormValues,
+    onSubmit: async ({ value }) => {
+      if (value.id) {
+        await onUpdateCollectionItem({
+          data: value,
+        });
+
+        resetEditingRowIds();
+      } else {
+        await onCreateCollectionItem({
+          data: {
+            // undefined values added long-hand to resolve type errors
+            ...value,
+            createdAt: undefined,
+            id: undefined,
+            userId: undefined,
+          },
+        });
+      }
+
+      form.reset();
+
+      await router.invalidate();
+    },
+    validationLogic: revalidateLogic({
+      mode: 'submit',
+      modeAfterSubmission: 'change',
+    }),
+    validators: {
+      onSubmit: collectionItemFormSchema,
+    },
+  });
+
+  const columns = getCollectionItemsTableColumns(collection);
+
+  useEffect(() => {
+    setCollectionItemFormValues({
+      ...collectionItemFormValues,
+      collectionId: collection.id,
+      customField1Value: lastAddedItem?.customField1Value || '',
+      customField2Value: lastAddedItem?.customField2Value || '',
+      customField3Value: lastAddedItem?.customField3Value || '',
+      notes: collectionItemFormValues.notes || '',
+    });
+  }, [lastAddedItem]);
+
+  useEffect(() => {
+    form.reset();
+  }, [isEditing]);
+
   return (
     <PageWrapper childrenClassName="grid gap-8" title={collection?.name || '-'}>
-      {showAddForm ? (
-        <div className="grid gap-4">
-          <Button
-            className="justify-self-start flex flex-nowrap gap-2"
-            onClick={toggleForm}
-            text="Cancel"
-            variant="secondary"
-          />
-
-          <AddCollectionItemForm
-            collectionId={collection.id}
-            customField1Enabled={collection.customField1Enabled}
-            customField1Label={collection.customField1Label || ''}
-            customField2Enabled={collection.customField2Enabled}
-            customField2Label={collection.customField2Label || ''}
-            customField3Enabled={collection.customField3Enabled}
-            customField3Label={collection.customField3Label || ''}
-            customFields={customFields}
-            lastAddedItem={lastAddedItem}
-          />
-        </div>
-      ) : (
-        <Button
-          className="justify-self-start"
-          onClick={toggleForm}
-          text="Add Item"
-          variant="primary"
-        />
-      )}
-
+      <div className="grid grid-cols-1 gap-4">
+        {!isEditing && (
+          <div className="flex justify-end">
+            <Button
+              Icon={ControlPointIcon}
+              onClick={() => {
+                addToEditingRowIds('');
+              }}
+              text="Add New"
+              variant="secondary"
+            />
+          </div>
+        )}
+      </div>
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -110,9 +153,7 @@ export const CollectionPage: RouteComponent = () => {
               ? (props) => {
                   return (
                     <AddCollectionItemFormTableRow
-                      collectionId={collection.id}
                       customField1Enabled={collection.customField1Enabled}
-                      // tdClassNames={`${tdClassNames} align-items-center min-h-[501px]`}
                       customField1Label={collection.customField1Label || ''}
                       customField2Enabled={collection.customField2Enabled}
                       customField2Label={collection.customField2Label || ''}
@@ -120,18 +161,19 @@ export const CollectionPage: RouteComponent = () => {
                       customField3Label={collection.customField3Label || ''}
                       customFields={customFields}
                       form={form}
-                      lastAddedItem={lastAddedItem}
                       onCancel={() => {
                         resetEditingRowIds();
+                        resetCollectionItemFormValues();
+                        form.reset();
                       }}
+                      // tdClassNames={`${tdClassNames} align-items-center min-h-[501px]`}
                       {...props}
                     />
                   );
                 }
               : undefined
           }
-          columns={getCollectionItemsTableColumns(collection)}
-
+          columns={columns}
           data={items || []}
         />
       </form>

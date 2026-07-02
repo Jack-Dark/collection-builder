@@ -9,7 +9,7 @@ import {
   deleteCollectionServerFn,
   getAllCollectionsServerFn,
   getCollectionServerFn,
-  updateCollectionSeverFn,
+  updateCollectionServerFn,
 } from '../server/serverFns';
 
 export const useGetAllCollections = () => {
@@ -67,7 +67,7 @@ export const useCreateCollection = (
 export const useUpdateCollection = (
   props?: Omit<Parameters<typeof useMutation>[0], 'mutationFn'>,
 ) => {
-  const mutationFn = useServerFn(updateCollectionSeverFn);
+  const mutationFn = useServerFn(updateCollectionServerFn);
 
   const { mutate: onUpdateCollection, ...rest } = useMutation({
     mutationFn,

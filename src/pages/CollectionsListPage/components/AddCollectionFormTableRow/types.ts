@@ -1,8 +1,5 @@
-import type {
-  CreateCollectionSchemaDef,
-  UpdateCollectionSchemaDef,
-} from '#/api/routes/collections/server/types';
+import type z from 'zod';
 
-export type AddCollectionFormSchemaDef =
-  | CreateCollectionSchemaDef
-  | UpdateCollectionSchemaDef;
+import type { collectionFormSchema } from '#/api/routes/collections/server/serverFns';
+
+export type AddCollectionFormSchemaDef = z.Infer<typeof collectionFormSchema>;

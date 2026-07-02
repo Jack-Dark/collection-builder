@@ -9,10 +9,6 @@ import type { CollectionRecordDef } from './types';
 import { collectionsDbQueries } from '.';
 import { collectionItemsDbQueries } from '../../collection-items/server';
 
-const nameSchema = z.string().describe('Name').min(1);
-const notesSchema = z.string().describe('Notes');
-const userIdSchema = z.string().describe('User ID').min(1);
-
 const getCustomFieldEnabledSchema = (num: number) => {
   return z.boolean().describe(`Custom Field ${num} Enabled`);
 };
@@ -33,23 +29,32 @@ export const baseCollectionSchema = z.object({
   customField3Enabled: getCustomFieldEnabledSchema(3),
   customField3Label: getCustomFieldLabelSchema(3),
   customField3Required: getCustomFieldRequiredSchema(3),
-  name: nameSchema,
-  notes: notesSchema,
+  name: z.string().describe('Name').min(1),
+  notes: z.string().describe('Notes'),
 });
 
-export const createCollectionSchema = baseCollectionSchema.extend({
-  id: z.number().optional(),
-  userId: z.string().optional(),
+const createItemSchema = z.object({
+  createdAt: z.undefined(),
+  id: z.undefined(),
+  userId: z.undefined(),
 });
-
-export const updateCollectionSchema = createCollectionSchema.extend({
+const updateItemSchema = z.object({
+  createdAt: z.string().describe('Created At').min(1),
   id: z.number().describe('ID').min(1),
-  userId: userIdSchema,
+  userId: z.string().describe('User ID').min(1),
 });
 
-export const requireCollectionIdSchema = z.object({
-  collectionId: z.number(),
-});
+export const collectionFormSchema = baseCollectionSchema.and(
+  z.union([createItemSchema, updateItemSchema]),
+);
+
+export const createCollectionSchema = baseCollectionSchema.extend(
+  createItemSchema.shape,
+);
+
+export const updateCollectionSchema = baseCollectionSchema.extend(
+  updateItemSchema.shape,
+);
 
 const allCollectionsSortFields = [
   'name',
@@ -83,6 +88,10 @@ export const createCollectionServerFn = createServerFn({
     });
   });
 
+export const requireCollectionIdSchema = z.object({
+  collectionId: z.number(),
+});
+
 export const getCollectionServerFn = createServerFn({
   method: 'GET',
 })
@@ -107,7 +116,7 @@ export const getLastAddedItemInCollectionIdServerFn = createServerFn({
     });
   });
 
-export const updateCollectionSeverFn = createServerFn({
+export const updateCollectionServerFn = createServerFn({
   // ? PUT is not yet supported via createServerFn, but the API route utilizes this via PUT
   method: 'POST',
 })

@@ -8,6 +8,7 @@ import { TextAreaField } from '#/components/TextAreaField';
 import type { AddCollectionFormSchemaDef } from './types';
 
 export const addCollectionFormDefaultValues: AddCollectionFormSchemaDef = {
+  createdAt: undefined,
   customField1Enabled: false,
   customField1Label: '',
   customField1Required: false,
@@ -17,8 +18,10 @@ export const addCollectionFormDefaultValues: AddCollectionFormSchemaDef = {
   customField3Enabled: false,
   customField3Label: '',
   customField3Required: false,
+  id: undefined,
   name: '',
   notes: '',
+  userId: undefined,
 };
 
 export const {

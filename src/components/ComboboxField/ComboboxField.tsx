@@ -102,11 +102,11 @@ export const ComboboxField = <TValue extends Record<string, any>>(
               return item.id === id;
             });
 
-            if (allowCreatable || queryNotFound) {
+            if (selected || allowCreatable || queryNotFound) {
               return onValueChange?.(selected);
             }
           }}
-          value={value}
+          value={value?.[idProperty] ? value : undefined}
         >
           <div className="relative">
             <Combobox.Input

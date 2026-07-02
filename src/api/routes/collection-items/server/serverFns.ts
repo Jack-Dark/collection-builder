@@ -6,7 +6,7 @@ import { authApiRouteMiddleware } from '#/auth/auth-middleware';
 import { collectionItemsDbQueries } from '.';
 import { requireCollectionIdSchema } from '../../collections/server/serverFns';
 
-const createCollectionItemBaseSchema = z.object({
+const baseCollectionItemSchema = z.object({
   collectionId: z.number().describe('Collection ID'),
   customField1Value: z.string().describe('[customField1Value] placeholder'),
   customField2Value: z.string().describe('[customField2Value] placeholder'),
@@ -14,40 +14,31 @@ const createCollectionItemBaseSchema = z.object({
   editionDetails: z.string().describe('Edition details'),
   isSpecialEdition: z.boolean().describe('Is special edition'),
   name: z.string().describe('Name').min(1),
-  notes: z.string().describe('Notes').optional(),
+  notes: z.string().describe('Notes'),
 });
 
-const createCollectionItemIsSpecialEditionSchema = z.object({
-  ...createCollectionItemBaseSchema.shape,
-  editionDetails: createCollectionItemBaseSchema.shape.editionDetails
-    .min(1)
-    .describe('Edition details'),
-  isSpecialEdition: z.literal(true).describe('Is special edition'),
+const createItemSchema = z.object({
+  createdAt: z.undefined(),
+  id: z.undefined(),
+  userId: z.undefined(),
+});
+const updateItemSchema = z.object({
+  createdAt: z.string().describe('Created At').min(1),
+  id: z.number().describe('ID').min(1),
+  userId: z.string().describe('User ID').min(1),
 });
 
-const createCollectionItemIsNotSpecialEditionSchema = z.object({
-  ...createCollectionItemBaseSchema.shape,
-  editionDetails: z.literal('').describe('Edition details'),
-  isSpecialEdition: z.literal(false).describe('Is special edition'),
-});
+export const collectionItemFormSchema = baseCollectionItemSchema.and(
+  z.union([createItemSchema, updateItemSchema]),
+);
 
-const requireCollectionItemIdSchema = z.object({
-  collectionItemId: z.number(),
-});
+export const createCollectionItemSchema = baseCollectionItemSchema.extend(
+  createItemSchema.shape,
+);
 
-export const createCollectionItemSchema = z.union([
-  createCollectionItemIsSpecialEditionSchema,
-  createCollectionItemIsNotSpecialEditionSchema,
-]);
-
-export const updateCollectionItemSchema = z.object({
-  customField1Value: z.string().describe('System').min(1).nullable(),
-  editionDetails: z.string().describe('Edition details').nullable(),
-  id: z.number().min(1),
-  isSpecialEdition: z.boolean().describe('Is special edition'),
-  name: z.string().describe('Name').min(1),
-  userId: z.string(),
-});
+export const updateCollectionItemSchema = baseCollectionItemSchema.extend(
+  updateItemSchema.shape,
+);
 
 export const createCollectionItemServerFn = createServerFn({
   method: 'POST',
@@ -55,11 +46,17 @@ export const createCollectionItemServerFn = createServerFn({
   .middleware([authApiRouteMiddleware])
   .validator(createCollectionItemSchema)
   .handler(async ({ context, data }) => {
+    const { createdAt: _createdAt, id: _id, userId: _userId, ...rest } = data;
+
     return collectionItemsDbQueries.createCollectionItemQuery({
-      ...data,
+      ...rest,
       userId: context.user.id,
     });
   });
+
+const requireCollectionItemIdSchema = z.object({
+  collectionItemId: z.number(),
+});
 
 export const getCollectionItemServerFn = createServerFn({
   method: 'GET',
@@ -85,7 +82,7 @@ export const getCustomFieldsSetsForCollectionIdServerFn = createServerFn({
     });
   });
 
-export const updateCollectionItemSeverFn = createServerFn({
+export const updateCollectionItemServerFn = createServerFn({
   // ? PUT is not yet supported via createServerFn, but the API route utilizes this via PUT
   method: 'POST',
 })
