@@ -84,10 +84,10 @@ export const getItemsByCollectionIdQuery = async (props: {
     .limit(limit)
     .offset((page - 1) * limit)
     .orderBy(
-      asc(collectionItemsTable.customField1Value),
       sortDirection === sortDirectionOptions.desc
         ? desc(collectionItemsTable[sortingField])
         : asc(collectionItemsTable[sortingField]),
+      asc(collectionItemsTable.name),
     );
 
   return {

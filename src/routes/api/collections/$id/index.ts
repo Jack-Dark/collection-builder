@@ -1,8 +1,10 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
+import z from 'zod';
 
 import type { UpdateCollectionItemRecordDef } from '#/api/routes/collection-items/server/types';
 
+import { sortDirectionOptions } from '#/api/pagination/constants';
 import { collectionItemsDbQueries } from '#/api/routes/collection-items/server';
 import { collectionsDbQueries } from '#/api/routes/collections/server';
 import { requireCollectionIdSchema } from '#/api/routes/collections/server/serverFns';
@@ -67,10 +69,41 @@ export const getItemsByCollectionId = createServerFn({
   method: 'GET',
 })
   .middleware([authApiRouteMiddleware])
-  .validator(requireCollectionIdSchema)
-  .handler(async ({ context, data: { collectionId } }) => {
+  .validator(
+    requireCollectionIdSchema.extend({
+      params: z
+        .object({
+          sortDirection: z
+            .union([
+              z.literal(sortDirectionOptions.asc),
+              z.literal(sortDirectionOptions.desc),
+            ])
+            .optional(),
+          sortField: z
+            .union([
+              z.literal('id'),
+              z.literal('name'),
+              z.literal('createdAt'),
+              z.literal('updatedAt'),
+              z.literal('userId'),
+              z.literal('collectionId'),
+              z.literal('notes'),
+              z.literal('deletedAt'),
+              z.literal('isSpecialEdition'),
+              z.literal('editionDetails'),
+              z.literal('customField1Value'),
+              z.literal('customField2Value'),
+              z.literal('customField3Value'),
+            ])
+            .optional(),
+        })
+        .optional(),
+    }),
+  )
+  .handler(async ({ context, data: { collectionId, params } }) => {
     return collectionItemsDbQueries.getItemsByCollectionIdQuery({
       collectionId,
+      params,
       userId: context.user.id,
     });
   });

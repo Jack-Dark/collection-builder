@@ -34,7 +34,7 @@ export const fetchItemsByCollectionId = createServerFn({
       collectionId: params.collectionId,
       params: {
         sortDirection: 'ASC',
-        sortField: 'name',
+        sortField: 'customField1Value',
       },
       userId: context.user.id,
     });

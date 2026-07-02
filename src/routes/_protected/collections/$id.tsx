@@ -15,7 +15,15 @@ export const Route = createFileRoute('/_protected/collections/$id')({
     const [collection, paginatedData, customFields, lastAddedItem] =
       await Promise.all([
         await getCollectionById({ data: { collectionId } }),
-        await getItemsByCollectionId({ data: { collectionId } }),
+        await getItemsByCollectionId({
+          data: {
+            collectionId,
+            params: {
+              sortDirection: 'ASC',
+              sortField: 'customField1Value',
+            },
+          },
+        }),
         await getCustomFieldsSetsForCollectionIdServerFn({
           data: { collectionId },
         }),
