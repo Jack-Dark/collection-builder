@@ -14,6 +14,7 @@ const createCollectionItemBaseSchema = z.object({
   editionDetails: z.string().describe('Edition details'),
   isSpecialEdition: z.boolean().describe('Is special edition'),
   name: z.string().describe('Name').min(1),
+  notes: z.string().describe('Notes').optional(),
 });
 
 const createCollectionItemIsSpecialEditionSchema = z.object({

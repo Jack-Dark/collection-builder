@@ -9,6 +9,7 @@ export type ComboboxFieldProps<TValue extends Record<string, any>> = Pick<
   Pick<ComboboxInputProps, 'placeholder'> &
   FieldWrapperProps & {
     allowCreatable?: boolean;
+    hideLabel?: boolean;
     idProperty?: keyof TValue;
     items: TValue[];
     labelProperty?: keyof TValue;

@@ -15,14 +15,14 @@ import { Table } from '#/components/Table';
 import { PageWrapper } from '#/page-wrapper';
 import { Route } from '#/routes/_protected/collections';
 
-import type { AddCollectionFormSchemaDef } from './components/AddCollectionForm/types';
+import type { AddCollectionFormSchemaDef } from './components/AddCollectionFormTableRow/types';
 
 import { getCollectionsListTableColumns } from './columns';
-import { AddCollectionFormTableRow } from './components/AddCollectionForm';
+import { AddCollectionFormTableRow } from './components/AddCollectionFormTableRow';
 import {
   addCollectionFormDefaultValues,
   useAddCollectionForm,
-} from './components/AddCollectionForm/constants';
+} from './components/AddCollectionFormTableRow/constants';
 import { useEditingCollectionsRowIds } from './hooks/use-editing-collections-row-ids';
 
 export const useCollectionsListFormStore = create<{

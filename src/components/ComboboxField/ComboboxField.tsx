@@ -21,6 +21,7 @@ export const ComboboxField = <TValue extends Record<string, any>>(
     description,
     disabled,
     error,
+    hideLabel,
     idProperty = 'id',
     invalid,
     items: originalItems,
@@ -85,7 +86,7 @@ export const ComboboxField = <TValue extends Record<string, any>>(
       disabled={disabled}
       error={error}
       invalid={invalid}
-      label={label}
+      label={hideLabel ? undefined : label}
       name={name}
       required={required}
       validationDebounceTime={validationDebounceTime}
@@ -109,7 +110,7 @@ export const ComboboxField = <TValue extends Record<string, any>>(
         >
           <div className="relative">
             <Combobox.Input
-              className="input w-full pr-18"
+              className="input w-full pr-8"
               placeholder={placeholder}
             />
             <div className="flex flex-nowrap justify-items-end gap-2 absolute right-2 top-1/2 -translate-y-1/2 **:grid **:items-center **:justify-items-center">
