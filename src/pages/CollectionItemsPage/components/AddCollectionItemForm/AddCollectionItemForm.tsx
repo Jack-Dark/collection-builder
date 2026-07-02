@@ -1,27 +1,12 @@
 import SaveIcon from '@mui/icons-material/Save';
 
 import { Button } from '#/components/Button';
+import { Popover } from '#/components/Popover';
 
 import {
   addCollectionItemFormDefaultValues,
   withAddCollectionItemForm,
 } from './constants';
-
-// type AddCollectionItemFormPropsDef = {
-//   collectionId: number;
-//   customField1Enabled: boolean | undefined;
-//   customField1Label: string | undefined;
-//   customField2Enabled: boolean | undefined;
-//   customField2Label: string | undefined;
-//   customField3Enabled: boolean | undefined;
-//   customField3Label: string | undefined;
-//   customFields: {
-//     customField1Values: string[];
-//     customField2Values: string[];
-//     customField3Values: string[];
-//   };
-//   lastAddedItem: CollectionItemRecordDef | undefined;
-// };
 
 export const AddCollectionItemFormTableRow = withAddCollectionItemForm({
   /** These values are only used for type-checking, and are not used at runtime */
@@ -109,23 +94,28 @@ export const AddCollectionItemFormTableRow = withAddCollectionItemForm({
                       >
                         {({ errors: _errors, value }) => {
                           return (
-                            <field.ComboboxField
-                              defaultValue={{ id: value, label: value }}
-                              error={field.state.meta.errors.join(',')}
+                            <div className="flex gap-1 items-center">
+                              <field.ComboboxField
+                                defaultValue={{ id: value, label: value }}
+                                error={field.state.meta.errors.join(',')}
 
-                              hideLabel
-                              items={customFields[
-                                `customField${num}Values`
-                              ].map((label) => {
-                                return { id: label, label };
-                              })}
-                              label={fieldLabel}
-                              onValueChange={(value) => {
-                                field.setValue(String(value?.id));
-                              }}
-                              placeholder={`${fieldLabel || ''}...`}
-                              required
-                            />
+                                hideLabel
+                                items={customFields[
+                                  `customField${num}Values`
+                                ].map((label) => {
+                                  return { id: label, label };
+                                })}
+                                label={fieldLabel}
+                                onValueChange={(value) => {
+                                  field.setValue(String(value?.id));
+                                }}
+                                placeholder={`${fieldLabel || ''}...`}
+                                required
+                              />
+                              <Popover
+                                Description={`Want to add a new item to the list? Just type it out and click on the "Add" option.`}
+                              />
+                            </div>
                           );
                         }}
                       </form.Subscribe>

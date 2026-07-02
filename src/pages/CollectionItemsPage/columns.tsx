@@ -37,21 +37,21 @@ export const getCollectionItemsTableColumns = (props: CollectionRecordDef) => {
         cell: ({ getValue }) => {
           return <p>{getValue()}</p>;
         },
-        header: customField1Label!,
+        header: customField1Label || '',
       }),
     customField2Enabled &&
       columnHelper.accessor('customField2Value', {
         cell: ({ getValue }) => {
           return <p>{getValue()}</p>;
         },
-        header: customField2Label!,
+        header: customField2Label || '',
       }),
     customField3Enabled &&
       columnHelper.accessor('customField3Value', {
         cell: ({ getValue }) => {
           return <p>{getValue()}</p>;
         },
-        header: customField3Label!,
+        header: customField3Label || '',
       }),
     columnHelper.accessor('editionDetails', {
       cell: ({ getValue }) => {
