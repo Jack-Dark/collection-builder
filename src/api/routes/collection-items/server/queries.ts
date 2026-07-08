@@ -38,16 +38,17 @@ const getMatchesCollectionIdAndUserIdAndNotDeleted = (props: {
   );
 };
 
-type CollectionItemsTableColumns = keyof CollectionItemRecordDef;
+type CollectionItemsTableColumn = keyof CollectionItemRecordDef;
 
 const formatFilters = <
-  TTable extends InferModelFromColumns<{
-    customField1Value: any;
-    customField2Value: any;
-    customField3Value: any;
-    name: any;
-  }> &
-    Record<string, any>,
+  TTable extends InferModelFromColumns<
+    {
+      customField1Value: any;
+      customField2Value: any;
+      customField3Value: any;
+      name: any;
+    } & Record<string, any>
+  >,
 >(props: {
   filters: {
     customField1: string[];
@@ -109,9 +110,9 @@ export const getItemsByCollectionIdQuery = async (props: {
     table: collectionItemsTable,
   });
 
-  const sortingField: CollectionItemsTableColumns =
+  const sortingField: CollectionItemsTableColumn =
     sort.field && collectionItemsTable.hasOwnProperty(sort.field)
-      ? sort.field
+      ? (sort.field as CollectionItemsTableColumn)
       : 'name';
 
   const data = await db
