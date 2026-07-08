@@ -17,6 +17,6 @@ export type UpdateCollectionRecordDef = Partial<
 > &
   Pick<CollectionRecordDef, 'id' | 'userId'>;
 
-export type CreateCollectionSchemaDef = z.Infer<typeof createCollectionSchema>;
+export type CreateCollectionSchemaDef = z.output<typeof createCollectionSchema>;
 
-export type UpdateCollectionSchemaDef = z.Infer<typeof updateCollectionSchema>;
+export type UpdateCollectionSchemaDef = z.output<typeof updateCollectionSchema>;

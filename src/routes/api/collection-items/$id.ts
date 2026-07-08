@@ -38,7 +38,7 @@ export const Route = createFileRoute('/api/collection-items/$id')({
       PUT: async ({ params, request }) => {
         const id = Number(params.id);
         // Access the request body, for example, a JSON body
-        const gameDetails: z.Infer<typeof updateCollectionItemSchema> =
+        const gameDetails: z.output<typeof updateCollectionItemSchema> =
           await request.json();
 
         if (id === gameDetails.id) {

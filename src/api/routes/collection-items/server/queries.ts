@@ -6,7 +6,7 @@ import type {
   PaginatedData,
   PaginationParamsSchemaDef,
 } from '#/api/pagination/types';
-import type { CollectionItemsSearchQueriesSchema } from '#/routes/api/collections/$id';
+import type { CollectionItemsSearchQueriesSchemaDef } from '#/routes/api/collections/$id';
 
 import { db } from '#/api/db';
 import { sortDirectionOptions } from '#/api/pagination/constants';
@@ -60,7 +60,7 @@ const formatFilters = <
 
   const getCustomFieldColumnName = (key: string) => {
     const num = Number(key.replace(/\D/g, ''));
-    const columnName = `customField${num}Value`;
+    const columnName = `customField${num}Value` as K;
 
     return columnName;
   };
@@ -98,7 +98,7 @@ const formatFilters = <
 
 export const getItemsByCollectionIdQuery = async (props: {
   collectionId: number;
-  params: CollectionItemsSearchQueriesSchema;
+  params: CollectionItemsSearchQueriesSchemaDef;
   userId: string;
 }): Promise<PaginatedData<CollectionItemRecordDef>> => {
   const { collectionId, params, userId } = props;

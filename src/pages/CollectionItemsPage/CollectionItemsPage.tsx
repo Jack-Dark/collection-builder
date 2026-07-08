@@ -2,12 +2,9 @@ import type { RouteComponent } from '@tanstack/react-router';
 
 import ControlPointIcon from '@mui/icons-material/ControlPoint';
 import { revalidateLogic } from '@tanstack/react-form';
-import { useRouter, useSearch } from '@tanstack/react-router';
+import { useRouter } from '@tanstack/react-router';
 import { useEffect } from 'react';
 import { create } from 'zustand';
-
-import type { CollectionRecordDef } from '#/api/routes/collections/server/types';
-import type { CollectionItemsFiltersSchema } from '#/routes/api/collections/$id';
 
 import {
   useCreateCollectionItem,
@@ -15,9 +12,7 @@ import {
 } from '#/api/routes/collection-items/client/hooks';
 import { collectionItemFormSchema } from '#/api/routes/collection-items/server/serverFns';
 import { Button } from '#/components/Button';
-import { CheckboxField } from '#/components/CheckboxField';
 import { Table } from '#/components/Table';
-import { getCreateDefaultZustandState } from '#/helpers/get-create-default-zustand-state';
 import { PageWrapper } from '#/page-wrapper';
 import { Route as CollectionRoute } from '#/routes/_protected/collections/$id';
 
@@ -30,6 +25,10 @@ import {
   addCollectionItemFormDefaultValues,
   useAddCollectionItemForm,
 } from './components/AddCollectionItemForm/constants';
+import {
+  CollectionItemsFiltersContent,
+  useCollectionItemsFilterActions,
+} from './components/CollectionItemsFiltersContent';
 
 export const useCollectionItemsFormStore = create<{
   collectionItemFormValues: AddCollectionItemFormSchemaDef;
@@ -114,7 +113,7 @@ export const CollectionItemsPage: RouteComponent = () => {
 
   const columns = getCollectionItemsTableColumns(collection);
 
-  const { getFilters } = useCollectionItemsFilters();
+  const { onReset, onSubmit } = useCollectionItemsFilterActions(collection.id);
 
   useEffect(() => {
     setCollectionItemFormValues({
@@ -173,7 +172,6 @@ export const CollectionItemsPage: RouteComponent = () => {
                         resetCollectionItemFormValues();
                         form.reset();
                       }}
-                      // tdClassNames={`${tdClassNames} align-items-center min-h-[501px]`}
                       {...props}
                     />
                   );
@@ -185,134 +183,17 @@ export const CollectionItemsPage: RouteComponent = () => {
           filters={{
             FiltersContent: () => {
               return (
-                <CollectionItemFiltersContent
+                <CollectionItemsFiltersContent
                   collection={collection}
                   customFields={customFields}
                 />
               );
             },
-            onSave: async ({ onClose }) => {
-              const filters = getFilters();
-              router.navigate({
-                params: { id: String(collection.id) },
-                reloadDocument: true,
-                resetScroll: true,
-                search: {
-                  filters,
-                },
-                to: '/collections/$id',
-              });
-
-              // onClose();
-
-              // router.invalidate();
-            },
+            onReset,
+            onSubmit,
           }}
         />
       </form>
     </PageWrapper>
   );
 };
-
-const CollectionItemFiltersContent = (props: {
-  collection: CollectionRecordDef;
-  customFields: {
-    customField1Values: string[];
-    customField2Values: string[];
-    customField3Values: string[];
-  };
-}) => {
-  const { collection, customFields } = props;
-
-  const { filters, setFilters } = useCollectionItemsFilters();
-
-  const queries = useSearch({
-    from: '/_protected/collections/$id',
-  });
-
-  const searchQueryFilters = queries?.filters;
-  useEffect(() => {
-    if (searchQueryFilters) {
-      setFilters(searchQueryFilters);
-    }
-  }, [searchQueryFilters]);
-
-  return (
-    <div className="grid gap-5">
-      {([1, 2, 3] as const).map((num) => {
-        const isEnabled = collection[`customField${num}Enabled`];
-        const label = collection[`customField${num}Label`];
-        const values = customFields[`customField${num}Values`];
-        const customFieldKey = `customField${num}` as const;
-
-        return (
-          <div className="grid gap-1" key={num}>
-            {isEnabled && (
-              <>
-                <h5>{label}</h5>
-                {values.map((value) => {
-                  return (
-                    <CheckboxField
-                      checked={filters[customFieldKey].includes(value)}
-                      key={value}
-                      label={value}
-                      onCheckedChange={(checked) => {
-                        if (checked) {
-                          setFilters((prevFilters) => {
-                            const newSelections = [
-                              ...prevFilters[customFieldKey],
-                              value,
-                            ];
-
-                            return {
-                              ...prevFilters,
-                              [customFieldKey]: newSelections,
-                            };
-                          });
-                        } else {
-                          setFilters((prevFilters) => {
-                            const newSelections = prevFilters[
-                              customFieldKey
-                            ].filter((item) => {
-                              return item !== value;
-                            });
-
-                            return {
-                              ...prevFilters,
-                              [customFieldKey]: newSelections,
-                            };
-                          });
-                        }
-                      }}
-                    />
-                  );
-                })}
-              </>
-            )}
-          </div>
-        );
-      })}
-    </div>
-  );
-};
-
-const createFiltersState = (defaultValues: CollectionItemsFiltersSchema) => {
-  const createState = getCreateDefaultZustandState(defaultValues);
-
-  return () => {
-    const { getValue, resetValue, setValue, value } = createState();
-
-    return {
-      filters: value,
-      getFilters: getValue,
-      resetFilters: resetValue,
-      setFilters: setValue,
-    };
-  };
-};
-
-const useCollectionItemsFilters = createFiltersState({
-  customField1: [],
-  customField2: [],
-  customField3: [],
-});

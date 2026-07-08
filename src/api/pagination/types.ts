@@ -4,7 +4,7 @@ import type { getRequiredPaginationParamsSchema } from './schema';
 
 export type PaginationParamsSchemaDef<TSortField extends string | undefined> =
   Omit<
-    z.Infer<ReturnType<typeof getRequiredPaginationParamsSchema>>,
+    z.output<ReturnType<typeof getRequiredPaginationParamsSchema>>,
     'sortField'
   > & {
     sortField?: TSortField;

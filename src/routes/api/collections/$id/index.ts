@@ -78,6 +78,10 @@ const collectionItemsFiltersSchema = z
     customField3: [],
   });
 
+export type CollectionItemsFiltersSchemaDef = z.output<
+  typeof collectionItemsFiltersSchema
+>;
+
 const sortSchema = z
   .object({
     direction: z.union([
@@ -94,7 +98,11 @@ const sortSchema = z
     field: 'name',
   });
 
+export type SortSchemaDef = z.output<typeof sortSchema>;
+
 const searchSchema = z.string().optional().default('');
+
+export type SearchSchemaDef = z.output<typeof searchSchema>;
 
 export const collectionItemsSearchQueriesSchema = z
   .object({
@@ -119,11 +127,7 @@ export const collectionItemsSearchQueriesSchema = z
     },
   });
 
-export type CollectionItemsFiltersSchema = z.Infer<
-  typeof collectionItemsFiltersSchema
->;
-
-export type CollectionItemsSearchQueriesSchema = z.Infer<
+export type CollectionItemsSearchQueriesSchemaDef = z.output<
   typeof collectionItemsSearchQueriesSchema
 >;
 

@@ -9,7 +9,7 @@ import {
 } from '@tanstack/react-table';
 import { useEffect, useRef, useState } from 'react';
 
-import type { FiltersButtonPropsDef } from './components/FilterButton';
+import type { FiltersButtonPropsDef } from './components/FilterButton/FilterButton.types';
 
 import { FilterButton } from './components/FilterButton';
 
