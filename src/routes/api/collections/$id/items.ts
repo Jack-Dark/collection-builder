@@ -5,6 +5,8 @@ import z from 'zod';
 import { collectionItemsDbQueries } from '#/api/routes/collection-items/server';
 import { authApiRouteMiddleware } from '#/auth/auth-middleware';
 
+import { collectionItemsSearchQueriesSchema } from '.';
+
 export const Route = createFileRoute('/api/collections/$id/items')({
   server: {
     handlers: {
@@ -28,14 +30,16 @@ export const fetchItemsByCollectionId = createServerFn({
   method: 'GET',
 })
   .middleware([authApiRouteMiddleware])
-  .validator(z.object({ collectionId: z.number() }))
-  .handler(async ({ context, data: params }) => {
+  .validator(
+    z.object({
+      collectionId: z.number(),
+      params: collectionItemsSearchQueriesSchema,
+    }),
+  )
+  .handler(async ({ context, data: { collectionId, params } }) => {
     return collectionItemsDbQueries.getItemsByCollectionIdQuery({
-      collectionId: params.collectionId,
-      params: {
-        sortDirection: 'ASC',
-        sortField: 'customField1Value',
-      },
+      collectionId,
+      params,
       userId: context.user.id,
     });
   });

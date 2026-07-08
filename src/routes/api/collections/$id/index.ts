@@ -65,39 +65,75 @@ export const getCollectionById = createServerFn({
     });
   });
 
+const collectionItemsFiltersSchema = z
+  .object({
+    customField1: z.array(z.string()).optional().default([]),
+    customField2: z.array(z.string()).optional().default([]),
+    customField3: z.array(z.string()).optional().default([]),
+  })
+  .optional()
+  .default({
+    customField1: [],
+    customField2: [],
+    customField3: [],
+  });
+
+const sortSchema = z
+  .object({
+    direction: z.union([
+      z.literal('ASC'),
+      z.literal('asc'),
+      z.literal('DESC'),
+      z.literal('desc'),
+    ]),
+    field: z.string(),
+  })
+  .optional()
+  .default({
+    direction: 'ASC',
+    field: 'name',
+  });
+
+const searchSchema = z.string().optional().default('');
+
+export const collectionItemsSearchQueriesSchema = z
+  .object({
+    filters: collectionItemsFiltersSchema,
+    limit: z.number().min(1).optional().default(100),
+    page: z.number().min(1).optional().default(1),
+    search: searchSchema,
+    sort: sortSchema,
+  })
+  .default({
+    filters: {
+      customField1: [],
+      customField2: [],
+      customField3: [],
+    },
+    limit: 100,
+    page: 1,
+    search: '',
+    sort: {
+      direction: sortDirectionOptions.asc,
+      field: 'name',
+    },
+  });
+
+export type CollectionItemsFiltersSchema = z.Infer<
+  typeof collectionItemsFiltersSchema
+>;
+
+export type CollectionItemsSearchQueriesSchema = z.Infer<
+  typeof collectionItemsSearchQueriesSchema
+>;
+
 export const getItemsByCollectionId = createServerFn({
   method: 'GET',
 })
   .middleware([authApiRouteMiddleware])
   .validator(
     requireCollectionIdSchema.extend({
-      params: z
-        .object({
-          sortDirection: z
-            .union([
-              z.literal(sortDirectionOptions.asc),
-              z.literal(sortDirectionOptions.desc),
-            ])
-            .optional(),
-          sortField: z
-            .union([
-              z.literal('id'),
-              z.literal('name'),
-              z.literal('createdAt'),
-              z.literal('updatedAt'),
-              z.literal('userId'),
-              z.literal('collectionId'),
-              z.literal('notes'),
-              z.literal('deletedAt'),
-              z.literal('isSpecialEdition'),
-              z.literal('editionDetails'),
-              z.literal('customField1Value'),
-              z.literal('customField2Value'),
-              z.literal('customField3Value'),
-            ])
-            .optional(),
-        })
-        .optional(),
+      params: collectionItemsSearchQueriesSchema,
     }),
   )
   .handler(async ({ context, data: { collectionId, params } }) => {

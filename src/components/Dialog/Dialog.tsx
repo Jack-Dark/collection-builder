@@ -8,10 +8,18 @@ export type DialogPropsDef = PropsWithChildren<{
   Header?: JSXElementConstructor<{}> | string;
   hideClose?: boolean;
   isFullScreen?: boolean;
+  onClose?: () => void;
 }>;
 
 export const Dialog = (props: DialogPropsDef) => {
-  const { children, Footer, Header, hideClose = false, isFullScreen } = props;
+  const {
+    children,
+    Footer,
+    Header,
+    hideClose = false,
+    isFullScreen,
+    onClose,
+  } = props;
 
   return (
     <MuiDialog.Viewport
@@ -23,15 +31,17 @@ export const Dialog = (props: DialogPropsDef) => {
         <div
           className={`flex ${Header ? 'justify-between' : 'justify-end'} items-center gap-2 px-4 py-2 border-b border-gray-400`}
         >
-          <CloseIcon className="opacity-0" />
+          {!hideClose && <CloseIcon className="opacity-0" />}
+
           {Header &&
             (typeof Header === 'string' ? (
               <MuiDialog.Title>{Header}</MuiDialog.Title>
             ) : (
               <Header />
             ))}
+
           {!hideClose && (
-            <MuiDialog.Close className="cursor-pointer">
+            <MuiDialog.Close className="cursor-pointer" onClick={onClose}>
               <CloseIcon />
             </MuiDialog.Close>
           )}

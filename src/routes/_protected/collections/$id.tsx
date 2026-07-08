@@ -4,24 +4,23 @@ import { getCustomFieldsSetsForCollectionIdServerFn } from '#/api/routes/collect
 import { getLastAddedItemInCollectionIdServerFn } from '#/api/routes/collections/server/serverFns';
 import { CollectionItemsPage } from '#/pages/CollectionItemsPage';
 import {
+  collectionItemsSearchQueriesSchema,
   getCollectionById,
   getItemsByCollectionId,
 } from '#/routes/api/collections/$id';
 
 export const Route = createFileRoute('/_protected/collections/$id')({
   component: CollectionItemsPage,
-  loader: async ({ params }) => {
+  loader: async ({ deps: collectionItemsSearchQueries, params }) => {
     const collectionId = Number(params.id);
+
     const [collection, paginatedData, customFields, lastAddedItem] =
       await Promise.all([
         await getCollectionById({ data: { collectionId } }),
         await getItemsByCollectionId({
           data: {
             collectionId,
-            params: {
-              sortDirection: 'ASC',
-              sortField: 'customField1Value',
-            },
+            params: collectionItemsSearchQueries,
           },
         }),
         await getCustomFieldsSetsForCollectionIdServerFn({
@@ -41,4 +40,14 @@ export const Route = createFileRoute('/_protected/collections/$id')({
       pagination: paginatedData.metadata,
     };
   },
+  loaderDeps: ({ search }) => {
+    return {
+      filters: search.filters,
+      limit: search.limit,
+      page: search.page,
+      search: search.search,
+      sort: search.sort,
+    };
+  },
+  validateSearch: collectionItemsSearchQueriesSchema,
 });

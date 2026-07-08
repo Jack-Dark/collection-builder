@@ -1,9 +1,12 @@
-import { and, asc, desc, eq, ilike, isNull } from 'drizzle-orm';
+import type { SQL, Table } from 'drizzle-orm';
+
+import { inArray, and, asc, desc, eq, ilike, isNull } from 'drizzle-orm';
 
 import type {
   PaginatedData,
   PaginationParamsSchemaDef,
 } from '#/api/pagination/types';
+import type { CollectionItemsSearchQueriesSchema } from '#/routes/api/collections/$id';
 
 import { db } from '#/api/db';
 import { sortDirectionOptions } from '#/api/pagination/constants';
@@ -45,19 +48,61 @@ const defaultParams = {
 
 type CollectionItemsTableColumns = keyof CollectionItemRecordDef;
 
+const formatFilters = <
+  T extends Table,
+  K extends keyof T['_']['columns'],
+>(props: {
+  filters: Record<K, boolean | string | string[] | undefined>;
+  search: string | undefined;
+  table: T;
+}): SQL | undefined => {
+  const { filters = {}, search = '', table } = props;
+
+  const getCustomFieldColumnName = (key: string) => {
+    const num = Number(key.replace(/\D/g, ''));
+    const columnName = `customField${num}Value`;
+
+    return columnName;
+  };
+
+  const filterItems = Object.entries(filters)
+    .filter(([key]) => {
+      const columnName = getCustomFieldColumnName(key);
+      const isTableColumn = table.hasOwnProperty(columnName);
+
+      return isTableColumn;
+    })
+    .map(([key, value]) => {
+      const columnName = getCustomFieldColumnName(key);
+
+      const isArray = Array.isArray(value);
+
+      if (isArray) {
+        if (value.length) {
+          return inArray(table[columnName], value as string[]);
+        }
+      } else {
+        return eq(table[columnName], value as string);
+      }
+
+      return undefined;
+    });
+
+  const cleanSearchTerm = search.trim();
+
+  return and(
+    ...filterItems,
+    cleanSearchTerm ? ilike(table.name, `%${cleanSearchTerm}%`) : undefined,
+  );
+};
+
 export const getItemsByCollectionIdQuery = async (props: {
   collectionId: number;
-  params?: PaginationParamsSchemaDef<keyof CollectionItemRecordDef>;
+  params: CollectionItemsSearchQueriesSchema;
   userId: string;
 }): Promise<PaginatedData<CollectionItemRecordDef>> => {
-  const { collectionId, params = {}, userId } = props;
-  const {
-    limit = defaultParams.limit,
-    page = defaultParams.page,
-    search,
-    sortDirection = sortDirectionOptions.asc,
-    sortField = 'name',
-  } = params;
+  const { collectionId, params, userId } = props;
+  const { filters, limit, page, search, sort } = params;
 
   const metadata = await getPaginationMetadataQuery({
     currentPage: page,
@@ -66,8 +111,8 @@ export const getItemsByCollectionIdQuery = async (props: {
   });
 
   const sortingField: CollectionItemsTableColumns =
-    sortField && collectionItemsTable.hasOwnProperty(sortField)
-      ? sortField
+    sort.field && collectionItemsTable.hasOwnProperty(sort.field)
+      ? sort.field
       : 'name';
 
   const data = await db
@@ -76,15 +121,17 @@ export const getItemsByCollectionIdQuery = async (props: {
     .where(
       and(
         getMatchesCollectionIdAndUserIdAndNotDeleted({ collectionId, userId }),
-        search
-          ? ilike(collectionItemsTable.name, `%${search.toLowerCase()}%`)
-          : undefined,
+        formatFilters({
+          filters,
+          search,
+          table: collectionItemsTable,
+        }),
       ),
     )
     .limit(limit)
     .offset((page - 1) * limit)
     .orderBy(
-      sortDirection === sortDirectionOptions.desc
+      sort.direction === sortDirectionOptions.desc
         ? desc(collectionItemsTable[sortingField])
         : asc(collectionItemsTable[sortingField]),
       asc(collectionItemsTable.name),
@@ -124,10 +171,7 @@ export const getLastAddedCollectionItemQuery = async (props: {
     .select()
     .from(collectionItemsTable)
     .where(
-      and(
-        eq(collectionItemsTable.collectionId, collectionId),
-        getMatchesUserIdAndNotDeleted(userId),
-      ),
+      getMatchesCollectionIdAndUserIdAndNotDeleted({ collectionId, userId }),
     )
     .orderBy(desc(collectionItemsTable.createdAt))
     .limit(1);

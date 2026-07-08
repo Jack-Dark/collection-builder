@@ -19,16 +19,17 @@ export const getCreateDefaultZustandState = <T extends Exclude<any, Function>>(
       resetValue: () => {
         set({ value: defaultValue });
       },
-      setValue: (setValueArg) => {
-        if (typeof setValueArg === 'function') {
+      set,
+      setValue: (valueOrCallback) => {
+        if (typeof valueOrCallback === 'function') {
           const { value: currentValue } = get();
 
           // @ts-expect-error
-          const newValue = setValueArg(currentValue);
+          const newValue = valueOrCallback(currentValue);
 
           set({ value: newValue });
         } else {
-          set({ value: setValueArg });
+          set({ value: valueOrCallback });
         }
       },
       value: defaultValue,

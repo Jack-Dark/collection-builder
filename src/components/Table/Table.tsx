@@ -9,6 +9,10 @@ import {
 } from '@tanstack/react-table';
 import { useEffect, useRef, useState } from 'react';
 
+import type { FiltersButtonPropsDef } from './components/FilterButton';
+
+import { FilterButton } from './components/FilterButton';
+
 const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
   // Rank the item
   const itemRank = rankItem(row.getValue(columnId), value);
@@ -61,11 +65,13 @@ export type TablePropsDef<T> = Omit<
 > &
   Partial<Pick<TableOptions<T>, 'filterFns' | 'getCoreRowModel'>> & {
     BodyTopRow?: JSXElementConstructor<BodyTopRowPropsDef>;
+    filters?: FiltersButtonPropsDef;
   };
 
 export const Table = <T,>({
   BodyTopRow,
   data = [],
+  filters,
   ...rest
 }: TablePropsDef<T>) => {
   const [makeColumnsSticky, setMakeColumnsSticky] = useState<boolean>(false);
@@ -107,6 +113,7 @@ export const Table = <T,>({
 
   return (
     <div className="w-full overflow-auto">
+      <div>{filters && <FilterButton {...filters} />}</div>
       <table className="table w-full" ref={tableRef}>
         <thead>
           {table.getHeaderGroups().map((hg) => {

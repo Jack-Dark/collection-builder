@@ -1,6 +1,4 @@
-import type { SQL, Subquery, ColumnsSelection } from 'drizzle-orm';
-import type { PgTable, TableConfig } from 'drizzle-orm/pg-core';
-import type { PgViewBase } from 'drizzle-orm/pg-core/view-base';
+import type { Table } from 'drizzle-orm';
 
 import { count } from 'drizzle-orm';
 
@@ -11,11 +9,7 @@ import { db } from '../db';
 export const getPaginationMetadataQuery = async (props: {
   currentPage: number;
   pageSize: number;
-  table:
-    | SQL<unknown>
-    | PgTable<TableConfig>
-    | Subquery<string, Record<string, unknown>>
-    | PgViewBase<string, boolean, ColumnsSelection>;
+  table: Table;
 }) => {
   const { currentPage, pageSize, table } = props;
 
