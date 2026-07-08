@@ -1,8 +1,10 @@
+import type { InferInsertModel, InferSelectModel } from 'drizzle-orm';
+
 import type { timestamps, usersTable } from './schema';
 
-export type UserRecordDef = typeof usersTable.$inferSelect;
+export type UserRecordDef = InferSelectModel<typeof usersTable>;
 
-export type NewUserRecordDef = typeof usersTable.$inferInsert;
+export type NewUserRecordDef = InferInsertModel<typeof usersTable>;
 
 export type UpdateUserRecordDef = Partial<
   Omit<UserRecordDef, 'id' | keyof TimestampsDef>

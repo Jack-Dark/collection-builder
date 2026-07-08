@@ -1,3 +1,4 @@
+import type { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import type z from 'zod';
 
 import type { TimestampsDef } from '#/api/types';
@@ -8,10 +9,13 @@ import type {
   updateCollectionItemSchema,
 } from './serverFns';
 
-export type CollectionItemRecordDef = typeof collectionItemsTable.$inferSelect;
+export type CollectionItemRecordDef = InferSelectModel<
+  typeof collectionItemsTable
+>;
 
-export type NewCollectionItemRecordDef =
-  typeof collectionItemsTable.$inferInsert;
+export type NewCollectionItemRecordDef = InferInsertModel<
+  typeof collectionItemsTable
+>;
 
 export type UpdateCollectionItemRecordDef = Partial<
   Omit<CollectionItemRecordDef, keyof TimestampsDef>

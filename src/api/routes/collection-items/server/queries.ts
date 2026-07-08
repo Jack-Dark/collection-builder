@@ -1,11 +1,8 @@
-import type { SQL, Table } from 'drizzle-orm';
+import type { InferModelFromColumns, SQL } from 'drizzle-orm';
 
 import { inArray, and, asc, desc, eq, ilike, isNull } from 'drizzle-orm';
 
-import type {
-  PaginatedData,
-  PaginationParamsSchemaDef,
-} from '#/api/pagination/types';
+import type { PaginatedData } from '#/api/pagination/types';
 import type { CollectionItemsSearchQueriesSchemaDef } from '#/routes/api/collections/$id';
 
 import { db } from '#/api/db';
@@ -41,26 +38,30 @@ const getMatchesCollectionIdAndUserIdAndNotDeleted = (props: {
   );
 };
 
-const defaultParams = {
-  limit: 100,
-  page: 1,
-} satisfies PaginationParamsSchemaDef<never>;
-
 type CollectionItemsTableColumns = keyof CollectionItemRecordDef;
 
 const formatFilters = <
-  T extends Table,
-  K extends keyof T['_']['columns'],
+  TTable extends InferModelFromColumns<{
+    customField1Value: any;
+    customField2Value: any;
+    customField3Value: any;
+    name: any;
+  }> &
+    Record<string, any>,
 >(props: {
-  filters: Record<K, boolean | string | string[] | undefined>;
+  filters: {
+    customField1: string[];
+    customField2: string[];
+    customField3: string[];
+  };
   search: string | undefined;
-  table: T;
+  table: TTable;
 }): SQL | undefined => {
   const { filters = {}, search = '', table } = props;
 
   const getCustomFieldColumnName = (key: string) => {
     const num = Number(key.replace(/\D/g, ''));
-    const columnName = `customField${num}Value` as K;
+    const columnName = `customField${num}Value` as const;
 
     return columnName;
   };
@@ -84,8 +85,6 @@ const formatFilters = <
       } else {
         return eq(table[columnName], value as string);
       }
-
-      return undefined;
     });
 
   const cleanSearchTerm = search.trim();
