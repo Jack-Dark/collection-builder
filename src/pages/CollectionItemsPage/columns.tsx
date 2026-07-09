@@ -31,6 +31,7 @@ export const getCollectionItemsTableColumns = (props: CollectionRecordDef) => {
         return <p>{getValue()}</p>;
       },
       header: 'Name',
+      size: 200,
     }),
     customField1Enabled &&
       columnHelper.accessor('customField1Value', {
@@ -69,11 +70,7 @@ export const getCollectionItemsTableColumns = (props: CollectionRecordDef) => {
       cell: ({ getValue }) => {
         const date = getValue();
 
-        return date ? (
-          <p>
-            {formatDate(date, `${masks.paddedShortDate} @ ${masks.shortTime}`)}
-          </p>
-        ) : null;
+        return date ? <p>{formatDate(date, masks.paddedShortDate)}</p> : null;
       },
       header: 'Added',
     }),

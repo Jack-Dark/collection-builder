@@ -1,16 +1,39 @@
-import { useNavigate, useSearch } from '@tanstack/react-router';
-import { useCallback, useEffect } from 'react';
+import type { NavigateOptions } from '@tanstack/react-router';
+import type { SortDirection } from '@tanstack/react-table';
+import type { PropsWithChildren } from 'react';
 
+import { useSearch } from '@tanstack/react-router';
+import _ from 'lodash';
+import { useEffect, useMemo } from 'react';
+
+import type { CollectionItemsTableColumn } from '#/api/routes/collection-items/server/queries';
 import type { CollectionRecordDef } from '#/api/routes/collections/server/types';
-import type {
-  CollectionItemsFiltersSchemaDef,
-  SortSchemaDef,
-} from '#/routes/api/collections/$id';
+import type { SortItemDef } from '#/components/Table';
+import type { FiltersButtonPropsDef } from '#/components/Table/components/FilterButton/FilterButton.types';
+import type { SetZustandStateFnDef } from '#/helpers/get-create-default-zustand-state';
+import type { CollectionItemsFiltersSchemaDef } from '#/routes/api/collections/$id';
 
 import { sortDirectionOptions } from '#/api/pagination/constants';
+import { Button } from '#/components/Button';
 import { CheckboxField } from '#/components/CheckboxField';
 import { getCreateDefaultZustandState } from '#/helpers/get-create-default-zustand-state';
 import { Route } from '#/routes/_protected/collections/$id';
+
+export const useSetCollectionItemsFiltersFromQueries = () => {
+  const queries = useSearch({
+    from: '/_protected/collections/$id',
+  });
+
+  const searchQueryFilters = queries?.filters;
+
+  const { setAllFilters: setFilters } = useCollectionItemsFilters();
+
+  useEffect(() => {
+    if (searchQueryFilters) {
+      setFilters(searchQueryFilters);
+    }
+  }, [searchQueryFilters]);
+};
 
 type CollectionItemsFiltersContentPropsDef = {
   collection: CollectionRecordDef;
@@ -21,103 +44,388 @@ type CollectionItemsFiltersContentPropsDef = {
   };
 };
 
+const FiltersBlock = (
+  props: PropsWithChildren<{
+    label: string | null;
+    onReset: () => void;
+  }>,
+) => {
+  const { children, label, onReset } = props;
+
+  return (
+    <div className="grid gap-1">
+      <div className="flex items-center gap-2">
+        <h5>{label}</h5>
+
+        <Button onClick={onReset} size="xs" text="Reset" variant="ghost" />
+      </div>
+
+      {children}
+    </div>
+  );
+};
+
 export const CollectionItemsFiltersContent = (
   props: CollectionItemsFiltersContentPropsDef,
 ) => {
   const { collection, customFields } = props;
 
-  const { filters, setFilters } = useCollectionItemsFilters();
-
-  const queries = useSearch({
-    from: '/_protected/collections/$id',
-  });
+  const {
+    customField1State,
+    customField2State,
+    customField3State,
+    saveAllFiltersSnapshot,
+  } = useCollectionItemsFilters();
 
   const getOnCheckedChange = (props: {
-    customFieldKey: 'customField1' | 'customField2' | 'customField3';
+    setState: SetZustandStateFnDef<string[]>;
     value: string;
   }) => {
-    return (checked: boolean): void => {
-      const { customFieldKey, value } = props;
-      if (checked) {
-        setFilters((prevFilters) => {
-          const newSelections = [...prevFilters[customFieldKey], value];
+    const { setState, value } = props;
 
-          return {
-            ...prevFilters,
-            [customFieldKey]: newSelections,
-          };
+    return (checked: boolean) => {
+      if (checked) {
+        setState((prevFilters) => {
+          return [...prevFilters, value];
         });
       } else {
-        setFilters((prevFilters) => {
-          const newSelections = prevFilters[customFieldKey].filter((item) => {
+        setState((prevFilters) => {
+          return prevFilters.filter((item) => {
             return item !== value;
           });
-
-          return {
-            ...prevFilters,
-            [customFieldKey]: newSelections,
-          };
         });
       }
     };
   };
 
-  const searchQueryFilters = queries?.filters;
-
   useEffect(() => {
-    if (searchQueryFilters) {
-      setFilters(searchQueryFilters);
-    }
-  }, [searchQueryFilters]);
+    saveAllFiltersSnapshot();
+  }, []);
 
   return (
     <div className="grid gap-5">
-      {([1, 2, 3] as const).map((num) => {
-        const isEnabled = collection[`customField${num}Enabled`];
-        const label = collection[`customField${num}Label`];
-        const values = customFields[`customField${num}Values`];
-        const customFieldKey = `customField${num}` as const;
+      {collection.customField1Enabled && (
+        <FiltersBlock
+          label={collection.customField1Label}
+          onReset={customField1State.resetValue}
+        >
+          {customFields.customField1Values.map((value) => {
+            const onCheckedChange = getOnCheckedChange({
+              setState: customField1State.setValue,
+              value,
+            });
 
-        return (
-          <div className="grid gap-1" key={num}>
-            {isEnabled && (
-              <>
-                <h5>{label}</h5>
-                {values.map((value) => {
-                  const onCheckedChange = getOnCheckedChange({
-                    customFieldKey,
-                    value,
-                  });
+            return (
+              <CheckboxField
+                checked={customField1State.value.includes(value)}
+                key={value}
+                label={value}
+                onCheckedChange={onCheckedChange}
+              />
+            );
+          })}
+        </FiltersBlock>
+      )}
 
-                  return (
-                    <CheckboxField
-                      checked={filters[customFieldKey].includes(value)}
-                      key={value}
-                      label={value}
-                      onCheckedChange={onCheckedChange}
-                    />
-                  );
-                })}
-              </>
-            )}
-          </div>
-        );
-      })}
+      {collection.customField2Enabled && (
+        <FiltersBlock
+          label={collection.customField2Label}
+          onReset={customField2State.resetValue}
+        >
+          {customFields.customField2Values.map((value) => {
+            const onCheckedChange = getOnCheckedChange({
+              setState: customField2State.setValue,
+              value,
+            });
+
+            return (
+              <CheckboxField
+                checked={customField2State.value.includes(value)}
+                key={value}
+                label={value}
+                onCheckedChange={onCheckedChange}
+              />
+            );
+          })}
+        </FiltersBlock>
+      )}
+
+      {collection.customField3Enabled && (
+        <FiltersBlock
+          label={collection.customField3Label}
+          onReset={customField3State.resetValue}
+        >
+          {customFields.customField3Values.map((value) => {
+            const onCheckedChange = getOnCheckedChange({
+              setState: customField3State.setValue,
+              value,
+            });
+
+            return (
+              <CheckboxField
+                checked={customField3State.value.includes(value)}
+                key={value}
+                label={value}
+                onCheckedChange={onCheckedChange}
+              />
+            );
+          })}
+        </FiltersBlock>
+      )}
     </div>
   );
 };
 
+export const useCollectionItemsFilterActions = (): Omit<
+  FiltersButtonPropsDef,
+  'FiltersContent'
+> => {
+  const {
+    defaultValues,
+    getAllFilters: getFilters,
+    numApplied,
+    restoreAllFiltersFromSnapshot,
+  } = useCollectionItemsFilters();
+
+  const { onUpdateCollectionItemsQueries } =
+    useOnUpdateCollectionItemsQueries();
+
+  const onReset = () => {
+    onUpdateCollectionItemsQueries({ filters: defaultValues });
+  };
+
+  const onSubmit = () => {
+    const filters = getFilters();
+
+    onUpdateCollectionItemsQueries({ filters });
+  };
+
+  return {
+    numApplied,
+    onCancel: restoreAllFiltersFromSnapshot,
+    onReset,
+    onSubmit,
+  };
+};
+
+export const useCollectionItemsSearch = () => {
+  const { onUpdateCollectionItemsQueries, searchQueries } =
+    useOnUpdateCollectionItemsQueries();
+
+  const onChange = _.debounce(async (searchValue: string) => {
+    onUpdateCollectionItemsQueries({
+      search: searchValue.trim(),
+    });
+  }, 200);
+
+  return {
+    onChange,
+    value: searchQueries.search,
+  };
+};
+
+type UnformattedSortItemDef<TField extends string> = (
+  | {
+      bidirectional: true;
+      direction?: never;
+    }
+  | {
+      bidirectional?: never;
+      direction: SortDirection;
+    }
+) & {
+  field: TField;
+  /** Pass `true` to remove the item from the formatted output. */
+  hide?: boolean;
+  label?: string | null;
+};
+
+export const formatSortItems = <TField extends string>(
+  items: UnformattedSortItemDef<TField>[],
+): SortItemDef<TField>[] => {
+  const initialItems: SortItemDef<TField>[] = [];
+
+  return items.reduce((accumulator, item) => {
+    const { bidirectional, direction, field, hide, label } = item;
+
+    const getFormattedLabel = (direction: SortDirection) => {
+      const prefix =
+        label ?? `${field.substring(0, 1).toUpperCase()}${field.substring(1)}`;
+
+      return `${prefix}, ${direction}.`;
+    };
+
+    const getId = (direction: SortDirection) => {
+      return `${field}_${direction}`;
+    };
+
+    if (hide) {
+      return accumulator;
+    }
+
+    if (bidirectional) {
+      const itemAsc: SortItemDef<TField> = {
+        direction: sortDirectionOptions.asc,
+        field,
+        id: getId(sortDirectionOptions.asc),
+        label: getFormattedLabel(sortDirectionOptions.asc),
+      };
+      const itemDesc: SortItemDef<TField> = {
+        direction: sortDirectionOptions.desc,
+        field,
+        id: getId(sortDirectionOptions.desc),
+        label: getFormattedLabel(sortDirectionOptions.desc),
+      };
+
+      return [...accumulator, itemAsc, itemDesc];
+    }
+
+    const formattedItem: SortItemDef<TField> = {
+      direction,
+      field,
+      id: getId(direction),
+      label: getFormattedLabel(direction),
+    };
+
+    return [...accumulator, formattedItem];
+  }, initialItems);
+};
+
+export const useCollectionItemsSort = <
+  TField extends CollectionItemsTableColumn,
+>(props: {
+  items: UnformattedSortItemDef<TField>[];
+}) => {
+  const { items } = props;
+
+  const { onUpdateCollectionItemsQueries, searchQueries } =
+    useOnUpdateCollectionItemsQueries();
+
+  const formattedItems = useMemo(() => {
+    return formatSortItems(items);
+  }, [...items]);
+
+  const onChange = (sort: SortItemDef<TField> | null) => {
+    onUpdateCollectionItemsQueries({
+      sort: {
+        direction: sort?.direction || sortDirectionOptions.asc,
+        field: sort?.direction || 'name',
+      },
+    });
+  };
+
+  const { direction, field } = searchQueries.sort;
+  const defaultValue = formattedItems.find((item) => {
+    return item.field === field && item.direction === direction;
+  });
+
+  return {
+    items: formattedItems,
+    onChange,
+    value: defaultValue,
+  };
+};
+
+export const useOnUpdateCollectionItemsQueries = () => {
+  const navigate = Route.useNavigate();
+  const params = Route.useParams();
+  const searchQueries = Route.useSearch();
+
+  const onUpdateCollectionItemsQueries = (
+    updatedQueries: Partial<typeof searchQueries>,
+    options?: NavigateOptions,
+  ) => {
+    navigate({
+      params,
+      reloadDocument: true,
+      resetScroll: true,
+      search: {
+        ...searchQueries,
+        ...updatedQueries,
+      },
+      to: Route.fullPath,
+      ...options,
+    });
+  };
+
+  return { onUpdateCollectionItemsQueries, searchQueries };
+};
+
 const createFiltersState = (defaultValues: CollectionItemsFiltersSchemaDef) => {
-  const createState = getCreateDefaultZustandState(defaultValues);
+  const createCustomField1State = getCreateDefaultZustandState<string[]>(
+    defaultValues.customField1,
+  );
+  const createCustomField2State = getCreateDefaultZustandState<string[]>(
+    defaultValues.customField2,
+  );
+  const createCustomField3State = getCreateDefaultZustandState<string[]>(
+    defaultValues.customField3,
+  );
 
   return () => {
-    const { getValue, resetValue, setValue, value } = createState();
+    const customField1State = createCustomField1State();
+    const customField2State = createCustomField2State();
+    const customField3State = createCustomField3State();
+
+    const numApplied = [
+      customField1State.value.length,
+      customField2State.value.length,
+      customField3State.value.length,
+    ].filter(Boolean).length;
+
+    const getAllFilters = (): CollectionItemsFiltersSchemaDef => {
+      return {
+        customField1: customField1State.getValue(),
+        customField2: customField2State.getValue(),
+        customField3: customField3State.getValue(),
+      };
+    };
 
     return {
-      filters: value,
-      getFilters: getValue,
-      resetFilters: resetValue,
-      setFilters: setValue,
+      customField1State,
+      customField2State,
+      customField3State,
+      defaultValues,
+      filters: {
+        customField1: customField1State.value,
+        customField2: customField2State.value,
+        customField3: customField3State.value,
+      },
+      getAllFilters,
+      numApplied,
+      resetAllFilters: () => {
+        customField1State.resetValue();
+        customField2State.resetValue();
+        customField3State.resetValue();
+      },
+      restoreAllFiltersFromSnapshot: () => {
+        customField1State.restoreFromSnapshot();
+        customField2State.restoreFromSnapshot();
+        customField3State.restoreFromSnapshot();
+      },
+      saveAllFiltersSnapshot: () => {
+        return {
+          customField1: customField1State.saveSnapshot(),
+          customField2: customField2State.saveSnapshot(),
+          customField3: customField3State.saveSnapshot(),
+        };
+      },
+      setAllFilters: (
+        stateOrSetState:
+          | CollectionItemsFiltersSchemaDef
+          | ((prevState: CollectionItemsFiltersSchemaDef) => void),
+      ) => {
+        if (typeof stateOrSetState === 'function') {
+          const currentState = getAllFilters();
+          stateOrSetState(currentState);
+        } else {
+          const { customField1, customField2, customField3 } = stateOrSetState;
+
+          customField1State.setValue(customField1);
+          customField2State.setValue(customField2);
+          customField3State.setValue(customField3);
+        }
+      },
     };
   };
 };
@@ -127,76 +435,3 @@ export const useCollectionItemsFilters = createFiltersState({
   customField2: [],
   customField3: [],
 });
-
-const createSearchState = (defaultValue: string = '') => {
-  const createState = getCreateDefaultZustandState(defaultValue);
-
-  return () => {
-    const { getValue, resetValue, setValue, value } = createState();
-
-    return {
-      getSearch: getValue,
-      resetSearch: resetValue,
-      search: value,
-      setSearch: setValue,
-    };
-  };
-};
-
-export const useSearchState = createSearchState();
-
-const createSortState = (defaultValues: SortSchemaDef) => {
-  const createState = getCreateDefaultZustandState(defaultValues);
-
-  return () => {
-    const { getValue, resetValue, setValue, value } = createState();
-
-    return {
-      getSort: getValue,
-      resetSort: resetValue,
-      setSort: setValue,
-      sort: value,
-    };
-  };
-};
-
-export const useSortState = createSortState({
-  direction: sortDirectionOptions.asc,
-  field: 'name',
-});
-
-export const useCollectionItemsFilterActions = (collectionId: number) => {
-  const navigate = useNavigate({ from: Route.fullPath });
-
-  const { getFilters, resetFilters } = useCollectionItemsFilters();
-
-  const onReset = useCallback(() => {
-    resetFilters();
-
-    navigate({
-      params: { id: String(collectionId) },
-      reloadDocument: true,
-      resetScroll: true,
-      to: Route.fullPath,
-    });
-  }, []);
-
-  const onSubmit = useCallback(async () => {
-    const filters = getFilters();
-
-    navigate({
-      params: { id: String(collectionId) },
-      reloadDocument: true,
-      resetScroll: true,
-      search: {
-        filters,
-      },
-      to: Route.fullPath,
-    });
-  }, []);
-
-  return {
-    onReset,
-    onSubmit,
-  };
-};

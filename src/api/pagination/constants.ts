@@ -1,8 +1,8 @@
 import type { PaginationMetadata } from './types';
 
 export const sortDirectionOptions = {
-  asc: 'ASC',
-  desc: 'DESC',
+  asc: 'asc',
+  desc: 'desc',
 } as const;
 
 export const getPaginationMetadataDefaults = (limit: number) => {

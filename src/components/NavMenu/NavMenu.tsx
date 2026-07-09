@@ -14,9 +14,9 @@ export const NavMenu = (props: { items: NavMenuItem[] }) => {
     <NavigationMenu.Root className="min-w-max rounded-lg bg-gray-50 p-1 text-gray-900">
       <NavigationMenu.List className="relative flex items-center gap-2">
         {items.map(({ hidden, href, Icon, items, label, onClick }) => {
-          const hasSubMenu = !!items?.filter(({ hidden }) => {
+          const hasSubMenu = !!items?.some(({ hidden }) => {
             return !hidden;
-          })?.length;
+          });
 
           return hidden ? null : (
             <NavigationMenu.Item

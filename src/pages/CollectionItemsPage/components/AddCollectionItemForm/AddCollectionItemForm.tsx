@@ -96,9 +96,9 @@ export const AddCollectionItemFormTableRow = withAddCollectionItemForm({
                           return (
                             <div className="flex gap-1 items-center">
                               <field.ComboboxField
+                                allowCreatable
                                 defaultValue={{ id: value, label: value }}
                                 error={field.state.meta.errors.join(',')}
-
                                 hideLabel
                                 items={customFields[
                                   `customField${num}Values`

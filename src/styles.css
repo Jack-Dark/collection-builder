@@ -33,6 +33,7 @@
   --color-divider: var(--color-gray-200);
 
   --color-anchor: var(--color-primary-700);
+  --color-anchor-hover: var(--color-primary-900);
 }
 
 .text-disabled {
@@ -45,6 +46,15 @@
 
 body {
   position: relative;
+}
+
+/* For some reason tailwind element styles are overriding the class level specificity. Only way I could think to apply anchor styling without it overriding classes was to apply the styles only to anchors in paragraph tags. */
+p a {
+  color: var(--color-anchor);
+
+  &:hover {
+    color: var(--color-anchor-hover)
+  }
 }
 
 [data-base-ui-portal] {

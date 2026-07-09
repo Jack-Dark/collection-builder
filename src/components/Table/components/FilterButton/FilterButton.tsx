@@ -1,4 +1,5 @@
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
+import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
 import SearchIcon from '@mui/icons-material/Search';
 
 import { Button } from '#/components/Button';
@@ -8,7 +9,7 @@ import { useDialog } from '#/components/Dialog/hooks/useDialog';
 import type { FiltersButtonPropsDef } from './FilterButton.types';
 
 export const FilterButton = (props: FiltersButtonPropsDef) => {
-  const { FiltersContent, onReset, onSubmit } = props;
+  const { FiltersContent, numApplied, onCancel, onReset, onSubmit } = props;
 
   const [showFilters, hideFilters] = useDialog(() => {
     return (
@@ -35,7 +36,10 @@ export const FilterButton = (props: FiltersButtonPropsDef) => {
           );
         }}
         Header="Filters"
-        onClose={hideFilters}
+        onClose={async () => {
+          await onCancel();
+          hideFilters();
+        }}
       >
         <FiltersContent />
       </Dialog>
@@ -44,11 +48,19 @@ export const FilterButton = (props: FiltersButtonPropsDef) => {
 
   return (
     <Button
-      Icon={FilterAltIcon}
+      Icon={() => {
+        return (
+          <div>
+            {numApplied ? <FilterAltIcon /> : <FilterAltOutlinedIcon />}
+          </div>
+        );
+      }}
       onClick={showFilters}
-      size="sm"
-      text="Filter"
       variant="mono"
-    />
+    >
+      <span className="sr-only md:not-sr-only">
+        Filters{numApplied ? ` (${numApplied})` : ''}
+      </span>
+    </Button>
   );
 };

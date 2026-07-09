@@ -85,16 +85,14 @@ export type CollectionItemsFiltersSchemaDef = z.output<
 const sortSchema = z
   .object({
     direction: z.union([
-      z.literal('ASC'),
-      z.literal('asc'),
-      z.literal('DESC'),
-      z.literal('desc'),
+      z.literal(sortDirectionOptions.asc),
+      z.literal(sortDirectionOptions.desc),
     ]),
     field: z.string(),
   })
   .optional()
   .default({
-    direction: 'ASC',
+    direction: 'asc',
     field: 'name',
   });
 
@@ -104,28 +102,13 @@ const searchSchema = z.string().optional().default('');
 
 export type SearchSchemaDef = z.output<typeof searchSchema>;
 
-export const collectionItemsSearchQueriesSchema = z
-  .object({
-    filters: collectionItemsFiltersSchema,
-    limit: z.number().min(1).optional().default(100),
-    page: z.number().min(1).optional().default(1),
-    search: searchSchema,
-    sort: sortSchema,
-  })
-  .default({
-    filters: {
-      customField1: [],
-      customField2: [],
-      customField3: [],
-    },
-    limit: 100,
-    page: 1,
-    search: '',
-    sort: {
-      direction: sortDirectionOptions.asc,
-      field: 'name',
-    },
-  });
+export const collectionItemsSearchQueriesSchema = z.object({
+  filters: collectionItemsFiltersSchema,
+  limit: z.number().min(1).optional().default(100),
+  page: z.number().min(1).optional().default(1),
+  search: searchSchema,
+  sort: sortSchema,
+});
 
 export type CollectionItemsSearchQueriesSchemaDef = z.output<
   typeof collectionItemsSearchQueriesSchema

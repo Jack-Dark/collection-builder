@@ -1,11 +1,16 @@
 @layer components {
+
+  .table th,
   .table td {
     border-color: var(--color-stone-300);
-    background-color: inherit;
   }
 
   .table th {
     background-color: var(--color-white);
+  }
+
+  .table td {
+    background-color: inherit;
   }
 
   .table tr,

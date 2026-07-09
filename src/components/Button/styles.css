@@ -124,13 +124,13 @@
   .btn-ghost {
     background-color: transparent;
     border-color: transparent;
-    color: inherit;
+    color: var(--color-anchor);
     box-shadow: none;
 
     &:not(:disabled):hover {
       @media (hover: hover) {
         background-color: transparent;
-        color: inherit;
+        color: var(--color-anchor-hover);
       }
     }
 

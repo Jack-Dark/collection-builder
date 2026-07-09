@@ -3,7 +3,6 @@ import type { JSXElementConstructor } from 'react';
 
 import { Button as MuiButton } from '@base-ui/react';
 import CircularProgress from '@mui/material/CircularProgress';
-import { useMemo } from 'react';
 
 type ButtonProps = MuiButtonProps & {
   disabled?: boolean;
@@ -24,7 +23,7 @@ const iconPositions = {
 
 export const Button = ({
   children,
-  className,
+  className = '',
   disabled = false,
   Icon,
   iconPosition = iconPositions.left,
@@ -35,25 +34,11 @@ export const Button = ({
   variant = 'primary',
   ...rest
 }: ButtonProps) => {
-  const classNameString = useMemo(() => {
-    const prefix = 'btn';
-
-    return [
-      prefix,
-      `${prefix}-${size}`,
-      `${prefix}-${variant}`,
-      'flex items-center justify-center gap-2',
-      className,
-    ]
-      .filter(Boolean)
-      .join(' ');
-  }, [className, size, variant]);
-
   return (
     <MuiButton
       disabled={disabled || processing}
       {...rest}
-      className={classNameString}
+      className={`btn btn-${size} btn-${variant} flex items-center justify-center gap-2 ${className}`}
       type={type}
     >
       {iconPosition === iconPositions.left &&
@@ -63,7 +48,7 @@ export const Button = ({
           Icon && <Icon />
         ))}
 
-      {children ? children : <p>{text}</p>}
+      {children ? children : text && <p>{text}</p>}
 
       {iconPosition === iconPositions.right &&
         (processing ? (

@@ -6,6 +6,8 @@ import { useRouter } from '@tanstack/react-router';
 import { useEffect } from 'react';
 import { create } from 'zustand';
 
+import type { CollectionItemsTableColumn } from '#/api/routes/collection-items/server/queries';
+
 import {
   useCreateCollectionItem,
   useUpdateCollectionItem,
@@ -28,6 +30,10 @@ import {
 import {
   CollectionItemsFiltersContent,
   useCollectionItemsFilterActions,
+  useCollectionItemsSearch,
+  useCollectionItemsSort,
+  useOnUpdateCollectionItemsQueries,
+  useSetCollectionItemsFiltersFromQueries,
 } from './components/CollectionItemsFiltersContent';
 
 export const useCollectionItemsFormStore = create<{
@@ -51,7 +57,7 @@ export const useCollectionItemsFormStore = create<{
 });
 
 export const CollectionItemsPage: RouteComponent = () => {
-  const { collection, customFields, items, lastAddedItem } =
+  const { collection, customFields, items, lastAddedItem, pagination } =
     CollectionRoute.useLoaderData();
 
   const router = useRouter();
@@ -113,7 +119,37 @@ export const CollectionItemsPage: RouteComponent = () => {
 
   const columns = getCollectionItemsTableColumns(collection);
 
-  const { onReset, onSubmit } = useCollectionItemsFilterActions(collection.id);
+  const filtersProps = useCollectionItemsFilterActions();
+
+  const searchProps = useCollectionItemsSearch();
+
+  const sortProps = useCollectionItemsSort<CollectionItemsTableColumn>({
+    items: [
+      {
+        bidirectional: true,
+        field: 'customField1Value',
+        hide: !collection.customField1Enabled,
+        label: collection.customField1Label,
+      },
+      {
+        bidirectional: true,
+        field: 'customField2Value',
+        hide: !collection.customField2Enabled,
+        label: collection.customField2Label,
+      },
+      {
+        bidirectional: true,
+        field: 'customField3Value',
+        hide: !collection.customField3Enabled,
+        label: collection.customField3Label,
+      },
+    ],
+  });
+
+  const { onUpdateCollectionItemsQueries } =
+    useOnUpdateCollectionItemsQueries();
+
+  useSetCollectionItemsFiltersFromQueries();
 
   useEffect(() => {
     setCollectionItemFormValues({
@@ -131,7 +167,14 @@ export const CollectionItemsPage: RouteComponent = () => {
   }, [isEditing]);
 
   return (
-    <PageWrapper childrenClassName="grid gap-8" title={collection?.name || '-'}>
+    <PageWrapper
+      childrenClassName="grid gap-8"
+      title={
+        collection?.name
+          ? `${collection.name} (${pagination.totalRecords})`
+          : '-'
+      }
+    >
       <div className="grid grid-cols-1 gap-4">
         {!isEditing && (
           <div className="flex justify-end">
@@ -189,8 +232,28 @@ export const CollectionItemsPage: RouteComponent = () => {
                 />
               );
             },
-            onReset,
-            onSubmit,
+            ...filtersProps,
+          }}
+          pagination={{
+            limit: {
+              onChange: (limit) => {
+                onUpdateCollectionItemsQueries({ limit });
+              },
+              value: pagination.pageSize,
+            },
+            page: {
+              max: pagination.totalPages,
+              onChange: (page) => {
+                onUpdateCollectionItemsQueries({ page });
+              },
+              value: pagination.currentPage,
+            },
+          }}
+          search={searchProps}
+          sort={{
+            items: sortProps.items,
+            onChange: sortProps.onChange,
+            value: sortProps.value,
           }}
         />
       </form>

@@ -38,7 +38,7 @@ const getMatchesCollectionIdAndUserIdAndNotDeleted = (props: {
   );
 };
 
-type CollectionItemsTableColumn = keyof CollectionItemRecordDef;
+export type CollectionItemsTableColumn = keyof CollectionItemRecordDef;
 
 const formatFilters = <
   TTable extends InferModelFromColumns<
