@@ -6,6 +6,7 @@ import type {
 } from '@tanstack/react-table';
 import type { CSSProperties, JSXElementConstructor } from 'react';
 
+import { ScrollArea } from '@base-ui/react';
 import SwapVertIcon from '@mui/icons-material/SwapVert';
 import { rankItem } from '@tanstack/match-sorter-utils';
 import {
@@ -181,7 +182,7 @@ export const Table = <TData,>({
 
   return (
     <div
-      className={`grid gap-4 max-h-[calc(100dvh-4rem)] overflow-h ${containerRows}`}
+      className={`grid gap-4 h-full max-h-[calc(100dvh-4rem)]  ${containerRows}`}
     >
       {showActionsRow && (
         <div className={`grid ${actionsColumns} items-stretch gap-4`}>
@@ -215,83 +216,88 @@ export const Table = <TData,>({
           )}
         </div>
       )}
-      <div className="overflow-auto">
-        <table
-          className="table w-full overflow-auto border-spacing-0 border-separate"
-          ref={tableRef}
-        >
-          <thead className="sticky top-0 z-2">
-            {table.getHeaderGroups().map((hg) => {
-              return (
-                <tr key={hg.id}>
-                  {hg.headers.map((header) => {
-                    const { column } = header;
-
+      <div className="min-h-0 overflow-hidden">
+        <ScrollArea.Root className="group h-full">
+          <ScrollArea.Viewport className="h-full">
+            <ScrollArea.Content>
+              <table
+                className="table w-full overflow-auto border-spacing-0 border-separate"
+                ref={tableRef}
+              >
+                <thead className="sticky top-0 z-2 group-data-overflow-y-start:shadow-[0_0_2rem_rgba(0,0,0,.25)]">
+                  {table.getHeaderGroups().map((hg) => {
                     return (
-                      <th
-                        className="text-left px-2 py-1 border-b"
-                        colSpan={header.colSpan}
-                        key={header.id}
-                        style={{
-                          ...getCommonPinningStyles({
-                            column,
-                            makeColumnsSticky,
-                          }),
-                        }}
-                      >
-                        {flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
-                      </th>
+                      <tr key={hg.id}>
+                        {hg.headers.map((header) => {
+                          const { column } = header;
+
+                          return (
+                            <th
+                              className="text-left px-2 py-1 border-b"
+                              colSpan={header.colSpan}
+                              key={header.id}
+                              style={{
+                                ...getCommonPinningStyles({
+                                  column,
+                                  makeColumnsSticky,
+                                }),
+                              }}
+                            >
+                              {flexRender(
+                                header.column.columnDef.header,
+                                header.getContext(),
+                              )}
+                            </th>
+                          );
+                        })}
+                      </tr>
                     );
                   })}
-                </tr>
-              );
-            })}
-          </thead>
-          <tbody>
-            {BodyTopRow && (
-              <BodyTopRow
-                numColumns={table.getAllColumns().length}
-                tdClassNames="px-2 py-1"
-              />
-            )}
-            {table.getRowModel().rows.map((row) => {
-              return (
-                <tr className="not-last:*:border-b" key={row.id}>
-                  {row.getVisibleCells().map((cell) => {
-                    const { column } = cell;
-
+                </thead>
+                <tbody>
+                  {BodyTopRow && (
+                    <BodyTopRow
+                      numColumns={table.getAllColumns().length}
+                      tdClassNames="px-2 py-1"
+                    />
+                  )}
+                  {table.getRowModel().rows.map((row) => {
                     return (
-                      <td
-                        className="px-2 py-1"
-                        data-column-id={column.id}
-                        key={cell.id}
-                        style={{
-                          ...getCommonPinningStyles({
-                            column,
-                            makeColumnsSticky,
-                          }),
-                        }}
-                      >
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )}
-                      </td>
+                      <tr className="not-last:*:border-b" key={row.id}>
+                        {row.getVisibleCells().map((cell) => {
+                          const { column } = cell;
+
+                          return (
+                            <td
+                              className="px-2 py-1"
+                              data-column-id={column.id}
+                              key={cell.id}
+                              style={{
+                                ...getCommonPinningStyles({
+                                  column,
+                                  makeColumnsSticky,
+                                }),
+                              }}
+                            >
+                              {flexRender(
+                                cell.column.columnDef.cell,
+                                cell.getContext(),
+                              )}
+                            </td>
+                          );
+                        })}
+                      </tr>
                     );
                   })}
-                </tr>
-              );
-            })}
-          </tbody>
-          <tfoot>
-            {/* 
-            // TODO - MOVE ADD-GAME FORM TO FOOTER
-          */}
-          </tfoot>
-        </table>
+                </tbody>
+              </table>
+            </ScrollArea.Content>
+          </ScrollArea.Viewport>
+          <div
+            className="relative group-data-overflow-y-end:h-8 group-data-overflow-y-end:shadow-[0_0_2rem_rgba(0,0,0,.25)]"
+            data-scroll-bottom-shadow=""
+          />
+        </ScrollArea.Root>
       </div>
       {pagination && (
         <div className="flex gap-4 items-center justify-end">
