@@ -7,7 +7,7 @@ import { authApiRouteMiddleware } from '#/auth/auth-middleware';
 import type { CollectionRecordDef } from './types';
 
 import { collectionsDbQueries } from '.';
-import { collectionItemsDbQueries } from '../../collection-items/server';
+import { getLastAddedCollectionItemQuery } from '../../collection-items/server/queries';
 
 const getCustomFieldEnabledSchema = (num: number) => {
   return z.boolean().describe(`Custom Field ${num} Enabled`);
@@ -110,7 +110,7 @@ export const getLastAddedItemInCollectionIdServerFn = createServerFn({
   .middleware([authApiRouteMiddleware])
   .validator(requireCollectionIdSchema)
   .handler(async ({ context, data: { collectionId } }) => {
-    return collectionItemsDbQueries.getLastAddedCollectionItemQuery({
+    return getLastAddedCollectionItemQuery({
       collectionId,
       userId: context.user.id,
     });

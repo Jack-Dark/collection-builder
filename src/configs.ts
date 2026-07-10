@@ -4,6 +4,7 @@ config({ path: '.env' });
 
 export const configs = {
   authSecret: process.env.BETTER_AUTH_SECRET!,
+  cloudinaryCloudName: process.env.CLOUDINARY_CLOUD_NAME!,
   dbUrl: process.env.DATABASE_URL!,
   resendApiKey: process.env.RESEND_API_KEY!,
   siteUrl: process.env.SITE_URL!,

@@ -33,6 +33,27 @@ export const getCollectionItemsTableColumns = (props: CollectionRecordDef) => {
       header: 'Name',
       size: 200,
     }),
+    columnHelper.accessor('images', {
+      cell: ({ getValue, row }) => {
+        const images = getValue();
+
+        return images.length ? (
+          images.map((src, index) => {
+            return (
+              <img
+                alt={`${row.original.name} thumbnail ${index + 1}`}
+                key={src}
+                src={src}
+              />
+            );
+          })
+        ) : (
+          <p>-</p>
+        );
+      },
+      header: 'Images',
+      size: 600,
+    }),
     customField1Enabled &&
       columnHelper.accessor('customField1Value', {
         cell: ({ getValue }) => {

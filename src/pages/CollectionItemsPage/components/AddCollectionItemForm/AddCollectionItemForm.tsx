@@ -1,4 +1,7 @@
+import AddIcon from '@mui/icons-material/Add';
+import DeleteIcon from '@mui/icons-material/Delete';
 import SaveIcon from '@mui/icons-material/Save';
+import { useRef } from 'react';
 
 import { Button } from '#/components/Button';
 import { Popover } from '#/components/Popover';
@@ -62,6 +65,114 @@ export const AddCollectionItemFormTableRow = withAddCollectionItemForm({
                         required
                         value={value}
                       />
+                    );
+                  }}
+                </form.Subscribe>
+              );
+            }}
+          </form.AppField>
+        </td>
+
+        <td className={tdClassNames}>
+          <form.AppField name="images">
+            {(field) => {
+              return (
+                <form.Subscribe
+                  selector={(state) => {
+                    return {
+                      errors: state.errors,
+                      name: state.values.name,
+                      value: state.values.images,
+                    };
+                  }}
+                >
+                  {({ errors: _errors, name, value }) => {
+                    // TODO - EXTRACT ERROR MESSAGE (AND IDEALLY SUBSCRIBE) LOGIC
+                    // const errorMsg = errors?.[0]?.[field.name]?.[0]?.message;
+
+                    const inputRef = useRef<HTMLInputElement>(null);
+
+                    return (
+                      <div className="flex gap-2 flex-wrap">
+                        {value.map((file, index) => {
+                          let src: string;
+                          if (typeof file === 'string') {
+                            src = file;
+                          } else {
+                            // const foo = new Blob(file)
+                            src = '';
+                          }
+
+                          return (
+                            <div
+                              className="grid grid-rows-[auto_1fr] items-center w-25 h-25  bg-white border border-gray-400 text-gray-500"
+                              key={src}
+                            >
+                              <div className="flex justify-end p-1 border-b border-gray-400">
+                                <DeleteIcon
+                                  className="cursor-pointer"
+                                  fontSize="small"
+                                  onClick={() => {
+                                    return field.handleChange(
+                                      value.filter((string) => {
+                                        return string !== src;
+                                      }),
+                                    );
+                                  }}
+                                />
+                              </div>
+                              <div className="w-full h-full overflow-hidden">
+                                <img
+                                  alt={`${field.name} thumbnail ${index + 1}`}
+                                  className="w-full h-full object-contain"
+                                  src={src}
+                                />
+                              </div>
+                            </div>
+                          );
+                        })}
+                        <div
+                          className="grid items-center justify-center w-25 h-25 border border-gray-400 text-gray-500 cursor-pointer"
+                          onClick={() => {
+                            inputRef.current?.click();
+                          }}
+                          title="Upload"
+                        >
+                          <AddIcon fontSize="large" />
+                        </div>
+                        <input
+                          accept="image/*"
+                          autoFocus
+                          capture="environment"
+                          className="hidden"
+                          multiple
+                          name={field.name}
+                          onChange={async (event) => {
+                            const selectedFiles = event?.target?.files || [];
+
+                            const urls = await Promise.all(
+                              [...selectedFiles].map(async (file) => {
+                                const arrayBuffer = await file.arrayBuffer();
+
+                                const blob = new Blob([arrayBuffer], {
+                                  type: file.type,
+                                });
+
+                                const url = URL.createObjectURL(blob);
+
+                                return url;
+                              }),
+                            );
+                            console.log('🚀 ~ blobs:', urls);
+
+                            return field.handleChange([...value, ...urls]);
+                          }}
+                          placeholder="Input name..."
+                          ref={inputRef}
+                          required
+                          type="file"
+                        />
+                      </div>
                     );
                   }}
                 </form.Subscribe>
@@ -201,7 +312,7 @@ export const AddCollectionItemFormTableRow = withAddCollectionItemForm({
           </form.AppField>
         </td>
 
-        <td className={tdClassNames}>
+        <td className={tdClassNames} colSpan={2}>
           <form.AppField name="notes">
             {(field) => {
               return (
@@ -233,7 +344,6 @@ export const AddCollectionItemFormTableRow = withAddCollectionItemForm({
           </form.AppField>
         </td>
 
-        <td className={tdClassNames}>-</td>
         <td className={tdClassNames}>
           <div className="flex align-items-center gap-2 justify-end">
             <Button onClick={onCancel} text="Cancel" variant="mono" />

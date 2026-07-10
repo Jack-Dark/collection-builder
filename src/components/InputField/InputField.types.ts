@@ -12,6 +12,9 @@ export type InputFieldProps = Pick<
   | 'type'
   | 'value'
   | 'defaultValue'
+  | 'multiple'
+  | 'accept'
+  | 'capture'
 > &
   FieldWrapperProps & {
     ref?: Ref<HTMLElement>;

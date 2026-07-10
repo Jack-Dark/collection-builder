@@ -10,9 +10,9 @@ import { sortDirectionOptions } from '#/api/pagination/constants';
 import { getPaginationMetadataQuery } from '#/api/pagination/query';
 
 import type {
-  NewCollectionItemRecordDef,
-  UpdateCollectionItemRecordDef,
   CollectionItemRecordDef,
+  InsertCollectionItemRecordDef,
+  UpdateCollectionItemSchemaDef,
 } from './types';
 
 import { collectionItemsTable } from '../../../schema';
@@ -227,35 +227,100 @@ export const getCustomFieldsSetsForCollectionIdQuery = async (props: {
   };
 };
 
-export const createCollectionItemQuery = async (
-  gameDetails: NewCollectionItemRecordDef,
-) => {
-  const [newRecord] = await db
-    .insert(collectionItemsTable)
-    .values(gameDetails)
-    .onConflictDoNothing()
-    .returning();
+export const createCollectionItemQuery = async ({
+  images,
+  ...rest
+}: InsertCollectionItemRecordDef): Promise<CollectionItemRecordDef> => {
+  const record = await db.transaction(async (tx) => {
+    const [recordWithoutImageUploads] = await tx
+      .insert(collectionItemsTable)
+      .values(rest)
+      .onConflictDoNothing()
+      .returning();
 
-  return newRecord;
+    const { id: collectionItemId, userId } = recordWithoutImageUploads;
+
+    if (images?.length) {
+      const updatedImages = await Promise.all(
+        images.map((img) => {
+          if (img instanceof File) {
+            // TODO HANDLE UPLOAD
+            return 'MOCK_VALUE';
+          } else {
+            return img;
+          }
+        }),
+      );
+
+      const [recordWithImageUploads] = await tx
+        .update(collectionItemsTable)
+        .set({
+          images: updatedImages,
+        })
+        .where(
+          and(
+            eq(collectionItemsTable.id, collectionItemId),
+            getMatchesUserIdAndNotDeleted(userId),
+          ),
+        )
+        .returning();
+
+      return recordWithImageUploads;
+    }
+
+    return recordWithoutImageUploads;
+  });
+
+  return record;
 };
 
 export const updateCollectionItemQuery = async (
-  props: UpdateCollectionItemRecordDef,
+  props: UpdateCollectionItemSchemaDef,
 ) => {
-  const { userId } = props;
-  // TODO - MAY HAVE TO MERGE OLD AND NEW DATA. GET GAME BY ID, IF NEEDED
-  const [updatedRecord] = await db
-    .update(collectionItemsTable)
-    .set({ ...props, updatedAt: new Date().toDateString() })
-    .where(
-      and(
-        eq(collectionItemsTable.id, props.id),
-        getMatchesUserIdAndNotDeleted(userId),
-      ),
-    )
-    .returning();
+  const { id, images, userId, ...rest } = props;
 
-  return updatedRecord;
+  return await db.transaction(async (tx) => {
+    const whereSql = and(
+      eq(collectionItemsTable.id, id),
+      getMatchesUserIdAndNotDeleted(userId),
+    );
+
+    const hasFilesToUpload = images.some((img) => {
+      return img instanceof File;
+    });
+
+    if (hasFilesToUpload) {
+      const updatedImages = await Promise.all(
+        images.map((img) => {
+          if (img instanceof File) {
+            // TODO HANDLE UPLOAD
+            return 'MOCK_VALUE';
+          } else {
+            return img;
+          }
+        }),
+      );
+
+      const [recordWithImageUploads] = await tx
+        .update(collectionItemsTable)
+        .set({
+          images: updatedImages,
+          updatedAt: new Date().toDateString(),
+        })
+        .where(whereSql)
+        .returning();
+
+      return recordWithImageUploads;
+    } else {
+      const [recordWithoutImageUploads] = await tx
+        .update(collectionItemsTable)
+        .set({ ...rest, images: images as string[] })
+        .where(whereSql)
+        .returning();
+
+      return recordWithoutImageUploads;
+    }
+  });
 };
 
 export const softDeleteCollectionItemByIdQuery = async (props: {

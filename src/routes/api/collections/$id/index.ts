@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
 import z from 'zod';
 
-import type { UpdateCollectionItemRecordDef } from '#/api/routes/collection-items/server/types';
+import type { UpdateCollectionItemSchemaDef } from '#/api/routes/collection-items/server/types';
 
 import { sortDirectionOptions } from '#/api/pagination/constants';
 import { collectionItemsDbQueries } from '#/api/routes/collection-items/server';
@@ -37,7 +37,7 @@ export const Route = createFileRoute('/api/collections/$id/')({
       PUT: async ({ context, params, request }) => {
         const id = Number(params.id);
         // Access the request body, for example, a JSON body
-        const gameDetails: UpdateCollectionItemRecordDef = await request.json();
+        const gameDetails: UpdateCollectionItemSchemaDef = await request.json();
 
         const updatedRecord =
           await collectionItemsDbQueries.updateCollectionItemQuery({

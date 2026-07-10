@@ -17,6 +17,7 @@ export const addCollectionItemFormDefaultValues: AddCollectionItemFormSchemaDef 
     customField3Value: '',
     editionDetails: '',
     id: undefined,
+    images: [],
     isSpecialEdition: Boolean(),
     name: '',
     notes: '',

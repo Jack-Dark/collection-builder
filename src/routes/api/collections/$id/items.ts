@@ -1,19 +1,33 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { createServerFn } from '@tanstack/react-start';
-import z from 'zod';
 
-import { collectionItemsDbQueries } from '#/api/routes/collection-items/server';
+import { getItemsByCollectionId } from '#/api/routes/collection-items/server/serverFns';
 import { authApiRouteMiddleware } from '#/auth/auth-middleware';
 
 import { collectionItemsSearchQueriesSchema } from '.';
 
 export const Route = createFileRoute('/api/collections/$id/items')({
+  loaderDeps: ({ search }) => {
+    return {
+      filters: search.filters,
+      limit: search.limit,
+      page: search.page,
+      search: search.search,
+      sort: search.sort,
+    };
+  },
   server: {
     handlers: {
       GET: async ({ params }) => {
         const collectionId = Number(params.id);
 
-        const data = await fetchItemsByCollectionId({ data: { collectionId } });
+        const data = await getItemsByCollectionId({
+          data: {
+            collectionId,
+            params: {
+              // TODO
+            },
+          },
+        });
 
         if (!data) {
           return Response.json({});
@@ -24,22 +38,5 @@ export const Route = createFileRoute('/api/collections/$id/items')({
     },
     middleware: [authApiRouteMiddleware],
   },
+  validateSearch: collectionItemsSearchQueriesSchema,
 });
-
-export const fetchItemsByCollectionId = createServerFn({
-  method: 'GET',
-})
-  .middleware([authApiRouteMiddleware])
-  .validator(
-    z.object({
-      collectionId: z.number(),
-      params: collectionItemsSearchQueriesSchema,
-    }),
-  )
-  .handler(async ({ context, data: { collectionId, params } }) => {
-    return collectionItemsDbQueries.getItemsByCollectionIdQuery({
-      collectionId,
-      params,
-      userId: context.user.id,
-    });
-  });
