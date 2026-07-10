@@ -6,6 +6,7 @@ import {
   boolean,
   index,
   serial,
+  json,
 } from 'drizzle-orm/pg-core';
 
 export const timestamps = {
@@ -152,6 +153,7 @@ export const collectionItemsTable = pgTable(
   {
     /* eslint-disable perfectionist/sort-objects */
     id: serial().primaryKey(),
+    images: json().notNull().$type<string[]>().default([]),
     name: text().notNull(),
     isSpecialEdition: boolean().notNull(),
     editionDetails: text().notNull().default(''),
