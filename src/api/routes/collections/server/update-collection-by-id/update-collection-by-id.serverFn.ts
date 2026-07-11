@@ -3,14 +3,14 @@ import { createServerFn } from '@tanstack/react-start';
 import { authApiRouteMiddleware } from '#/auth/auth-middleware';
 
 import { updateCollection } from '../queries';
-import { updateCollectionSchema } from '../serverFns';
+import { updateCollectionByIdSchema } from './update-collection-by-id.schema';
 
 export const updateCollectionByIdServerFn = createServerFn({
   // ? PUT is not yet supported via createServerFn, but the API route utilizes this via PUT
   method: 'POST',
 })
   .middleware([authApiRouteMiddleware])
-  .validator(updateCollectionSchema)
+  .validator(updateCollectionByIdSchema)
   .handler(async ({ data }) => {
     return updateCollection(data);
   });

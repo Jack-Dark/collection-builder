@@ -3,10 +3,8 @@ import type z from 'zod';
 import type { TimestampsDef } from '#/api/db-tables-schema.types';
 
 import type { collectionsTable } from '../../../db-tables-schema';
-import type {
-  createCollectionSchema,
-  updateCollectionSchema,
-} from './serverFns';
+import type { createCollectionSchema } from './create-collection/create-collection.schema';
+import type { updateCollectionSchema } from './updateCollectionSchema';
 
 export type CollectionRecordDef = typeof collectionsTable.$inferSelect;
 

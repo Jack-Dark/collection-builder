@@ -9,10 +9,10 @@ import {
   useCreateCollection,
   useUpdateCollection,
 } from '#/api/routes/collections/client/hooks';
-import { collectionFormSchema } from '#/api/routes/collections/server/serverFns';
 import { Button } from '#/components/Button';
 import { Table, tableCellClasses } from '#/components/Table';
 import { PageWrapper } from '#/page-wrapper';
+import { collectionFormSchema } from '#/pages/CollectionsListPage/collection-form.schema';
 import { Route } from '#/routes/_protected/collections';
 
 import type { AddCollectionFormSchemaDef } from './components/AddCollectionFormTableRow/types';

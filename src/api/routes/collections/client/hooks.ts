@@ -6,10 +6,8 @@ import { reactQueryKeys } from '#/api/react-query-keys';
 
 import { deleteCollectionByIdServerFn } from '../server/delete-collection-by-id/delete-collection-by-id.serverFn';
 import { getCollectionByIdServerFn } from '../server/get-collection-by-id/get-collection-by-id.serverFn';
-import {
-  createCollectionServerFn,
-  getAllCollectionsServerFn,
-} from '../server/serverFns';
+import { createCollectionServerFn } from '../server/create-collection/create-collection.serverFn';
+import { getAllCollectionsServerFn } from '../server/get-all-collections/get-all-collections.serverFn';
 import { updateCollectionByIdServerFn } from '../server/update-collection-by-id/update-collection-by-id.serverFn';
 
 export const useGetAllCollections = () => {
