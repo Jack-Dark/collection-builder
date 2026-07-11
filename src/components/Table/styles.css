@@ -15,10 +15,10 @@
 
   .table tr,
   .table tr:nth-child(odd) {
-    background-color: var(--color-white);
+    background-color: var(--color-gray-50);
   }
 
   .table tr:nth-child(even) {
-    background-color: var(--color-gray-50);
+    background-color: var(--color-white);
   }
 }

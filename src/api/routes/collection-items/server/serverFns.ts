@@ -5,8 +5,8 @@ import { authApiRouteMiddleware } from '#/auth/auth-middleware';
 
 import {
   createCollectionItemQuery,
+  deleteCollectionItemByIdQuery,
   getCollectionItemByIdQuery,
-  softDeleteCollectionItemByIdQuery,
   updateCollectionItemQuery,
 } from './queries';
 
@@ -100,7 +100,7 @@ export const deleteCollectionItemServerFn = createServerFn({
   .middleware([authApiRouteMiddleware])
   .validator(requireCollectionItemIdSchema)
   .handler(async ({ context, data: { collectionItemId } }) => {
-    return softDeleteCollectionItemByIdQuery({
+    return deleteCollectionItemByIdQuery({
       id: collectionItemId,
       userId: context.user.id,
     });

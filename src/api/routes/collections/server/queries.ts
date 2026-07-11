@@ -162,21 +162,7 @@ export const updateCollection = async (data: UpdateCollectionRecordDef) => {
   return record;
 };
 
-export const softDeleteCollection = async (props: {
-  id: number;
-  userId: string;
-}) => {
-  const { id, userId } = props;
-
-  await db
-    .update(collectionsTable)
-    .set({ deletedAt: new Date().toDateString() })
-    .where(
-      and(eq(collectionsTable.id, id), getMatchesUserIdAndNotDeleted(userId)),
-    );
-};
-
-export const hardDeleteCollection = async (props: {
+export const deleteCollection = async (props: {
   id: number;
   userId: string;
 }) => {
@@ -187,10 +173,4 @@ export const hardDeleteCollection = async (props: {
     .where(
       and(eq(collectionsTable.id, id), getMatchesUserIdAndNotDeleted(userId)),
     );
-};
-
-export const hardDeleteAllCollectionsByUser = async (userId: string) => {
-  await db
-    .delete(collectionsTable)
-    .where(getMatchesUserIdAndNotDeleted(userId));
 };

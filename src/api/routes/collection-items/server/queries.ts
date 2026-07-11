@@ -193,24 +193,7 @@ export const updateCollectionItemQuery = async (
   });
 };
 
-export const softDeleteCollectionItemByIdQuery = async (props: {
-  id: number;
-  userId: string;
-}) => {
-  const { id, userId } = props;
-
-  await db
-    .update(collectionItemsTable)
-    .set({ deletedAt: new Date().toDateString() })
-    .where(
-      and(
-        eq(collectionItemsTable.id, id),
-        getMatchesUserIdAndNotDeleted(userId),
-      ),
-    );
-};
-
-export const hardDeleteCollectionItemByIdQuery = async (props: {
+export const deleteCollectionItemByIdQuery = async (props: {
   id: number;
   userId: string;
 }) => {
@@ -224,12 +207,4 @@ export const hardDeleteCollectionItemByIdQuery = async (props: {
         getMatchesUserIdAndNotDeleted(userId),
       ),
     );
-};
-
-export const hardDeleteAllCollectionItemsByUserQuery = async (
-  userId: string,
-) => {
-  await db
-    .delete(collectionItemsTable)
-    .where(getMatchesUserIdAndNotDeleted(userId));
 };
