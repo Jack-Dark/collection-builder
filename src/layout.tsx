@@ -19,14 +19,14 @@ export const Layout: RouteComponent = () => {
 
   const { data: session } = authClient.useSession();
 
-  const { data: collections } = useGetAllCollections();
+  const { data } = useGetAllCollections();
 
   const isLoggedOut = !session?.user.id;
 
   const navItems: NavMenuItem[] = [
     {
       href: CollectionsRoute.fullPath,
-      items: collections?.data?.map((collection) => {
+      items: data?.collections?.map((collection) => {
         return {
           href: CollectionRoute.fullPath.replace('$id', String(collection.id)),
           label: collection.name,

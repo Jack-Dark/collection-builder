@@ -1,15 +1,9 @@
 import { and, asc, count, desc, eq, ilike, isNull } from 'drizzle-orm';
 
-import type {
-  PaginatedResponseData,
-  PaginationQueriesSchemaDef,
-} from '#/api/pagination/pagination.types';
+import type { PaginationQueriesSchemaDef } from '#/api/pagination/pagination.types';
 
 import { db } from '#/api/db';
-import {
-  getPaginationMetadataDefaults,
-  sortDirectionOptions,
-} from '#/api/pagination/pagination.constants';
+import { sortDirectionOptions } from '#/api/pagination/pagination.constants';
 import { getPaginationMetadataQuery } from '#/api/pagination/pagination.query';
 
 import type {
@@ -43,16 +37,16 @@ const getMatchesCollectionIdAndUserIdAndNotDeleted = (props: {
 export const getAllCollections = async (props: {
   params: PaginationQueriesSchemaDef;
   userId: string;
-}): Promise<PaginatedResponseData<CollectionRecordDef>> => {
+}) => {
   const { params, userId } = props;
   const { limit, page, search, sort } = params;
 
-  if (userId) {
-    const [{ totalRecords }] = await db
+  return db.transaction(async (tx) => {
+    const [{ totalRecords }] = await tx
       .select({ totalRecords: count() })
       .from(collectionsTable);
 
-    const metadata = getPaginationMetadataQuery({
+    const pagination = getPaginationMetadataQuery({
       currentPage: page,
       pageSize: limit,
       totalRecords,
@@ -64,7 +58,7 @@ export const getAllCollections = async (props: {
         ? (sortFieldParam as keyof CollectionRecordDef)
         : 'name';
 
-    const data = await db
+    const collections = await tx
       .select()
       .from(collectionsTable)
       .where(
@@ -84,15 +78,10 @@ export const getAllCollections = async (props: {
       );
 
     return {
-      data,
-      metadata,
+      collections,
+      pagination,
     };
-  }
-
-  return {
-    data: [],
-    metadata: getPaginationMetadataDefaults(limit),
-  };
+  });
 };
 
 export const getCollectionById = async (props: {

@@ -46,7 +46,7 @@ export const useCollectionsListFormStore = create<{
 });
 
 export const CollectionsListPage: RouteComponent = () => {
-  const collections = Route.useLoaderData();
+  const { collections, pagination } = Route.useLoaderData();
 
   const router = useRouter();
 
@@ -139,7 +139,6 @@ export const CollectionsListPage: RouteComponent = () => {
                         resetCollectionFormValues();
                         form.reset();
                       }}
-                      // tdClassNames={`${tdClassNames} align-items-center min-h-[501px]`}
                       {...props}
                     />
                   );
@@ -147,7 +146,18 @@ export const CollectionsListPage: RouteComponent = () => {
               : undefined
           }
           columns={columns}
-          data={collections.data}
+          data={collections}
+          pagination={{
+            limit: {
+              onChange: (limit) => {},
+              value: pagination.pageSize,
+            },
+            page: {
+              max: pagination.totalPages,
+              onChange: (page) => {},
+              value: pagination.currentPage,
+            },
+          }}
         />
       </form>
     </PageWrapper>

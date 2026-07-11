@@ -16,7 +16,10 @@ export const useGetAllCollections = () => {
   const queryFn = useServerFn(getAllCollectionsServerFn);
 
   return useQuery({
-    initialData: { data: [], metadata: getPaginationMetadataDefaults(10) },
+    initialData: {
+      collections: [],
+      pagination: getPaginationMetadataDefaults(10),
+    },
     queryFn: () => {
       return queryFn();
     },
