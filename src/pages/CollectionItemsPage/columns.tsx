@@ -135,9 +135,7 @@ export const getCollectionItemsTableColumns = (props: CollectionRecordDef) => {
           />
         );
       },
-      header: () => {
-        return <p className="text-right">Actions</p>;
-      },
+      header: '',
       id: 'actions',
       size: 0,
     }),

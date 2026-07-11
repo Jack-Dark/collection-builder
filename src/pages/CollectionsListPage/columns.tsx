@@ -121,9 +121,7 @@ export const getCollectionsListTableColumns = () => {
           />
         );
       },
-      header: () => {
-        return <p className="text-right">Actions</p>;
-      },
+      header: '',
       id: 'actions',
       size: 0,
     }),
