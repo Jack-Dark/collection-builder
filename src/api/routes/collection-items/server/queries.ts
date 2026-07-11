@@ -3,7 +3,7 @@ import type { InferModelFromColumns, SQL } from 'drizzle-orm';
 import { inArray, and, asc, desc, eq, ilike, isNull } from 'drizzle-orm';
 
 import type { PaginatedResponseData } from '#/api/pagination/pagination.types';
-import type { CollectionItemsSearchQueriesSchemaDef } from '#/api/TEMP';
+import type { CollectionItemsSearchQueriesSchemaDef } from '../get-items-by-collection-id/get-items-by-collection-id.types';
 
 import { db } from '#/api/db';
 import { sortDirectionOptions } from '#/api/pagination/pagination.constants';

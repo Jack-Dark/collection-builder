@@ -11,7 +11,7 @@ import type { CollectionRecordDef } from '#/api/routes/collections/server/types'
 import type { SortItemDef } from '#/components/Table';
 import type { FiltersButtonPropsDef } from '#/components/Table/components/FilterButton/FilterButton.types';
 import type { SetZustandStateFnDef } from '#/helpers/get-create-default-zustand-state';
-import type { CollectionItemsFiltersSchemaDef } from '#/api/TEMP';
+import type { CollectionItemsFiltersSchemaDef } from '#/api/routes/collection-items/get-items-by-collection-id/get-items-by-collection-id.types';
 
 import { sortDirectionOptions } from '#/api/pagination/pagination.constants';
 import { Button } from '#/components/Button';
