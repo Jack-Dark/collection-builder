@@ -32,6 +32,9 @@ const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
   return itemRank.passed;
 };
 
+export const tableCellClasses =
+  'text-left px-2 py-1 border-b z-0 first:sticky first:left-0 first:z-1 first:group-data-overflow-x-start:border-r last:sticky last:right-0 last:z-1 last:group-data-overflow-x-end:border-l';
+
 export type BodyTopRowPropsDef = {
   numColumns: number;
   tdClassNames: string;
@@ -170,7 +173,7 @@ export const Table = <TData,>({
           <ScrollArea.Viewport className="h-full">
             <ScrollArea.Content>
               <table
-                className="table w-full overflow-auto border-spacing-0 border-separate"
+                className="table table-fixed w-full overflow-auto border-spacing-0 border-separate"
                 ref={tableRef}
               >
                 <thead className="sticky top-0 z-2 group-data-overflow-y-start:shadow-[0_0_2rem_rgba(0,0,0,.25)]">
@@ -180,9 +183,10 @@ export const Table = <TData,>({
                         {hg.headers.map((header) => {
                           return (
                             <th
-                              className="text-left px-2 py-1 border-b z-0 first:sticky first:left-0 first:z-1 first:group-data-overflow-x-start:border-r last:sticky last:right-0 last:z-1 last:group-data-overflow-x-end:border-l"
+                              className={`text-left px-2 py-1 ${tableCellClasses}`}
                               colSpan={header.colSpan}
                               key={header.id}
+                              style={{ width: `${header.getSize()}px` }}
                             >
                               {flexRender(
                                 header.column.columnDef.header,
@@ -210,9 +214,10 @@ export const Table = <TData,>({
 
                           return (
                             <td
-                              className="text-left px-2 py-1 border-b z-0 first:sticky first:left-0 first:z-1 first:group-data-overflow-x-start:border-r last:sticky last:right-0 last:z-1 last:group-data-overflow-x-end:border-l"
+                              className={tableCellClasses}
                               data-column-id={column.id}
                               key={cell.id}
+                              style={{ width: `${column.getSize()}px` }}
                             >
                               {flexRender(
                                 cell.column.columnDef.cell,

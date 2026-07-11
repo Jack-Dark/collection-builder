@@ -55,7 +55,7 @@ export const AddCollectionFormTableRow = withAddCollectionForm({
         {([1, 2, 3] as const).map((num) => {
           return (
             <td className={tdClassNames} key={num}>
-              <div className="grid grid-cols-1 gap-2">
+              <div className="grid gap-2">
                 <form.Subscribe
                   selector={(state) => {
                     return {
@@ -130,69 +130,73 @@ export const AddCollectionFormTableRow = withAddCollectionForm({
             </td>
           );
         })}
+
         <td className={tdClassNames}>
-          <form.AppField name="notes">
-            {(field) => {
-              return (
+          <div className="grid gap-2">
+            <form.AppField name="notes">
+              {(field) => {
+                return (
+                  <form.Subscribe
+                    selector={(state) => {
+                      return {
+                        errors: state.errors,
+                        value: state.values.notes,
+                      };
+                    }}
+                  >
+                    {({ errors: _errors, value }) => {
+                      // TODO - EXTRACT ERROR MESSAGE (AND IDEALLY SUBSCRIBE) LOGIC
+                      // const errorMsg = errors?.[0]?.[field.name]?.[0]?.message;
+
+                      return (
+                        <field.TextAreaField
+                          // error={errorMsg}
+                          name={field.name}
+                          onValueChange={field.handleChange}
+                          placeholder="Input notes..."
+                          value={value}
+                        />
+                      );
+                    }}
+                  </form.Subscribe>
+                );
+              }}
+            </form.AppField>
+
+            <div className="flex align-items-center gap-2 justify-end">
+              <Button onClick={onCancel} text="Cancel" variant="mono" />
+
+              <form.AppForm>
                 <form.Subscribe
                   selector={(state) => {
                     return {
-                      errors: state.errors,
-                      value: state.values.notes,
+                      isFormValid: state.isFormValid,
+                      values: state.values,
                     };
                   }}
                 >
-                  {({ errors: _errors, value }) => {
-                    // TODO - EXTRACT ERROR MESSAGE (AND IDEALLY SUBSCRIBE) LOGIC
-                    // const errorMsg = errors?.[0]?.[field.name]?.[0]?.message;
+                  {(state) => {
+                    const { isFormValid } = state;
 
                     return (
-                      <field.TextAreaField
-                        // error={errorMsg}
-                        name={field.name}
-                        onValueChange={field.handleChange}
-                        placeholder="Input notes..."
-                        value={value}
-                      />
+                      <form.Button
+                        className="flex flex-nowrap gap-2"
+                        disabled={!isFormValid}
+                        processing={form.state.isSubmitting}
+                        type="submit"
+                      >
+                        <SaveIcon />
+                        Save
+                      </form.Button>
                     );
                   }}
                 </form.Subscribe>
-              );
-            }}
-          </form.AppField>
-        </td>
-        <td className={tdClassNames} colSpan={2}>
-          <div className="flex align-items-center gap-2 justify-end">
-            <Button onClick={onCancel} text="Cancel" variant="mono" />
-
-            <form.AppForm>
-              <form.Subscribe
-                selector={(state) => {
-                  return {
-                    isFormValid: state.isFormValid,
-                    values: state.values,
-                  };
-                }}
-              >
-                {(state) => {
-                  const { isFormValid } = state;
-
-                  return (
-                    <form.Button
-                      className="flex flex-nowrap gap-2"
-                      disabled={!isFormValid}
-                      processing={form.state.isSubmitting}
-                      type="submit"
-                    >
-                      <SaveIcon />
-                      Save
-                    </form.Button>
-                  );
-                }}
-              </form.Subscribe>
-            </form.AppForm>
+              </form.AppForm>
+            </div>
           </div>
         </td>
+
+        <td className={tdClassNames} />
       </tr>
     );
   },

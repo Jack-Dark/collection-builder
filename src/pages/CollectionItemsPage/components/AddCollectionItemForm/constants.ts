@@ -4,6 +4,7 @@ import { Button } from '#/components/Button';
 import { CheckboxField } from '#/components/CheckboxField';
 import { ComboboxField } from '#/components/ComboboxField';
 import { InputField } from '#/components/InputField';
+import { SwitchField } from '#/components/SwitchField';
 import { TextAreaField } from '#/components/TextAreaField';
 
 import type { AddCollectionItemFormSchemaDef } from './types';
@@ -39,6 +40,7 @@ export const {
     CheckboxField,
     ComboboxField,
     InputField,
+    SwitchField,
     TextAreaField,
   },
   fieldContext: addCollectionFormFieldContext,

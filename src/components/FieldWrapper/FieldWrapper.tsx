@@ -22,7 +22,7 @@ export const FieldWrapper = (props: PropsWithChildren<FieldWrapperProps>) => {
 
   return (
     <Field.Root
-      className={`grid grid-cols-1 gap-2 ${className || ''}`}
+      className={`grid gap-2 ${className || ''}`}
       disabled={disabled}
       invalid={invalid}
       name={name}

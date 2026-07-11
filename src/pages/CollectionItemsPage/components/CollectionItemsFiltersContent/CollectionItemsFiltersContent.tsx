@@ -315,7 +315,7 @@ export const useCollectionItemsSort = <
     onUpdateCollectionItemsQueries({
       sort: {
         direction: sort?.direction || sortDirectionOptions.asc,
-        field: sort?.direction || 'name',
+        field: sort?.field || 'name',
       },
     });
   };

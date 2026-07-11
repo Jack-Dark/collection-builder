@@ -9,13 +9,13 @@ import type { ConditionalWrapperPropsDef } from './ConditionalWrapper.types';
  *   condition={boolean}
  *   Wrapper={({ children }) => {
  *     return (
- *       <WrapperComponent myProp={value}>
+ *       <YourWrapperComponent>
  *         {children}
- *       </WrapperComponent>
+ *       </YourWrapperComponent>
  *     );
  *   }}
  * >
- *   // children
+ *   <YourContentComponent />
  * </ConditionalWrapper>
  * ```
  */

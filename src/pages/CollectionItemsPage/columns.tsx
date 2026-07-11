@@ -52,7 +52,7 @@ export const getCollectionItemsTableColumns = (props: CollectionRecordDef) => {
         );
       },
       header: 'Images',
-      size: 600,
+      minSize: 200,
     }),
     customField1Enabled &&
       columnHelper.accessor('customField1Value', {
@@ -60,6 +60,7 @@ export const getCollectionItemsTableColumns = (props: CollectionRecordDef) => {
           return <p>{getValue()}</p>;
         },
         header: customField1Label || '',
+        minSize: 200,
       }),
     customField2Enabled &&
       columnHelper.accessor('customField2Value', {
@@ -67,6 +68,7 @@ export const getCollectionItemsTableColumns = (props: CollectionRecordDef) => {
           return <p>{getValue()}</p>;
         },
         header: customField2Label || '',
+        minSize: 200,
       }),
     customField3Enabled &&
       columnHelper.accessor('customField3Value', {
@@ -74,18 +76,21 @@ export const getCollectionItemsTableColumns = (props: CollectionRecordDef) => {
           return <p>{getValue()}</p>;
         },
         header: customField3Label || '',
+        minSize: 200,
       }),
     columnHelper.accessor('editionDetails', {
       cell: ({ getValue }) => {
         return <p>{getValue() || '-'}</p>;
       },
       header: 'Edition',
+      minSize: 200,
     }),
     columnHelper.accessor('notes', {
       cell: ({ getValue }) => {
         return <p>{getValue() || '-'}</p>;
       },
       header: 'Notes',
+      minSize: 210,
     }),
     columnHelper.accessor('createdAt', {
       cell: ({ getValue }) => {
@@ -94,6 +99,7 @@ export const getCollectionItemsTableColumns = (props: CollectionRecordDef) => {
         return date ? <p>{formatDate(date, masks.paddedShortDate)}</p> : null;
       },
       header: 'Added',
+      size: 120,
     }),
     columnHelper.accessor('id', {
       cell: ({ getValue, row }) => {
@@ -137,7 +143,7 @@ export const getCollectionItemsTableColumns = (props: CollectionRecordDef) => {
       },
       header: '',
       id: 'actions',
-      size: 0,
+      size: 40,
     }),
   ].filter(Boolean) as AccessorKeyColumnDefBase<CollectionItemRecordDef>[];
 };

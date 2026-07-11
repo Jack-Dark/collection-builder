@@ -11,7 +11,7 @@ import {
 } from '#/api/routes/collections/client/hooks';
 import { collectionFormSchema } from '#/api/routes/collections/server/serverFns';
 import { Button } from '#/components/Button';
-import { Table } from '#/components/Table';
+import { Table, tableCellClasses } from '#/components/Table';
 import { PageWrapper } from '#/page-wrapper';
 import { Route } from '#/routes/_protected/collections';
 
@@ -106,7 +106,7 @@ export const CollectionsListPage: RouteComponent = () => {
 
   return (
     <PageWrapper title="Collections">
-      <div className="grid grid-cols-1 gap-4">
+      <div className="grid gap-4">
         {!isEditing && (
           <div className="flex justify-end">
             <Button
@@ -130,7 +130,7 @@ export const CollectionsListPage: RouteComponent = () => {
         <Table
           BodyTopRow={
             isEditing
-              ? (props) => {
+              ? ({ tdClassNames: _tdClassNames, ...rest }) => {
                   return (
                     <AddCollectionFormTableRow
                       form={form}
@@ -139,7 +139,8 @@ export const CollectionsListPage: RouteComponent = () => {
                         resetCollectionFormValues();
                         form.reset();
                       }}
-                      {...props}
+                      tdClassNames={tableCellClasses}
+                      {...rest}
                     />
                   );
                 }

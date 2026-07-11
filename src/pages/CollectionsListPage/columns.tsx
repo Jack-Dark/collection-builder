@@ -48,8 +48,8 @@ export const getCollectionsListTableColumns = () => {
         );
       },
       header: 'Name',
+      size: 200,
     }),
-
     columnHelper.accessor('customField1Label', {
       cell: ({ getValue, row }) => {
         return (
@@ -82,6 +82,7 @@ export const getCollectionsListTableColumns = () => {
         return <p>{value || '-'}</p>;
       },
       header: 'Notes',
+      minSize: 210,
     }),
     columnHelper.accessor('id', {
       cell: ({ getValue, row }) => {
@@ -123,7 +124,7 @@ export const getCollectionsListTableColumns = () => {
       },
       header: '',
       id: 'actions',
-      size: 0,
+      size: 40,
     }),
   ];
 };

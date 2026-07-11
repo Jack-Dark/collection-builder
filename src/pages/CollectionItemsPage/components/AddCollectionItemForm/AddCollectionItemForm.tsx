@@ -239,128 +239,131 @@ export const AddCollectionItemFormTableRow = withAddCollectionItemForm({
         })}
 
         <td className={tdClassNames}>
-          <form.AppField
-            listeners={{
-              onChange: ({ value: isSpecialEdition }) => {
-                form.setFieldValue(
-                  'editionDetails',
-                  isSpecialEdition ? "Collector's Edition" : '',
-                );
-              },
-            }}
-            name="isSpecialEdition"
-          >
-            {(field) => {
-              return (
-                <form.Subscribe
-                  selector={(state) => {
-                    return {
-                      errors: state.errors,
-                      value: state.values.isSpecialEdition,
-                    };
-                  }}
-                >
-                  {({ errors: _errors, value }) => {
-                    // TODO - EXTRACT ERROR MESSAGE (AND IDEALLY SUBSCRIBE) LOGIC
-                    // const errorMsg = errors?.[0]?.[field.name]?.[0]?.message;
+          <div className="grid gap-2">
+            <form.AppField
+              listeners={{
+                onChange: ({ value: isSpecialEdition }) => {
+                  form.setFieldValue(
+                    'editionDetails',
+                    isSpecialEdition ? "Collector's Edition" : '',
+                  );
+                },
+              }}
+              name="isSpecialEdition"
+            >
+              {(field) => {
+                return (
+                  <form.Subscribe
+                    selector={(state) => {
+                      return {
+                        errors: state.errors,
+                        value: state.values.isSpecialEdition,
+                      };
+                    }}
+                  >
+                    {({ errors: _errors, value }) => {
+                      // TODO - EXTRACT ERROR MESSAGE (AND IDEALLY SUBSCRIBE) LOGIC
+                      // const errorMsg = errors?.[0]?.[field.name]?.[0]?.message;
 
-                    return (
-                      <field.CheckboxField
-                        checked={value}
-                        error={field.state.meta.errors.join(',')}
-                        label="Is this a special edition?"
-                        onCheckedChange={field.handleChange}
-                      />
-                    );
-                  }}
-                </form.Subscribe>
-              );
-            }}
-          </form.AppField>
-          <form.AppField name="editionDetails">
-            {(field) => {
-              return (
-                <form.Subscribe
-                  selector={(state) => {
-                    return {
-                      errors: state.errors,
-                      isSpecialEdition: state.values.isSpecialEdition,
-                      value: state.values.editionDetails,
-                    };
-                  }}
-                >
-                  {({ errors: _errors, isSpecialEdition, value }) => {
-                    // TODO - EXTRACT ERROR MESSAGE (AND IDEALLY SUBSCRIBE) LOGIC
-                    // const errorMsg = errors?.[0]?.[field.name]?.[0]?.message;
-
-                    return (
-                      isSpecialEdition && (
-                        <field.TextAreaField
+                      return (
+                        <field.SwitchField
+                          checked={value}
                           error={field.state.meta.errors.join(',')}
-                          label="Edition details"
-                          name={field.name}
-                          onValueChange={field.handleChange}
-                          required
-                          value={value}
+                          label="Special edition"
+                          onCheckedChange={field.handleChange}
                         />
-                      )
-                    );
-                  }}
-                </form.Subscribe>
-              );
-            }}
-          </form.AppField>
+                      );
+                    }}
+                  </form.Subscribe>
+                );
+              }}
+            </form.AppField>
+            <form.AppField name="editionDetails">
+              {(field) => {
+                return (
+                  <form.Subscribe
+                    selector={(state) => {
+                      return {
+                        errors: state.errors,
+                        isSpecialEdition: state.values.isSpecialEdition,
+                        value: state.values.editionDetails,
+                      };
+                    }}
+                  >
+                    {({ errors: _errors, isSpecialEdition, value }) => {
+                      // TODO - EXTRACT ERROR MESSAGE (AND IDEALLY SUBSCRIBE) LOGIC
+                      // const errorMsg = errors?.[0]?.[field.name]?.[0]?.message;
+
+                      return (
+                        isSpecialEdition && (
+                          <field.TextAreaField
+                            error={field.state.meta.errors.join(',')}
+                            name={field.name}
+                            onValueChange={field.handleChange}
+                            required
+                            value={value}
+                          />
+                        )
+                      );
+                    }}
+                  </form.Subscribe>
+                );
+              }}
+            </form.AppField>
+          </div>
         </td>
 
         <td className={tdClassNames} colSpan={2}>
-          <form.AppField name="notes">
-            {(field) => {
-              return (
-                <form.Subscribe
-                  selector={(state) => {
-                    return {
-                      errors: state.errors,
-                      value: state.values.notes,
-                    };
-                  }}
+          <div className="grid gap-2">
+            <form.AppField name="notes">
+              {(field) => {
+                return (
+                  <form.Subscribe
+                    selector={(state) => {
+                      return {
+                        errors: state.errors,
+                        value: state.values.notes,
+                      };
+                    }}
+                  >
+                    {({ errors: _errors, value }) => {
+                      // TODO - EXTRACT ERROR MESSAGE (AND IDEALLY SUBSCRIBE) LOGIC
+                      // const errorMsg = errors?.[0]?.[field.name]?.[0]?.message;
+
+                      return (
+                        <field.TextAreaField
+                          error={field.state.meta.errors.join(',')}
+                          name={field.name}
+                          onValueChange={field.handleChange}
+                          placeholder="Input notes..."
+                          value={value}
+                        />
+                      );
+                    }}
+                  </form.Subscribe>
+                );
+              }}
+            </form.AppField>
+
+            <div className="flex align-items-center gap-2 justify-end">
+              <Button onClick={onCancel} text="Cancel" variant="mono" />
+
+              <form.AppForm>
+                <form.Button
+                  className="flex flex-nowrap gap-2"
+                  disabled={!form.state.isFormValid}
+                  processing={form.state.isSubmitting}
+                  type="submit"
                 >
-                  {({ errors: _errors, value }) => {
-                    // TODO - EXTRACT ERROR MESSAGE (AND IDEALLY SUBSCRIBE) LOGIC
-                    // const errorMsg = errors?.[0]?.[field.name]?.[0]?.message;
-
-                    return (
-                      <field.TextAreaField
-                        error={field.state.meta.errors.join(',')}
-                        name={field.name}
-                        onValueChange={field.handleChange}
-                        placeholder="Input notes..."
-                        value={value}
-                      />
-                    );
-                  }}
-                </form.Subscribe>
-              );
-            }}
-          </form.AppField>
-        </td>
-
-        <td className={tdClassNames}>
-          <div className="flex align-items-center gap-2 justify-end">
-            <Button onClick={onCancel} text="Cancel" variant="mono" />
-
-            <form.AppForm>
-              <form.Button
-                className="flex flex-nowrap gap-2"
-                disabled={!form.state.isFormValid}
-                processing={form.state.isSubmitting}
-                type="submit"
-              >
-                <SaveIcon />
-                Save
-              </form.Button>
-            </form.AppForm>
+                  <SaveIcon />
+                  Save
+                </form.Button>
+              </form.AppForm>
+            </div>
           </div>
         </td>
+
+        <td className={tdClassNames} />
       </tr>
     );
   },

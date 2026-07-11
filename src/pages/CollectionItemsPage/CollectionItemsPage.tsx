@@ -14,7 +14,7 @@ import {
 } from '#/api/routes/collection-items/client/hooks';
 import { collectionItemFormSchema } from '#/api/routes/collection-items/server/serverFns';
 import { Button } from '#/components/Button';
-import { Table } from '#/components/Table';
+import { Table, tableCellClasses } from '#/components/Table';
 import { PageWrapper } from '#/page-wrapper';
 import { Route as CollectionRoute } from '#/routes/_protected/collections/$id';
 
@@ -198,7 +198,7 @@ export const CollectionItemsPage: RouteComponent = () => {
         <Table
           BodyTopRow={
             isEditing
-              ? (props) => {
+              ? ({ tdClassNames: _tdClassNames, ...rest }) => {
                   return (
                     <AddCollectionItemFormTableRow
                       customField1Enabled={collection.customField1Enabled}
@@ -214,7 +214,8 @@ export const CollectionItemsPage: RouteComponent = () => {
                         resetCollectionItemFormValues();
                         form.reset();
                       }}
-                      {...props}
+                      tdClassNames={tableCellClasses}
+                      {...rest}
                     />
                   );
                 }
