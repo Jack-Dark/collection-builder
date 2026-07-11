@@ -1,8 +1,8 @@
 import type z from 'zod';
 
-import type { TimestampsDef } from '#/api/types';
+import type { TimestampsDef } from '#/api/db-tables-schema.types';
 
-import type { collectionsTable } from '../../../schema';
+import type { collectionsTable } from '../../../db-tables-schema';
 import type {
   createCollectionSchema,
   updateCollectionSchema,

@@ -5,7 +5,7 @@ import { drizzle } from 'drizzle-orm/node-postgres';
 
 import { configs } from '#/configs.ts';
 
-import * as schema from './schema.ts';
+import * as dbTablesSchema from './db-tables-schema.ts';
 
 let client: NeonQueryFunction<boolean, boolean> | undefined;
 
@@ -25,10 +25,10 @@ export const db = drizzle({
   casing: 'snake_case',
   connection: configs.dbUrl,
   schema: {
-    account: schema.accountsTable,
-    session: schema.sessionsTable,
-    user: schema.usersTable,
-    verification: schema.verificationsTable,
+    account: dbTablesSchema.accountsTable,
+    session: dbTablesSchema.sessionsTable,
+    user: dbTablesSchema.usersTable,
+    verification: dbTablesSchema.verificationsTable,
   },
   sql: getClient(),
 });

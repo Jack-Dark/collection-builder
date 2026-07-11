@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useServerFn } from '@tanstack/react-start';
 
 import { getPaginationMetadataDefaults } from '#/api/pagination/pagination.constants';
-import { queryKeys } from '#/api/queryKeys';
+import { reactQueryKeys } from '#/api/react-query-keys';
 
 import {
   createCollectionServerFn,
@@ -23,7 +23,7 @@ export const useGetAllCollections = () => {
     queryFn: () => {
       return queryFn();
     },
-    queryKey: [queryKeys.getCollection],
+    queryKey: [reactQueryKeys.getCollection],
   });
 };
 
@@ -34,7 +34,7 @@ export const useGetCollection = (collectionId: number) => {
     queryFn: () => {
       return queryFn({ data: { collectionId } });
     },
-    queryKey: [queryKeys.getCollection, { id: collectionId }],
+    queryKey: [reactQueryKeys.getCollection, { id: collectionId }],
   });
 };
 
@@ -43,7 +43,7 @@ const useInvalidateGetCollection = (id: number) => {
 
   return () => {
     return queryClient.invalidateQueries({
-      queryKey: [queryKeys.getCollection, { id }],
+      queryKey: [reactQueryKeys.getCollection, { id }],
     });
   };
 };

@@ -10,7 +10,7 @@ import type {
   UpdateCollectionItemSchemaDef,
 } from './types';
 
-import { collectionItemsTable } from '../../../schema';
+import { collectionItemsTable } from '../../../db-tables-schema';
 
 // TODO - DELETE
 const getMatchesUserIdAndNotDeleted = (userId: string) => {

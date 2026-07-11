@@ -12,7 +12,7 @@ import type {
   CollectionRecordDef,
 } from './types';
 
-import { collectionsTable } from '../../../schema';
+import { collectionsTable } from '../../../db-tables-schema';
 
 const getMatchesUserIdAndNotDeleted = (userId: string) => {
   return and(

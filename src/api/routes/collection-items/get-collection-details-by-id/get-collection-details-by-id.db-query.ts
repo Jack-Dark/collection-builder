@@ -3,7 +3,7 @@ import { and, desc, asc, eq, isNull, count } from 'drizzle-orm';
 import { db } from '#/api/db';
 import { sortDirectionOptions } from '#/api/pagination/pagination.constants';
 import { getPaginationMetadataQuery } from '#/api/pagination/pagination.query';
-import { collectionItemsTable, collectionsTable } from '#/api/schema';
+import { collectionItemsTable, collectionsTable } from '#/api/db-tables-schema';
 
 import type { CollectionItemsTableColumn } from '../server/queries';
 import type { CollectionItemsSearchQueriesSchemaDef } from './get-collection-details-by-id.types';
