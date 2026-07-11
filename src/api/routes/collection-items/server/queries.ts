@@ -149,7 +149,7 @@ export const getCollectionItemByIdQuery = async (props: {
 }) => {
   const { collectionItemId, userId } = props;
 
-  const [game] = await db
+  const [record] = await db
     .select()
     .from(collectionItemsTable)
     .where(
@@ -159,7 +159,7 @@ export const getCollectionItemByIdQuery = async (props: {
       ),
     );
 
-  return game;
+  return record;
 };
 
 export const getLastAddedCollectionItemQuery = async (props: {

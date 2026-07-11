@@ -1,10 +1,10 @@
 import { createFileRoute } from '@tanstack/react-router';
 
 import { getCustomFieldsByCollectionIdServerFn } from '#/api/routes/collection-items/server/serverFns';
+import { getCollectionByIdServerFn } from '#/api/routes/collections/get-collection-by-id/get-collection-by-id.serverFn';
 import { getLastAddedItemInCollectionIdServerFn } from '#/api/routes/collections/server/serverFns';
 import {
   collectionItemsSearchQueriesSchema,
-  getCollectionByIdServerFn,
   getItemsByCollectionIdServerFn,
 } from '#/api/TEMP';
 import { CollectionItemsPage } from '#/pages/CollectionItemsPage';

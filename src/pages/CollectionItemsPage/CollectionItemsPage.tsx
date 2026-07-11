@@ -198,29 +198,28 @@ export const CollectionItemsPage: RouteComponent = () => {
       >
         <Table
           BodyTopRow={
-            // isEditing
-            // ?
-            (props) => {
-              return (
-                <AddCollectionItemFormTableRow
-                  customField1Enabled={collection.customField1Enabled}
-                  customField1Label={collection.customField1Label || ''}
-                  customField2Enabled={collection.customField2Enabled}
-                  customField2Label={collection.customField2Label || ''}
-                  customField3Enabled={collection.customField3Enabled}
-                  customField3Label={collection.customField3Label || ''}
-                  customFields={customFields}
-                  form={form}
-                  onCancel={() => {
-                    resetEditingRowIds();
-                    resetCollectionItemFormValues();
-                    form.reset();
-                  }}
-                  {...props}
-                />
-              );
-            }
-            // : undefined
+            isEditing
+              ? (props) => {
+                  return (
+                    <AddCollectionItemFormTableRow
+                      customField1Enabled={collection.customField1Enabled}
+                      customField1Label={collection.customField1Label || ''}
+                      customField2Enabled={collection.customField2Enabled}
+                      customField2Label={collection.customField2Label || ''}
+                      customField3Enabled={collection.customField3Enabled}
+                      customField3Label={collection.customField3Label || ''}
+                      customFields={customFields}
+                      form={form}
+                      onCancel={() => {
+                        resetEditingRowIds();
+                        resetCollectionItemFormValues();
+                        form.reset();
+                      }}
+                      {...props}
+                    />
+                  );
+                }
+              : undefined
           }
           columns={columns}
           data={items || []}

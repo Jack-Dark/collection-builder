@@ -60,7 +60,7 @@ export const Layout: RouteComponent = () => {
         <div className="w-full max-w-7xl">
           <div className="flex items-center gap-4 mb-8">
             <SportsEsportsIcon className="text-4xl" fontSize="large" />
-            <h1 className="text-white">Start tracking your game collection!</h1>
+            <h1 className="text-white">Start tracking your collection!</h1>
           </div>
 
           <ErrorBoundary

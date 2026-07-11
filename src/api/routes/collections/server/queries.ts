@@ -97,14 +97,14 @@ export const getCollectionById = async (props: {
 }) => {
   const { id, userId } = props;
 
-  const [game] = await db
+  const [record] = await db
     .select()
     .from(collectionsTable)
     .where(
       and(eq(collectionsTable.id, id), getMatchesUserIdAndNotDeleted(userId)),
     );
 
-  return game;
+  return record;
 };
 
 export const getCustomFieldsForCollectionIdQuery = async (props: {
