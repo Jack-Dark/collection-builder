@@ -4,13 +4,7 @@ import z from 'zod';
 import { optionalPaginationQueriesSchema } from '#/api/pagination/pagination.schema';
 import { authApiRouteMiddleware } from '#/auth/auth-middleware';
 
-import {
-  createCollection,
-  deleteCollection,
-  getAllCollections,
-  getCollectionById,
-  updateCollection,
-} from './queries';
+import { createCollection, getAllCollections } from './queries';
 
 const getCustomFieldEnabledSchema = (num: number) => {
   return z.boolean().describe(`Custom Field ${num} Enabled`);
@@ -79,45 +73,6 @@ export const createCollectionServerFn = createServerFn({
   .handler(async ({ context, data }) => {
     return createCollection({
       ...data,
-      userId: context.user.id,
-    });
-  });
-
-export const requireCollectionIdSchema = z.object({
-  collectionId: z.number(),
-});
-
-export const getCollectionServerFn = createServerFn({
-  method: 'GET',
-})
-  .middleware([authApiRouteMiddleware])
-  .validator(requireCollectionIdSchema)
-  .handler(async ({ context, data: { collectionId } }) => {
-    return getCollectionById({
-      id: collectionId,
-      userId: context.user.id,
-    });
-  });
-
-export const updateCollectionServerFn = createServerFn({
-  // ? PUT is not yet supported via createServerFn, but the API route utilizes this via PUT
-  method: 'POST',
-})
-  .middleware([authApiRouteMiddleware])
-  .validator(updateCollectionSchema)
-  .handler(async ({ data }) => {
-    return updateCollection(data);
-  });
-
-export const deleteCollectionServerFn = createServerFn({
-  // ? DELETE is not yet supported via createServerFn, but the API route utilizes this via DELETE
-  method: 'POST',
-})
-  .middleware([authApiRouteMiddleware])
-  .validator(requireCollectionIdSchema)
-  .handler(async ({ context, data: { collectionId } }) => {
-    return deleteCollection({
-      id: collectionId,
       userId: context.user.id,
     });
   });

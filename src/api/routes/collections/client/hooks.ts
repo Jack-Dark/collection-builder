@@ -4,13 +4,13 @@ import { useServerFn } from '@tanstack/react-start';
 import { getPaginationMetadataDefaults } from '#/api/pagination/pagination.constants';
 import { reactQueryKeys } from '#/api/react-query-keys';
 
+import { deleteCollectionByIdServerFn } from '../server/delete-collection-by-id/delete-collection-by-id.serverFn';
+import { getCollectionByIdServerFn } from '../server/get-collection-by-id/get-collection-by-id.serverFn';
 import {
   createCollectionServerFn,
-  deleteCollectionServerFn,
   getAllCollectionsServerFn,
-  getCollectionServerFn,
-  updateCollectionServerFn,
 } from '../server/serverFns';
+import { updateCollectionByIdServerFn } from '../server/update-collection-by-id/update-collection-by-id.serverFn';
 
 export const useGetAllCollections = () => {
   const queryFn = useServerFn(getAllCollectionsServerFn);
@@ -28,7 +28,7 @@ export const useGetAllCollections = () => {
 };
 
 export const useGetCollection = (collectionId: number) => {
-  const queryFn = useServerFn(getCollectionServerFn);
+  const queryFn = useServerFn(getCollectionByIdServerFn);
 
   return useQuery({
     queryFn: () => {
@@ -70,7 +70,7 @@ export const useCreateCollection = (
 export const useUpdateCollection = (
   props?: Omit<Parameters<typeof useMutation>[0], 'mutationFn'>,
 ) => {
-  const mutationFn = useServerFn(updateCollectionServerFn);
+  const mutationFn = useServerFn(updateCollectionByIdServerFn);
 
   const { mutate: onUpdateCollection, ...rest } = useMutation({
     mutationFn,
@@ -87,7 +87,7 @@ export const useUpdateCollection = (
 };
 
 export const useDeleteCollection = () => {
-  const mutationFn = useServerFn(deleteCollectionServerFn);
+  const mutationFn = useServerFn(deleteCollectionByIdServerFn);
 
   const { mutate: onDeleteCollection, ...rest } = useMutation({
     mutationFn,
