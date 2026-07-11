@@ -3,7 +3,7 @@ import { createServerFn } from '@tanstack/react-start';
 import { optionalPaginationQueriesSchema } from '#/api/pagination/pagination.schema';
 import { authApiRouteMiddleware } from '#/auth/auth-middleware';
 
-import { getPaginatedCollectionsDbQuery } from '../queries';
+import { getPaginatedCollectionsDbQuery } from './get-paginated-collections.db-query';
 
 export const getAllCollectionsServerFn = createServerFn({
   method: 'GET',

@@ -2,7 +2,7 @@ import { createServerFn } from '@tanstack/react-start';
 
 import { authApiRouteMiddleware } from '#/auth/auth-middleware';
 
-import { createCollectionDbQuery } from '../queries';
+import { createCollectionDbQuery } from './create-collection.db-query';
 import { createCollectionSchema } from './create-collection.schema';
 
 export const createCollectionServerFn = createServerFn({

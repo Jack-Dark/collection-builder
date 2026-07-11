@@ -4,10 +4,10 @@ import { useServerFn } from '@tanstack/react-start';
 import { getPaginationMetadataDefaults } from '#/api/pagination/pagination.constants';
 import { reactQueryKeys } from '#/api/react-query-keys';
 
-import { deleteCollectionByIdServerFn } from '../server/delete-collection-by-id/delete-collection-by-id.serverFn';
-import { getCollectionByIdServerFn } from '../server/get-collection-by-id/get-collection-by-id.serverFn';
+import { getCollectionByIdServerFn } from '../get-collection-by-id/get-collection-by-id.serverFn';
 import { createCollectionServerFn } from '../server/create-collection/create-collection.serverFn';
-import { getAllCollectionsServerFn } from '../server/get-all-collections/get-all-collections.serverFn';
+import { deleteCollectionByIdServerFn } from '../server/delete-collection-by-id/delete-collection-by-id.serverFn';
+import { getAllCollectionsServerFn } from '../server/get-paginated-collections/get-paginated-collections.serverFn';
 import { updateCollectionByIdServerFn } from '../server/update-collection-by-id/update-collection-by-id.serverFn';
 
 export const useGetAllCollections = () => {

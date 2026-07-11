@@ -6,13 +6,9 @@ import { db } from '#/api/db';
 import { sortDirectionOptions } from '#/api/pagination/pagination.constants';
 import { getPaginationMetadataQuery } from '#/api/pagination/pagination.query';
 
-import type {
-  NewCollectionRecordDef,
-  UpdateCollectionRecordDef,
-  CollectionRecordDef,
-} from './types';
+import type { CollectionRecordDef } from '../types';
 
-import { collectionsTable } from '../../../db-tables-schema';
+import { collectionsTable } from '../../../../db-tables-schema';
 
 export const getPaginatedCollectionsDbQuery = async (props: {
   params: PaginationQueriesSchemaDef;
@@ -63,71 +59,4 @@ export const getPaginatedCollectionsDbQuery = async (props: {
       pagination,
     };
   });
-};
-
-export const getCollectionByIdDbQuery = async (props: {
-  id: number;
-  userId: string;
-}) => {
-  const { id, userId } = props;
-
-  const [collection] = await db
-    .select()
-    .from(collectionsTable)
-    .where(
-      and(
-        eq(collectionsTable.id, id),
-        eq(collectionsTable.userId, userId),
-        isNull(collectionsTable.deletedAt),
-      ),
-    );
-
-  return collection;
-};
-
-export const createCollectionDbQuery = async (data: NewCollectionRecordDef) => {
-  const [newCollection] = await db
-    .insert(collectionsTable)
-    .values(data)
-    .onConflictDoNothing()
-    .returning();
-
-  return newCollection;
-};
-
-export const updateCollectionDbQuery = async (
-  data: UpdateCollectionRecordDef,
-) => {
-  const { userId } = data;
-  // TODO - MAY HAVE TO MERGE OLD AND NEW DATA. GET COLLECTION BY ID, IF NEEDED
-  const [record] = await db
-    .update(collectionsTable)
-    .set({ ...data, updatedAt: new Date().toDateString() })
-    .where(
-      and(
-        eq(collectionsTable.id, data.id),
-        eq(collectionsTable.userId, userId),
-        isNull(collectionsTable.deletedAt),
-      ),
-    )
-    .returning();
-
-  return record;
-};
-
-export const deleteCollectionDbQuery = async (props: {
-  id: number;
-  userId: string;
-}) => {
-  const { id, userId } = props;
-
-  await db
-    .delete(collectionsTable)
-    .where(
-      and(
-        eq(collectionsTable.id, id),
-        eq(collectionsTable.userId, userId),
-        isNull(collectionsTable.deletedAt),
-      ),
-    );
 };
