@@ -294,7 +294,7 @@ export const Table = <TData,>({
             </ScrollArea.Content>
           </ScrollArea.Viewport>
           <div
-            className="relative group-data-overflow-y-end:h-8 group-data-overflow-y-end:shadow-[0_0_2rem_rgba(0,0,0,.25)]"
+            className="relative z-50 group-data-overflow-y-end:h-8 group-data-overflow-y-end:shadow-[0_0_2rem_rgba(0,0,0,.25)]"
             data-scroll-bottom-shadow=""
           />
         </ScrollArea.Root>
