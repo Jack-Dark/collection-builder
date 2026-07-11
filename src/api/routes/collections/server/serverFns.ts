@@ -4,7 +4,6 @@ import z from 'zod';
 import { optionalPaginationQueriesSchema } from '#/api/pagination/pagination.schema';
 import { authApiRouteMiddleware } from '#/auth/auth-middleware';
 
-import { getLastAddedCollectionItemQuery } from '../../collection-items/server/queries';
 import {
   createCollection,
   getAllCollections,
@@ -96,18 +95,6 @@ export const getCollectionServerFn = createServerFn({
   .handler(async ({ context, data: { collectionId } }) => {
     return getCollectionById({
       id: collectionId,
-      userId: context.user.id,
-    });
-  });
-
-export const getLastAddedItemInCollectionIdServerFn = createServerFn({
-  method: 'GET',
-})
-  .middleware([authApiRouteMiddleware])
-  .validator(requireCollectionIdSchema)
-  .handler(async ({ context, data: { collectionId } }) => {
-    return getLastAddedCollectionItemQuery({
-      collectionId,
       userId: context.user.id,
     });
   });

@@ -2,7 +2,7 @@ import type z from '../../../../../node_modules/zod/v4/classic/external.d.cts';
 import type {
   collectionItemsFiltersSchema,
   collectionItemsSearchQueriesSchema,
-} from './get-items-by-collection-id.schema';
+} from './get-collection-details-by-id.schema';
 
 export type CollectionItemsFiltersSchemaDef = z.output<
   typeof collectionItemsFiltersSchema

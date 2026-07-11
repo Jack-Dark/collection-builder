@@ -1,4 +1,4 @@
-import { and, asc, desc, eq, ilike, isNull } from 'drizzle-orm';
+import { and, asc, count, desc, eq, ilike, isNull } from 'drizzle-orm';
 
 import type {
   PaginatedResponseData,
@@ -48,10 +48,14 @@ export const getAllCollections = async (props: {
   const { limit, page, search, sort } = params;
 
   if (userId) {
-    const metadata = await getPaginationMetadataQuery({
+    const [{ totalRecords }] = await db
+      .select({ totalRecords: count() })
+      .from(collectionsTable);
+
+    const metadata = getPaginationMetadataQuery({
       currentPage: page,
       pageSize: limit,
-      table: collectionsTable,
+      totalRecords,
     });
 
     const sortFieldParam = sort?.field;
@@ -97,14 +101,14 @@ export const getCollectionById = async (props: {
 }) => {
   const { id, userId } = props;
 
-  const [record] = await db
+  const [collection] = await db
     .select()
     .from(collectionsTable)
     .where(
       and(eq(collectionsTable.id, id), getMatchesUserIdAndNotDeleted(userId)),
     );
 
-  return record;
+  return collection;
 };
 
 export const getCustomFieldsForCollectionIdQuery = async (props: {

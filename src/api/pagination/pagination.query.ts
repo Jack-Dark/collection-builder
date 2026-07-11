@@ -1,21 +1,11 @@
-import type { Table } from 'drizzle-orm';
-
-import { count } from 'drizzle-orm';
-
 import type { PaginationMetadata } from './pagination.types';
 
-import { db } from '../db';
-
-export const getPaginationMetadataQuery = async (props: {
+export const getPaginationMetadataQuery = (props: {
   currentPage: number;
   pageSize: number;
-  table: Table;
+  totalRecords: number;
 }) => {
-  const { currentPage, pageSize, table } = props;
-
-  const [{ value: totalRecords }] = await db
-    .select({ value: count() })
-    .from(table);
+  const { currentPage, pageSize, totalRecords } = props;
 
   const totalPages = Math.ceil(totalRecords / pageSize);
 

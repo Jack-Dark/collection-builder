@@ -1,10 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 
-import { collectionItemsSearchQueriesSchema } from '#/api/routes/collection-items/get-items-by-collection-id/get-items-by-collection-id.schema';
-import { getItemsByCollectionIdServerFn } from '#/api/routes/collection-items/get-items-by-collection-id/get-items-by-collection-id.serverFn';
-import { getCustomFieldsByCollectionIdServerFn } from '#/api/routes/collection-items/server/serverFns';
-import { getCollectionByIdServerFn } from '#/api/routes/collections/get-collection-by-id/get-collection-by-id.serverFn';
-import { getLastAddedItemInCollectionIdServerFn } from '#/api/routes/collections/server/serverFns';
+import { collectionItemsSearchQueriesSchema } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.schema';
+import { getCollectionDetailsByIdServerFn } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.serverFn';
 import { CollectionItemsPage } from '#/pages/CollectionItemsPage';
 
 export const Route = createFileRoute('/_protected/collections/$id')({
@@ -12,30 +9,16 @@ export const Route = createFileRoute('/_protected/collections/$id')({
   loader: async ({ deps: collectionItemsSearchQueries, params }) => {
     const collectionId = Number(params.id);
 
-    const [collection, paginatedData, customFields, lastAddedItem] =
-      await Promise.all([
-        await getCollectionByIdServerFn({ data: { collectionId } }),
-        await getItemsByCollectionIdServerFn({
-          data: {
-            collectionId,
-            params: collectionItemsSearchQueries,
-          },
-        }),
-        await getCustomFieldsByCollectionIdServerFn({
-          data: { collectionId },
-        }),
-        await getLastAddedItemInCollectionIdServerFn({
-          data: { collectionId },
-        }),
-      ]);
+    const data = await getCollectionDetailsByIdServerFn({
+      data: {
+        collectionId,
+        params: collectionItemsSearchQueries,
+      },
+    });
 
     return {
-      collection,
       collectionId,
-      customFields,
-      items: paginatedData.data,
-      lastAddedItem,
-      pagination: paginatedData.metadata,
+      ...data,
     };
   },
   loaderDeps: ({ search }) => {

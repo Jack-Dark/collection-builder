@@ -20,7 +20,7 @@ export const collectionItemsSearchQueriesSchema =
     filters: collectionItemsFiltersSchema,
   });
 
-export const getItemsByCollectionIdSchema = z.object({
+export const getCollectionDetailsByIdSchema = z.object({
   collectionId: z.number(),
   params: collectionItemsSearchQueriesSchema,
 });

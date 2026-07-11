@@ -1,13 +1,8 @@
 import type { InferModelFromColumns, SQL } from 'drizzle-orm';
 
-import { inArray, and, asc, desc, eq, ilike, isNull } from 'drizzle-orm';
-
-import type { PaginatedResponseData } from '#/api/pagination/pagination.types';
-import type { CollectionItemsSearchQueriesSchemaDef } from '../get-items-by-collection-id/get-items-by-collection-id.types';
+import { inArray, and, eq, ilike, isNull } from 'drizzle-orm';
 
 import { db } from '#/api/db';
-import { sortDirectionOptions } from '#/api/pagination/pagination.constants';
-import { getPaginationMetadataQuery } from '#/api/pagination/pagination.query';
 
 import type {
   CollectionItemRecordDef,
@@ -25,22 +20,9 @@ const getMatchesUserIdAndNotDeleted = (userId: string) => {
   );
 };
 
-const getMatchesCollectionIdAndUserIdAndNotDeleted = (props: {
-  collectionId: number;
-  userId: string;
-}) => {
-  const { collectionId, userId } = props;
-
-  return and(
-    eq(collectionItemsTable.collectionId, collectionId),
-    eq(collectionItemsTable.userId, userId),
-    isNull(collectionItemsTable.deletedAt),
-  );
-};
-
 export type CollectionItemsTableColumn = keyof CollectionItemRecordDef;
 
-const formatFilters = <
+export const formatFilters = <
   TTable extends InferModelFromColumns<
     {
       customField1Value: any;
@@ -96,53 +78,6 @@ const formatFilters = <
   );
 };
 
-export const getItemsByCollectionIdQuery = async (props: {
-  collectionId: number;
-  params: CollectionItemsSearchQueriesSchemaDef;
-  userId: string;
-}): Promise<PaginatedResponseData<CollectionItemRecordDef>> => {
-  const { collectionId, params, userId } = props;
-  const { filters, limit, page, search, sort } = params;
-
-  const metadata = await getPaginationMetadataQuery({
-    currentPage: page,
-    pageSize: limit,
-    table: collectionItemsTable,
-  });
-
-  const sortingField: CollectionItemsTableColumn =
-    sort.field && collectionItemsTable.hasOwnProperty(sort.field)
-      ? (sort.field as CollectionItemsTableColumn)
-      : 'name';
-
-  const data = await db
-    .select()
-    .from(collectionItemsTable)
-    .where(
-      and(
-        getMatchesCollectionIdAndUserIdAndNotDeleted({ collectionId, userId }),
-        formatFilters({
-          filters,
-          search,
-          table: collectionItemsTable,
-        }),
-      ),
-    )
-    .limit(limit)
-    .offset((page - 1) * limit)
-    .orderBy(
-      sort.direction === sortDirectionOptions.desc
-        ? desc(collectionItemsTable[sortingField])
-        : asc(collectionItemsTable[sortingField]),
-      asc(collectionItemsTable.name),
-    );
-
-  return {
-    data,
-    metadata,
-  };
-};
-
 export const getCollectionItemByIdQuery = async (props: {
   collectionItemId: number;
   userId: string;
@@ -160,71 +95,6 @@ export const getCollectionItemByIdQuery = async (props: {
     );
 
   return record;
-};
-
-export const getLastAddedCollectionItemQuery = async (props: {
-  collectionId: number;
-  userId: string;
-}) => {
-  const { collectionId, userId } = props;
-  const [lastAddedItem] = await db
-    .select()
-    .from(collectionItemsTable)
-    .where(
-      getMatchesCollectionIdAndUserIdAndNotDeleted({ collectionId, userId }),
-    )
-    .orderBy(desc(collectionItemsTable.createdAt))
-    .limit(1);
-
-  return lastAddedItem;
-};
-
-export const getCustomFieldsSetsForCollectionIdQuery = async (props: {
-  collectionId: number;
-  userId: string;
-}) => {
-  const { collectionId, userId } = props;
-
-  const customFields = await db
-    .selectDistinct({
-      customField1Value: collectionItemsTable.customField1Value,
-      customField2Value: collectionItemsTable.customField2Value,
-      customField3Value: collectionItemsTable.customField3Value,
-    })
-    .from(collectionItemsTable)
-    .where(
-      and(
-        getMatchesCollectionIdAndUserIdAndNotDeleted({ collectionId, userId }),
-        eq(collectionItemsTable.collectionId, collectionId),
-      ),
-    );
-
-  const filteredFields = customFields.reduce(
-    (acc, { customField1Value, customField2Value, customField3Value }) => {
-      if (customField1Value) {
-        acc.customField1Values.add(customField1Value);
-      }
-      if (customField2Value) {
-        acc.customField2Values.add(customField2Value);
-      }
-      if (customField3Value) {
-        acc.customField3Values.add(customField3Value);
-      }
-
-      return acc;
-    },
-    {
-      customField1Values: new Set<string>(),
-      customField2Values: new Set<string>(),
-      customField3Values: new Set<string>(),
-    },
-  );
-
-  return {
-    customField1Values: Array.from(filteredFields.customField1Values).sort(),
-    customField2Values: Array.from(filteredFields.customField2Values).sort(),
-    customField3Values: Array.from(filteredFields.customField3Values).sort(),
-  };
 };
 
 export const createCollectionItemQuery = async ({

@@ -2,14 +2,10 @@ import { createServerFn } from '@tanstack/react-start';
 import z from 'zod';
 
 import { authApiRouteMiddleware } from '#/auth/auth-middleware';
-import { collectionItemsSearchQueriesSchema } from '#/api/routes/collection-items/get-items-by-collection-id/get-items-by-collection-id.schema';
 
-import { requireCollectionIdSchema } from '../../collections/server/serverFns';
 import {
   createCollectionItemQuery,
   getCollectionItemByIdQuery,
-  getCustomFieldsSetsForCollectionIdQuery,
-  getItemsByCollectionIdQuery,
   softDeleteCollectionItemByIdQuery,
   updateCollectionItemQuery,
 } from './queries';
@@ -87,18 +83,6 @@ export const getCollectionItemServerFn = createServerFn({
     });
   });
 
-export const getCustomFieldsByCollectionIdServerFn = createServerFn({
-  method: 'GET',
-})
-  .middleware([authApiRouteMiddleware])
-  .validator(requireCollectionIdSchema)
-  .handler(async ({ context, data: { collectionId } }) => {
-    return getCustomFieldsSetsForCollectionIdQuery({
-      collectionId,
-      userId: context.user.id,
-    });
-  });
-
 export const updateCollectionItemServerFn = createServerFn({
   // ? PUT is not yet supported via createServerFn, but the API route utilizes this via PUT
   method: 'POST',
@@ -118,24 +102,6 @@ export const deleteCollectionItemServerFn = createServerFn({
   .handler(async ({ context, data: { collectionItemId } }) => {
     return softDeleteCollectionItemByIdQuery({
       id: collectionItemId,
-      userId: context.user.id,
-    });
-  });
-
-export const getItemsByCollectionId = createServerFn({
-  method: 'GET',
-})
-  .middleware([authApiRouteMiddleware])
-  .validator(
-    z.object({
-      collectionId: z.number(),
-      params: collectionItemsSearchQueriesSchema,
-    }),
-  )
-  .handler(async ({ context, data: { collectionId, params } }) => {
-    return getItemsByCollectionIdQuery({
-      collectionId,
-      params,
       userId: context.user.id,
     });
   });
