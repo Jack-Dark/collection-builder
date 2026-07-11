@@ -1,9 +1,9 @@
 import { and, desc, asc, eq, isNull, count } from 'drizzle-orm';
 
 import { db } from '#/api/db';
+import { collectionItemsTable, collectionsTable } from '#/api/db-tables-schema';
 import { sortDirectionOptions } from '#/api/pagination/pagination.constants';
 import { getPaginationMetadataQuery } from '#/api/pagination/pagination.query';
-import { collectionItemsTable, collectionsTable } from '#/api/db-tables-schema';
 
 import type { CollectionItemsTableColumn } from '../server/queries';
 import type { CollectionItemsSearchQueriesSchemaDef } from './get-collection-details-by-id.types';
@@ -35,7 +35,16 @@ export const getCollectionDetailsByIdDbQuery = async (props: {
     });
 
     const [collection] = await tx
-      .select()
+      .select({
+        customField1Enabled: collectionsTable.customField1Enabled,
+        customField1Label: collectionsTable.customField1Label,
+        customField2Enabled: collectionsTable.customField2Enabled,
+        customField2Label: collectionsTable.customField2Label,
+        customField3Enabled: collectionsTable.customField3Enabled,
+        customField3Label: collectionsTable.customField3Label,
+        id: collectionsTable.id,
+        name: collectionsTable.name,
+      })
       .from(collectionsTable)
       .where(
         and(

@@ -2,7 +2,7 @@ import { createServerFn } from '@tanstack/react-start';
 
 import { authApiRouteMiddleware } from '#/auth/auth-middleware';
 
-import { updateCollection } from '../queries';
+import { updateCollectionDbQuery } from '../queries';
 import { updateCollectionByIdSchema } from './update-collection-by-id.schema';
 
 export const updateCollectionByIdServerFn = createServerFn({
@@ -12,5 +12,5 @@ export const updateCollectionByIdServerFn = createServerFn({
   .middleware([authApiRouteMiddleware])
   .validator(updateCollectionByIdSchema)
   .handler(async ({ data }) => {
-    return updateCollection(data);
+    return updateCollectionDbQuery(data);
   });

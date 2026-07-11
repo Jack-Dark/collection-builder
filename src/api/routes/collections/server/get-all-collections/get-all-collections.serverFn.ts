@@ -3,7 +3,7 @@ import { createServerFn } from '@tanstack/react-start';
 import { optionalPaginationQueriesSchema } from '#/api/pagination/pagination.schema';
 import { authApiRouteMiddleware } from '#/auth/auth-middleware';
 
-import { getAllCollections } from '../queries';
+import { getPaginatedCollectionsDbQuery } from '../queries';
 
 export const getAllCollectionsServerFn = createServerFn({
   method: 'GET',
@@ -11,7 +11,7 @@ export const getAllCollectionsServerFn = createServerFn({
   .middleware([authApiRouteMiddleware])
   .validator(optionalPaginationQueriesSchema)
   .handler(async ({ context, data: params }) => {
-    return getAllCollections({
+    return getPaginatedCollectionsDbQuery({
       params,
       userId: context.user.id,
     });

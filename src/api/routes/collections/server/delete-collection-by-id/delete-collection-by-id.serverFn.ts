@@ -3,7 +3,7 @@ import z from 'zod';
 
 import { authApiRouteMiddleware } from '#/auth/auth-middleware';
 
-import { deleteCollection } from '../queries';
+import { deleteCollectionDbQuery } from '../queries';
 
 export const deleteCollectionByIdServerFn = createServerFn({
   // ? DELETE is not yet supported via createServerFn, but the API route utilizes this via DELETE
@@ -16,7 +16,7 @@ export const deleteCollectionByIdServerFn = createServerFn({
     }),
   )
   .handler(async ({ context, data: { collectionId } }) => {
-    return deleteCollection({
+    return deleteCollectionDbQuery({
       id: collectionId,
       userId: context.user.id,
     });

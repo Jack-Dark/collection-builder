@@ -3,7 +3,7 @@ import z from 'zod';
 
 import { authApiRouteMiddleware } from '#/auth/auth-middleware';
 
-import { getCollectionById } from '../queries';
+import { getCollectionByIdDbQuery } from '../queries';
 
 export const getCollectionByIdServerFn = createServerFn({
   method: 'GET',
@@ -15,7 +15,7 @@ export const getCollectionByIdServerFn = createServerFn({
     }),
   )
   .handler(async ({ context, data: { collectionId } }) => {
-    return getCollectionById({
+    return getCollectionByIdDbQuery({
       id: collectionId,
       userId: context.user.id,
     });

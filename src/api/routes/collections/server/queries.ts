@@ -14,27 +14,7 @@ import type {
 
 import { collectionsTable } from '../../../db-tables-schema';
 
-const getMatchesUserIdAndNotDeleted = (userId: string) => {
-  return and(
-    eq(collectionsTable.userId, userId),
-    isNull(collectionsTable.deletedAt),
-  );
-};
-
-const getMatchesCollectionIdAndUserIdAndNotDeleted = (props: {
-  collectionId: number;
-  userId: string;
-}) => {
-  const { collectionId, userId } = props;
-
-  return and(
-    eq(collectionsTable.id, collectionId),
-    eq(collectionsTable.userId, userId),
-    isNull(collectionsTable.deletedAt),
-  );
-};
-
-export const getAllCollections = async (props: {
+export const getPaginatedCollectionsDbQuery = async (props: {
   params: PaginationQueriesSchemaDef;
   userId: string;
 }) => {
@@ -63,7 +43,8 @@ export const getAllCollections = async (props: {
       .from(collectionsTable)
       .where(
         and(
-          getMatchesUserIdAndNotDeleted(userId),
+          eq(collectionsTable.userId, userId),
+          isNull(collectionsTable.deletedAt),
           search
             ? ilike(collectionsTable.name, `%${search.toLowerCase()}%`)
             : undefined,
@@ -84,7 +65,7 @@ export const getAllCollections = async (props: {
   });
 };
 
-export const getCollectionById = async (props: {
+export const getCollectionByIdDbQuery = async (props: {
   id: number;
   userId: string;
 }) => {
@@ -94,37 +75,17 @@ export const getCollectionById = async (props: {
     .select()
     .from(collectionsTable)
     .where(
-      and(eq(collectionsTable.id, id), getMatchesUserIdAndNotDeleted(userId)),
+      and(
+        eq(collectionsTable.id, id),
+        eq(collectionsTable.userId, userId),
+        isNull(collectionsTable.deletedAt),
+      ),
     );
 
   return collection;
 };
 
-export const getCustomFieldsForCollectionIdQuery = async (props: {
-  collectionId: number;
-  userId: string;
-}) => {
-  const { collectionId, userId } = props;
-
-  const [record] = await db
-    .select({
-      customField1Enabled: collectionsTable.customField1Enabled,
-      customField1Label: collectionsTable.customField1Label,
-      customField2Enabled: collectionsTable.customField2Enabled,
-      customField2Label: collectionsTable.customField2Label,
-      customField3Enabled: collectionsTable.customField3Enabled,
-      customField3Label: collectionsTable.customField3Label,
-    })
-    .from(collectionsTable)
-    .where(
-      getMatchesCollectionIdAndUserIdAndNotDeleted({ collectionId, userId }),
-    )
-    .limit(1);
-
-  return record;
-};
-
-export const createCollection = async (data: NewCollectionRecordDef) => {
+export const createCollectionDbQuery = async (data: NewCollectionRecordDef) => {
   const [newCollection] = await db
     .insert(collectionsTable)
     .values(data)
@@ -134,7 +95,9 @@ export const createCollection = async (data: NewCollectionRecordDef) => {
   return newCollection;
 };
 
-export const updateCollection = async (data: UpdateCollectionRecordDef) => {
+export const updateCollectionDbQuery = async (
+  data: UpdateCollectionRecordDef,
+) => {
   const { userId } = data;
   // TODO - MAY HAVE TO MERGE OLD AND NEW DATA. GET COLLECTION BY ID, IF NEEDED
   const [record] = await db
@@ -143,7 +106,8 @@ export const updateCollection = async (data: UpdateCollectionRecordDef) => {
     .where(
       and(
         eq(collectionsTable.id, data.id),
-        getMatchesUserIdAndNotDeleted(userId),
+        eq(collectionsTable.userId, userId),
+        isNull(collectionsTable.deletedAt),
       ),
     )
     .returning();
@@ -151,7 +115,7 @@ export const updateCollection = async (data: UpdateCollectionRecordDef) => {
   return record;
 };
 
-export const deleteCollection = async (props: {
+export const deleteCollectionDbQuery = async (props: {
   id: number;
   userId: string;
 }) => {
@@ -160,6 +124,10 @@ export const deleteCollection = async (props: {
   await db
     .delete(collectionsTable)
     .where(
-      and(eq(collectionsTable.id, id), getMatchesUserIdAndNotDeleted(userId)),
+      and(
+        eq(collectionsTable.id, id),
+        eq(collectionsTable.userId, userId),
+        isNull(collectionsTable.deletedAt),
+      ),
     );
 };

@@ -78,7 +78,7 @@ export const formatFilters = <
   );
 };
 
-export const getCollectionItemByIdQuery = async (props: {
+export const getCollectionItemByIdDbQuery = async (props: {
   collectionItemId: number;
   userId: string;
 }) => {
@@ -97,7 +97,7 @@ export const getCollectionItemByIdQuery = async (props: {
   return record;
 };
 
-export const createCollectionItemQuery = async ({
+export const createCollectionItemDbQuery = async ({
   images,
   ...rest
 }: InsertCollectionItemRecordDef): Promise<CollectionItemRecordDef> => {
@@ -144,7 +144,7 @@ export const createCollectionItemQuery = async ({
   return record;
 };
 
-export const updateCollectionItemQuery = async (
+export const updateCollectionItemDbQuery = async (
   props: UpdateCollectionItemSchemaDef,
 ) => {
   const { id, images, userId, ...rest } = props;
@@ -193,7 +193,7 @@ export const updateCollectionItemQuery = async (
   });
 };
 
-export const deleteCollectionItemByIdQuery = async (props: {
+export const deleteCollectionItemByIdDbQuery = async (props: {
   id: number;
   userId: string;
 }) => {

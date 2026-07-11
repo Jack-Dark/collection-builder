@@ -4,10 +4,10 @@ import z from 'zod';
 import { authApiRouteMiddleware } from '#/auth/auth-middleware';
 
 import {
-  createCollectionItemQuery,
-  deleteCollectionItemByIdQuery,
-  getCollectionItemByIdQuery,
-  updateCollectionItemQuery,
+  createCollectionItemDbQuery,
+  deleteCollectionItemByIdDbQuery,
+  getCollectionItemByIdDbQuery,
+  updateCollectionItemDbQuery,
 } from './queries';
 
 const baseCollectionItemSchema = z.object({
@@ -61,7 +61,7 @@ export const createCollectionItemServerFn = createServerFn({
   .handler(async ({ context, data }) => {
     const { createdAt: _createdAt, id: _id, userId: _userId, ...rest } = data;
 
-    return createCollectionItemQuery({
+    return createCollectionItemDbQuery({
       ...rest,
       userId: context.user.id,
     });
@@ -77,7 +77,7 @@ export const getCollectionItemServerFn = createServerFn({
   .middleware([authApiRouteMiddleware])
   .validator(requireCollectionItemIdSchema)
   .handler(async ({ context, data: { collectionItemId } }) => {
-    return getCollectionItemByIdQuery({
+    return getCollectionItemByIdDbQuery({
       collectionItemId,
       userId: context.user.id,
     });
@@ -90,7 +90,7 @@ export const updateCollectionItemServerFn = createServerFn({
   .middleware([authApiRouteMiddleware])
   .validator(updateCollectionItemSchema)
   .handler(async ({ data }) => {
-    return updateCollectionItemQuery(data);
+    return updateCollectionItemDbQuery(data);
   });
 
 export const deleteCollectionItemServerFn = createServerFn({
@@ -100,7 +100,7 @@ export const deleteCollectionItemServerFn = createServerFn({
   .middleware([authApiRouteMiddleware])
   .validator(requireCollectionItemIdSchema)
   .handler(async ({ context, data: { collectionItemId } }) => {
-    return deleteCollectionItemByIdQuery({
+    return deleteCollectionItemByIdDbQuery({
       id: collectionItemId,
       userId: context.user.id,
     });
