@@ -5,7 +5,7 @@ import { createColumnHelper } from '@tanstack/react-table';
 
 import type { CollectionRecordDef } from '#/api/routes/collections/server/collection.types';
 
-import { useDeleteCollection } from '#/api/routes/collections/client/hooks';
+import { useDeleteCollectionById } from '#/api/routes/collections/server/delete-collection-by-id/delete-collection-by-id.react-query';
 import { TableCellActionsMenu } from '#/components/TableCellActionsMenu';
 
 import { useCollectionsListFormStore } from './CollectionsListPage';
@@ -89,7 +89,7 @@ export const getCollectionsListTableColumns = () => {
         const router = useRouter();
 
         const { isPending: isDeletePending, onDeleteCollection } =
-          useDeleteCollection();
+          useDeleteCollectionById();
 
         const { resetCollectionFormValues, setCollectionFormValues } =
           useCollectionsListFormStore();

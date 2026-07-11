@@ -5,7 +5,7 @@ import { authApiRouteMiddleware } from '#/auth/auth-middleware';
 
 import { getPaginatedCollectionsDbQuery } from './get-paginated-collections.db-query';
 
-export const getAllCollectionsServerFn = createServerFn({
+export const getPaginatedCollectionsServerFn = createServerFn({
   method: 'GET',
 })
   .middleware([authApiRouteMiddleware])

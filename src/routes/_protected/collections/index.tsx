@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 
-import { getAllCollectionsServerFn } from '#/api/routes/collections/server/get-paginated-collections/get-paginated-collections.serverFn';
+import { getPaginatedCollectionsServerFn } from '#/api/routes/collections/server/get-paginated-collections/get-paginated-collections.serverFn';
 import { CollectionsListPage } from '#/pages/CollectionsListPage';
 
 export const Route = createFileRoute('/_protected/collections/')({
@@ -8,6 +8,6 @@ export const Route = createFileRoute('/_protected/collections/')({
     return <CollectionsListPage {...props} />;
   },
   loader: async () => {
-    return getAllCollectionsServerFn();
+    return getPaginatedCollectionsServerFn();
   },
 });

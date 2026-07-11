@@ -5,10 +5,8 @@ import { revalidateLogic } from '@tanstack/react-form';
 import { useRouter } from '@tanstack/react-router';
 import { create } from 'zustand';
 
-import {
-  useCreateCollection,
-  useUpdateCollection,
-} from '#/api/routes/collections/client/hooks';
+import { useCreateCollection } from '#/api/routes/collections/server/create-collection/create-collection.react-query';
+import { useUpdateCollectionById } from '#/api/routes/collections/server/update-collection-by-id/update-collection-by-id.react-query';
 import { Button } from '#/components/Button';
 import { Table, tableCellClasses } from '#/components/Table';
 import { PageWrapper } from '#/page-wrapper';
@@ -59,7 +57,7 @@ export const CollectionsListPage: RouteComponent = () => {
     },
   });
 
-  const { onUpdateCollection } = useUpdateCollection({
+  const { onUpdateCollection } = useUpdateCollectionById({
     onSuccess: () => {
       resetCollectionFormValues();
     },

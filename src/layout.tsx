@@ -8,7 +8,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 import type { NavMenuItem } from './components/NavMenu/NavMenu.types';
 import type { RouterPath } from './types';
 
-import { useGetAllCollections } from './api/routes/collections/client/hooks';
+import { useGetPaginatedCollections } from './api/routes/collections/server/get-paginated-collections/get-paginated-collections.react-query';
 import { authClient } from './auth/auth-client';
 import { NavMenu } from './components/NavMenu';
 import { Route as CollectionsRoute } from './routes/_protected/collections';
@@ -19,7 +19,7 @@ export const Layout: RouteComponent = () => {
 
   const { data: session } = authClient.useSession();
 
-  const { data } = useGetAllCollections();
+  const { data } = useGetPaginatedCollections();
 
   const isLoggedOut = !session?.user.id;
 
