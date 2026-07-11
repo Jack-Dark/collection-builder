@@ -13,7 +13,7 @@ import type { FiltersButtonPropsDef } from '#/components/Table/components/Filter
 import type { SetZustandStateFnDef } from '#/helpers/get-create-default-zustand-state';
 import type { CollectionItemsFiltersSchemaDef } from '#/api/TEMP';
 
-import { sortDirectionOptions } from '#/api/pagination/constants';
+import { sortDirectionOptions } from '#/api/pagination/pagination.constants';
 import { Button } from '#/components/Button';
 import { CheckboxField } from '#/components/CheckboxField';
 import { getCreateDefaultZustandState } from '#/helpers/get-create-default-zustand-state';

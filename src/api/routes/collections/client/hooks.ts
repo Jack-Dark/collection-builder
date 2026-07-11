@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useServerFn } from '@tanstack/react-start';
 
-import { getPaginationMetadataDefaults } from '#/api/pagination/constants';
+import { getPaginationMetadataDefaults } from '#/api/pagination/pagination.constants';
 import { queryKeys } from '#/api/queryKeys';
 
 import {

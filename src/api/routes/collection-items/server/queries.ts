@@ -2,12 +2,12 @@ import type { InferModelFromColumns, SQL } from 'drizzle-orm';
 
 import { inArray, and, asc, desc, eq, ilike, isNull } from 'drizzle-orm';
 
-import type { PaginatedData } from '#/api/pagination/types';
+import type { PaginatedResponseData } from '#/api/pagination/pagination.types';
 import type { CollectionItemsSearchQueriesSchemaDef } from '#/api/TEMP';
 
 import { db } from '#/api/db';
-import { sortDirectionOptions } from '#/api/pagination/constants';
-import { getPaginationMetadataQuery } from '#/api/pagination/query';
+import { sortDirectionOptions } from '#/api/pagination/pagination.constants';
+import { getPaginationMetadataQuery } from '#/api/pagination/pagination.query';
 
 import type {
   CollectionItemRecordDef,
@@ -100,7 +100,7 @@ export const getItemsByCollectionIdQuery = async (props: {
   collectionId: number;
   params: CollectionItemsSearchQueriesSchemaDef;
   userId: string;
-}): Promise<PaginatedData<CollectionItemRecordDef>> => {
+}): Promise<PaginatedResponseData<CollectionItemRecordDef>> => {
   const { collectionId, params, userId } = props;
   const { filters, limit, page, search, sort } = params;
 

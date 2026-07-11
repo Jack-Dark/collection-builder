@@ -1,16 +1,16 @@
 import { and, asc, desc, eq, ilike, isNull } from 'drizzle-orm';
 
 import type {
-  PaginatedData,
-  PaginationParamsSchemaDef,
-} from '#/api/pagination/types';
+  PaginatedResponseData,
+  PaginationQueriesSchemaDef,
+} from '#/api/pagination/pagination.types';
 
 import { db } from '#/api/db';
 import {
   getPaginationMetadataDefaults,
   sortDirectionOptions,
-} from '#/api/pagination/constants';
-import { getPaginationMetadataQuery } from '#/api/pagination/query';
+} from '#/api/pagination/pagination.constants';
+import { getPaginationMetadataQuery } from '#/api/pagination/pagination.query';
 
 import type {
   NewCollectionRecordDef,
@@ -40,25 +40,12 @@ const getMatchesCollectionIdAndUserIdAndNotDeleted = (props: {
   );
 };
 
-const defaultParams = {
-  limit: 100,
-  page: 1,
-} satisfies PaginationParamsSchemaDef<never>;
-
-type CollectionsTableColumns = keyof CollectionRecordDef;
-
 export const getAllCollections = async (props: {
-  params?: PaginationParamsSchemaDef<keyof CollectionRecordDef>;
+  params: PaginationQueriesSchemaDef;
   userId: string;
-}): Promise<PaginatedData<CollectionRecordDef>> => {
-  const { params = {}, userId } = props;
-  const {
-    limit = defaultParams.limit,
-    page = defaultParams.page,
-    search,
-    sortDirection = sortDirectionOptions.asc,
-    sortField = 'name',
-  } = params;
+}): Promise<PaginatedResponseData<CollectionRecordDef>> => {
+  const { params, userId } = props;
+  const { limit, page, search, sort } = params;
 
   if (userId) {
     const metadata = await getPaginationMetadataQuery({
@@ -67,9 +54,10 @@ export const getAllCollections = async (props: {
       table: collectionsTable,
     });
 
-    const sortingField: CollectionsTableColumns =
-      sortField && collectionsTable.hasOwnProperty(sortField)
-        ? sortField
+    const sortFieldParam = sort?.field;
+    const sortingField =
+      sortFieldParam && collectionsTable.hasOwnProperty(sortFieldParam)
+        ? (sortFieldParam as keyof CollectionRecordDef)
         : 'name';
 
     const data = await db
@@ -86,7 +74,7 @@ export const getAllCollections = async (props: {
       .limit(limit)
       .offset((page - 1) * limit)
       .orderBy(
-        sortDirection === sortDirectionOptions.desc
+        sort?.direction === sortDirectionOptions.desc
           ? desc(collectionsTable[sortingField])
           : asc(collectionsTable[sortingField]),
       );

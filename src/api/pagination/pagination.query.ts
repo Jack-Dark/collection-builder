@@ -2,7 +2,7 @@ import type { Table } from 'drizzle-orm';
 
 import { count } from 'drizzle-orm';
 
-import type { PaginationMetadata } from './types';
+import type { PaginationMetadata } from './pagination.types';
 
 import { db } from '../db';
 

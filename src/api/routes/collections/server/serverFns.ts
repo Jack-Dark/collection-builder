@@ -1,10 +1,8 @@
 import { createServerFn } from '@tanstack/react-start';
 import z from 'zod';
 
-import { getOptionalPaginationParamsSchema } from '#/api/pagination/schema';
+import { optionalPaginationQueriesSchema } from '#/api/pagination/pagination.schema';
 import { authApiRouteMiddleware } from '#/auth/auth-middleware';
-
-import type { CollectionRecordDef } from './types';
 
 import { getLastAddedCollectionItemQuery } from '../../collection-items/server/queries';
 import {
@@ -62,19 +60,11 @@ export const updateCollectionSchema = baseCollectionSchema.extend(
   updateItemSchema.shape,
 );
 
-const allCollectionsSortFields = [
-  'name',
-  'createdAt',
-] satisfies (keyof CollectionRecordDef)[];
-
-export const allCollectionsPaginationParamsSchema =
-  getOptionalPaginationParamsSchema(allCollectionsSortFields);
-
 export const getAllCollectionsServerFn = createServerFn({
   method: 'GET',
 })
   .middleware([authApiRouteMiddleware])
-  .validator(allCollectionsPaginationParamsSchema)
+  .validator(optionalPaginationQueriesSchema)
   .handler(async ({ context, data: params }) => {
     return getAllCollections({
       params,
