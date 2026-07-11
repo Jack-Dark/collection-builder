@@ -1,62 +1,11 @@
-import { createFileRoute } from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
 import z from 'zod';
 
-import type { UpdateCollectionItemSchemaDef } from '#/api/routes/collection-items/server/types';
-
 import { sortDirectionOptions } from '#/api/pagination/constants';
-import {
-  getItemsByCollectionIdQuery,
-  softDeleteCollectionItemByIdQuery,
-  updateCollectionItemQuery,
-} from '#/api/routes/collection-items/server/queries';
+import { getItemsByCollectionIdQuery } from '#/api/routes/collection-items/server/queries';
 import { getCollectionById } from '#/api/routes/collections/server/queries';
 import { requireCollectionIdSchema } from '#/api/routes/collections/server/serverFns';
 import { authApiRouteMiddleware } from '#/auth/auth-middleware';
-
-export const Route = createFileRoute('/api/collections/$id/')({
-  server: {
-    handlers: {
-      DELETE: async ({ context, params }) => {
-        const id = Number(params.id);
-
-        await softDeleteCollectionItemByIdQuery({
-          id,
-          userId: context.user.id,
-        });
-
-        return Response.json({ message: 'Collection deleted successfully' });
-      },
-      GET: async ({ params }) => {
-        const id = Number(params.id);
-
-        const data = await getCollectionByIdServerFn({
-          data: { collectionId: id },
-        });
-
-        if (!data) {
-          return Response.json({});
-        }
-
-        return Response.json(data);
-      },
-      PUT: async ({ context, params, request }) => {
-        const id = Number(params.id);
-        // Access the request body, for example, a JSON body
-        const gameDetails: UpdateCollectionItemSchemaDef = await request.json();
-
-        const updatedRecord = await updateCollectionItemQuery({
-          ...gameDetails,
-          id,
-          userId: context.user.id,
-        });
-
-        return Response.json(updatedRecord);
-      },
-    },
-    middleware: [authApiRouteMiddleware],
-  },
-});
 
 export const getCollectionByIdServerFn = createServerFn({
   method: 'GET',

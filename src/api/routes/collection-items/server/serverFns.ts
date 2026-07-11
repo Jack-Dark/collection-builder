@@ -2,7 +2,7 @@ import { createServerFn } from '@tanstack/react-start';
 import z from 'zod';
 
 import { authApiRouteMiddleware } from '#/auth/auth-middleware';
-import { collectionItemsSearchQueriesSchema } from '#/routes/api/collections/$id';
+import { collectionItemsSearchQueriesSchema } from '#/api/TEMP';
 
 import { requireCollectionIdSchema } from '../../collections/server/serverFns';
 import {

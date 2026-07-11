@@ -2,12 +2,12 @@ import { createFileRoute } from '@tanstack/react-router';
 
 import { getCustomFieldsByCollectionIdServerFn } from '#/api/routes/collection-items/server/serverFns';
 import { getLastAddedItemInCollectionIdServerFn } from '#/api/routes/collections/server/serverFns';
-import { CollectionItemsPage } from '#/pages/CollectionItemsPage';
 import {
   collectionItemsSearchQueriesSchema,
   getCollectionByIdServerFn,
   getItemsByCollectionId,
-} from '#/routes/api/collections/$id';
+} from '#/api/TEMP';
+import { CollectionItemsPage } from '#/pages/CollectionItemsPage';
 
 export const Route = createFileRoute('/_protected/collections/$id')({
   component: CollectionItemsPage,
