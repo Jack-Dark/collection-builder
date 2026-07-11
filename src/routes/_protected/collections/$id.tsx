@@ -5,7 +5,7 @@ import { getLastAddedItemInCollectionIdServerFn } from '#/api/routes/collections
 import { CollectionItemsPage } from '#/pages/CollectionItemsPage';
 import {
   collectionItemsSearchQueriesSchema,
-  getCollectionById,
+  getCollectionByIdServerFn,
   getItemsByCollectionId,
 } from '#/routes/api/collections/$id';
 
@@ -16,7 +16,7 @@ export const Route = createFileRoute('/_protected/collections/$id')({
 
     const [collection, paginatedData, customFields, lastAddedItem] =
       await Promise.all([
-        await getCollectionById({ data: { collectionId } }),
+        await getCollectionByIdServerFn({ data: { collectionId } }),
         await getItemsByCollectionId({
           data: {
             collectionId,

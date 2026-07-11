@@ -6,8 +6,14 @@ import { authApiRouteMiddleware } from '#/auth/auth-middleware';
 
 import type { CollectionRecordDef } from './types';
 
-import { collectionsDbQueries } from '.';
 import { getLastAddedCollectionItemQuery } from '../../collection-items/server/queries';
+import {
+  createCollection,
+  getAllCollections,
+  getCollectionById,
+  softDeleteCollection,
+  updateCollection,
+} from './queries';
 
 const getCustomFieldEnabledSchema = (num: number) => {
   return z.boolean().describe(`Custom Field ${num} Enabled`);
@@ -70,7 +76,7 @@ export const getAllCollectionsServerFn = createServerFn({
   .middleware([authApiRouteMiddleware])
   .validator(allCollectionsPaginationParamsSchema)
   .handler(async ({ context, data: params }) => {
-    return collectionsDbQueries.getAllCollections({
+    return getAllCollections({
       params,
       userId: context.user.id,
     });
@@ -82,7 +88,7 @@ export const createCollectionServerFn = createServerFn({
   .middleware([authApiRouteMiddleware])
   .validator(createCollectionSchema)
   .handler(async ({ context, data }) => {
-    return collectionsDbQueries.createCollection({
+    return createCollection({
       ...data,
       userId: context.user.id,
     });
@@ -98,7 +104,7 @@ export const getCollectionServerFn = createServerFn({
   .middleware([authApiRouteMiddleware])
   .validator(requireCollectionIdSchema)
   .handler(async ({ context, data: { collectionId } }) => {
-    return collectionsDbQueries.getCollectionById({
+    return getCollectionById({
       id: collectionId,
       userId: context.user.id,
     });
@@ -123,7 +129,7 @@ export const updateCollectionServerFn = createServerFn({
   .middleware([authApiRouteMiddleware])
   .validator(updateCollectionSchema)
   .handler(async ({ data }) => {
-    return collectionsDbQueries.updateCollection(data);
+    return updateCollection(data);
   });
 
 export const deleteCollectionServerFn = createServerFn({
@@ -133,7 +139,7 @@ export const deleteCollectionServerFn = createServerFn({
   .middleware([authApiRouteMiddleware])
   .validator(requireCollectionIdSchema)
   .handler(async ({ context, data: { collectionId } }) => {
-    return collectionsDbQueries.softDeleteCollection({
+    return softDeleteCollection({
       id: collectionId,
       userId: context.user.id,
     });

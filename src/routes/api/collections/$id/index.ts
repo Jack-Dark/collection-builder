@@ -5,8 +5,12 @@ import z from 'zod';
 import type { UpdateCollectionItemSchemaDef } from '#/api/routes/collection-items/server/types';
 
 import { sortDirectionOptions } from '#/api/pagination/constants';
-import { collectionItemsDbQueries } from '#/api/routes/collection-items/server';
-import { collectionsDbQueries } from '#/api/routes/collections/server';
+import {
+  getItemsByCollectionIdQuery,
+  softDeleteCollectionItemByIdQuery,
+  updateCollectionItemQuery,
+} from '#/api/routes/collection-items/server/queries';
+import { getCollectionById } from '#/api/routes/collections/server/queries';
 import { requireCollectionIdSchema } from '#/api/routes/collections/server/serverFns';
 import { authApiRouteMiddleware } from '#/auth/auth-middleware';
 
@@ -16,7 +20,7 @@ export const Route = createFileRoute('/api/collections/$id/')({
       DELETE: async ({ context, params }) => {
         const id = Number(params.id);
 
-        await collectionItemsDbQueries.softDeleteCollectionItemByIdQuery({
+        await softDeleteCollectionItemByIdQuery({
           id,
           userId: context.user.id,
         });
@@ -26,7 +30,9 @@ export const Route = createFileRoute('/api/collections/$id/')({
       GET: async ({ params }) => {
         const id = Number(params.id);
 
-        const data = await getCollectionById({ data: { collectionId: id } });
+        const data = await getCollectionByIdServerFn({
+          data: { collectionId: id },
+        });
 
         if (!data) {
           return Response.json({});
@@ -39,12 +45,11 @@ export const Route = createFileRoute('/api/collections/$id/')({
         // Access the request body, for example, a JSON body
         const gameDetails: UpdateCollectionItemSchemaDef = await request.json();
 
-        const updatedRecord =
-          await collectionItemsDbQueries.updateCollectionItemQuery({
-            ...gameDetails,
-            id,
-            userId: context.user.id,
-          });
+        const updatedRecord = await updateCollectionItemQuery({
+          ...gameDetails,
+          id,
+          userId: context.user.id,
+        });
 
         return Response.json(updatedRecord);
       },
@@ -53,13 +58,13 @@ export const Route = createFileRoute('/api/collections/$id/')({
   },
 });
 
-export const getCollectionById = createServerFn({
+export const getCollectionByIdServerFn = createServerFn({
   method: 'GET',
 })
   .middleware([authApiRouteMiddleware])
   .validator(requireCollectionIdSchema)
   .handler(async ({ context, data: { collectionId } }) => {
-    return collectionsDbQueries.getCollectionById({
+    return getCollectionById({
       id: collectionId,
       userId: context.user.id,
     });
@@ -124,7 +129,7 @@ export const getItemsByCollectionId = createServerFn({
     }),
   )
   .handler(async ({ context, data: { collectionId, params } }) => {
-    return collectionItemsDbQueries.getItemsByCollectionIdQuery({
+    return getItemsByCollectionIdQuery({
       collectionId,
       params,
       userId: context.user.id,
