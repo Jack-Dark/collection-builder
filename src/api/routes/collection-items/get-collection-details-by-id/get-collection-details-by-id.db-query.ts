@@ -34,7 +34,7 @@ export const getCollectionDetailsByIdDbQuery = async (props: {
       totalRecords,
     });
 
-    const [collection] = await db
+    const [collection] = await tx
       .select()
       .from(collectionsTable)
       .where(
