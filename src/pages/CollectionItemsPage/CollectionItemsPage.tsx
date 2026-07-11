@@ -168,27 +168,26 @@ export const CollectionItemsPage: RouteComponent = () => {
 
   return (
     <PageWrapper
-      childrenClassName="grid gap-8"
+      childrenClassName="grid gap-4"
       title={
         collection?.name
           ? `${collection.name} (${pagination.totalRecords})`
           : '-'
       }
     >
-      <div className="grid grid-cols-1 gap-4">
-        {!isEditing && (
-          <div className="flex justify-end">
-            <Button
-              Icon={ControlPointIcon}
-              onClick={() => {
-                addToEditingRowIds('');
-              }}
-              text="Add New"
-              variant="secondary"
-            />
-          </div>
-        )}
-      </div>
+      {!isEditing && (
+        <div className="flex justify-end">
+          <Button
+            Icon={ControlPointIcon}
+            onClick={() => {
+              addToEditingRowIds('');
+            }}
+            text="Add New"
+            variant="secondary"
+          />
+        </div>
+      )}
+
       <form
         onSubmit={(e) => {
           e.preventDefault();

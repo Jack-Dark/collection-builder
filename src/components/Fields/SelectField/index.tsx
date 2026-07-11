@@ -45,7 +45,7 @@ export const SelectField = <TItem extends Record<string, any>>(
         onValueChange(item);
       }}
     >
-      <Select.Trigger className="flex gap-1 md:gap-2 p-2 bg-white border border-black cursor-pointer">
+      <Select.Trigger className="flex gap-1 md:gap-2 p-1.5 bg-white border border-black cursor-pointer">
         <Select.Value>
           {(item) => {
             return <RenderValue {...item} />;

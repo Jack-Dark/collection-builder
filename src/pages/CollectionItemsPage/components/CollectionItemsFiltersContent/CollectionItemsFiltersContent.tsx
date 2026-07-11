@@ -57,7 +57,13 @@ const FiltersBlock = (
       <div className="flex items-center gap-2">
         <h5>{label}</h5>
 
-        <Button onClick={onReset} size="xs" text="Reset" variant="ghost" />
+        <Button
+          className="font-normal"
+          onClick={onReset}
+          size="xs"
+          text="Reset"
+          variant="ghost"
+        />
       </div>
 
       {children}
