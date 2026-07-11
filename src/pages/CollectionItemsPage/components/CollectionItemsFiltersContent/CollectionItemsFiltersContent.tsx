@@ -8,7 +8,7 @@ import { useEffect, useMemo } from 'react';
 
 import type { CollectionItemsFiltersSchemaDef } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.types';
 import type { CollectionItemsTableColumn } from '#/api/routes/collection-items/server/queries';
-import type { CollectionRecordDef } from '#/api/routes/collections/server/collection.types';
+import type { CollectionRecordDef } from '#/api/routes/collections/collection.types';
 import type { SortItemDef } from '#/components/Table';
 import type { FiltersButtonPropsDef } from '#/components/Table/components/FilterButton/FilterButton.types';
 import type { SetZustandStateFnDef } from '#/helpers/get-create-default-zustand-state';

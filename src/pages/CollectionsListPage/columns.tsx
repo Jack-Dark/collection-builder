@@ -3,9 +3,9 @@ import type { Getter, Row } from '@tanstack/react-table';
 import { Link, useRouter } from '@tanstack/react-router';
 import { createColumnHelper } from '@tanstack/react-table';
 
-import type { CollectionRecordDef } from '#/api/routes/collections/server/collection.types';
+import type { CollectionRecordDef } from '#/api/routes/collections/collection.types';
 
-import { useDeleteCollectionById } from '#/api/routes/collections/server/delete-collection-by-id/delete-collection-by-id.react-query';
+import { useDeleteCollectionById } from '#/api/routes/collections/delete-collection-by-id/delete-collection-by-id.react-query';
 import { TableCellActionsMenu } from '#/components/TableCellActionsMenu';
 
 import { useCollectionsListFormStore } from './CollectionsListPage';

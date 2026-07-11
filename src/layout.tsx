@@ -8,7 +8,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 import type { NavMenuItem } from './components/NavMenu/NavMenu.types';
 import type { RouterPath } from './types';
 
-import { useGetPaginatedCollections } from './api/routes/collections/server/get-paginated-collections/get-paginated-collections.react-query';
+import { useGetPaginatedCollections } from './api/routes/collections/get-paginated-collections/get-paginated-collections.react-query';
 import { authClient } from './auth/auth-client';
 import { NavMenu } from './components/NavMenu';
 import { Route as CollectionsRoute } from './routes/_protected/collections';

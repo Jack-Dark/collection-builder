@@ -8,7 +8,7 @@ import { getPaginationMetadataQuery } from '#/api/pagination/pagination.query';
 
 import type { CollectionRecordDef } from '../collection.types';
 
-import { collectionsTable } from '../../../../db-tables-schema';
+import { collectionsTable } from '../../../db-tables-schema';
 
 export const getPaginatedCollectionsDbQuery = async (props: {
   params: PaginationQueriesSchemaDef;
