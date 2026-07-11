@@ -3,7 +3,7 @@ import type { Getter, Row } from '@tanstack/react-table';
 import { Link, useRouter } from '@tanstack/react-router';
 import { createColumnHelper } from '@tanstack/react-table';
 
-import type { CollectionRecordDef } from '#/api/routes/collections/server/types';
+import type { CollectionRecordDef } from '#/api/routes/collections/server/collection.types';
 
 import { useDeleteCollection } from '#/api/routes/collections/client/hooks';
 import { TableCellActionsMenu } from '#/components/TableCellActionsMenu';

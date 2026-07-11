@@ -3,7 +3,7 @@ import { and, eq, isNull } from 'drizzle-orm';
 import { db } from '#/api/db';
 import { collectionsTable } from '#/api/db-tables-schema';
 
-import type { UpdateCollectionRecordDef } from '../types';
+import type { UpdateCollectionRecordDef } from '../collection.types';
 
 export const updateCollectionDbQuery = async (
   data: UpdateCollectionRecordDef,

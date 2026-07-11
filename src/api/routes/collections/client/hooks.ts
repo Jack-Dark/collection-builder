@@ -4,7 +4,6 @@ import { useServerFn } from '@tanstack/react-start';
 import { getPaginationMetadataDefaults } from '#/api/pagination/pagination.constants';
 import { reactQueryKeys } from '#/api/react-query-keys';
 
-import { getCollectionByIdServerFn } from '../get-collection-by-id/get-collection-by-id.serverFn';
 import { createCollectionServerFn } from '../server/create-collection/create-collection.serverFn';
 import { deleteCollectionByIdServerFn } from '../server/delete-collection-by-id/delete-collection-by-id.serverFn';
 import { getAllCollectionsServerFn } from '../server/get-paginated-collections/get-paginated-collections.serverFn';
@@ -22,17 +21,6 @@ export const useGetAllCollections = () => {
       return queryFn();
     },
     queryKey: [reactQueryKeys.getCollection],
-  });
-};
-
-export const useGetCollection = (collectionId: number) => {
-  const queryFn = useServerFn(getCollectionByIdServerFn);
-
-  return useQuery({
-    queryFn: () => {
-      return queryFn({ data: { collectionId } });
-    },
-    queryKey: [reactQueryKeys.getCollection, { id: collectionId }],
   });
 };
 

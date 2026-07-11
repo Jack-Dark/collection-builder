@@ -6,7 +6,7 @@ import { db } from '#/api/db';
 import { sortDirectionOptions } from '#/api/pagination/pagination.constants';
 import { getPaginationMetadataQuery } from '#/api/pagination/pagination.query';
 
-import type { CollectionRecordDef } from '../types';
+import type { CollectionRecordDef } from '../collection.types';
 
 import { collectionsTable } from '../../../../db-tables-schema';
 

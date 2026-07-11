@@ -4,7 +4,7 @@ import type { TimestampsDef } from '#/api/db-tables-schema.types';
 
 import type { collectionsTable } from '../../../db-tables-schema';
 import type { createCollectionSchema } from './create-collection/create-collection.schema';
-import type { updateCollectionSchema } from './updateCollectionSchema';
+import type { updateCollectionByIdSchema } from './update-collection-by-id/update-collection-by-id.schema';
 
 export type CollectionRecordDef = typeof collectionsTable.$inferSelect;
 
@@ -17,4 +17,6 @@ export type UpdateCollectionRecordDef = Partial<
 
 export type CreateCollectionSchemaDef = z.output<typeof createCollectionSchema>;
 
-export type UpdateCollectionSchemaDef = z.output<typeof updateCollectionSchema>;
+export type UpdateCollectionSchemaDef = z.output<
+  typeof updateCollectionByIdSchema
+>;

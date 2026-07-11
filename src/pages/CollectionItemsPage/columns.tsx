@@ -5,7 +5,7 @@ import { createColumnHelper } from '@tanstack/react-table';
 import formatDate, { masks } from 'dateformat';
 
 import type { CollectionItemRecordDef } from '#/api/routes/collection-items/server/types';
-import type { CollectionRecordDef } from '#/api/routes/collections/server/types';
+import type { CollectionRecordDef } from '#/api/routes/collections/server/collection.types';
 
 import { useDeleteCollectionItem } from '#/api/routes/collection-items/client/hooks';
 
