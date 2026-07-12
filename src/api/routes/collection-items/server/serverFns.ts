@@ -3,31 +3,12 @@ import z from 'zod';
 
 import { authApiRouteMiddleware } from '#/auth/auth-middleware';
 
+import { baseCollectionItemSchema } from '../base-collection-item.schema';
 import {
   createCollectionItemDbQuery,
-  deleteCollectionItemByIdDbQuery,
   getCollectionItemByIdDbQuery,
   updateCollectionItemDbQuery,
 } from './queries';
-
-export const baseCollectionItemSchema = z.object({
-  collectionId: z.number().describe('Collection ID'),
-  customField1Value: z.string().describe('[customField1Value] placeholder'),
-  customField2Value: z.string().describe('[customField2Value] placeholder'),
-  customField3Value: z.string().describe('[customField3Value] placeholder'),
-  editionDetails: z.string().describe('Edition details'),
-  images: z
-    .array(
-      z.union([
-        z.string(),
-        z.file().min(10_000).max(1_000_000).mime('image/*'),
-      ]),
-    )
-    .describe('Images'),
-  isSpecialEdition: z.boolean().describe('Is special edition'),
-  name: z.string().describe('Name').min(1),
-  notes: z.string().describe('Notes'),
-});
 
 export const createItemAttrsSchema = z.object({
   createdAt: z.undefined(),
@@ -87,21 +68,4 @@ export const updateCollectionItemServerFn = createServerFn({
   .validator(updateCollectionItemByIdSchema)
   .handler(async ({ data }) => {
     return updateCollectionItemDbQuery(data);
-  });
-
-export const deleteCollectionItemServerFn = createServerFn({
-  // ? DELETE is not yet supported via createServerFn, but the API route utilizes this via DELETE
-  method: 'POST',
-})
-  .middleware([authApiRouteMiddleware])
-  .validator(
-    z.object({
-      collectionItemId: z.number(),
-    }),
-  )
-  .handler(async ({ context, data: { collectionItemId } }) => {
-    return deleteCollectionItemByIdDbQuery({
-      id: collectionItemId,
-      userId: context.user.id,
-    });
   });

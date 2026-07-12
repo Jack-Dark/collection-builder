@@ -3,9 +3,9 @@ import { useServerFn } from '@tanstack/react-start';
 
 import {
   createCollectionItemServerFn,
-  deleteCollectionItemServerFn,
   updateCollectionItemServerFn,
 } from '../server/serverFns';
+import { deleteCollectionItemByIdServerFn } from '../delete-collection-item-by-id/delete-collection-item-by-id.serverFn';
 
 export const useCreateCollectionItem = (
   props?: Omit<Parameters<typeof useMutation>[0], 'mutationFn'>,
@@ -52,7 +52,7 @@ export const useUpdateCollectionItem = (
 };
 
 export const useDeleteCollectionItem = () => {
-  const mutationFn = useServerFn(deleteCollectionItemServerFn);
+  const mutationFn = useServerFn(deleteCollectionItemByIdServerFn);
 
   const { mutate: onDeleteCollectionItem, ...rest } = useMutation({
     mutationFn,
