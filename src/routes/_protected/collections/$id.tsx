@@ -6,13 +6,13 @@ import { CollectionItemsPage } from '#/pages/CollectionItemsPage';
 
 export const Route = createFileRoute('/_protected/collections/$id')({
   component: CollectionItemsPage,
-  loader: async ({ deps: collectionItemsSearchQueries, params }) => {
+  loader: async ({ deps: searchQueries, params }) => {
     const collectionId = Number(params.id);
 
     const data = await getCollectionDetailsByIdServerFn({
       data: {
         collectionId,
-        params: collectionItemsSearchQueries,
+        params: searchQueries,
       },
     });
 

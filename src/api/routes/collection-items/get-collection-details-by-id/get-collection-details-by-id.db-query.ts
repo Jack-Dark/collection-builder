@@ -8,13 +8,13 @@ import { sortDirectionOptions } from '#/api/pagination/pagination.constants';
 import { getPaginationMetadataQuery } from '#/api/pagination/pagination.query';
 
 import type { CollectionItemsTableColumn } from '../collection-item.types';
-import type { CollectionItemsSearchQueriesSchemaDef } from './get-collection-details-by-id.types';
+import type { GetCollectionDetailsByIdRequestArgsDef } from './get-collection-details-by-id.types';
 
-export const getCollectionDetailsByIdDbQuery = async (props: {
-  collectionId: number;
-  params: CollectionItemsSearchQueriesSchemaDef;
-  userId: string;
-}) => {
+export const getCollectionDetailsByIdDbQuery = async (
+  props: GetCollectionDetailsByIdRequestArgsDef & {
+    userId: string;
+  },
+) => {
   const { collectionId, params, userId } = props;
   const { filters, limit, page, search, sort } = params;
 

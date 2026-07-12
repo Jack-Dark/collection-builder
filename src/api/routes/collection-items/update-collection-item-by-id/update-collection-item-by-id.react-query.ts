@@ -7,6 +7,7 @@ import { useGenericMutateQuery } from '#/api/react-query-hooks/use-generic-mutat
 import type { CollectionItemRecordDef } from '../collection-item.types';
 import type { UpdateCollectionItemSchemaDef } from './update-collection-item-by-id.types';
 
+import { useInvalidateGetCollectionDetailsById } from '../get-collection-details-by-id/get-collection-details-by-id.react-query';
 import { updateCollectionItemByIdServerFn } from './update-collection-item-by-id.serverFn';
 
 export const useUpdateCollectionItemById = <
@@ -18,6 +19,9 @@ export const useUpdateCollectionItemById = <
     TTransformedData
   >,
 ) => {
+  const invalidateGetCollectionDetailsById =
+    useInvalidateGetCollectionDetailsById();
+
   const serverFn = useServerFn(updateCollectionItemByIdServerFn);
 
   const { onMutate: onUpdateCollectionItemById, ...rest } =
@@ -27,6 +31,11 @@ export const useUpdateCollectionItemById = <
         return serverFn({ data });
       },
       ...props,
+      onSuccess: async (...args) => {
+        invalidateGetCollectionDetailsById();
+
+        await props?.onSuccess?.(...args);
+      },
     });
 
   return { ...rest, onUpdateCollectionItemById };

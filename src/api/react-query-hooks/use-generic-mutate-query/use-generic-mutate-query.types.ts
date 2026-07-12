@@ -25,10 +25,9 @@ export interface UseGenericMutateQueryProps<
   TRequestArgs extends Record<string, any>,
   TResponseDef extends Record<string, any> | void,
   TTransformedData = TResponseDef,
-> extends GenericMutateQueryProps<
-  TRequestArgs,
-  TResponseDef,
-  TTransformedData
+> extends Omit<
+  GenericMutateQueryProps<TRequestArgs, TResponseDef, TTransformedData>,
+  'requestArgs'
 > {
   fallbackErrorMessage: string;
   mutationFn: (args: TRequestArgs) => Promise<TResponseDef>;

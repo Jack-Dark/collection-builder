@@ -15,14 +15,12 @@ import { createCollectionServerFn } from './create-collection.serverFn';
 export const useCreateCollection = <
   TTransformedData = CreateCollectionResponseDef,
 >(
-  props: GenericMutateQueryProps<
+  props?: GenericMutateQueryProps<
     CreateCollectionRequestArgsDef,
     CreateCollectionResponseDef,
     TTransformedData
   >,
 ) => {
-  const { onSuccess, ...queryProps } = props;
-
   const invalidateGetPaginatedCollections =
     useInvalidateGetPaginatedCollections();
 
@@ -33,12 +31,12 @@ export const useCreateCollection = <
     mutationFn: (data) => {
       return serverFn({ data });
     },
+    ...props,
     onSuccess: async (...args) => {
       invalidateGetPaginatedCollections();
 
-      await onSuccess?.(...args);
+      await props?.onSuccess?.(...args);
     },
-    ...queryProps,
   });
 
   return { ...rest, onCreateCollection };

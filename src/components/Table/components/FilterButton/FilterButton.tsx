@@ -19,8 +19,8 @@ export const FilterButton = (props: FiltersButtonPropsDef) => {
             <>
               <Button
                 onClick={async () => {
-                  hideFilters();
                   await onReset();
+                  hideFilters();
                 }}
                 text="Reset Filters"
                 variant="mono"
@@ -29,6 +29,7 @@ export const FilterButton = (props: FiltersButtonPropsDef) => {
                 Icon={SearchIcon}
                 onClick={() => {
                   onSubmit();
+                  hideFilters();
                 }}
                 text="View Results"
               />

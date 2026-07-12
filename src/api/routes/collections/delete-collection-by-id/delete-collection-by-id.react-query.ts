@@ -15,14 +15,12 @@ import { deleteCollectionByIdServerFn } from './delete-collection-by-id.serverFn
 export const useDeleteCollectionById = <
   TTransformedData = DeleteCollectionResponseDef,
 >(
-  props: GenericMutateQueryProps<
+  props?: GenericMutateQueryProps<
     DeleteCollectionByIdRequestArgsDef,
     DeleteCollectionResponseDef,
     TTransformedData
   >,
 ) => {
-  const { onSuccess, ...queryProps } = props;
-
   const invalidateGetPaginatedCollections =
     useInvalidateGetPaginatedCollections();
 
@@ -33,12 +31,12 @@ export const useDeleteCollectionById = <
     mutationFn: (data) => {
       return serverFn({ data });
     },
+    ...props,
     onSuccess: async (...args) => {
       invalidateGetPaginatedCollections();
 
-      await onSuccess?.(...args);
+      await props?.onSuccess?.(...args);
     },
-    ...queryProps,
   });
 
   return { ...rest, onDeleteCollectionById };

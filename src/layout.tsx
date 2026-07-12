@@ -10,7 +10,9 @@ import type { RouterPath } from './types';
 
 import { useGetPaginatedCollections } from './api/routes/collections/get-paginated-collections/get-paginated-collections.react-query';
 import { authClient } from './auth/auth-client';
+import { FullPageLoadingSpinner } from './components/FullPageLoadingSpinner';
 import { NavMenu } from './components/NavMenu';
+import { Notifications } from './components/Notifications';
 import { Route as CollectionsRoute } from './routes/_protected/collections';
 import { Route as CollectionRoute } from './routes/_protected/collections/$id';
 
@@ -19,6 +21,8 @@ export const Layout: RouteComponent = () => {
 
   const { data: session } = authClient.useSession();
 
+  // TODO - REPLACE WITH NEW NAV MENU REQUEST
+  // @ts-expect-error
   const { data } = useGetPaginatedCollections();
 
   const isLoggedOut = !session?.user.id;
@@ -56,6 +60,8 @@ export const Layout: RouteComponent = () => {
 
   return (
     <>
+      <FullPageLoadingSpinner />
+      <Notifications />
       <header className="grid justify-items-center px-4 py-4">
         <div className="w-full max-w-7xl">
           <div className="flex items-center gap-4 mb-8">

@@ -1,6 +1,6 @@
 import z from 'zod';
 
-import { requiredPaginationQueriesSchema } from '../../../pagination/pagination.schema';
+import { optionalPaginationQueriesSchema } from '../../../pagination/pagination.schema';
 
 export const collectionItemsFiltersSchema = z
   .object({
@@ -16,9 +16,13 @@ export const collectionItemsFiltersSchema = z
   });
 
 export const collectionItemsSearchQueriesSchema =
-  requiredPaginationQueriesSchema.extend({
-    filters: collectionItemsFiltersSchema,
-  });
+  optionalPaginationQueriesSchema.and(
+    z
+      .object({
+        filters: collectionItemsFiltersSchema,
+      })
+      .optional(),
+  );
 
 export const getCollectionDetailsByIdSchema = z.object({
   collectionId: z.number(),

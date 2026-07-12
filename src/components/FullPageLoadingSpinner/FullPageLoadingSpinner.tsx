@@ -31,7 +31,7 @@ export const FullPageLoadingSpinner = () => {
 
   return isSpinnerShowing ? (
     <div
-      className="fixed size-full flex items-center justify-center bg-[rgba(0,0,0,0.2)]"
+      className="fixed z-99999 size-full flex items-center justify-center bg-[rgba(0,0,0,0.2)]"
       data-loading-overlay=""
     >
       {showForceClose && (

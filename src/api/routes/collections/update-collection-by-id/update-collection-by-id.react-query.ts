@@ -15,14 +15,12 @@ import { updateCollectionByIdServerFn } from './update-collection-by-id.serverFn
 export const useUpdateCollectionById = <
   TTransformedData = UpdateCollectionResponseDef,
 >(
-  props: GenericMutateQueryProps<
+  props?: GenericMutateQueryProps<
     UpdateCollectionRequestArgsDef,
     UpdateCollectionResponseDef,
     TTransformedData
   >,
 ) => {
-  const { onSuccess, ...queryProps } = props;
-
   const invalidateGetPaginatedCollections =
     useInvalidateGetPaginatedCollections();
 
@@ -33,12 +31,12 @@ export const useUpdateCollectionById = <
     mutationFn: (data) => {
       return serverFn({ data });
     },
+    ...props,
     onSuccess: async (...args) => {
       invalidateGetPaginatedCollections();
 
-      await onSuccess?.(...args);
+      await props?.onSuccess?.(...args);
     },
-    ...queryProps,
   });
 
   return { ...rest, onUpdateCollectionById };

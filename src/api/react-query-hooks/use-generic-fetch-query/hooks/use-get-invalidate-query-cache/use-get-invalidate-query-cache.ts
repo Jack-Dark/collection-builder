@@ -2,9 +2,7 @@ import { useQueryClient } from '@tanstack/react-query';
 
 import type { ReactQueryKeysDef } from '../../use-generic-fetch-query.types';
 
-export const getUseInvalidateQuery = <
-  TRequestArgs extends Record<string, any> | never,
->(
+export const getUseInvalidateQuery = <TRequestArgs extends Record<string, any>>(
   groupName: ReactQueryKeysDef,
 ) => {
   return () => {

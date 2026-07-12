@@ -1,4 +1,4 @@
-import { queryOptions, useSuspenseQuery } from '@tanstack/react-query';
+import { queryOptions, useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo } from 'react';
 
 import { useSpinner } from '#/components/FullPageLoadingSpinner/useSpinner';
@@ -20,7 +20,7 @@ import type {
  *     TTransformedData
  *   >,
  * ) => {
- *  const query = useServerFn(getPaginatedCollectionsServerFn);
+ *  const query = useServerFn(YOUR_SERVER_FUNCTION);
  *
  *  return useGenericFetchQuery({
  *    fallbackErrorMessage: 'Unable to retrieve __________.',
@@ -36,7 +36,7 @@ import type {
  *   );
  */
 export const useGenericFetchQuery = <
-  TRequestArgs extends Record<string, any> | never,
+  TRequestArgs extends Record<string, any>,
   TResponseDef extends Record<any, any>,
   TTransformedData extends TResponseDef,
 >(
@@ -89,7 +89,8 @@ export const useGenericFetchQuery = <
     select: memoizedSelect,
   });
 
-  const context = useSuspenseQuery(queryConfig);
+  const context = useQuery(queryConfig);
+  // const context = useSuspenseQuery(queryConfig);
 
   const { data, error, isError, isFetching, isSuccess } = context;
 

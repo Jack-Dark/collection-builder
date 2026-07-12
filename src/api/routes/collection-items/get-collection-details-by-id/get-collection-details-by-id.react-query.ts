@@ -7,33 +7,33 @@ import { getUseInvalidateQuery } from '#/api/react-query-hooks/use-generic-fetch
 import { reactQueryKeys } from '#/api/react-query-hooks/use-generic-fetch-query/react-query-keys';
 
 import type {
-  GetPaginatedCollectionsRequestArgsDef,
-  GetPaginatedCollectionsResponseDef,
-} from './get-paginated-collections.types';
+  GetCollectionDetailsByIdRequestArgsDef,
+  GetCollectionDetailsByIdResponseDef,
+} from './get-collection-details-by-id.types';
 
-import { getPaginatedCollectionsServerFn } from './get-paginated-collections.serverFn';
+import { getCollectionDetailsByIdServerFn } from './get-collection-details-by-id.serverFn';
 
-export const useGetPaginatedCollections = <
-  TTransformedData extends GetPaginatedCollectionsResponseDef,
+export const useGetCollectionDetailsById = <
+  TTransformedData extends GetCollectionDetailsByIdResponseDef,
 >(
   props: GenericFetchProps<
-    GetPaginatedCollectionsRequestArgsDef,
-    GetPaginatedCollectionsResponseDef,
+    GetCollectionDetailsByIdRequestArgsDef,
+    GetCollectionDetailsByIdResponseDef,
     TTransformedData
   >,
 ) => {
-  const query = useServerFn(getPaginatedCollectionsServerFn);
+  const query = useServerFn(getCollectionDetailsByIdServerFn);
 
   return useGenericFetchQuery({
     fallbackErrorMessage: 'Unable to retrieve collections.',
-    groupName: reactQueryKeys.getPaginatedCollections,
+    groupName: reactQueryKeys.getCollectionDetailsById,
     query,
     showLoading: true,
     ...props,
   });
 };
 
-export const useInvalidateGetPaginatedCollections =
-  getUseInvalidateQuery<GetPaginatedCollectionsRequestArgsDef>(
-    reactQueryKeys.getPaginatedCollections,
+export const useInvalidateGetCollectionDetailsById =
+  getUseInvalidateQuery<GetCollectionDetailsByIdRequestArgsDef>(
+    reactQueryKeys.getCollectionDetailsById,
   );

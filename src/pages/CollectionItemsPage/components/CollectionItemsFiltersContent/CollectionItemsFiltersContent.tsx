@@ -6,14 +6,15 @@ import { useSearch } from '@tanstack/react-router';
 import _ from 'lodash';
 import { useEffect, useMemo } from 'react';
 
-import type { CollectionItemsFiltersSchemaDef } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.types';
 import type { CollectionItemsTableColumn } from '#/api/routes/collection-items/collection-item.types';
+import type { CollectionItemsFiltersSchemaDef } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.types';
 import type { CollectionRecordDef } from '#/api/routes/collections/collection.types';
 import type { SortItemDef } from '#/components/Table';
 import type { FiltersButtonPropsDef } from '#/components/Table/components/FilterButton/FilterButton.types';
 import type { SetZustandStateFnDef } from '#/helpers/get-create-default-zustand-state';
 
 import { sortDirectionOptions } from '#/api/pagination/pagination.constants';
+import { useInvalidateGetCollectionDetailsById } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.react-query';
 import { Button } from '#/components/Button';
 import { CheckboxField } from '#/components/CheckboxField';
 import { getCreateDefaultZustandState } from '#/helpers/get-create-default-zustand-state';
@@ -337,14 +338,15 @@ export const useOnUpdateCollectionItemsQueries = () => {
   const params = Route.useParams();
   const searchQueries = Route.useSearch();
 
+  const invalidateGetCollectionDetailsById =
+    useInvalidateGetCollectionDetailsById();
+
   const onUpdateCollectionItemsQueries = (
     updatedQueries: Partial<typeof searchQueries>,
     options?: NavigateOptions,
   ) => {
     navigate({
       params,
-      reloadDocument: true,
-      resetScroll: true,
       search: {
         ...searchQueries,
         ...updatedQueries,
@@ -352,6 +354,8 @@ export const useOnUpdateCollectionItemsQueries = () => {
       to: Route.fullPath,
       ...options,
     });
+
+    invalidateGetCollectionDetailsById();
   };
 
   return { onUpdateCollectionItemsQueries, searchQueries };

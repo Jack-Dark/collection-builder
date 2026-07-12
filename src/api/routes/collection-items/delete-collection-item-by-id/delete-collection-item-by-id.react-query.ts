@@ -6,6 +6,7 @@ import { useGenericMutateQuery } from '#/api/react-query-hooks/use-generic-mutat
 
 import type { DeleteCollectionItemByIdSchemaDef } from './delete-collection-item-by-id.type';
 
+import { useInvalidateGetCollectionDetailsById } from '../get-collection-details-by-id/get-collection-details-by-id.react-query';
 import { deleteCollectionItemByIdServerFn } from './delete-collection-item-by-id.serverFn';
 
 export const useDeleteCollectionItemById = <TTransformedData = void>(
@@ -15,6 +16,9 @@ export const useDeleteCollectionItemById = <TTransformedData = void>(
     TTransformedData
   >,
 ) => {
+  const invalidateGetCollectionDetailsById =
+    useInvalidateGetCollectionDetailsById();
+
   const serverFn = useServerFn(deleteCollectionItemByIdServerFn);
 
   const { onMutate: onDeleteCollectionItemById, ...rest } =
@@ -24,6 +28,11 @@ export const useDeleteCollectionItemById = <TTransformedData = void>(
         return serverFn({ data });
       },
       ...props,
+      onSuccess: async (...args) => {
+        invalidateGetCollectionDetailsById();
+
+        await props?.onSuccess?.(...args);
+      },
     });
 
   return { ...rest, onDeleteCollectionItemById };
