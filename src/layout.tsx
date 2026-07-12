@@ -8,7 +8,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 import type { NavMenuItem } from './components/NavMenu/NavMenu.types';
 import type { RouterPath } from './types';
 
-import { useGetPaginatedCollections } from './api/routes/collections/get-paginated-collections/get-paginated-collections.react-query';
+import { useGetNavMenuCollections } from './api/routes/collections/get-nav-menu-collections/get-nav-menu-collections.react-query';
 import { authClient } from './auth/auth-client';
 import { FullPageLoadingSpinner } from './components/FullPageLoadingSpinner';
 import { NavMenu } from './components/NavMenu';
@@ -23,7 +23,7 @@ export const Layout: RouteComponent = () => {
 
   // TODO - REPLACE WITH NEW NAV MENU REQUEST
   // @ts-expect-error
-  const { data } = useGetPaginatedCollections();
+  const { data } = useGetNavMenuCollections();
 
   const isLoggedOut = !session?.user.id;
 
