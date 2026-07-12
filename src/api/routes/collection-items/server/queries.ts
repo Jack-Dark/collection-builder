@@ -8,7 +8,7 @@ import type {
   CollectionItemRecordDef,
   InsertCollectionItemRecordDef,
   UpdateCollectionItemSchemaDef,
-} from './types';
+} from '../types';
 
 import { collectionItemsTable } from '../../../db-tables-schema';
 

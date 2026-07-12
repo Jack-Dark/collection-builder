@@ -4,7 +4,7 @@ import { useRouter } from '@tanstack/react-router';
 import { createColumnHelper } from '@tanstack/react-table';
 import formatDate, { masks } from 'dateformat';
 
-import type { CollectionItemRecordDef } from '#/api/routes/collection-items/server/types';
+import type { CollectionItemRecordDef } from '#/api/routes/collection-items/types';
 import type { CollectionRecordDef } from '#/api/routes/collections/collection.types';
 
 import { useDeleteCollectionItem } from '#/api/routes/collection-items/client/hooks';

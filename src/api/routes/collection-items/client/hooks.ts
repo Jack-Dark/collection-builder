@@ -1,11 +1,9 @@
 import { useMutation } from '@tanstack/react-query';
 import { useServerFn } from '@tanstack/react-start';
 
-import {
-  createCollectionItemServerFn,
-  updateCollectionItemServerFn,
-} from '../server/serverFns';
+import { createCollectionItemServerFn } from '../create-collection-item/create-collection-item.schema';
 import { deleteCollectionItemByIdServerFn } from '../delete-collection-item-by-id/delete-collection-item-by-id.serverFn';
+import { updateCollectionItemServerFn } from '../update-collection-item-by-id/update-collection-item-by-id.schema';
 
 export const useCreateCollectionItem = (
   props?: Omit<Parameters<typeof useMutation>[0], 'mutationFn'>,
