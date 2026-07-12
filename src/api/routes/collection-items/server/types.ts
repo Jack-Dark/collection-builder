@@ -4,7 +4,7 @@ import type z from 'zod';
 import type { collectionItemsTable } from '../../../db-tables-schema';
 import type {
   createCollectionItemSchema,
-  updateCollectionItemSchema,
+  updateCollectionItemByIdSchema,
 } from './serverFns';
 
 export type CollectionItemRecordDef = InferSelectModel<
@@ -22,5 +22,5 @@ export type CreateCollectionItemSchemaDef = z.output<
 >;
 
 export type UpdateCollectionItemSchemaDef = z.output<
-  typeof updateCollectionItemSchema
+  typeof updateCollectionItemByIdSchema
 >;

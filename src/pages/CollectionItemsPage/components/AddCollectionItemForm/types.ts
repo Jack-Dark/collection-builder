@@ -1,7 +1,7 @@
 import type z from 'zod';
 
-import type { collectionItemFormSchema } from '#/api/routes/collection-items/server/serverFns';
+import type { addOrUpdateCollectionItemFormSchema } from '#/api/routes/collection-items/server/addOrUpdateCollectionItemFormSchema';
 
 export type AddCollectionItemFormSchemaDef = z.output<
-  typeof collectionItemFormSchema
+  typeof addOrUpdateCollectionItemFormSchema
 >;

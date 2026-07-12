@@ -1,35 +1,11 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { useServerFn } from '@tanstack/react-start';
-
-import { reactQueryKeys } from '#/api/react-query-keys';
 
 import {
   createCollectionItemServerFn,
   deleteCollectionItemServerFn,
-  getCollectionItemServerFn,
   updateCollectionItemServerFn,
 } from '../server/serverFns';
-
-export const useGetCollectionItem = (collectionItemId: number) => {
-  const queryFn = useServerFn(getCollectionItemServerFn);
-
-  return useQuery({
-    queryFn: () => {
-      return queryFn({ data: { collectionItemId } });
-    },
-    queryKey: [reactQueryKeys.getCollectionItems, { collectionItemId }],
-  });
-};
-
-const useInvalidateGetCollectionItem = (id: number) => {
-  const queryClient = useQueryClient();
-
-  return () => {
-    return queryClient.invalidateQueries({
-      queryKey: [reactQueryKeys.getCollectionItems, { id }],
-    });
-  };
-};
 
 export const useCreateCollectionItem = (
   props?: Omit<Parameters<typeof useMutation>[0], 'mutationFn'>,
@@ -40,9 +16,6 @@ export const useCreateCollectionItem = (
     mutationFn,
     ...props,
     onSuccess: async (data, ...rest) => {
-      const { id } = data;
-      const invalidateQuery = useInvalidateGetCollectionItem(id);
-      await invalidateQuery();
       props?.onSuccess?.(data, ...rest);
     },
   });
@@ -71,10 +44,6 @@ export const useUpdateCollectionItem = (
       }
     },
     onSuccess: async (data, ...rest) => {
-      const { id } = data;
-      const invalidateQuery = useInvalidateGetCollectionItem(id);
-
-      await invalidateQuery();
       props?.onSuccess?.(data, ...rest);
     },
   });

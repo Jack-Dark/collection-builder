@@ -35,16 +35,7 @@ export const getCollectionDetailsByIdDbQuery = async (props: {
     });
 
     const [collection] = await tx
-      .select({
-        customField1Enabled: collectionsTable.customField1Enabled,
-        customField1Label: collectionsTable.customField1Label,
-        customField2Enabled: collectionsTable.customField2Enabled,
-        customField2Label: collectionsTable.customField2Label,
-        customField3Enabled: collectionsTable.customField3Enabled,
-        customField3Label: collectionsTable.customField3Label,
-        id: collectionsTable.id,
-        name: collectionsTable.name,
-      })
+      .select()
       .from(collectionsTable)
       .where(
         and(

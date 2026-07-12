@@ -10,7 +10,7 @@ import {
   updateCollectionItemDbQuery,
 } from './queries';
 
-const baseCollectionItemSchema = z.object({
+export const baseCollectionItemSchema = z.object({
   collectionId: z.number().describe('Collection ID'),
   customField1Value: z.string().describe('[customField1Value] placeholder'),
   customField2Value: z.string().describe('[customField2Value] placeholder'),
@@ -29,28 +29,14 @@ const baseCollectionItemSchema = z.object({
   notes: z.string().describe('Notes'),
 });
 
-const createItemSchema = z.object({
+export const createItemAttrsSchema = z.object({
   createdAt: z.undefined(),
   id: z.undefined(),
   userId: z.undefined(),
 });
 
-const updateItemSchema = z.object({
-  createdAt: z.string().describe('Created At').min(1),
-  id: z.number().describe('ID').min(1),
-  userId: z.string().describe('User ID').min(1),
-});
-
-export const collectionItemFormSchema = baseCollectionItemSchema.and(
-  z.union([createItemSchema, updateItemSchema]),
-);
-
 export const createCollectionItemSchema = baseCollectionItemSchema.extend(
-  createItemSchema.shape,
-);
-
-export const updateCollectionItemSchema = baseCollectionItemSchema.extend(
-  updateItemSchema.shape,
+  createItemAttrsSchema.shape,
 );
 
 export const createCollectionItemServerFn = createServerFn({
@@ -67,15 +53,15 @@ export const createCollectionItemServerFn = createServerFn({
     });
   });
 
-const requireCollectionItemIdSchema = z.object({
-  collectionItemId: z.number(),
-});
-
 export const getCollectionItemServerFn = createServerFn({
   method: 'GET',
 })
   .middleware([authApiRouteMiddleware])
-  .validator(requireCollectionItemIdSchema)
+  .validator(
+    z.object({
+      collectionItemId: z.number(),
+    }),
+  )
   .handler(async ({ context, data: { collectionItemId } }) => {
     return getCollectionItemByIdDbQuery({
       collectionItemId,
@@ -83,12 +69,22 @@ export const getCollectionItemServerFn = createServerFn({
     });
   });
 
+export const updateItemAttrsSchema = z.object({
+  createdAt: z.string().describe('Created At').min(1),
+  id: z.number().describe('ID').min(1),
+  userId: z.string().describe('User ID').min(1),
+});
+
+export const updateCollectionItemByIdSchema = baseCollectionItemSchema.extend(
+  updateItemAttrsSchema.shape,
+);
+
 export const updateCollectionItemServerFn = createServerFn({
   // ? PUT is not yet supported via createServerFn, but the API route utilizes this via PUT
   method: 'POST',
 })
   .middleware([authApiRouteMiddleware])
-  .validator(updateCollectionItemSchema)
+  .validator(updateCollectionItemByIdSchema)
   .handler(async ({ data }) => {
     return updateCollectionItemDbQuery(data);
   });
@@ -98,7 +94,11 @@ export const deleteCollectionItemServerFn = createServerFn({
   method: 'POST',
 })
   .middleware([authApiRouteMiddleware])
-  .validator(requireCollectionItemIdSchema)
+  .validator(
+    z.object({
+      collectionItemId: z.number(),
+    }),
+  )
   .handler(async ({ context, data: { collectionItemId } }) => {
     return deleteCollectionItemByIdDbQuery({
       id: collectionItemId,

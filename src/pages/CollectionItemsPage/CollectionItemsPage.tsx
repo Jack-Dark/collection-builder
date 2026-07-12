@@ -12,7 +12,6 @@ import {
   useCreateCollectionItem,
   useUpdateCollectionItem,
 } from '#/api/routes/collection-items/client/hooks';
-import { collectionItemFormSchema } from '#/api/routes/collection-items/server/serverFns';
 import { Button } from '#/components/Button';
 import { Table, tableCellClasses } from '#/components/Table';
 import { PageWrapper } from '#/page-wrapper';
@@ -21,6 +20,7 @@ import { Route as CollectionRoute } from '#/routes/_protected/collections/$id';
 import type { AddCollectionItemFormSchemaDef } from './components/AddCollectionItemForm/types';
 
 import { useEditingCollectionItemsRowIds } from '../CollectionsListPage/hooks/use-editing-collections-row-ids';
+import { addOrUpdateCollectionItemFormSchema } from './addOrUpdateCollectionItemForm.schema';
 import { getCollectionItemsTableColumns } from './columns';
 import { AddCollectionItemFormTableRow } from './components/AddCollectionItemForm';
 import {
@@ -113,7 +113,7 @@ export const CollectionItemsPage: RouteComponent = () => {
       modeAfterSubmission: 'change',
     }),
     validators: {
-      onSubmit: collectionItemFormSchema,
+      onSubmit: addOrUpdateCollectionItemFormSchema,
     },
   });
 
