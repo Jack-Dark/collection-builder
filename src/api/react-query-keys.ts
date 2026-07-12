@@ -1,4 +1,4 @@
 export const reactQueryKeys = {
-  getCollectionItems: 'get-collection-items',
+  getPaginatedCollectionItems: 'get-paginated-collection-items',
   getPaginatedCollections: 'get-paginated-collections',
 } as const;
