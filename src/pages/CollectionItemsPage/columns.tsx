@@ -105,7 +105,7 @@ export const getCollectionItemsTableColumns = (props: CollectionRecordDef) => {
       cell: ({ getValue, row }) => {
         const router = useRouter();
 
-        const { isPending: isDeletePending, onDeleteCollectionItem } =
+        const { isPending: isDeletePending, onDeleteCollectionItemById } =
           useDeleteCollectionItemById();
 
         const { resetCollectionItemFormValues, setCollectionItemFormValues } =
@@ -122,8 +122,8 @@ export const getCollectionItemsTableColumns = (props: CollectionRecordDef) => {
           <TableCellActionsMenu
             deleteIsDisabled={isDeletePending}
             deleteOnClick={async () => {
-              await onDeleteCollectionItem({
-                data: { collectionItemId },
+              await onDeleteCollectionItemById({
+                collectionItemId,
               });
               router.invalidate();
             }}

@@ -17,9 +17,13 @@ import { useNotifications } from '#/components/Notifications';
  *     TTransformedData
  *   >,
  * ) => {
+ *  const serverFn = useServerFn(YOUR_SERVER_FUNCTION);
+ *
  * const { onMutate: YOUR_RETURNED_FUNCTION_NAME, ...rest } = useGenericMutateQuery({
  *     fallbackErrorMessage: 'Unable to ___________.',
- *     mutationFn: YOUR_MUTATE_FUNCTION,
+ *     mutationFn: (data) => {
+ *       return serverFn({ data });
+ *     },
  *     ...props,
  * });
  *
@@ -28,7 +32,7 @@ import { useNotifications } from '#/components/Notifications';
  */
 export const useGenericMutateQuery = <
   TRequestArgs extends Record<string, any>,
-  TResponseDef extends Record<string, any>,
+  TResponseDef extends Record<string, any> | void,
   TTransformedData = TResponseDef,
 >(
   props: UseGenericMutateQueryProps<
@@ -100,7 +104,7 @@ export const useGenericMutateQuery = <
 // ? This type def applies the props passed to the hook when calling it
 export interface GenericMutateQueryProps<
   TRequestArgs extends Record<string, any>,
-  TResponseDef extends Record<string, any>,
+  TResponseDef extends Record<string, any> | void,
   TTransformedData = TResponseDef,
 > extends Partial<
   Omit<
@@ -120,7 +124,7 @@ export interface GenericMutateQueryProps<
 // ? This type def applies specifically to the hook's props
 export interface UseGenericMutateQueryProps<
   TRequestArgs extends Record<string, any>,
-  TResponseDef extends Record<string, any>,
+  TResponseDef extends Record<string, any> | void,
   TTransformedData = TResponseDef,
 > extends GenericMutateQueryProps<
   TRequestArgs,

@@ -1,24 +1,30 @@
-import { useMutation } from '@tanstack/react-query';
 import { useServerFn } from '@tanstack/react-start';
 
-import { useInvalidateGetPaginatedCollections } from '../get-paginated-collections/get-paginated-collections.react-query';
+import type { GenericMutateQueryProps } from '#/api/hooks/use-generic-mutation-query';
+
+import { useGenericMutateQuery } from '#/api/hooks/use-generic-mutation-query';
+
+import type { CollectionRecordDef } from '../collection.types';
+import type { UpdateCollectionSchemaDef } from './update-collection-by-id.types';
+
 import { updateCollectionByIdServerFn } from './update-collection-by-id.serverFn';
 
-export const useUpdateCollectionById = (
-  props?: Omit<Parameters<typeof useMutation>[0], 'mutationFn'>,
+export const useUpdateCollectionById = <TTransformedData = CollectionRecordDef>(
+  props?: GenericMutateQueryProps<
+    UpdateCollectionSchemaDef,
+    CollectionRecordDef,
+    TTransformedData
+  >,
 ) => {
-  const mutationFn = useServerFn(updateCollectionByIdServerFn);
+  const serverFn = useServerFn(updateCollectionByIdServerFn);
 
-  const { mutate: onUpdateCollection, ...rest } = useMutation({
-    mutationFn,
-    ...props,
-    onSuccess: async (data, ...rest) => {
-      const { id } = data;
-      const invalidateQuery = useInvalidateGetPaginatedCollections(id);
-      await invalidateQuery();
-      props?.onSuccess?.(data, ...rest);
+  const { onMutate: onUpdateCollectionById, ...rest } = useGenericMutateQuery({
+    fallbackErrorMessage: 'Unable to update collection.',
+    mutationFn: (data) => {
+      return serverFn({ data });
     },
+    ...props,
   });
 
-  return { onUpdateCollection, ...rest };
+  return { ...rest, onUpdateCollectionById };
 };

@@ -57,7 +57,7 @@ export const CollectionsListPage: RouteComponent = () => {
     },
   });
 
-  const { onUpdateCollection } = useUpdateCollectionById({
+  const { onUpdateCollectionById } = useUpdateCollectionById({
     onSuccess: () => {
       resetCollectionFormValues();
     },
@@ -67,20 +67,17 @@ export const CollectionsListPage: RouteComponent = () => {
     defaultValues: collectionFormValues,
     onSubmit: async ({ value }) => {
       if (value.id) {
-        await onUpdateCollection({
-          data: value,
-        });
+        await onUpdateCollectionById(value);
 
         resetEditingRowIds();
       } else {
         await onCreateCollection({
-          data: {
-            // undefined values added long-hand to resolve type errors
-            ...value,
-            createdAt: undefined,
-            id: undefined,
-            userId: undefined,
-          },
+          // undefined values added long-hand to resolve type errors
+          // TODO - LOOK AT USING `NewCollectionRecordDef` INSTEAD
+          ...value,
+          createdAt: undefined,
+          id: undefined,
+          userId: undefined,
         });
       }
 

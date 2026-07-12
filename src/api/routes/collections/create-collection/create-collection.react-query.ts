@@ -1,24 +1,30 @@
-import { useMutation } from '@tanstack/react-query';
 import { useServerFn } from '@tanstack/react-start';
 
-import { useInvalidateGetPaginatedCollections } from '../get-paginated-collections/get-paginated-collections.react-query';
+import type { GenericMutateQueryProps } from '#/api/hooks/use-generic-mutation-query';
+
+import { useGenericMutateQuery } from '#/api/hooks/use-generic-mutation-query';
+
+import type { CollectionRecordDef } from '../collection.types';
+import type { CreateCollectionSchemaDef } from './create-collection.types';
+
 import { createCollectionServerFn } from './create-collection.serverFn';
 
-export const useCreateCollection = (
-  props?: Omit<Parameters<typeof useMutation>[0], 'mutationFn'>,
+export const useCreateCollection = <TTransformedData = CollectionRecordDef>(
+  props?: GenericMutateQueryProps<
+    CreateCollectionSchemaDef,
+    CollectionRecordDef,
+    TTransformedData
+  >,
 ) => {
-  const mutationFn = useServerFn(createCollectionServerFn);
+  const serverFn = useServerFn(createCollectionServerFn);
 
-  const { mutate: onCreateCollection, ...rest } = useMutation({
-    mutationFn,
-    ...props,
-    onSuccess: async (data, ...rest) => {
-      const { id } = data;
-      const invalidateQuery = useInvalidateGetPaginatedCollections(id);
-      await invalidateQuery();
-      props?.onSuccess?.(data, ...rest);
+  const { onMutate: onCreateCollection, ...rest } = useGenericMutateQuery({
+    fallbackErrorMessage: 'Unable to add collection.',
+    mutationFn: (data) => {
+      return serverFn({ data });
     },
+    ...props,
   });
 
-  return { onCreateCollection, ...rest };
+  return { ...rest, onCreateCollection };
 };

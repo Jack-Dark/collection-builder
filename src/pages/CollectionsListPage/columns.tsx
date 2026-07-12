@@ -88,7 +88,7 @@ export const getCollectionsListTableColumns = () => {
       cell: ({ getValue, row }) => {
         const router = useRouter();
 
-        const { isPending: isDeletePending, onDeleteCollection } =
+        const { isPending: isDeletePending, onDeleteCollectionById } =
           useDeleteCollectionById();
 
         const { resetCollectionFormValues, setCollectionFormValues } =
@@ -105,7 +105,7 @@ export const getCollectionsListTableColumns = () => {
           <TableCellActionsMenu
             deleteIsDisabled={isDeletePending}
             deleteOnClick={async () => {
-              await onDeleteCollection({ data: { collectionId } });
+              await onDeleteCollectionById({ collectionId });
               router.invalidate();
             }}
             editIsDisabled={isDeletePending}

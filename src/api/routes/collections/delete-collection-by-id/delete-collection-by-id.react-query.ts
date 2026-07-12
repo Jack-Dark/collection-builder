@@ -1,14 +1,29 @@
-import { useMutation } from '@tanstack/react-query';
 import { useServerFn } from '@tanstack/react-start';
+
+import type { GenericMutateQueryProps } from '#/api/hooks/use-generic-mutation-query';
+
+import { useGenericMutateQuery } from '#/api/hooks/use-generic-mutation-query';
+
+import type { DeleteCollectionByIdSchemaDef } from './delete-collection-by-id.types';
 
 import { deleteCollectionByIdServerFn } from './delete-collection-by-id.serverFn';
 
-export const useDeleteCollectionById = () => {
-  const mutationFn = useServerFn(deleteCollectionByIdServerFn);
+export const useDeleteCollectionById = <TTransformedData = void>(
+  props?: GenericMutateQueryProps<
+    DeleteCollectionByIdSchemaDef,
+    void,
+    TTransformedData
+  >,
+) => {
+  const serverFn = useServerFn(deleteCollectionByIdServerFn);
 
-  const { mutate: onDeleteCollection, ...rest } = useMutation({
-    mutationFn,
+  const { onMutate: onDeleteCollectionById, ...rest } = useGenericMutateQuery({
+    fallbackErrorMessage: 'Unable to delete item from collection.',
+    mutationFn: (data) => {
+      return serverFn({ data });
+    },
+    ...props,
   });
 
-  return { onDeleteCollection, ...rest };
+  return { ...rest, onDeleteCollectionById };
 };
