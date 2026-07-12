@@ -7,3 +7,10 @@ export type UserRecordDef = InferSelectModel<typeof usersTable>;
 export type CreateNewUserRecordDef = InferInsertModel<typeof usersTable>;
 
 export type TimestampsDef = typeof timestamps;
+
+/**
+ * @example export type YOUR_RESPONSE_TYPE = QueryResponseDef<typeof YOUR_DB_QUERY_FUNCTION>;
+ */
+export type QueryResponseDef<TDbQuery extends (...args: any) => any> = Awaited<
+  ReturnType<TDbQuery>
+>;

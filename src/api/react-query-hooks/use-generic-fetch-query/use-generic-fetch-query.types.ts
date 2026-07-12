@@ -1,6 +1,8 @@
 import type { UseQueryOptions } from '@tanstack/react-query';
 import type { DependencyList } from 'react';
 
+import type { reactQueryKeys } from './react-query-keys';
+
 // ? This type def applies the props passed to the hook when calling it
 export type GenericFetchProps<
   TRequestArgs extends Record<string, any> | never,
@@ -8,7 +10,12 @@ export type GenericFetchProps<
   TTransformedData = TResponseDef,
 > = Partial<
   Omit<
-    UseQueryOptions<TTransformedData, Error, TTransformedData, QueryKeyDef>,
+    UseQueryOptions<
+      TTransformedData,
+      Error,
+      TTransformedData,
+      QueryKeyDef<TRequestArgs>
+    >,
     'gcTime' | 'queryFn' | 'queryKey' | 'select'
   >
 > & {
@@ -31,15 +38,13 @@ export type UseGenericFetchProps<
   TTransformedData = TResponseDef,
 > = GenericFetchProps<TRequestArgs, TResponseDef, TTransformedData> & {
   fallbackErrorMessage: string;
-  queryObj: {
-    groupKey: () => string;
-    key: QueryObjectKeyDef<TRequestArgs>;
-    query: (args?: TRequestArgs) => Promise<TResponseDef>;
-  };
+  groupName: string;
+  query: (props: { data?: TRequestArgs }) => Promise<TResponseDef>;
 };
 
-export type QueryKeyDef = Readonly<[{ groupKey: string; key: string }]>;
+export type QueryKeyDef<TRequestArgs extends Record<string, any>> = Readonly<
+  [string, TRequestArgs | undefined]
+>;
 
-export type QueryObjectKeyDef<
-  TRequestArgs extends Record<string, any> | never,
-> = (args?: TRequestArgs) => QueryKeyDef;
+export type ReactQueryKeysDef =
+  (typeof reactQueryKeys)[keyof typeof reactQueryKeys];

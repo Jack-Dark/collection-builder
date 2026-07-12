@@ -1,6 +1,4 @@
-import type { UseQueryOptions } from '@tanstack/react-query';
-
-import { useQuery } from '@tanstack/react-query';
+import { queryOptions, useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo } from 'react';
 
 import { useSpinner } from '#/components/FullPageLoadingSpinner/useSpinner';
@@ -13,11 +11,6 @@ import type {
 
 /**
  * @example
- * const YOUR_FETCH_QUERY_OBJ = getGenericQueryObj({
- *   groupName: 'YOUR_UNIQUE_REQUEST_NAME',
- *   query,
- * });
- *
  * export const use[YOUR_FETCH_QUERY_NAME] = <
  *   TTransformedData = YOUR_FETCH_RESPONSE_TYPE,
  * >(
@@ -26,20 +19,21 @@ import type {
  *     YOUR_FETCH_RESPONSE_TYPE,
  *     TTransformedData
  *   >,
- * ) =>
- *   useGenericFetchQuery({
- *     fallbackErrorMessage: 'Unable to fetch ___________.',
- *     queryObj: YOUR_FETCH_QUERY_OBJ,
- *     ...props,
- *   });
+ * ) => {
+ *  const query = useServerFn(getPaginatedCollectionsServerFn);
  *
- * export const useInvalidate[YOUR_FETCH_QUERY_NAME]Cache = () => {
- *   const invalidate[YOUR_FETCH_QUERY_NAME]Cache = useGetInvalidateQueryCache(
- *     YOUR_FETCH_QUERY_OBJ,
+ *  return useGenericFetchQuery({
+ *    fallbackErrorMessage: 'Unable to retrieve __________.',
+ *    groupName: YOUR_UNIQUE_GROUP_NAME,
+ *    query,
+ *    ...props,
+ *  });
+ * }
+ *
+ * export const useInvalidate[YOUR_FETCH_QUERY_NAME] =
+ *   getUseInvalidateQuery<YOUR_FETCH_ARGS_TYPE>(
+ *     YOUR_UNIQUE_GROUP_NAME
  *   );
- *
- *   return { invalidate[YOUR_FETCH_QUERY_NAME]Cache };
- * };
  */
 export const useGenericFetchQuery = <
   TRequestArgs extends Record<string, any> | never,
@@ -51,10 +45,11 @@ export const useGenericFetchQuery = <
   const {
     cacheTime,
     fallbackErrorMessage,
+    groupName,
     onError,
     onStart,
     onSuccess,
-    queryObj,
+    query,
     requestArgs,
     showLoading: enableSpinner,
     transform,
@@ -77,22 +72,22 @@ export const useGenericFetchQuery = <
     return response;
   }, memoizedTransformDependencies);
 
-  const queryConfig: UseQueryOptions<
+  const queryConfig = queryOptions<
     TResponseDef,
     Error,
     TTransformedData,
-    QueryKeyDef
-  > = {
+    QueryKeyDef<TRequestArgs>
+  >({
     ...configs,
     gcTime: cacheTime,
     queryFn: async () => {
       await onStart?.();
 
-      return queryObj.query(requestArgs);
+      return query({ data: requestArgs });
     },
-    queryKey: queryObj.key(requestArgs),
+    queryKey: [groupName, requestArgs],
     select: memoizedSelect,
-  };
+  });
 
   const context = useQuery(queryConfig);
 
@@ -114,8 +109,7 @@ export const useGenericFetchQuery = <
     }
   }, [
     isSuccess,
-    // ? Providing context.data ensures that onSuccess is executed any time
-    // ? the data changes, even if provided from a cached response
+    // ? Providing context.data ensures that onSuccess is executed any time the data changes, even if provided from a cached response
     data,
   ]);
 
