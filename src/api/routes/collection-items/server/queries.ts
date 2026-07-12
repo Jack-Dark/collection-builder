@@ -1,6 +1,4 @@
-import type { InferModelFromColumns, SQL } from 'drizzle-orm';
-
-import { inArray, and, eq, ilike, isNull } from 'drizzle-orm';
+import { and, eq, isNull } from 'drizzle-orm';
 
 import { db } from '#/api/db';
 
@@ -8,94 +6,9 @@ import type {
   CollectionItemRecordDef,
   InsertCollectionItemRecordDef,
   UpdateCollectionItemSchemaDef,
-} from '../types';
+} from '../collection-item.types';
 
 import { collectionItemsTable } from '../../../db-tables-schema';
-
-// TODO - DELETE
-const getMatchesUserIdAndNotDeleted = (userId: string) => {
-  return and(
-    eq(collectionItemsTable.userId, userId),
-    isNull(collectionItemsTable.deletedAt),
-  );
-};
-
-export type CollectionItemsTableColumn = keyof CollectionItemRecordDef;
-
-export const formatFilters = <
-  TTable extends InferModelFromColumns<
-    {
-      customField1Value: any;
-      customField2Value: any;
-      customField3Value: any;
-      name: any;
-    } & Record<string, any>
-  >,
->(props: {
-  filters: {
-    customField1: string[];
-    customField2: string[];
-    customField3: string[];
-  };
-  search: string | undefined;
-  table: TTable;
-}): SQL | undefined => {
-  const { filters = {}, search = '', table } = props;
-
-  const getCustomFieldColumnName = (key: string) => {
-    const num = Number(key.replace(/\D/g, ''));
-    const columnName = `customField${num}Value` as const;
-
-    return columnName;
-  };
-
-  const filterItems = Object.entries(filters)
-    .filter(([key]) => {
-      const columnName = getCustomFieldColumnName(key);
-      const isTableColumn = table.hasOwnProperty(columnName);
-
-      return isTableColumn;
-    })
-    .map(([key, value]) => {
-      const columnName = getCustomFieldColumnName(key);
-
-      const isArray = Array.isArray(value);
-
-      if (isArray) {
-        if (value.length) {
-          return inArray(table[columnName], value as string[]);
-        }
-      } else {
-        return eq(table[columnName], value as string);
-      }
-    });
-
-  const cleanSearchTerm = search.trim();
-
-  return and(
-    ...filterItems,
-    cleanSearchTerm ? ilike(table.name, `%${cleanSearchTerm}%`) : undefined,
-  );
-};
-
-export const getCollectionItemByIdDbQuery = async (props: {
-  collectionItemId: number;
-  userId: string;
-}) => {
-  const { collectionItemId, userId } = props;
-
-  const [record] = await db
-    .select()
-    .from(collectionItemsTable)
-    .where(
-      and(
-        eq(collectionItemsTable.id, collectionItemId),
-        getMatchesUserIdAndNotDeleted(userId),
-      ),
-    );
-
-  return record;
-};
 
 export const createCollectionItemDbQuery = async ({
   images,
@@ -130,7 +43,8 @@ export const createCollectionItemDbQuery = async ({
         .where(
           and(
             eq(collectionItemsTable.id, collectionItemId),
-            getMatchesUserIdAndNotDeleted(userId),
+            eq(collectionItemsTable.userId, userId),
+            isNull(collectionItemsTable.deletedAt),
           ),
         )
         .returning();
@@ -152,7 +66,8 @@ export const updateCollectionItemDbQuery = async (
   return await db.transaction(async (tx) => {
     const whereSql = and(
       eq(collectionItemsTable.id, id),
-      getMatchesUserIdAndNotDeleted(userId),
+      eq(collectionItemsTable.userId, userId),
+      isNull(collectionItemsTable.deletedAt),
     );
 
     const hasFilesToUpload = images.some((img) => {
@@ -204,7 +119,8 @@ export const deleteCollectionItemByIdDbQuery = async (props: {
     .where(
       and(
         eq(collectionItemsTable.id, id),
-        getMatchesUserIdAndNotDeleted(userId),
+        eq(collectionItemsTable.userId, userId),
+        isNull(collectionItemsTable.deletedAt),
       ),
     );
 };

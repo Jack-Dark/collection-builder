@@ -1,14 +1,14 @@
-import { and, desc, asc, eq, isNull, count } from 'drizzle-orm';
+import type { InferModelFromColumns, SQL } from 'drizzle-orm';
+
+import { and, desc, asc, eq, isNull, count, ilike, inArray } from 'drizzle-orm';
 
 import { db } from '#/api/db';
 import { collectionItemsTable, collectionsTable } from '#/api/db-tables-schema';
 import { sortDirectionOptions } from '#/api/pagination/pagination.constants';
 import { getPaginationMetadataQuery } from '#/api/pagination/pagination.query';
 
-import type { CollectionItemsTableColumn } from '../server/queries';
+import type { CollectionItemsTableColumn } from '../collection-item.types';
 import type { CollectionItemsSearchQueriesSchemaDef } from './get-collection-details-by-id.types';
-
-import { formatFilters } from '../server/queries';
 
 export const getCollectionDetailsByIdDbQuery = async (props: {
   collectionId: number;
@@ -134,4 +134,60 @@ export const getCollectionDetailsByIdDbQuery = async (props: {
       pagination,
     };
   });
+};
+
+const formatFilters = <
+  TTable extends InferModelFromColumns<
+    {
+      customField1Value: any;
+      customField2Value: any;
+      customField3Value: any;
+      name: any;
+    } & Record<string, any>
+  >,
+>(props: {
+  filters: {
+    customField1: string[];
+    customField2: string[];
+    customField3: string[];
+  };
+  search: string | undefined;
+  table: TTable;
+}): SQL | undefined => {
+  const { filters = {}, search = '', table } = props;
+
+  const getCustomFieldColumnName = (key: string) => {
+    const num = Number(key.replace(/\D/g, ''));
+    const columnName = `customField${num}Value` as const;
+
+    return columnName;
+  };
+
+  const filterItems = Object.entries(filters)
+    .filter(([key]) => {
+      const columnName = getCustomFieldColumnName(key);
+      const isTableColumn = table.hasOwnProperty(columnName);
+
+      return isTableColumn;
+    })
+    .map(([key, value]) => {
+      const columnName = getCustomFieldColumnName(key);
+
+      const isArray = Array.isArray(value);
+
+      if (isArray) {
+        if (value.length) {
+          return inArray(table[columnName], value as string[]);
+        }
+      } else {
+        return eq(table[columnName], value as string);
+      }
+    });
+
+  const cleanSearchTerm = search.trim();
+
+  return and(
+    ...filterItems,
+    cleanSearchTerm ? ilike(table.name, `%${cleanSearchTerm}%`) : undefined,
+  );
 };

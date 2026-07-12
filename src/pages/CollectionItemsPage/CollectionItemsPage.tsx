@@ -6,7 +6,7 @@ import { useRouter } from '@tanstack/react-router';
 import { useEffect } from 'react';
 import { create } from 'zustand';
 
-import type { CollectionItemsTableColumn } from '#/api/routes/collection-items/server/queries';
+import type { CollectionItemsTableColumn } from '#/api/routes/collection-items/collection-item.types';
 
 import {
   useCreateCollectionItem,

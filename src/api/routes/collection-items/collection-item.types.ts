@@ -22,3 +22,5 @@ export type CreateCollectionItemSchemaDef = z.output<
 export type UpdateCollectionItemSchemaDef = z.output<
   typeof updateCollectionItemByIdSchema
 >;
+
+export type CollectionItemsTableColumn = keyof CollectionItemRecordDef;
