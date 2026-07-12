@@ -11,9 +11,11 @@ export type PaginationMetadata = {
   totalRecords: number;
 };
 
-export type PaginatedResponseData<T> = {
-  data: T[];
-  metadata: PaginationMetadata;
+export type PaginatedResponseData<TKey extends string, TData> = Record<
+  TKey,
+  TData[]
+> & {
+  pagination: PaginationMetadata;
 };
 
 export type PaginationQueriesSchemaDef = z.output<

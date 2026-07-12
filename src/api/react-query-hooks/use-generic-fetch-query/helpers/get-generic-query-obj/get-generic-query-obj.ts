@@ -10,6 +10,7 @@
  * });
  */
 
+import type { QueryObjectKeyDef } from '../../use-generic-fetch-query.types';
 import type { GetGenericQueryObjProps } from './get-generic-query-obj.types';
 
 export const getGenericQueryObj = <
@@ -24,7 +25,7 @@ export const getGenericQueryObj = <
     return groupName;
   };
 
-  const key = (args?: TRequestArgs) => {
+  const key: QueryObjectKeyDef<TRequestArgs> = (args) => {
     const key = [
       groupKey(),
       JSON.stringify(

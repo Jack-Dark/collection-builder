@@ -3,5 +3,5 @@ export interface GetGenericQueryObjProps<
   TResponseDef extends Record<any, any>,
 > {
   groupName: string;
-  query: (args: TRequestArgs) => Promise<TResponseDef>;
+  query: (args?: TRequestArgs) => Promise<TResponseDef>;
 }
