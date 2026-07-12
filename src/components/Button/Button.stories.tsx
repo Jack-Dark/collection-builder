@@ -14,7 +14,7 @@ const meta = {
   // More on argTypes: https://storybook.js.org/docs/api/arg-types#argtypes
   argTypes: {
     type: {
-      control: 'inline-radio',
+      control: 'radio',
     },
   },
   component: Button,
