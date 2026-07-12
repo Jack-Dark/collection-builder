@@ -4,18 +4,28 @@ import type { GenericMutateQueryProps } from '#/api/react-query-hooks/use-generi
 
 import { useGenericMutateQuery } from '#/api/react-query-hooks/use-generic-mutate-query';
 
-import type { CollectionRecordDef } from '../collection.types';
-import type { CreateCollectionSchemaDef } from './create-collection.types';
+import type {
+  CreateCollectionResponseDef,
+  CreateCollectionRequestArgsDef,
+} from './create-collection.types';
 
+import { useInvalidateGetPaginatedCollections } from '../get-paginated-collections/get-paginated-collections.react-query';
 import { createCollectionServerFn } from './create-collection.serverFn';
 
-export const useCreateCollection = <TTransformedData = CollectionRecordDef>(
-  props?: GenericMutateQueryProps<
-    CreateCollectionSchemaDef,
-    CollectionRecordDef,
+export const useCreateCollection = <
+  TTransformedData = CreateCollectionResponseDef,
+>(
+  props: GenericMutateQueryProps<
+    CreateCollectionRequestArgsDef,
+    CreateCollectionResponseDef,
     TTransformedData
   >,
 ) => {
+  const { onSuccess, ...queryProps } = props;
+
+  const invalidateGetPaginatedCollections =
+    useInvalidateGetPaginatedCollections();
+
   const serverFn = useServerFn(createCollectionServerFn);
 
   const { onMutate: onCreateCollection, ...rest } = useGenericMutateQuery({
@@ -23,7 +33,12 @@ export const useCreateCollection = <TTransformedData = CollectionRecordDef>(
     mutationFn: (data) => {
       return serverFn({ data });
     },
-    ...props,
+    onSuccess: async (...args) => {
+      invalidateGetPaginatedCollections();
+
+      await onSuccess?.(...args);
+    },
+    ...queryProps,
   });
 
   return { ...rest, onCreateCollection };

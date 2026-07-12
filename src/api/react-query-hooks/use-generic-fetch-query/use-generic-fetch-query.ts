@@ -1,4 +1,4 @@
-import { queryOptions, useQuery } from '@tanstack/react-query';
+import { queryOptions, useSuspenseQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo } from 'react';
 
 import { useSpinner } from '#/components/FullPageLoadingSpinner/useSpinner';
@@ -89,7 +89,7 @@ export const useGenericFetchQuery = <
     select: memoizedSelect,
   });
 
-  const context = useQuery(queryConfig);
+  const context = useSuspenseQuery(queryConfig);
 
   const { data, error, isError, isFetching, isSuccess } = context;
 

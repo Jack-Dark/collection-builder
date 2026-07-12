@@ -4,17 +4,28 @@ import type { GenericMutateQueryProps } from '#/api/react-query-hooks/use-generi
 
 import { useGenericMutateQuery } from '#/api/react-query-hooks/use-generic-mutate-query';
 
-import type { DeleteCollectionByIdSchemaDef } from './delete-collection-by-id.types';
+import type {
+  DeleteCollectionByIdRequestArgsDef,
+  DeleteCollectionResponseDef,
+} from './delete-collection-by-id.types';
 
+import { useInvalidateGetPaginatedCollections } from '../get-paginated-collections/get-paginated-collections.react-query';
 import { deleteCollectionByIdServerFn } from './delete-collection-by-id.serverFn';
 
-export const useDeleteCollectionById = <TTransformedData = void>(
-  props?: GenericMutateQueryProps<
-    DeleteCollectionByIdSchemaDef,
-    void,
+export const useDeleteCollectionById = <
+  TTransformedData = DeleteCollectionResponseDef,
+>(
+  props: GenericMutateQueryProps<
+    DeleteCollectionByIdRequestArgsDef,
+    DeleteCollectionResponseDef,
     TTransformedData
   >,
 ) => {
+  const { onSuccess, ...queryProps } = props;
+
+  const invalidateGetPaginatedCollections =
+    useInvalidateGetPaginatedCollections();
+
   const serverFn = useServerFn(deleteCollectionByIdServerFn);
 
   const { onMutate: onDeleteCollectionById, ...rest } = useGenericMutateQuery({
@@ -22,7 +33,12 @@ export const useDeleteCollectionById = <TTransformedData = void>(
     mutationFn: (data) => {
       return serverFn({ data });
     },
-    ...props,
+    onSuccess: async (...args) => {
+      invalidateGetPaginatedCollections();
+
+      await onSuccess?.(...args);
+    },
+    ...queryProps,
   });
 
   return { ...rest, onDeleteCollectionById };
