@@ -1,10 +1,10 @@
-import type { UseMutationOptions } from '@tanstack/react-query';
-
 import { useMutation } from '@tanstack/react-query';
 import { useEffect } from 'react';
 
 import { useSpinner } from '#/components/FullPageLoadingSpinner/useSpinner';
 import { useNotifications } from '#/components/Notifications';
+
+import type { UseGenericMutateQueryProps } from './use-generic-mutate-query.types';
 
 /**
  * @example
@@ -51,16 +51,10 @@ export const useGenericMutateQuery = <
   } = props;
 
   const { hideSpinner, showSpinner } = useSpinner();
-  const { notify } = useNotifications();
+  const { notifyError } = useNotifications();
 
   const handleMutationFn = async (requestArgs: TRequestArgs) => {
     const response = await mutationFn(requestArgs);
-
-    const notice: string = response?.notice;
-
-    if (notice) {
-      notify(notice);
-    }
 
     return transform
       ? transform(response)
@@ -76,7 +70,11 @@ export const useGenericMutateQuery = <
     mutationFn: handleMutationFn,
     onError: (err: unknown, requestArgs) => {
       const error = err as Error;
-      onError?.(error?.message || fallbackErrorMessage, requestArgs);
+      const errorMsg = error?.message || fallbackErrorMessage;
+
+      notifyError(errorMsg);
+
+      onError?.(errorMsg, requestArgs);
     },
     ...configs,
   });
@@ -100,45 +98,3 @@ export const useGenericMutateQuery = <
     processing: isPending,
   };
 };
-
-// ? This type def applies the props passed to the hook when calling it
-export interface GenericMutateQueryProps<
-  TRequestArgs extends Record<string, any>,
-  TResponseDef extends Record<string, any> | void,
-  TTransformedData = TResponseDef,
-> extends Partial<
-  Omit<
-    UseMutationOptions<TTransformedData, unknown, TRequestArgs, unknown>,
-    'onError' | 'mutationFn'
-  >
-> {
-  onError?: (error: string, requestArgs?: TRequestArgs) => void;
-  onSuccess?: (
-    data: TTransformedData,
-    requestArgs: TRequestArgs,
-  ) => Promise<void> | void;
-  showSpinner?: boolean;
-  transform?: (response: TResponseDef) => TTransformedData;
-}
-
-// ? This type def applies specifically to the hook's props
-export interface UseGenericMutateQueryProps<
-  TRequestArgs extends Record<string, any>,
-  TResponseDef extends Record<string, any> | void,
-  TTransformedData = TResponseDef,
-> extends GenericMutateQueryProps<
-  TRequestArgs,
-  TResponseDef,
-  TTransformedData
-> {
-  fallbackErrorMessage: string;
-  mutationFn: (args: TRequestArgs) => Promise<TResponseDef>;
-}
-
-export type ErrorType =
-  | string
-  | Error
-  | Record<'message', string>
-  | {
-      response: Response;
-    };

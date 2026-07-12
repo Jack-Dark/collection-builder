@@ -1,0 +1,43 @@
+import type { UseMutationOptions } from '@tanstack/react-query';
+
+// ? This type def applies the props passed to the hook when calling it
+export interface GenericMutateQueryProps<
+  TRequestArgs extends Record<string, any>,
+  TResponseDef extends Record<string, any> | void,
+  TTransformedData = TResponseDef,
+> extends Partial<
+  Omit<
+    UseMutationOptions<TTransformedData, unknown, TRequestArgs, unknown>,
+    'onError' | 'mutationFn'
+  >
+> {
+  onError?: (error: string, requestArgs?: TRequestArgs) => void;
+  onSuccess?: (
+    data: TTransformedData,
+    requestArgs: TRequestArgs,
+  ) => Promise<void> | void;
+  showSpinner?: boolean;
+  transform?: (response: TResponseDef) => TTransformedData;
+}
+
+// ? This type def applies specifically to the hook's props
+export interface UseGenericMutateQueryProps<
+  TRequestArgs extends Record<string, any>,
+  TResponseDef extends Record<string, any> | void,
+  TTransformedData = TResponseDef,
+> extends GenericMutateQueryProps<
+  TRequestArgs,
+  TResponseDef,
+  TTransformedData
+> {
+  fallbackErrorMessage: string;
+  mutationFn: (args: TRequestArgs) => Promise<TResponseDef>;
+}
+
+export type ErrorType =
+  | string
+  | Error
+  | Record<'message', string>
+  | {
+      response: Response;
+    };

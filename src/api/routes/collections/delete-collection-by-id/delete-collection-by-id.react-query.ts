@@ -1,8 +1,8 @@
 import { useServerFn } from '@tanstack/react-start';
 
-import type { GenericMutateQueryProps } from '#/api/hooks/use-generic-mutation-query';
+import type { GenericMutateQueryProps } from '#/api/react-query-hooks/use-generic-mutate-query/use-generic-mutate-query.types';
 
-import { useGenericMutateQuery } from '#/api/hooks/use-generic-mutation-query';
+import { useGenericMutateQuery } from '#/api/react-query-hooks/use-generic-mutate-query';
 
 import type { DeleteCollectionByIdSchemaDef } from './delete-collection-by-id.types';
 
