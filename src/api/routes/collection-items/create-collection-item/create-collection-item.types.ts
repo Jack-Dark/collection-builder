@@ -11,6 +11,6 @@ export type InsertCollectionItemRecordDef = Omit<
 > &
   Pick<CreateCollectionItemSchemaDef, 'images'>;
 
-type CreateCollectionItemSchemaDef = z.output<
+export type CreateCollectionItemSchemaDef = z.output<
   typeof createCollectionItemSchema
 >;

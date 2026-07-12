@@ -1,32 +1,33 @@
-import { useMutation } from '@tanstack/react-query';
 import { useServerFn } from '@tanstack/react-start';
 
-import { updateCollectionItemServerFn } from './update-collection-item-by-id.serverFn';
+import type { GenericMutateQueryProps } from '#/api/hooks/use-generic-mutation-query';
 
-export const useUpdateCollectionItemById = (
-  props?: Omit<Parameters<typeof useMutation>[0], 'mutationFn'>,
+import { useGenericMutateQuery } from '#/api/hooks/use-generic-mutation-query';
+
+import type { CollectionItemRecordDef } from '../collection-item.types';
+import type { UpdateCollectionItemSchemaDef } from './update-collection-item-by-id.types';
+
+import { updateCollectionItemByIdServerFn } from './update-collection-item-by-id.serverFn';
+
+export const useUpdateCollectionItemById = <
+  TTransformedData = CollectionItemRecordDef,
+>(
+  props?: GenericMutateQueryProps<
+    UpdateCollectionItemSchemaDef,
+    CollectionItemRecordDef,
+    TTransformedData
+  >,
 ) => {
-  const mutationFn = useServerFn(updateCollectionItemServerFn);
+  const serverFn = useServerFn(updateCollectionItemByIdServerFn);
 
-  const { mutate: onUpdateCollectionItem, ...rest } = useMutation({
-    mutationFn,
-    ...props,
-    onError: (error, variables, context) => {
-      // 1. The error object thrown by mutationFn
-      console.error(`Mutation failed: ${error}`);
+  const { onMutate: onUpdateCollectionItemById, ...rest } =
+    useGenericMutateQuery({
+      fallbackErrorMessage: 'Unable to update collection item.',
+      mutationFn: (data) => {
+        return serverFn({ data });
+      },
+      ...props,
+    });
 
-      // 2. The exact variables sent into mutate()
-      console.log(`Attempted variables:`, variables);
-
-      // 3. Rollback context if using optimistic updates
-      if (context) {
-        // Do rollback logic here
-      }
-    },
-    onSuccess: async (data, ...rest) => {
-      props?.onSuccess?.(data, ...rest);
-    },
-  });
-
-  return { onUpdateCollectionItem, ...rest };
+  return { ...rest, onUpdateCollectionItemById };
 };

@@ -1,20 +1,32 @@
-import { useMutation } from '@tanstack/react-query';
 import { useServerFn } from '@tanstack/react-start';
+
+import type { GenericMutateQueryProps } from '#/api/hooks/use-generic-mutation-query';
+
+import { useGenericMutateQuery } from '#/api/hooks/use-generic-mutation-query';
+
+import type { CollectionItemRecordDef } from '../collection-item.types';
+import type { CreateCollectionItemSchemaDef } from './create-collection-item.types';
 
 import { createCollectionItemServerFn } from './create-collection-item.serverFn';
 
-export const useCreateCollectionItem = (
-  props?: Omit<Parameters<typeof useMutation>[0], 'mutationFn'>,
+export const useCreateCollectionItem = <
+  TTransformedData = CollectionItemRecordDef,
+>(
+  props?: GenericMutateQueryProps<
+    CreateCollectionItemSchemaDef,
+    CollectionItemRecordDef,
+    TTransformedData
+  >,
 ) => {
-  const mutationFn = useServerFn(createCollectionItemServerFn);
+  const serverFn = useServerFn(createCollectionItemServerFn);
 
-  const { mutate: onCreateCollectionItem, ...rest } = useMutation({
-    mutationFn,
-    ...props,
-    onSuccess: async (data, ...rest) => {
-      props?.onSuccess?.(data, ...rest);
+  const { onMutate: onCreateCollectionItem, ...rest } = useGenericMutateQuery({
+    fallbackErrorMessage: 'Unable to add item to collection.',
+    mutationFn: (data) => {
+      return serverFn({ data });
     },
+    ...props,
   });
 
-  return { onCreateCollectionItem, ...rest };
+  return { ...rest, onCreateCollectionItem };
 };
