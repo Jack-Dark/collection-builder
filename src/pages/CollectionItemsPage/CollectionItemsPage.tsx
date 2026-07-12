@@ -8,10 +8,8 @@ import { create } from 'zustand';
 
 import type { CollectionItemsTableColumn } from '#/api/routes/collection-items/collection-item.types';
 
-import {
-  useCreateCollectionItem,
-  useUpdateCollectionItem,
-} from '#/api/routes/collection-items/client/hooks';
+import { useCreateCollectionItem } from '#/api/routes/collection-items/create-collection-item/create-collection-item.react-query';
+import { useUpdateCollectionItemById } from '#/api/routes/collection-items/update-collection-item-by-id.react-query';
 import { Button } from '#/components/Button';
 import { Table, tableCellClasses } from '#/components/Table';
 import { PageWrapper } from '#/page-wrapper';
@@ -74,7 +72,7 @@ export const CollectionItemsPage: RouteComponent = () => {
     },
   });
 
-  const { onUpdateCollectionItem } = useUpdateCollectionItem({
+  const { onUpdateCollectionItem } = useUpdateCollectionItemById({
     onSuccess: () => {
       resetCollectionItemFormValues();
     },

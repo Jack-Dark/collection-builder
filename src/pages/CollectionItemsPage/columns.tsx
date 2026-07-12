@@ -7,7 +7,7 @@ import formatDate, { masks } from 'dateformat';
 import type { CollectionItemRecordDef } from '#/api/routes/collection-items/collection-item.types';
 import type { CollectionRecordDef } from '#/api/routes/collections/collection.types';
 
-import { useDeleteCollectionItem } from '#/api/routes/collection-items/client/hooks';
+import { useDeleteCollectionItemById } from '#/api/routes/collection-items/delete-collection-item-by-id/delete-collection-item-by-id.react-query';
 
 import { TableCellActionsMenu } from '../../components/TableCellActionsMenu';
 import { useEditingCollectionItemsRowIds } from '../CollectionsListPage/hooks/use-editing-collections-row-ids';
@@ -106,7 +106,7 @@ export const getCollectionItemsTableColumns = (props: CollectionRecordDef) => {
         const router = useRouter();
 
         const { isPending: isDeletePending, onDeleteCollectionItem } =
-          useDeleteCollectionItem();
+          useDeleteCollectionItemById();
 
         const { resetCollectionItemFormValues, setCollectionItemFormValues } =
           useCollectionItemsFormStore();
