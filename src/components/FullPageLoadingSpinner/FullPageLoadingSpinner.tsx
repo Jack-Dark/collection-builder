@@ -1,5 +1,5 @@
 import CloseIcon from '@mui/icons-material/Close';
-import { debounce } from 'lodash';
+import _ from 'lodash';
 import { useEffect, useRef, useState } from 'react';
 
 import { LoadingSpinner } from './components/LoadingSpinner';
@@ -12,7 +12,7 @@ export const FullPageLoadingSpinner = () => {
 
   const debouncedShowForceClose = useRef(
     // ref required to correctly cancel debounce called via state changes https://stackoverflow.com/a/74738879
-    debounce(() => {
+    _.debounce(() => {
       setShowForceClose(true);
     }, 5000),
   ).current;
