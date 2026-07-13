@@ -1,13 +1,12 @@
-import { queryOptions, useQuery } from '@tanstack/react-query';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo } from 'react';
 
 import { useSpinner } from '#/components/FullPageLoadingSpinner/useSpinner';
 import { useNotifications } from '#/components/Notifications';
 
-import type {
-  QueryKeyDef,
-  UseGenericFetchProps,
-} from './use-generic-fetch-query.types';
+import type { UseGenericFetchProps } from './use-generic-fetch-query.types';
+
+import { getGenericFetchQueryOptions } from './get-generic-fetch-query-options';
 
 /**
  * @example
@@ -43,13 +42,9 @@ export const useGenericFetchQuery = <
   props: UseGenericFetchProps<TRequestArgs, TResponseDef, TTransformedData>,
 ) => {
   const {
-    cacheTime,
     fallbackErrorMessage,
-    groupName,
     onError,
-    onStart,
     onSuccess,
-    query,
     requestArgs,
     showLoading: enableSpinner,
     transform,
@@ -72,25 +67,13 @@ export const useGenericFetchQuery = <
     return response;
   }, memoizedTransformDependencies);
 
-  const queryConfig = queryOptions<
-    TResponseDef,
-    Error,
-    TTransformedData,
-    QueryKeyDef<TRequestArgs>
-  >({
+  const configuredQueryOptions = getGenericFetchQueryOptions({
     ...configs,
-    gcTime: cacheTime,
-    queryFn: async () => {
-      await onStart?.();
-
-      return query({ data: requestArgs });
-    },
-    queryKey: [groupName, requestArgs],
-    select: memoizedSelect,
+    requestArgs,
+    transform: memoizedSelect,
   });
 
-  const context = useQuery(queryConfig);
-  // const context = useSuspenseQuery(queryConfig);
+  const context = useSuspenseQuery(configuredQueryOptions);
 
   const { data, error, isError, isFetching, isSuccess } = context;
 

@@ -27,7 +27,7 @@ export const useGetCollectionDetailsById = <
   return useGenericFetchQuery({
     fallbackErrorMessage: 'Unable to retrieve collections.',
     groupName: reactQueryKeys.getCollectionDetailsById,
-    query,
+    queryFn: query,
     showLoading: true,
     ...props,
   });

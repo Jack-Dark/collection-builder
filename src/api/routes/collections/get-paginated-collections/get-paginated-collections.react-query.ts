@@ -22,12 +22,12 @@ export const useGetPaginatedCollections = <
     TTransformedData
   >,
 ) => {
-  const query = useServerFn(getPaginatedCollectionsServerFn);
+  const queryFn = useServerFn(getPaginatedCollectionsServerFn);
 
   return useGenericFetchQuery({
     fallbackErrorMessage: 'Unable to retrieve collections.',
     groupName: reactQueryKeys.getPaginatedCollections,
-    query,
+    queryFn,
     showLoading: true,
     ...props,
   });

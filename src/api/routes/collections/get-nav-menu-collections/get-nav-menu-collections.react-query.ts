@@ -27,7 +27,7 @@ export const useGetNavMenuCollections = <
   return useGenericFetchQuery({
     fallbackErrorMessage: 'Unable to retrieve collections for nav menu.',
     groupName: reactQueryKeys.getNavMenuCollections,
-    query,
+    queryFn: query,
     ...props,
   });
 };

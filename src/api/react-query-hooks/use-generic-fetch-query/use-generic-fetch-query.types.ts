@@ -39,7 +39,7 @@ export type UseGenericFetchProps<
 > = GenericFetchProps<TRequestArgs, TResponseDef, TTransformedData> & {
   fallbackErrorMessage: string;
   groupName: string;
-  query: (props: { data: TRequestArgs }) => Promise<TResponseDef>;
+  queryFn: (props: { data: TRequestArgs }) => Promise<TResponseDef>;
 };
 
 export type QueryKeyDef<TRequestArgs extends Record<string, any>> = Readonly<

@@ -10,7 +10,7 @@ import {
   Outlet,
   HeadContent,
   Scripts,
-  createRootRoute,
+  createRootRouteWithContext,
 } from '@tanstack/react-router';
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
 import { StrictMode } from 'react';
@@ -19,7 +19,9 @@ import { DialogProvider } from '#/components/Dialog/Dialog.Provider';
 
 import appCss from '../styles.css?url';
 
-export const Route = createRootRoute({
+export const Route = createRootRouteWithContext<{
+  queryClient: QueryClient;
+}>()({
   component: RootComponent,
   errorComponent: () => {
     return <p>An Error Occurred</p>;
