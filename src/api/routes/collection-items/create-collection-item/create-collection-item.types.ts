@@ -3,14 +3,21 @@ import type z from 'zod';
 
 import type { collectionItemsTable } from '#/api/db-tables-schema';
 
-import type { createCollectionItemSchema } from './create-collection-item.schema';
+import type {
+  createCollectionItemFormSchema,
+  createCollectionItemSchema,
+} from './create-collection-item.schema';
 
 export type InsertCollectionItemRecordDef = Omit<
   InferInsertModel<typeof collectionItemsTable>,
   'images'
 > &
-  Pick<CreateCollectionItemSchemaDef, 'images'>;
+  Pick<CreateCollectionItemFormSchemaDef, 'images'>;
 
-export type CreateCollectionItemSchemaDef = z.output<
+export type CreateCollectionItemFormSchemaDef = z.output<
+  typeof createCollectionItemFormSchema
+>;
+
+export type CreateCollectionItemRequestArgsDef = z.output<
   typeof createCollectionItemSchema
 >;

@@ -5,11 +5,13 @@ import { useRef } from 'react';
 
 import { Button } from '#/components/Button';
 import { Popover } from '#/components/Popover';
+import { SimpleErrorBoundary } from '#/components/SimpleErrorBoundary';
 
 import {
   addCollectionItemFormDefaultValues,
   withAddCollectionItemForm,
 } from './constants';
+import { useUploadFile } from '../../../../hooks/use-upload-file';
 
 export const AddCollectionItemFormTableRow = withAddCollectionItemForm({
   /** These values are only used for type-checking, and are not used at runtime */
@@ -35,6 +37,8 @@ export const AddCollectionItemFormTableRow = withAddCollectionItemForm({
       rest.customField2Enabled && 2,
       rest.customField3Enabled && 3,
     ].filter(Boolean) as (1 | 2 | 3)[];
+
+    const { createPreviewUrl, handleUploadFile, processing } = useUploadFile();
 
     return (
       <tr className="align-top">
@@ -95,83 +99,71 @@ export const AddCollectionItemFormTableRow = withAddCollectionItemForm({
                     return (
                       <div className="flex gap-2 flex-wrap">
                         {value.map((file, index) => {
-                          let src: string;
-                          if (typeof file === 'string') {
-                            src = file;
-                          } else {
-                            // const foo = new Blob(file)
-                            src = '';
-                          }
+                          const src =
+                            typeof file === 'string' ? file : file.previewUrl;
 
                           return (
-                            <div
-                              className="grid grid-rows-[auto_1fr] items-center w-25 h-25  bg-white border border-gray-400 text-gray-500"
-                              key={src}
-                            >
-                              <div className="flex justify-end p-1 border-b border-gray-400">
-                                <DeleteIcon
-                                  className="cursor-pointer"
-                                  fontSize="small"
-                                  onClick={() => {
-                                    return field.handleChange(
-                                      value.filter((string) => {
-                                        return string !== src;
-                                      }),
-                                    );
-                                  }}
-                                />
+                            <SimpleErrorBoundary key={src}>
+                              <div className="grid grid-rows-[auto_1fr] items-center w-25 h-25  bg-white border border-gray-400 text-gray-500">
+                                <div className="flex justify-end p-1 border-b border-gray-400">
+                                  <DeleteIcon
+                                    className="cursor-pointer"
+                                    fontSize="small"
+                                    onClick={() => {
+                                      return field.handleChange(
+                                        value.filter((string) => {
+                                          return string !== src;
+                                        }),
+                                      );
+                                    }}
+                                  />
+                                </div>
+                                <div className="w-full h-full overflow-hidden">
+                                  <img
+                                    alt={`${field.name} thumbnail ${index + 1}`}
+                                    className="w-full h-full object-contain"
+                                    src={src}
+                                  />
+                                </div>
                               </div>
-                              <div className="w-full h-full overflow-hidden">
-                                <img
-                                  alt={`${field.name} thumbnail ${index + 1}`}
-                                  className="w-full h-full object-contain"
-                                  src={src}
-                                />
-                              </div>
-                            </div>
+                            </SimpleErrorBoundary>
                           );
                         })}
-                        <div
-                          className="grid items-center justify-center w-25 h-25 border border-gray-400 text-gray-500 cursor-pointer"
-                          onClick={() => {
-                            inputRef.current?.click();
-                          }}
-                          title="Upload"
-                        >
-                          <AddIcon fontSize="large" />
-                        </div>
-                        <input
-                          accept="image/*"
-                          autoFocus
-                          capture="environment"
-                          className="hidden"
-                          multiple
-                          name={field.name}
-                          onChange={async (event) => {
-                            const selectedFiles = event?.target?.files || [];
+                        <SimpleErrorBoundary>
+                          <div
+                            className="grid items-center justify-center w-25 h-25 border border-gray-400 text-gray-500 cursor-pointer"
+                            onClick={() => {
+                              inputRef.current?.click();
+                            }}
+                            title="Upload"
+                          >
+                            <AddIcon fontSize="large" />
+                          </div>
+                          <input
+                            accept="image/*"
+                            autoFocus
+                            capture="environment"
+                            className="size-0 overflow-hidden"
+                            multiple
+                            name={field.name}
+                            onChange={async (event) => {
+                              const selectedFiles = event?.target?.files || [];
 
-                            const urls = await Promise.all(
-                              [...selectedFiles].map(async (file) => {
-                                const arrayBuffer = await file.arrayBuffer();
+                              const files = [...selectedFiles].map((file) => {
+                                return {
+                                  file,
+                                  previewUrl: createPreviewUrl(file),
+                                };
+                              });
 
-                                const blob = new Blob([arrayBuffer], {
-                                  type: file.type,
-                                });
-
-                                const url = URL.createObjectURL(blob);
-
-                                return url;
-                              }),
-                            );
-                            console.log('🚀 ~ blobs:', urls);
-
-                            return field.handleChange([...value, ...urls]);
-                          }}
-                          placeholder="Input name..."
-                          ref={inputRef}
-                          required
-                          type="file"
-                        />
+                              return field.handleChange([...value, ...files]);
+                            }}
+                            placeholder="Input name..."
+                            ref={inputRef}
+                            required
+                            type="file"
+                          />
+                        </SimpleErrorBoundary>
                       </div>
                     );
                   }}

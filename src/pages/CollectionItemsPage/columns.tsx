@@ -43,11 +43,18 @@ export const getCollectionItemsTableColumns = (props: CollectionRecordDef) => {
         return images.length ? (
           images.map((src, index) => {
             return (
-              <img
-                alt={`${row.original.name} thumbnail ${index + 1}`}
+              <div
+                className="grid grid-rows-[auto_1fr] items-center w-25 h-25  bg-white border border-gray-400 text-gray-500"
                 key={src}
-                src={src}
-              />
+              >
+                <div className="w-full h-full overflow-hidden">
+                  <img
+                    alt={`${row.original.name} thumbnail ${index + 1}`}
+                    className="w-full h-full object-contain"
+                    src={src}
+                  />
+                </div>
+              </div>
             );
           })
         ) : (

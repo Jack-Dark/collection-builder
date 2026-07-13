@@ -1,20 +1,24 @@
-import { useServerFn } from '@tanstack/react-start';
-
 import type { GenericMutateQueryProps } from '#/api/react-query-hooks/use-generic-mutate-query/use-generic-mutate-query.types';
 
 import { useGenericMutateQuery } from '#/api/react-query-hooks/use-generic-mutate-query';
 
 import type { CollectionItemRecordDef } from '../collection-item.types';
-import type { CreateCollectionItemSchemaDef } from './create-collection-item.types';
+import type { CreateCollectionItemFormSchemaDef } from './create-collection-item.types';
 
+import {
+  chunkAndUploadFileToCloudinary,
+  createCollectionItemCloudinaryTags,
+  uploadChunkActionServerFn,
+} from '../../cloudinary/TEMP';
 import { useInvalidateGetCollectionDetailsById } from '../get-collection-details-by-id/get-collection-details-by-id.react-query';
+import { updateCollectionItemByIdServerFn } from '../update-collection-item-by-id/update-collection-item-by-id.serverFn';
 import { createCollectionItemServerFn } from './create-collection-item.serverFn';
 
 export const useCreateCollectionItem = <
   TTransformedData = CollectionItemRecordDef,
 >(
   props?: GenericMutateQueryProps<
-    CreateCollectionItemSchemaDef,
+    CreateCollectionItemFormSchemaDef,
     CollectionItemRecordDef,
     TTransformedData
   >,
@@ -22,17 +26,50 @@ export const useCreateCollectionItem = <
   const invalidateGetCollectionDetailsById =
     useInvalidateGetCollectionDetailsById();
 
-  const serverFn = useServerFn(createCollectionItemServerFn);
-
   const { onMutate: onCreateCollectionItem, ...rest } = useGenericMutateQuery({
     fallbackErrorMessage: 'Unable to add item to collection.',
-    mutationFn: (data) => {
-      return serverFn({ data });
+    mutationFn: async (data) => {
+      const images: string[] = [];
+      const record = await createCollectionItemServerFn({
+        data: { ...data, images },
+      });
+
+      const { collectionId, id: collectionItemId, userId } = record;
+
+      const imageSources: string[] = await Promise.all(
+        data.images.map(async (image) => {
+          if (typeof image === 'string') {
+            return image;
+          } else {
+            const tags = createCollectionItemCloudinaryTags({
+              collectionId,
+              collectionItemId,
+              userId,
+            });
+            const response = await chunkAndUploadFileToCloudinary(
+              image.file,
+              tags,
+              uploadChunkActionServerFn,
+            );
+
+            return response.url;
+          }
+        }),
+      );
+      const updatedRecord = updateCollectionItemByIdServerFn({
+        data: {
+          ...record,
+          images: imageSources,
+        },
+      });
+
+      return updatedRecord;
     },
+    mutationKey: ['create-collection-item'],
     showLoading: true,
     ...props,
     onSuccess: async (...args) => {
-      invalidateGetCollectionDetailsById();
+      await invalidateGetCollectionDetailsById();
 
       await props?.onSuccess?.(...args);
     },

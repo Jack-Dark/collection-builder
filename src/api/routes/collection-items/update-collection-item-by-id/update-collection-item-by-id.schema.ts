@@ -8,6 +8,13 @@ export const updateItemAttrsSchema = z.object({
   userId: z.string().describe('User ID').min(1),
 });
 
-export const updateCollectionItemByIdSchema = baseCollectionItemSchema.extend(
+export const updateCollectionItemFormSchema = baseCollectionItemSchema.extend(
   updateItemAttrsSchema.shape,
 );
+
+const { images: _images, ...rest } = updateCollectionItemFormSchema.shape;
+
+export const updateCollectionItemByIdSchema = z.object({
+  ...rest,
+  images: z.array(z.string()).describe('Images'),
+});

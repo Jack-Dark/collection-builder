@@ -9,6 +9,7 @@ import { create } from 'zustand';
 import type { CollectionItemsTableColumn } from '#/api/routes/collection-items/collection-item.types';
 
 import { useCreateCollectionItem } from '#/api/routes/collection-items/create-collection-item/create-collection-item.react-query';
+import { useInvalidateGetCollectionDetailsById } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.react-query';
 import { useUpdateCollectionItemById } from '#/api/routes/collection-items/update-collection-item-by-id/update-collection-item-by-id.react-query';
 import { Button } from '#/components/Button';
 import { useSpinner } from '#/components/FullPageLoadingSpinner/useSpinner';
@@ -87,14 +88,21 @@ export const CollectionItemsPage: RouteComponent = () => {
     setCollectionItemFormValues,
   } = useCollectionItemsFormStore();
 
+  const invalidateGetCollectionDetailsById =
+    useInvalidateGetCollectionDetailsById();
+
   const { onCreateCollectionItem } = useCreateCollectionItem({
-    onSuccess: () => {
+    onSuccess: async () => {
+      await invalidateGetCollectionDetailsById();
+
       resetCollectionItemFormValues();
     },
   });
 
   const { onUpdateCollectionItemById } = useUpdateCollectionItemById({
-    onSuccess: () => {
+    onSuccess: async () => {
+      await invalidateGetCollectionDetailsById();
+
       resetCollectionItemFormValues();
     },
   });

@@ -8,7 +8,13 @@ export const baseCollectionItemSchema = z.object({
   editionDetails: z.string().describe('Edition details'),
   images: z
     .array(
-      z.union([z.string(), z.file().min(10000).max(1000000).mime('image/*')]),
+      z.union([
+        z.string(),
+        z.object({
+          file: z.file(),
+          previewUrl: z.string(),
+        }),
+      ]),
     )
     .describe('Images'),
   isSpecialEdition: z.boolean().describe('Is special edition'),

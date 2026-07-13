@@ -8,6 +8,13 @@ export const createItemAttrsSchema = z.object({
   userId: z.undefined(),
 });
 
-export const createCollectionItemSchema = baseCollectionItemSchema.extend(
+export const createCollectionItemFormSchema = baseCollectionItemSchema.extend(
   createItemAttrsSchema.shape,
 );
+
+const { images: _images, ...rest } = createCollectionItemFormSchema.shape;
+
+export const createCollectionItemSchema = z.object({
+  ...rest,
+  images: z.array(z.string()).describe('Images'),
+});

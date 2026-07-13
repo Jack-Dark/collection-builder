@@ -15,6 +15,10 @@ export const createCollectionItemServerFn = createServerFn({
 
     return createCollectionItemDbQuery({
       ...rest,
+      createdAt: undefined,
+      id: undefined,
+      // TODO - RESOLVE TYPE ERROR
+      // @ts-expect-error
       userId: context.user.id,
     });
   });
