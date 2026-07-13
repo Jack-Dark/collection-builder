@@ -14,7 +14,6 @@ import type { FiltersButtonPropsDef } from '#/components/Table/components/Filter
 import type { SetZustandStateFnDef } from '#/helpers/get-create-default-zustand-state';
 
 import { sortDirectionOptions } from '#/api/pagination/pagination.constants';
-import { useInvalidateGetCollectionDetailsById } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.react-query';
 import { Button } from '#/components/Button';
 import { CheckboxField } from '#/components/CheckboxField';
 import { getCreateDefaultZustandState } from '#/helpers/get-create-default-zustand-state';
@@ -335,31 +334,19 @@ export const useCollectionItemsSort = <
 
 export const useOnUpdateCollectionItemsQueries = () => {
   const navigate = Route.useNavigate();
-  const params = Route.useParams();
-  const collectionId = Number(params.id);
   const searchQueries = Route.useSearch();
-
-  const invalidateGetCollectionDetailsById =
-    useInvalidateGetCollectionDetailsById();
 
   const onUpdateCollectionItemsQueries = async (
     updatedQueries: Partial<typeof searchQueries>,
     options?: NavigateOptions,
   ) => {
     await navigate({
-      params,
       search: {
         ...searchQueries,
         ...updatedQueries,
       },
-      // to: Route.fullPath,
       ...options,
     });
-
-    // await invalidateGetCollectionDetailsById({
-    //   collectionId,
-    //   params: searchQueries,
-    // });
   };
 
   return { onUpdateCollectionItemsQueries, searchQueries };
