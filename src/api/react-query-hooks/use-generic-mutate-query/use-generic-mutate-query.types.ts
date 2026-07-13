@@ -16,7 +16,7 @@ export interface GenericMutateQueryProps<
     data: TTransformedData,
     requestArgs: TRequestArgs,
   ) => Promise<void> | void;
-  showSpinner?: boolean;
+  showLoading?: boolean;
   transform?: (response: TResponseDef) => TTransformedData;
 }
 

@@ -1,4 +1,7 @@
-import type { AccessorKeyColumnDefBase } from '@tanstack/react-table';
+import type {
+  AccessorKeyColumnDefBase,
+  CellContext,
+} from '@tanstack/react-table';
 
 import { useRouter } from '@tanstack/react-router';
 import { createColumnHelper } from '@tanstack/react-table';
@@ -102,48 +105,55 @@ export const getCollectionItemsTableColumns = (props: CollectionRecordDef) => {
       size: 120,
     }),
     columnHelper.accessor('id', {
-      cell: ({ getValue, row }) => {
-        const router = useRouter();
-
-        const { isPending: isDeletePending, onDeleteCollectionItemById } =
-          useDeleteCollectionItemById();
-
-        const { resetCollectionItemFormValues, setCollectionItemFormValues } =
-          useCollectionItemsFormStore();
-
-        const collectionItemId = getValue();
-
-        const { getIsEditingRowId, resetEditingRowIds, setEditingRowIds } =
-          useEditingCollectionItemsRowIds();
-
-        const isEditingRow = getIsEditingRowId(collectionItemId);
-
-        return (
-          <TableCellActionsMenu
-            deleteIsDisabled={isDeletePending}
-            deleteOnClick={async () => {
-              await onDeleteCollectionItemById({
-                collectionItemId,
-              });
-              router.invalidate();
-            }}
-            editIsDisabled={isDeletePending}
-            editOnClick={async (row) => {
-              setEditingRowIds([collectionItemId]);
-              setCollectionItemFormValues(row);
-            }}
-            isEditing={isEditingRow}
-            onCancelEdit={() => {
-              resetEditingRowIds();
-              resetCollectionItemFormValues();
-            }}
-            row={row}
-          />
-        );
+      cell: (context) => {
+        return <CollectionDetailsActionsCell {...context} />;
       },
       header: '',
       id: 'actions',
       size: 40,
     }),
   ].filter(Boolean) as AccessorKeyColumnDefBase<CollectionItemRecordDef>[];
+};
+
+const CollectionDetailsActionsCell = ({
+  getValue,
+  row,
+}: CellContext<CollectionItemRecordDef, number>) => {
+  const router = useRouter();
+
+  const { isPending: isDeletePending, onDeleteCollectionItemById } =
+    useDeleteCollectionItemById();
+
+  const { resetCollectionItemFormValues, setCollectionItemFormValues } =
+    useCollectionItemsFormStore();
+
+  const collectionItemId = getValue();
+
+  const { getIsEditingRowId, resetEditingRowIds, setEditingRowIds } =
+    useEditingCollectionItemsRowIds();
+
+  const isEditingRow = getIsEditingRowId(collectionItemId);
+
+  return (
+    <TableCellActionsMenu
+      deleteIsDisabled={isDeletePending}
+      deleteOnClick={async () => {
+        await onDeleteCollectionItemById({
+          collectionItemId,
+        });
+        router.invalidate();
+      }}
+      editIsDisabled={isDeletePending}
+      editOnClick={async (row) => {
+        setEditingRowIds([collectionItemId]);
+        setCollectionItemFormValues(row);
+      }}
+      isEditing={isEditingRow}
+      onCancelEdit={() => {
+        resetEditingRowIds();
+        resetCollectionItemFormValues();
+      }}
+      row={row}
+    />
+  );
 };

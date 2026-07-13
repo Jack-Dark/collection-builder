@@ -1,6 +1,6 @@
 import type z from 'zod';
 
-import type { addOrUpdateCollectionItemFormSchema } from '#/api/routes/collection-items/server/addOrUpdateCollectionItemFormSchema';
+import type { addOrUpdateCollectionItemFormSchema } from '../../addOrUpdateCollectionItemForm.schema';
 
 export type AddCollectionItemFormSchemaDef = z.output<
   typeof addOrUpdateCollectionItemFormSchema

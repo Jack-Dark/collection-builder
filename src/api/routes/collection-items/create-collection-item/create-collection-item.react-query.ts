@@ -29,6 +29,7 @@ export const useCreateCollectionItem = <
     mutationFn: (data) => {
       return serverFn({ data });
     },
+    showLoading: true,
     ...props,
     onSuccess: async (...args) => {
       invalidateGetCollectionDetailsById();

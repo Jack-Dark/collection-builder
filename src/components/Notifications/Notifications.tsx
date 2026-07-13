@@ -13,23 +13,23 @@ import { SimpleErrorBoundary } from '../SimpleErrorBoundary';
 import { notificationTypes } from './Notifications.constants';
 import { useNotificationsStore } from './Notifications.store';
 
+const notificationClasses = {
+  error: {
+    bg: 'bg-red-800',
+    text: 'text-white',
+  },
+  success: {
+    bg: 'bg-blue-800',
+    text: 'text-white',
+  },
+  warning: {
+    bg: 'bg-amber-400',
+    text: 'text-black',
+  },
+} satisfies Record<NotificationType, Record<'bg' | 'text', string>>;
+
 export const Notifications = () => {
   const { clearNotification, notifications } = useNotificationsStore();
-
-  const notificationClasses = {
-    error: {
-      bg: 'bg-red-800',
-      text: 'text-white',
-    },
-    success: {
-      bg: 'bg-blue-800',
-      text: 'text-white',
-    },
-    warning: {
-      bg: 'bg-amber-400',
-      text: 'text-black',
-    },
-  } satisfies Record<NotificationType, Record<'bg' | 'text', string>>;
 
   useEffect(() => {
     notifications.forEach((notification) => {

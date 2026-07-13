@@ -220,9 +220,9 @@ export const useCollectionItemsSearch = () => {
     useOnUpdateCollectionItemsQueries();
 
   const onChange = _.debounce(async (searchValue: string) => {
-    onUpdateCollectionItemsQueries({
-      search: searchValue.trim(),
-    });
+    const search = searchValue.trim();
+
+    onUpdateCollectionItemsQueries({ search });
   }, 200);
 
   return {
@@ -336,26 +336,30 @@ export const useCollectionItemsSort = <
 export const useOnUpdateCollectionItemsQueries = () => {
   const navigate = Route.useNavigate();
   const params = Route.useParams();
+  const collectionId = Number(params.id);
   const searchQueries = Route.useSearch();
 
   const invalidateGetCollectionDetailsById =
     useInvalidateGetCollectionDetailsById();
 
-  const onUpdateCollectionItemsQueries = (
+  const onUpdateCollectionItemsQueries = async (
     updatedQueries: Partial<typeof searchQueries>,
     options?: NavigateOptions,
   ) => {
-    navigate({
+    await navigate({
       params,
       search: {
         ...searchQueries,
         ...updatedQueries,
       },
-      to: Route.fullPath,
+      // to: Route.fullPath,
       ...options,
     });
 
-    invalidateGetCollectionDetailsById();
+    // await invalidateGetCollectionDetailsById({
+    //   collectionId,
+    //   params: searchQueries,
+    // });
   };
 
   return { onUpdateCollectionItemsQueries, searchQueries };

@@ -31,7 +31,9 @@ const createSpinnerStore = () => {
 const useSpinnerStore = createSpinnerStore();
 
 export const useSpinner = () => {
-  const { hideSpinner, showSpinner, ...rest } = useSpinnerStore();
+  const spinnerStore = useSpinnerStore();
+
+  const { hideSpinner, showSpinner } = spinnerStore;
 
   const [processing, setProcessing] = useState<boolean>();
 
@@ -56,7 +58,7 @@ export const useSpinner = () => {
    * };
    * ```
    */
-  const onInterceptRequest = (requestCallback: () => Promise<any>) => {
+  const onInterceptRequest = async (requestCallback: () => Promise<any>) => {
     try {
       showSpinner();
 
@@ -89,7 +91,7 @@ export const useSpinner = () => {
    * return <Button processing={processing} text="Confirm" />
    * ```
    */
-  const onInterceptProcessingRequest = (
+  const onInterceptProcessingRequest = async (
     requestCallback: () => Promise<any>,
   ) => {
     try {
@@ -102,12 +104,10 @@ export const useSpinner = () => {
   };
 
   return {
-    hideSpinner,
     onInterceptProcessingRequest,
     onInterceptRequest,
     processing,
     setProcessing,
-    showSpinner,
-    ...rest,
+    ...spinnerStore,
   };
 };

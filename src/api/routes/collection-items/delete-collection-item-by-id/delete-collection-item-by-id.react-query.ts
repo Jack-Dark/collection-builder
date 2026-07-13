@@ -27,6 +27,7 @@ export const useDeleteCollectionItemById = <TTransformedData = void>(
       mutationFn: (data) => {
         return serverFn({ data });
       },
+      showLoading: true,
       ...props,
       onSuccess: async (...args) => {
         invalidateGetCollectionDetailsById();

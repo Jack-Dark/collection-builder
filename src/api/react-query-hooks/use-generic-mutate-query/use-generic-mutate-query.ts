@@ -45,12 +45,12 @@ export const useGenericMutateQuery = <
     fallbackErrorMessage,
     mutationFn,
     onError,
-    showSpinner: enableSpinner,
+    showLoading,
     transform,
     ...configs
   } = props;
 
-  const { hideSpinner, showSpinner } = useSpinner();
+  const { hideSpinner, isSpinnerShowing, showSpinner } = useSpinner();
   const { notifyError } = useNotifications();
 
   const handleMutationFn = async (requestArgs: TRequestArgs) => {
@@ -82,10 +82,10 @@ export const useGenericMutateQuery = <
   const { isPending } = context;
 
   useEffect(() => {
-    if (enableSpinner) {
+    if (showLoading) {
       if (isPending) {
         showSpinner();
-      } else {
+      } else if (isSpinnerShowing) {
         hideSpinner();
       }
     }

@@ -8,29 +8,27 @@ import { ErrorBoundary } from 'react-error-boundary';
 import type { NavMenuItem } from './components/NavMenu/NavMenu.types';
 import type { RouterPath } from './types';
 
-import { useGetNavMenuCollections } from './api/routes/collections/get-nav-menu-collections/get-nav-menu-collections.react-query';
 import { authClient } from './auth/auth-client';
 import { FullPageLoadingSpinner } from './components/FullPageLoadingSpinner';
 import { NavMenu } from './components/NavMenu';
 import { Notifications } from './components/Notifications';
+import { Route as RootRoute } from './routes/__root';
 import { Route as CollectionsRoute } from './routes/_protected/collections';
 import { Route as CollectionRoute } from './routes/_protected/collections/$id';
 
 export const Layout: RouteComponent = () => {
+  const { collections } = RootRoute.useLoaderData();
+
   const router = useRouter();
 
   const { data: session } = authClient.useSession();
-
-  // TODO - REPLACE WITH NEW NAV MENU REQUEST
-  // @ts-expect-error
-  const { data } = useGetNavMenuCollections();
 
   const isLoggedOut = !session?.user.id;
 
   const navItems: NavMenuItem[] = [
     {
       href: CollectionsRoute.fullPath,
-      items: data?.collections?.map((collection) => {
+      items: collections?.map((collection) => {
         return {
           href: CollectionRoute.fullPath.replace('$id', String(collection.id)),
           label: collection.name,

@@ -2,8 +2,8 @@ import type { RouteComponent } from '@tanstack/react-router';
 
 import ControlPointIcon from '@mui/icons-material/ControlPoint';
 import { revalidateLogic } from '@tanstack/react-form';
-import { useRouter } from '@tanstack/react-router';
-import { useEffect } from 'react';
+import { useRouter, useRouterState } from '@tanstack/react-router';
+import { useEffect, useMemo } from 'react';
 import { create } from 'zustand';
 
 import type { CollectionItemsTableColumn } from '#/api/routes/collection-items/collection-item.types';
@@ -11,6 +11,7 @@ import type { CollectionItemsTableColumn } from '#/api/routes/collection-items/c
 import { useCreateCollectionItem } from '#/api/routes/collection-items/create-collection-item/create-collection-item.react-query';
 import { useUpdateCollectionItemById } from '#/api/routes/collection-items/update-collection-item-by-id/update-collection-item-by-id.react-query';
 import { Button } from '#/components/Button';
+import { useSpinner } from '#/components/FullPageLoadingSpinner/useSpinner';
 import { Table, tableCellClasses } from '#/components/Table';
 import { PageWrapper } from '#/page-wrapper';
 import { Route as CollectionRoute } from '#/routes/_protected/collections/$id';
@@ -54,9 +55,29 @@ export const useCollectionItemsFormStore = create<{
   };
 });
 
+const useSpinnerWhenRouterLoading = () => {
+  const isLoading = useRouterState({
+    select: (state) => {
+      return state.status === 'pending';
+    },
+  });
+
+  const { hideSpinner, showSpinner } = useSpinner();
+
+  useEffect(() => {
+    if (isLoading) {
+      showSpinner();
+    } else {
+      hideSpinner();
+    }
+  }, [isLoading]);
+};
+
 export const CollectionItemsPage: RouteComponent = () => {
   const { collection, customFields, items, lastAddedItem, pagination } =
     CollectionRoute.useLoaderData();
+
+  useSpinnerWhenRouterLoading();
 
   const router = useRouter();
 
@@ -111,7 +132,9 @@ export const CollectionItemsPage: RouteComponent = () => {
     },
   });
 
-  const columns = getCollectionItemsTableColumns(collection);
+  const columns = useMemo(() => {
+    return getCollectionItemsTableColumns(collection);
+  }, []);
 
   const filtersProps = useCollectionItemsFilterActions();
 

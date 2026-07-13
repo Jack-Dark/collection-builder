@@ -31,6 +31,7 @@ export const useUpdateCollectionById = <
     mutationFn: (data) => {
       return serverFn({ data });
     },
+    showLoading: true,
     ...props,
     onSuccess: async (...args) => {
       invalidateGetPaginatedCollections();
