@@ -2,7 +2,8 @@ import type { ButtonProps as MuiButtonProps } from '@base-ui/react';
 import type { JSXElementConstructor } from 'react';
 
 import { Button as MuiButton } from '@base-ui/react';
-import CircularProgress from '@mui/material/CircularProgress';
+
+import { LoadingSpinner } from '../FullPageLoadingSpinner/components/LoadingSpinner';
 
 type ButtonProps = MuiButtonProps & {
   disabled?: boolean;
@@ -42,20 +43,12 @@ export const Button = ({
       type={type}
     >
       {iconPosition === iconPositions.left &&
-        (processing ? (
-          <CircularProgress color="inherit" enableTrackSlot size="1rem" />
-        ) : (
-          Icon && <Icon />
-        ))}
+        (processing ? <LoadingSpinner /> : Icon && <Icon />)}
 
       {children ? children : text && <p>{text}</p>}
 
       {iconPosition === iconPositions.right &&
-        (processing ? (
-          <CircularProgress color="inherit" enableTrackSlot size="1rem" />
-        ) : (
-          Icon && <Icon />
-        ))}
+        (processing ? <LoadingSpinner /> : Icon && <Icon />)}
     </MuiButton>
   );
 };
