@@ -9,7 +9,6 @@ import type {
   CreateCollectionRequestArgsDef,
 } from './create-collection.types';
 
-import { useInvalidateGetPaginatedCollections } from '../get-paginated-collections/get-paginated-collections.react-query';
 import { createCollectionServerFn } from './create-collection.serverFn';
 
 export const useCreateCollection = <
@@ -21,9 +20,6 @@ export const useCreateCollection = <
     TTransformedData
   >,
 ) => {
-  const invalidateGetPaginatedCollections =
-    useInvalidateGetPaginatedCollections();
-
   const serverFn = useServerFn(createCollectionServerFn);
 
   const { onMutate: onCreateCollection, ...rest } = useGenericMutateQuery({
@@ -33,11 +29,6 @@ export const useCreateCollection = <
     },
     showLoading: true,
     ...props,
-    onSuccess: async (...args) => {
-      invalidateGetPaginatedCollections();
-
-      await props?.onSuccess?.(...args);
-    },
   });
 
   return { ...rest, onCreateCollection };

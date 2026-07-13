@@ -2,7 +2,7 @@ import type { RouteComponent } from '@tanstack/react-router';
 
 import ControlPointIcon from '@mui/icons-material/ControlPoint';
 import { revalidateLogic } from '@tanstack/react-form';
-import { useRouter, useRouterState } from '@tanstack/react-router';
+import { useRouterState } from '@tanstack/react-router';
 import { useEffect, useMemo } from 'react';
 import { create } from 'zustand';
 
@@ -80,8 +80,6 @@ export const CollectionItemsPage: RouteComponent = () => {
 
   useSpinnerWhenRouterLoading();
 
-  const router = useRouter();
-
   const {
     collectionItemFormValues,
     resetCollectionItemFormValues,
@@ -115,8 +113,6 @@ export const CollectionItemsPage: RouteComponent = () => {
     onSubmit: async ({ value }) => {
       if (value.id) {
         await onUpdateCollectionItemById(value);
-
-        resetEditingRowIds();
       } else {
         await onCreateCollectionItem({
           // undefined values added long-hand to resolve type errors
@@ -128,8 +124,7 @@ export const CollectionItemsPage: RouteComponent = () => {
       }
 
       form.reset();
-
-      await router.invalidate();
+      resetEditingRowIds();
     },
     validationLogic: revalidateLogic({
       mode: 'submit',

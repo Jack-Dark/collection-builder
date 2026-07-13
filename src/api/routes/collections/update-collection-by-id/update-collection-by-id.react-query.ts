@@ -9,7 +9,6 @@ import type {
   UpdateCollectionResponseDef,
 } from './update-collection-by-id.types';
 
-import { useInvalidateGetPaginatedCollections } from '../get-paginated-collections/get-paginated-collections.react-query';
 import { updateCollectionByIdServerFn } from './update-collection-by-id.serverFn';
 
 export const useUpdateCollectionById = <
@@ -21,9 +20,6 @@ export const useUpdateCollectionById = <
     TTransformedData
   >,
 ) => {
-  const invalidateGetPaginatedCollections =
-    useInvalidateGetPaginatedCollections();
-
   const serverFn = useServerFn(updateCollectionByIdServerFn);
 
   const { onMutate: onUpdateCollectionById, ...rest } = useGenericMutateQuery({
@@ -33,11 +29,6 @@ export const useUpdateCollectionById = <
     },
     showLoading: true,
     ...props,
-    onSuccess: async (...args) => {
-      invalidateGetPaginatedCollections();
-
-      await props?.onSuccess?.(...args);
-    },
   });
 
   return { ...rest, onUpdateCollectionById };

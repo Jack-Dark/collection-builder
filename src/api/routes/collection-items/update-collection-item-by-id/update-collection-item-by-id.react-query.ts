@@ -5,11 +5,8 @@ import { useGenericMutateQuery } from '#/api/react-query-hooks/use-generic-mutat
 import type { CollectionItemRecordDef } from '../collection-item.types';
 import type { UpdateCollectionItemSchemaDef } from './update-collection-item-by-id.types';
 
-import {
-  chunkAndUploadFileToCloudinary,
-  createCollectionItemCloudinaryTags,
-} from '../../cloudinary/TEMP';
-import { useInvalidateGetCollectionDetailsById } from '../get-collection-details-by-id/get-collection-details-by-id.react-query';
+import { createCollectionItemCloudinaryTags } from '../../cloudinary/helpers/create-collection-item-cloudinary-tags';
+import { uploadFileToCloudinary } from '../../cloudinary/helpers/upload-file-to-cloudinary';
 import { updateCollectionItemByIdServerFn } from './update-collection-item-by-id.serverFn';
 
 export const useUpdateCollectionItemById = <
@@ -21,9 +18,6 @@ export const useUpdateCollectionItemById = <
     TTransformedData
   >,
 ) => {
-  const invalidateGetCollectionDetailsById =
-    useInvalidateGetCollectionDetailsById();
-
   const { onMutate: onUpdateCollectionItemById, ...rest } =
     useGenericMutateQuery({
       fallbackErrorMessage: 'Unable to update collection item.',
@@ -40,7 +34,7 @@ export const useUpdateCollectionItemById = <
                 collectionItemId,
                 userId,
               });
-              const response = await chunkAndUploadFileToCloudinary({
+              const response = await uploadFileToCloudinary({
                 file: image.file,
                 tags,
               });
@@ -61,11 +55,6 @@ export const useUpdateCollectionItemById = <
       mutationKey: ['update-collection-item'],
       showLoading: true,
       ...props,
-      onSuccess: async (...args) => {
-        await invalidateGetCollectionDetailsById();
-
-        await props?.onSuccess?.(...args);
-      },
     });
 
   return { ...rest, onUpdateCollectionItemById };

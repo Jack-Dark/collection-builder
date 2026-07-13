@@ -11,6 +11,7 @@ import type { CollectionItemRecordDef } from '#/api/routes/collection-items/coll
 import type { CollectionRecordDef } from '#/api/routes/collections/collection.types';
 
 import { useDeleteCollectionItemById } from '#/api/routes/collection-items/delete-collection-item-by-id/delete-collection-item-by-id.react-query';
+import { useInvalidateGetCollectionDetailsById } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.react-query';
 
 import { TableCellActionsMenu } from '../../components/TableCellActionsMenu';
 import { useEditingCollectionItemsRowIds } from '../CollectionsListPage/hooks/use-editing-collections-row-ids';
@@ -128,8 +129,15 @@ const CollectionDetailsActionsCell = ({
 }: CellContext<CollectionItemRecordDef, number>) => {
   const router = useRouter();
 
+  const invalidateGetCollectionDetailsById =
+    useInvalidateGetCollectionDetailsById();
+
   const { isPending: isDeletePending, onDeleteCollectionItemById } =
-    useDeleteCollectionItemById();
+    useDeleteCollectionItemById({
+      onSuccess: async () => {
+        invalidateGetCollectionDetailsById();
+      },
+    });
 
   const { resetCollectionItemFormValues, setCollectionItemFormValues } =
     useCollectionItemsFormStore();

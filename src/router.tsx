@@ -5,9 +5,9 @@ import { setupRouterSsrQueryIntegration } from '@tanstack/react-router-ssr-query
 import { SimpleErrorBoundary } from './components/SimpleErrorBoundary';
 import { routeTree } from './routeTree.gen';
 
-export function getRouter() {
-  const queryClient = new QueryClient();
+export const queryClient = new QueryClient();
 
+export function getRouter() {
   const router = createRouter({
     context: { queryClient },
     defaultErrorComponent: SimpleErrorBoundary,

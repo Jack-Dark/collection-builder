@@ -9,7 +9,6 @@ import type {
   DeleteCollectionResponseDef,
 } from './delete-collection-by-id.types';
 
-import { useInvalidateGetPaginatedCollections } from '../get-paginated-collections/get-paginated-collections.react-query';
 import { deleteCollectionByIdServerFn } from './delete-collection-by-id.serverFn';
 
 export const useDeleteCollectionById = <
@@ -21,9 +20,6 @@ export const useDeleteCollectionById = <
     TTransformedData
   >,
 ) => {
-  const invalidateGetPaginatedCollections =
-    useInvalidateGetPaginatedCollections();
-
   const serverFn = useServerFn(deleteCollectionByIdServerFn);
 
   const { onMutate: onDeleteCollectionById, ...rest } = useGenericMutateQuery({
@@ -33,11 +29,6 @@ export const useDeleteCollectionById = <
     },
     showLoading: true,
     ...props,
-    onSuccess: async (...args) => {
-      invalidateGetPaginatedCollections();
-
-      await props?.onSuccess?.(...args);
-    },
   });
 
   return { ...rest, onDeleteCollectionById };

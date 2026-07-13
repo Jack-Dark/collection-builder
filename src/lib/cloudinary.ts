@@ -1,3 +1,5 @@
+import type { UploadApiOptions } from 'cloudinary';
+
 import { v2 as cloudinary } from 'cloudinary';
 
 import { configs } from '#/configs';
@@ -23,20 +25,6 @@ export function safeCtxValue(s: string | number | undefined): string {
 }
 
 /* ─────────────────────────────────────────────────────────────────── */
-/* Transformation helpers                                               */
-/* ─────────────────────────────────────────────────────────────────── */
-
-function buildResizeStep(): object {
-  return {
-    crop: 'fit',
-    fetch_format: 'webp',
-    height: 800,
-    quality: 'auto',
-    width: 800,
-  };
-}
-
-/* ─────────────────────────────────────────────────────────────────── */
 /* Upload                                                                */
 /* ─────────────────────────────────────────────────────────────────── */
 
@@ -53,11 +41,7 @@ export async function uploadChunkToCloudinary(props: {
 }): Promise<CloudinaryUploadResult> {
   const { fileBuffer, filename, metadata, tags } = props;
 
-  const uploadPreset = configs.cloudinaryUploadPreset;
-
-  const transformation: object[] = [buildResizeStep()];
-
-  const uploadOptions = {
+  const uploadOptions: UploadApiOptions = {
     // All app metadata stored here — no separate database needed
     context: {
       pw_id: metadata.id,
@@ -68,8 +52,16 @@ export async function uploadChunkToCloudinary(props: {
     public_id: `${Date.now()}-${filename.replace(/\.[^/.]+$/, '')}`,
     resource_type: 'image' as const,
     tags,
-    transformation,
-    ...(uploadPreset ? { upload_preset: uploadPreset } : {}),
+    transformation: [
+      {
+        crop: 'fit',
+        fetch_format: 'webp',
+        height: 800,
+        quality: 'auto',
+        width: 800,
+      },
+    ],
+    upload_preset: configs.cloudinaryUploadPreset,
   };
 
   return new Promise((resolve, reject) => {

@@ -5,11 +5,8 @@ import { useGenericMutateQuery } from '#/api/react-query-hooks/use-generic-mutat
 import type { CollectionItemRecordDef } from '../collection-item.types';
 import type { CreateCollectionItemFormSchemaDef } from './create-collection-item.types';
 
-import {
-  chunkAndUploadFileToCloudinary,
-  createCollectionItemCloudinaryTags,
-} from '../../cloudinary/TEMP';
-import { useInvalidateGetCollectionDetailsById } from '../get-collection-details-by-id/get-collection-details-by-id.react-query';
+import { createCollectionItemCloudinaryTags } from '../../cloudinary/helpers/create-collection-item-cloudinary-tags';
+import { uploadFileToCloudinary } from '../../cloudinary/helpers/upload-file-to-cloudinary';
 import { updateCollectionItemByIdServerFn } from '../update-collection-item-by-id/update-collection-item-by-id.serverFn';
 import { createCollectionItemServerFn } from './create-collection-item.serverFn';
 
@@ -22,9 +19,6 @@ export const useCreateCollectionItem = <
     TTransformedData
   >,
 ) => {
-  const invalidateGetCollectionDetailsById =
-    useInvalidateGetCollectionDetailsById();
-
   const { onMutate: onCreateCollectionItem, ...rest } = useGenericMutateQuery({
     fallbackErrorMessage: 'Unable to add item to collection.',
     mutationFn: async (data) => {
@@ -45,7 +39,7 @@ export const useCreateCollectionItem = <
               collectionItemId,
               userId,
             });
-            const response = await chunkAndUploadFileToCloudinary({
+            const response = await uploadFileToCloudinary({
               file: image.file,
               tags,
             });
@@ -66,11 +60,6 @@ export const useCreateCollectionItem = <
     mutationKey: ['create-collection-item'],
     showLoading: true,
     ...props,
-    onSuccess: async (...args) => {
-      await invalidateGetCollectionDetailsById();
-
-      await props?.onSuccess?.(...args);
-    },
   });
 
   return { ...rest, onCreateCollectionItem };

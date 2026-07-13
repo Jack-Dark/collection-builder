@@ -6,6 +6,8 @@ import { createColumnHelper } from '@tanstack/react-table';
 import type { CollectionRecordDef } from '#/api/routes/collections/collection.types';
 
 import { useDeleteCollectionById } from '#/api/routes/collections/delete-collection-by-id/delete-collection-by-id.react-query';
+import { useInvalidateGetNavMenuCollections } from '#/api/routes/collections/get-nav-menu-collections/get-nav-menu-collections.react-query';
+import { useInvalidateGetPaginatedCollections } from '#/api/routes/collections/get-paginated-collections/get-paginated-collections.react-query';
 import { TableCellActionsMenu } from '#/components/TableCellActionsMenu';
 
 import { useCollectionsListFormStore } from './CollectionsListPage';
@@ -88,8 +90,19 @@ export const getCollectionsListTableColumns = () => {
       cell: ({ getValue, row }) => {
         const router = useRouter();
 
+        const invalidateGetPaginatedCollections =
+          useInvalidateGetPaginatedCollections();
+
+        const invalidateGetNavMenuCollections =
+          useInvalidateGetNavMenuCollections();
+
         const { isPending: isDeletePending, onDeleteCollectionById } =
-          useDeleteCollectionById();
+          useDeleteCollectionById({
+            onSuccess: async () => {
+              await invalidateGetNavMenuCollections();
+              await invalidateGetPaginatedCollections();
+            },
+          });
 
         const { resetCollectionFormValues, setCollectionFormValues } =
           useCollectionsListFormStore();

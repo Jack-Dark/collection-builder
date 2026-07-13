@@ -73,6 +73,7 @@ export const useGenericFetchQuery = <
     transform: memoizedSelect,
   });
 
+  // TODO - WRAP CONTENT IN SUSPENSE COMPONENT TO GET INVALIDATION WORKING
   const context = useSuspenseQuery(configuredQueryOptions);
 
   const { data, error, isError, isFetching, isSuccess } = context;
