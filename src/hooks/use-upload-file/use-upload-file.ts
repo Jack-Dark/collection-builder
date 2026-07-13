@@ -1,9 +1,6 @@
 import type { Photo } from '#/lib/cloudinary.types';
 
-import {
-  chunkAndUploadFileToCloudinary,
-  uploadChunkActionServerFn,
-} from '#/api/routes/cloudinary/TEMP';
+import { chunkAndUploadFileToCloudinary } from '#/api/routes/cloudinary/TEMP';
 import { useSpinner } from '#/components/FullPageLoadingSpinner/useSpinner';
 import { useNotifications } from '#/components/Notifications';
 
@@ -26,11 +23,7 @@ export const useUploadFile = () => {
       try {
         const { file, tags } = props;
 
-        return await chunkAndUploadFileToCloudinary(
-          file,
-          tags,
-          uploadChunkActionServerFn,
-        );
+        return await chunkAndUploadFileToCloudinary({ file, tags });
       } catch (err) {
         console.error('[Upload] failed:', err);
         const message =

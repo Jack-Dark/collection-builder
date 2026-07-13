@@ -111,12 +111,13 @@ export const uploadChunkActionServerFn = createServerFn({ method: 'POST' })
     return photo;
   });
 
-export const chunkAndUploadFileToCloudinary = async (
-  file: File,
-  tags: string[],
-  callback: typeof uploadChunkActionServerFn,
-) => {
+export const chunkAndUploadFileToCloudinary = async (props: {
+  file: File;
+  tags: string[];
+}) => {
   try {
+    const { file, tags } = props;
+
     const arrayBuffer = await file.arrayBuffer();
     const bytes = new Uint8Array(arrayBuffer);
     const totalChunks = Math.max(1, Math.ceil(bytes.length / CHUNK_SIZE));
@@ -132,7 +133,7 @@ export const chunkAndUploadFileToCloudinary = async (
       const filename = file.name;
       const originalSize = file.size;
 
-      const result = await callback({
+      const result = await uploadChunkActionServerFn({
         data: {
           chunkBase64,
           chunkIndex: i,

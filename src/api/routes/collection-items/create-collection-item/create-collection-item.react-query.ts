@@ -8,7 +8,6 @@ import type { CreateCollectionItemFormSchemaDef } from './create-collection-item
 import {
   chunkAndUploadFileToCloudinary,
   createCollectionItemCloudinaryTags,
-  uploadChunkActionServerFn,
 } from '../../cloudinary/TEMP';
 import { useInvalidateGetCollectionDetailsById } from '../get-collection-details-by-id/get-collection-details-by-id.react-query';
 import { updateCollectionItemByIdServerFn } from '../update-collection-item-by-id/update-collection-item-by-id.serverFn';
@@ -46,11 +45,10 @@ export const useCreateCollectionItem = <
               collectionItemId,
               userId,
             });
-            const response = await chunkAndUploadFileToCloudinary(
-              image.file,
+            const response = await chunkAndUploadFileToCloudinary({
+              file: image.file,
               tags,
-              uploadChunkActionServerFn,
-            );
+            });
 
             return response.url;
           }
