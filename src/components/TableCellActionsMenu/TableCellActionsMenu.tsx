@@ -5,8 +5,11 @@ import type { TableCellActionsMenuPropsDef } from './types';
 import { Button } from '../Button';
 import { Dialog } from '../Dialog';
 import { useDialog } from '../Dialog/hooks/useDialog';
+import { useSpinner } from '../FullPageLoadingSpinner/useSpinner';
 
-export const TableCellActionsMenu = <TData extends { id: number | string }>(
+export const TableCellActionsMenu = <
+  TData extends { id: number | string; name: string },
+>(
   props: TableCellActionsMenuPropsDef<TData>,
 ) => {
   const {
@@ -22,8 +25,9 @@ export const TableCellActionsMenu = <TData extends { id: number | string }>(
   } = props;
 
   const [showConfirmDelete, hideConfirmDelete] = useDialog(() => {
-    // @ts-expect-error
-    const recordName: string = row.original?.name;
+    const recordName = row.original.name;
+
+    const { onInterceptProcessingRequest, processing } = useSpinner();
 
     return (
       <Dialog
@@ -37,8 +41,12 @@ export const TableCellActionsMenu = <TData extends { id: number | string }>(
               />
               <Button
                 onClick={async () => {
-                  await deleteOnClick(row.original);
+                  onInterceptProcessingRequest(async () => {
+                    await deleteOnClick(row.original);
+                    hideConfirmDelete();
+                  });
                 }}
+                processing={processing}
                 text="Delete"
                 variant="alert"
               />
