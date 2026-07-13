@@ -50,7 +50,7 @@ export const useCreateCollectionItem = <
               tags,
             });
 
-            return response.url;
+            return response.secure_url;
           }
         }),
       );

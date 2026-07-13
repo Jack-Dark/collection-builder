@@ -65,21 +65,12 @@ export async function uploadChunkToCloudinary(props: {
       pw_status: 'pending',
       pw_title: safeCtxValue(metadata.title),
     },
-    // folder: 'community-photo-wall',
     public_id: `${Date.now()}-${filename.replace(/\.[^/.]+$/, '')}`,
     resource_type: 'image' as const,
     tags,
     transformation,
     ...(uploadPreset ? { upload_preset: uploadPreset } : {}),
   };
-
-  console.log('[Cloudinary] upload starting', {
-    bytes: fileBuffer.length,
-    cloudName: process.env['CLOUDINARY_CLOUD_NAME'],
-    filename,
-    metaId: metadata.id,
-    preset: uploadPreset ?? '(none)',
-  });
 
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
@@ -97,19 +88,8 @@ export async function uploadChunkToCloudinary(props: {
 
           return;
         }
-        console.log('[Cloudinary] upload success:', {
-          bytes: result.bytes,
-          height: result.height,
-          public_id: result.public_id,
-          width: result.width,
-        });
-        resolve({
-          bytes: result.bytes,
-          height: result.height,
-          public_id: result.public_id,
-          secure_url: result.secure_url,
-          width: result.width,
-        });
+
+        resolve(result);
       },
     );
     stream.end(fileBuffer);

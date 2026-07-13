@@ -45,7 +45,7 @@ export const useUpdateCollectionItemById = <
                 tags,
               });
 
-              return response.url;
+              return response.secure_url;
             }
           }),
         );

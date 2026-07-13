@@ -1,11 +1,13 @@
 import { createServerFn } from '@tanstack/react-start';
 import z from 'zod';
 
-import type { Photo } from '#/lib/cloudinary.types';
+import type { CloudinaryUploadResult } from '#/lib/cloudinary.types';
 
-import { CHUNK_SIZE } from '#/hooks/use-upload-file';
 import { uploadChunkToCloudinary } from '#/lib/cloudinary';
 import { arrayBufferToBase64 } from '#/lib/utils';
+
+/* Chunk size: 1 MB. Small enough to avoid memory spikes; large enough to be fast. */
+export const CHUNK_SIZE = 1 * 1024 * 1024;
 
 export const createCollectionItemCloudinaryTags = (props: {
   collectionId: number;
@@ -42,7 +44,7 @@ const uploadCloudinaryFileSchema = z.object({
  */
 export const uploadChunkActionServerFn = createServerFn({ method: 'POST' })
   .validator(uploadCloudinaryFileSchema)
-  .handler(async ({ data }): Promise<Photo | null> => {
+  .handler(async ({ data }) => {
     const {
       chunkBase64,
       chunkIndex,
@@ -54,10 +56,6 @@ export const uploadChunkActionServerFn = createServerFn({ method: 'POST' })
       uploadId,
     } = data;
 
-    console.log(
-      `[Chunk] received chunk ${chunkIndex + 1}/${totalChunks} for upload "${uploadId}"`,
-    );
-
     if (!chunkBuffers.has(uploadId)) {
       chunkBuffers.set(uploadId, new Array(totalChunks).fill(null));
     }
@@ -68,20 +66,14 @@ export const uploadChunkActionServerFn = createServerFn({ method: 'POST' })
     const received = chunks.filter((c) => {
       return c !== null;
     }).length;
-    console.log(
-      `[Chunk] upload "${uploadId}": ${received}/${totalChunks} chunks received`,
-    );
 
     if (received < totalChunks) return null;
 
-    console.log(`[Chunk] all chunks received for "${uploadId}", assembling…`);
     chunkBuffers.delete(uploadId);
     const fileBuffer = Buffer.concat(chunks as Buffer[]);
-    console.log(`[Chunk] assembled buffer: ${fileBuffer.length} bytes`);
 
     // Generate a stable ID that gets stored in Cloudinary context
     const photoId = `photo-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
-    const photoTitle = title.trim() || filename;
 
     const result = await uploadChunkToCloudinary({
       fileBuffer,
@@ -89,26 +81,12 @@ export const uploadChunkActionServerFn = createServerFn({ method: 'POST' })
       metadata: {
         id: photoId,
         originalSize,
-        title: photoTitle,
+        title,
       },
       tags,
     });
 
-    // Build Photo from upload result + metadata we just stored in Cloudinary context
-    const photo: Photo = {
-      createdAt: new Date().toISOString(),
-      height: result.height,
-      id: photoId,
-      originalSize,
-      processedSize: result.bytes,
-      publicId: result.public_id,
-      status: 'pending',
-      title: photoTitle,
-      url: result.secure_url,
-      width: result.width,
-    };
-
-    return photo;
+    return result;
   });
 
 export const chunkAndUploadFileToCloudinary = async (props: {
@@ -123,7 +101,7 @@ export const chunkAndUploadFileToCloudinary = async (props: {
     const totalChunks = Math.max(1, Math.ceil(bytes.length / CHUNK_SIZE));
     const uploadId = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
 
-    let photo: Photo | null = null;
+    let photo: CloudinaryUploadResult | null = null;
 
     for (let i = 0; i < totalChunks; i++) {
       const start = i * CHUNK_SIZE;

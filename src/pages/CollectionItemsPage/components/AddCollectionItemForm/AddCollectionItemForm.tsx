@@ -11,7 +11,6 @@ import {
   addCollectionItemFormDefaultValues,
   withAddCollectionItemForm,
 } from './constants';
-import { useUploadFile } from '../../../../hooks/use-upload-file';
 
 export const AddCollectionItemFormTableRow = withAddCollectionItemForm({
   /** These values are only used for type-checking, and are not used at runtime */
@@ -37,8 +36,6 @@ export const AddCollectionItemFormTableRow = withAddCollectionItemForm({
       rest.customField2Enabled && 2,
       rest.customField3Enabled && 3,
     ].filter(Boolean) as (1 | 2 | 3)[];
-
-    const { createPreviewUrl, handleUploadFile, processing } = useUploadFile();
 
     return (
       <tr className="align-top">
@@ -152,7 +149,7 @@ export const AddCollectionItemFormTableRow = withAddCollectionItemForm({
                               const files = [...selectedFiles].map((file) => {
                                 return {
                                   file,
-                                  previewUrl: createPreviewUrl(file),
+                                  previewUrl: URL.createObjectURL(file),
                                 };
                               });
 
