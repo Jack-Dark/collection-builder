@@ -22,13 +22,7 @@ export const Route = createFileRoute('/_protected/collections/$id')({
     };
   },
   loaderDeps: ({ search }) => {
-    return {
-      filters: search.filters,
-      limit: search.limit,
-      page: search.page,
-      search: search.search,
-      sort: search.sort,
-    };
+    return search;
   },
   validateSearch: collectionItemsSearchQueriesSchema,
 });

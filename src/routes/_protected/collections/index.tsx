@@ -16,12 +16,7 @@ export const Route = createFileRoute('/_protected/collections/')({
     });
   },
   loaderDeps: ({ search }) => {
-    return {
-      limit: search.limit,
-      page: search.page,
-      search: search.search,
-      sort: search.sort,
-    };
+    return search;
   },
   validateSearch: optionalPaginationQueriesSchema,
 });
