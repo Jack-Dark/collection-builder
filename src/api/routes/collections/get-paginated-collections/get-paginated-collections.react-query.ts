@@ -25,6 +25,7 @@ export const useGetPaginatedCollections = <
     queryFn: getPaginatedCollectionsServerFn,
     queryKey: [reactQueryKeys.getPaginatedCollections, props.requestArgs],
     ...props,
+    showLoading: true,
   });
 };
 

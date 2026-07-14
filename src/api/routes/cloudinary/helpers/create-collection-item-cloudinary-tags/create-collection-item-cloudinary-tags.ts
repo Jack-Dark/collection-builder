@@ -1,13 +1,17 @@
 import type { CreateCollectionItemCloudinaryTagsPropsDef } from './create-collection-item-cloudinary-tags.types';
 
-export const createCollectionItemCloudinaryTags = (
+export const createCloudinaryTags = (
   props: CreateCollectionItemCloudinaryTagsPropsDef,
 ) => {
   const { collectionId, collectionItemId, userId } = props;
 
   return [
-    `collection-item-${collectionItemId}`,
     `user-${userId}`,
     `collection-${collectionId}`,
-  ];
+    createCollectionItemCloudinaryTag(collectionItemId),
+  ] as const;
+};
+
+export const createCollectionItemCloudinaryTag = (collectionItemId: number) => {
+  return `collection-item-${collectionItemId}` as const;
 };

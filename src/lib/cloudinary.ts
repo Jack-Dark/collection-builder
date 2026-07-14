@@ -74,3 +74,7 @@ export const uploadChunkToCloudinary = async (props: {
     stream.end(fileBuffer);
   });
 };
+
+export const deleteCloudinaryAssetsByTag = (tag: string) => {
+  return cloudinary.api.delete_resources_by_tag(tag);
+};

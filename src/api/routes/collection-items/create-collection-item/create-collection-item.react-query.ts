@@ -5,7 +5,7 @@ import { useGenericMutateQuery } from '#/api/react-query-hooks/use-generic-mutat
 import type { CollectionItemRecordDef } from '../collection-item.types';
 import type { CreateCollectionItemFormSchemaDef } from './create-collection-item.types';
 
-import { createCollectionItemCloudinaryTags } from '../../cloudinary/helpers/create-collection-item-cloudinary-tags';
+import { createCloudinaryTags } from '../../cloudinary/helpers/create-collection-item-cloudinary-tags';
 import { uploadFileToCloudinary } from '../../cloudinary/helpers/upload-file-to-cloudinary';
 import { updateCollectionItemByIdServerFn } from '../update-collection-item-by-id/update-collection-item-by-id.serverFn';
 import { createCollectionItemServerFn } from './create-collection-item.serverFn';
@@ -34,7 +34,7 @@ export const useCreateCollectionItem = <
           if (typeof image === 'string') {
             return image;
           } else {
-            const tags = createCollectionItemCloudinaryTags({
+            const tags = createCloudinaryTags({
               collectionId,
               collectionItemId,
               userId,
