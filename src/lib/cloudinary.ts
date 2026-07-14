@@ -28,33 +28,20 @@ export function safeCtxValue(s: string | number | undefined): string {
 /* Upload                                                                */
 /* ─────────────────────────────────────────────────────────────────── */
 
-/**
- * Upload a raw file buffer to Cloudinary.
- * Stores app metadata (id, title, status, originalSize, moderationSource)
- * as Cloudinary context fields so photos survive server restarts.
- */
-export async function uploadChunkToCloudinary(props: {
+export const uploadChunkToCloudinary = async (props: {
   fileBuffer: Buffer;
   filename: string;
-  metadata: { id: string; originalSize: number; title: string };
   tags: string[];
-}): Promise<CloudinaryUploadResult> {
-  const { fileBuffer, filename, metadata, tags } = props;
+}): Promise<CloudinaryUploadResult> => {
+  const { fileBuffer, filename, tags } = props;
 
   const uploadOptions: UploadApiOptions = {
-    // All app metadata stored here — no separate database needed
-    context: {
-      pw_id: metadata.id,
-      pw_original_size: String(metadata.originalSize),
-      pw_status: 'pending',
-      pw_title: safeCtxValue(metadata.title),
-    },
     public_id: `${Date.now()}-${filename.replace(/\.[^/.]+$/, '')}`,
     resource_type: 'image' as const,
     tags,
     transformation: [
       {
-        crop: 'fit',
+        crop: 'limit',
         fetch_format: 'webp',
         height: 800,
         quality: 'auto',
@@ -86,4 +73,4 @@ export async function uploadChunkToCloudinary(props: {
     );
     stream.end(fileBuffer);
   });
-}
+};

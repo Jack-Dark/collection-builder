@@ -43,16 +43,13 @@ export const uploadFileToCloudinary = async (
       const chunk = bytes.slice(start, start + chunkSize);
       const chunkBase64 = arrayBufferToBase64(chunk.buffer);
       const filename = file.name;
-      const originalSize = file.size;
 
       const result = await uploadChunkToCloudinaryServerFn({
         data: {
           chunkBase64,
           chunkIndex: i,
           filename,
-          originalSize,
           tags,
-          title: filename,
           totalChunks,
           uploadId,
         },

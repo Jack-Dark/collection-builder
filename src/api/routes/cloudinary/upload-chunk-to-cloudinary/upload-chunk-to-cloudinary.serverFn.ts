@@ -17,16 +17,8 @@ export const uploadChunkToCloudinaryServerFn = createServerFn({
 })
   .validator(uploadCloudinaryFileSchema)
   .handler(async ({ data }) => {
-    const {
-      chunkBase64,
-      chunkIndex,
-      filename,
-      originalSize,
-      tags,
-      title,
-      totalChunks,
-      uploadId,
-    } = data;
+    const { chunkBase64, chunkIndex, filename, tags, totalChunks, uploadId } =
+      data;
 
     if (!chunkBuffers.has(uploadId)) {
       chunkBuffers.set(uploadId, new Array(totalChunks).fill(null));
@@ -44,17 +36,9 @@ export const uploadChunkToCloudinaryServerFn = createServerFn({
     chunkBuffers.delete(uploadId);
     const fileBuffer = Buffer.concat(chunks as Buffer[]);
 
-    // Generate a stable ID that gets stored in Cloudinary context
-    const photoId = `photo-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
-
     const result = await uploadChunkToCloudinary({
       fileBuffer,
       filename,
-      metadata: {
-        id: photoId,
-        originalSize,
-        title,
-      },
       tags,
     });
 
