@@ -1,5 +1,3 @@
-import { useServerFn } from '@tanstack/react-start';
-
 import type { GenericFetchProps } from '#/api/react-query-hooks/use-generic-fetch-query/use-generic-fetch-query.types';
 
 import { useGenericFetchQuery } from '#/api/react-query-hooks/use-generic-fetch-query';
@@ -22,12 +20,10 @@ export const useGetPaginatedCollections = <
     TTransformedData
   >,
 ) => {
-  const queryFn = useServerFn(getPaginatedCollectionsServerFn);
-
   return useGenericFetchQuery({
     fallbackErrorMessage: 'Unable to retrieve collections.',
-    groupName: reactQueryKeys.getPaginatedCollections,
-    queryFn,
+    queryFn: getPaginatedCollectionsServerFn,
+    queryKey: [reactQueryKeys.getPaginatedCollections, props.requestArgs],
     ...props,
   });
 };

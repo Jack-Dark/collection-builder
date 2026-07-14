@@ -39,7 +39,7 @@ export const SignInForm = () => {
       );
 
       if (data) {
-        router.invalidate();
+        // invalidate
       } else {
         // throw new Error(error.message);
       }

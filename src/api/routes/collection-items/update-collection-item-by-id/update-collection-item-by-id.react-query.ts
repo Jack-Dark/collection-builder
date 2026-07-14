@@ -24,6 +24,7 @@ export const useUpdateCollectionItemById = <
       mutationFn: async (data) => {
         const { collectionId, id: collectionItemId, userId } = data;
 
+        // TODO - ADD DELETE LOGIC FOR REPLACED IMAGES
         const imageSources: string[] = await Promise.all(
           data.images.map(async (image) => {
             if (typeof image === 'string') {

@@ -19,12 +19,10 @@ import { getGenericFetchQueryOptions } from './get-generic-fetch-query-options';
  *     TTransformedData
  *   >,
  * ) => {
- *  const query = useServerFn(YOUR_SERVER_FUNCTION);
- *
  *  return useGenericFetchQuery({
  *    fallbackErrorMessage: 'Unable to retrieve __________.',
- *    groupName: YOUR_UNIQUE_GROUP_NAME,
- *    query,
+ *    queryKey: [YOUR_UNIQUE_GROUP_NAME, props.requestArgs],
+ *    query: YOUR_SERVER_FUNCTION,
  *    ...props,
  *  });
  * }
@@ -73,7 +71,6 @@ export const useGenericFetchQuery = <
     transform: memoizedSelect,
   });
 
-  // TODO - WRAP CONTENT IN SUSPENSE COMPONENT TO GET INVALIDATION WORKING
   const context = useSuspenseQuery(configuredQueryOptions);
 
   const { data, error, isError, isFetching, isSuccess } = context;

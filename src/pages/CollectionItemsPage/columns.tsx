@@ -3,7 +3,6 @@ import type {
   CellContext,
 } from '@tanstack/react-table';
 
-import { useRouter } from '@tanstack/react-router';
 import { createColumnHelper } from '@tanstack/react-table';
 import formatDate, { masks } from 'dateformat';
 
@@ -12,6 +11,7 @@ import type { CollectionRecordDef } from '#/api/routes/collections/collection.ty
 
 import { useDeleteCollectionItemById } from '#/api/routes/collection-items/delete-collection-item-by-id/delete-collection-item-by-id.react-query';
 import { useInvalidateGetCollectionDetailsById } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.react-query';
+import { Route as CollectionRoute } from '#/routes/_protected/collections/$id';
 
 import { TableCellActionsMenu } from '../../components/TableCellActionsMenu';
 import { useEditingCollectionItemsRowIds } from '../CollectionsListPage/hooks/use-editing-collections-row-ids';
@@ -127,15 +127,18 @@ const CollectionDetailsActionsCell = ({
   getValue,
   row,
 }: CellContext<CollectionItemRecordDef, number>) => {
-  const router = useRouter();
-
   const invalidateGetCollectionDetailsById =
     useInvalidateGetCollectionDetailsById();
+
+  const { id } = CollectionRoute.useParams();
+  const collectionId = Number(id);
 
   const { isPending: isDeletePending, onDeleteCollectionItemById } =
     useDeleteCollectionItemById({
       onSuccess: async () => {
-        invalidateGetCollectionDetailsById();
+        await invalidateGetCollectionDetailsById({
+          id: collectionId,
+        });
       },
     });
 
@@ -156,7 +159,6 @@ const CollectionDetailsActionsCell = ({
         await onDeleteCollectionItemById({
           collectionItemId,
         });
-        router.invalidate();
       }}
       editIsDisabled={isDeletePending}
       editOnClick={async (row) => {

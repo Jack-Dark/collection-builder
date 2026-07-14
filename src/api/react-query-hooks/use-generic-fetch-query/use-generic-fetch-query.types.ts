@@ -38,12 +38,16 @@ export type UseGenericFetchProps<
   TTransformedData = TResponseDef,
 > = GenericFetchProps<TRequestArgs, TResponseDef, TTransformedData> & {
   fallbackErrorMessage: string;
-  groupName: string;
   queryFn: (props: { data: TRequestArgs }) => Promise<TResponseDef>;
+  queryKey: QueryKeyDef<TRequestArgs>;
 };
 
+type RequestId = number | string | undefined;
+
 export type QueryKeyDef<TRequestArgs extends Record<string, any>> = Readonly<
-  [string, TRequestArgs | undefined]
+  | [ReactQueryKeysDef]
+  | [ReactQueryKeysDef, TRequestArgs]
+  | [ReactQueryKeysDef, RequestId, TRequestArgs]
 >;
 
 export type ReactQueryKeysDef =

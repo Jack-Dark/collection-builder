@@ -11,10 +11,16 @@ export const Route = createFileRoute('/_protected/collections/$id')({
   loader: async ({ context, deps: searchQueries, params }) => {
     const collectionId = Number(params.id);
 
+    const requestArgs = { collectionId, params: searchQueries };
+
     const queryOptions = getGenericFetchQueryOptions({
-      groupName: reactQueryKeys.getCollectionDetailsById,
       queryFn: getCollectionDetailsByIdServerFn,
-      requestArgs: { collectionId, params: searchQueries },
+      queryKey: [
+        reactQueryKeys.getCollectionDetailsById,
+        requestArgs.collectionId,
+        requestArgs,
+      ],
+      requestArgs,
     });
 
     return await context.queryClient.ensureQueryData(queryOptions);

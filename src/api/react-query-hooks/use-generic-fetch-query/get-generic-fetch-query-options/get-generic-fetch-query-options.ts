@@ -14,7 +14,7 @@ export const getGenericFetchQueryOptions = <
     TTransformedData
   >,
 ) => {
-  const { cacheTime, groupName, onStart, queryFn, requestArgs, ...configs } =
+  const { cacheTime, onStart, queryFn, queryKey, requestArgs, ...configs } =
     props;
 
   const configuredQueryOptions = queryOptions<
@@ -30,7 +30,7 @@ export const getGenericFetchQueryOptions = <
 
       return queryFn({ data: requestArgs });
     },
-    queryKey: [groupName, requestArgs],
+    queryKey,
   });
 
   return configuredQueryOptions;

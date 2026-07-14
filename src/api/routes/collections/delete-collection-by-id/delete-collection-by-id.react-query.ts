@@ -1,5 +1,3 @@
-import { useServerFn } from '@tanstack/react-start';
-
 import type { GenericMutateQueryProps } from '#/api/react-query-hooks/use-generic-mutate-query/use-generic-mutate-query.types';
 
 import { useGenericMutateQuery } from '#/api/react-query-hooks/use-generic-mutate-query';
@@ -9,6 +7,8 @@ import type {
   DeleteCollectionResponseDef,
 } from './delete-collection-by-id.types';
 
+import { useInvalidateGetNavMenuCollections } from '../get-nav-menu-collections/get-nav-menu-collections.react-query';
+import { useInvalidateGetPaginatedCollections } from '../get-paginated-collections/get-paginated-collections.react-query';
 import { deleteCollectionByIdServerFn } from './delete-collection-by-id.serverFn';
 
 export const useDeleteCollectionById = <
@@ -20,15 +20,24 @@ export const useDeleteCollectionById = <
     TTransformedData
   >,
 ) => {
-  const serverFn = useServerFn(deleteCollectionByIdServerFn);
+  const invalidateGetPaginatedCollections =
+    useInvalidateGetPaginatedCollections();
+
+  const invalidateGetNavMenuCollections = useInvalidateGetNavMenuCollections();
 
   const { onMutate: onDeleteCollectionById, ...rest } = useGenericMutateQuery({
     fallbackErrorMessage: 'Unable to delete item from collection.',
     mutationFn: (data) => {
-      return serverFn({ data });
+      return deleteCollectionByIdServerFn({ data });
     },
     showLoading: true,
     ...props,
+    onSuccess: async (data, requestArgs) => {
+      await invalidateGetNavMenuCollections();
+      await invalidateGetPaginatedCollections();
+
+      await props?.onSuccess?.(data, requestArgs);
+    },
   });
 
   return { ...rest, onDeleteCollectionById };

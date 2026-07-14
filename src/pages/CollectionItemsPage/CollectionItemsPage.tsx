@@ -9,7 +9,10 @@ import { create } from 'zustand';
 import type { CollectionItemsTableColumn } from '#/api/routes/collection-items/collection-item.types';
 
 import { useCreateCollectionItem } from '#/api/routes/collection-items/create-collection-item/create-collection-item.react-query';
-import { useInvalidateGetCollectionDetailsById } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.react-query';
+import {
+  useGetCollectionDetailsById,
+  useInvalidateGetCollectionDetailsById,
+} from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.react-query';
 import { useUpdateCollectionItemById } from '#/api/routes/collection-items/update-collection-item-by-id/update-collection-item-by-id.react-query';
 import { Button } from '#/components/Button';
 import { useSpinner } from '#/components/FullPageLoadingSpinner/useSpinner';
@@ -75,8 +78,14 @@ const useSpinnerWhenRouterLoading = () => {
 };
 
 export const CollectionItemsPage: RouteComponent = () => {
-  const { collection, customFields, items, lastAddedItem, pagination } =
-    CollectionRoute.useLoaderData();
+  const { id } = CollectionRoute.useParams();
+  const collectionId = Number(id);
+  const search = CollectionRoute.useSearch();
+
+  const { data } = useGetCollectionDetailsById({
+    requestArgs: { collectionId, params: search },
+  });
+  const { collection, customFields, items, lastAddedItem, pagination } = data;
 
   useSpinnerWhenRouterLoading();
 
@@ -91,7 +100,7 @@ export const CollectionItemsPage: RouteComponent = () => {
 
   const { onCreateCollectionItem } = useCreateCollectionItem({
     onSuccess: async () => {
-      await invalidateGetCollectionDetailsById();
+      await invalidateGetCollectionDetailsById({ id: collection.id });
 
       resetCollectionItemFormValues();
     },
@@ -99,7 +108,7 @@ export const CollectionItemsPage: RouteComponent = () => {
 
   const { onUpdateCollectionItemById } = useUpdateCollectionItemById({
     onSuccess: async () => {
-      await invalidateGetCollectionDetailsById();
+      await invalidateGetCollectionDetailsById({ id: collection.id });
 
       resetCollectionItemFormValues();
     },

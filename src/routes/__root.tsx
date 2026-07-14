@@ -54,8 +54,8 @@ export const Route = createRootRouteWithContext<{
   },
   loader: async ({ context }) => {
     const queryOptions = getGenericFetchQueryOptions({
-      groupName: reactQueryKeys.getNavMenuCollections,
       queryFn: getNavMenuCollectionsServerFn,
+      queryKey: [reactQueryKeys.getNavMenuCollections],
       requestArgs: {},
     });
 

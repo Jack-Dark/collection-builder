@@ -11,10 +11,12 @@ export const Route = createFileRoute('/_protected/collections/')({
     return <CollectionsListPage {...props} />;
   },
   loader: async ({ context, deps: searchQueries }) => {
+    const requestArgs = { params: searchQueries };
+
     const queryOptions = getGenericFetchQueryOptions({
-      groupName: reactQueryKeys.getPaginatedCollections,
       queryFn: getPaginatedCollectionsServerFn,
-      requestArgs: { params: searchQueries },
+      queryKey: [reactQueryKeys.getPaginatedCollections, requestArgs],
+      requestArgs,
     });
 
     return await context.queryClient.ensureQueryData(queryOptions);

@@ -18,13 +18,13 @@ export type GetGenericFetchOptionsProps<
   >
 > & {
   cacheTime?: number;
-  groupName: string;
   onError?: (error: string, requestArgs?: TRequestArgs) => void;
   /** NOT called when returning a cached response. */
   onStart?: () => void | Promise<void>;
   /** This is called on the response every time, even if it's returned from cache. */
   onSuccess?: (data: TTransformedData) => void;
   queryFn: (props: { data: TRequestArgs }) => Promise<TResponseDef>;
+  queryKey: QueryKeyDef<TRequestArgs>;
   requestArgs: TRequestArgs;
   transform?: (response: TResponseDef) => TTransformedData;
 };

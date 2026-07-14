@@ -2,12 +2,9 @@ import type { RouteComponent } from '@tanstack/react-router';
 
 import ControlPointIcon from '@mui/icons-material/ControlPoint';
 import { revalidateLogic } from '@tanstack/react-form';
-import { useRouter } from '@tanstack/react-router';
 import { create } from 'zustand';
 
 import { useCreateCollection } from '#/api/routes/collections/create-collection/create-collection.react-query';
-import { useInvalidateGetNavMenuCollections } from '#/api/routes/collections/get-nav-menu-collections/get-nav-menu-collections.react-query';
-import { useInvalidateGetPaginatedCollections } from '#/api/routes/collections/get-paginated-collections/get-paginated-collections.react-query';
 import { useUpdateCollectionById } from '#/api/routes/collections/update-collection-by-id/update-collection-by-id.react-query';
 import { Button } from '#/components/Button';
 import { Table, tableCellClasses } from '#/components/Table';
@@ -46,32 +43,20 @@ export const useCollectionsListFormStore = create<{
 });
 
 export const CollectionsListPage: RouteComponent = () => {
+  // TODO - REPLACE WITH USEQUERY FETCH HOOK
   const { collections, pagination } = Route.useLoaderData();
-
-  const router = useRouter();
 
   const { collectionFormValues, resetCollectionFormValues } =
     useCollectionsListFormStore();
 
-  const invalidateGetPaginatedCollections =
-    useInvalidateGetPaginatedCollections();
-
-  const invalidateGetNavMenuCollections = useInvalidateGetNavMenuCollections();
-
   const { onCreateCollection } = useCreateCollection({
     onSuccess: async () => {
-      await invalidateGetNavMenuCollections();
-      await invalidateGetPaginatedCollections();
-
       resetCollectionFormValues();
     },
   });
 
   const { onUpdateCollectionById } = useUpdateCollectionById({
     onSuccess: async () => {
-      await invalidateGetNavMenuCollections();
-      await invalidateGetPaginatedCollections();
-
       resetCollectionFormValues();
     },
   });
@@ -95,8 +80,6 @@ export const CollectionsListPage: RouteComponent = () => {
       }
 
       form.reset();
-
-      await router.invalidate();
     },
     validationLogic: revalidateLogic({
       mode: 'submit',

@@ -1,13 +1,11 @@
 import type { Getter, Row } from '@tanstack/react-table';
 
-import { Link, useRouter } from '@tanstack/react-router';
+import { Link } from '@tanstack/react-router';
 import { createColumnHelper } from '@tanstack/react-table';
 
 import type { CollectionRecordDef } from '#/api/routes/collections/collection.types';
 
 import { useDeleteCollectionById } from '#/api/routes/collections/delete-collection-by-id/delete-collection-by-id.react-query';
-import { useInvalidateGetNavMenuCollections } from '#/api/routes/collections/get-nav-menu-collections/get-nav-menu-collections.react-query';
-import { useInvalidateGetPaginatedCollections } from '#/api/routes/collections/get-paginated-collections/get-paginated-collections.react-query';
 import { TableCellActionsMenu } from '#/components/TableCellActionsMenu';
 
 import { useCollectionsListFormStore } from './CollectionsListPage';
@@ -88,21 +86,8 @@ export const getCollectionsListTableColumns = () => {
     }),
     columnHelper.accessor('id', {
       cell: ({ getValue, row }) => {
-        const router = useRouter();
-
-        const invalidateGetPaginatedCollections =
-          useInvalidateGetPaginatedCollections();
-
-        const invalidateGetNavMenuCollections =
-          useInvalidateGetNavMenuCollections();
-
         const { isPending: isDeletePending, onDeleteCollectionById } =
-          useDeleteCollectionById({
-            onSuccess: async () => {
-              await invalidateGetNavMenuCollections();
-              await invalidateGetPaginatedCollections();
-            },
-          });
+          useDeleteCollectionById();
 
         const { resetCollectionFormValues, setCollectionFormValues } =
           useCollectionsListFormStore();
@@ -119,7 +104,6 @@ export const getCollectionsListTableColumns = () => {
             deleteIsDisabled={isDeletePending}
             deleteOnClick={async () => {
               await onDeleteCollectionById({ collectionId });
-              router.invalidate();
             }}
             editIsDisabled={isDeletePending}
             editOnClick={async (row) => {

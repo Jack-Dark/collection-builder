@@ -8,9 +8,16 @@ export const getUseInvalidateQuery = <TRequestArgs extends Record<string, any>>(
   return () => {
     const queryClient = useQueryClient();
 
-    const invalidate = async (requestArgs?: TRequestArgs) => {
+    const invalidate = async (props?: {
+      id?: number | string | undefined;
+      requestArgs?: TRequestArgs;
+    }) => {
+      const queryKey = [groupName, props?.id, props?.requestArgs].filter(
+        Boolean,
+      );
+
       await queryClient.invalidateQueries({
-        queryKey: [groupName, requestArgs],
+        queryKey,
       });
     };
 

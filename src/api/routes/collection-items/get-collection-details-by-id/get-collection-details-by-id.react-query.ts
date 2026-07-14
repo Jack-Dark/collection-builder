@@ -1,5 +1,3 @@
-import { useServerFn } from '@tanstack/react-start';
-
 import type { GenericFetchProps } from '#/api/react-query-hooks/use-generic-fetch-query/use-generic-fetch-query.types';
 
 import { useGenericFetchQuery } from '#/api/react-query-hooks/use-generic-fetch-query';
@@ -22,12 +20,14 @@ export const useGetCollectionDetailsById = <
     TTransformedData
   >,
 ) => {
-  const query = useServerFn(getCollectionDetailsByIdServerFn);
-
   return useGenericFetchQuery({
     fallbackErrorMessage: 'Unable to retrieve collections.',
-    groupName: reactQueryKeys.getCollectionDetailsById,
-    queryFn: query,
+    queryFn: getCollectionDetailsByIdServerFn,
+    queryKey: [
+      reactQueryKeys.getCollectionDetailsById,
+      props.requestArgs.collectionId,
+      props.requestArgs,
+    ],
     ...props,
   });
 };
