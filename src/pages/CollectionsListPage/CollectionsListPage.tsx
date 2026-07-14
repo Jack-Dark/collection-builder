@@ -5,6 +5,7 @@ import { revalidateLogic } from '@tanstack/react-form';
 import { create } from 'zustand';
 
 import { useCreateCollection } from '#/api/routes/collections/create-collection/create-collection.react-query';
+import { useGetPaginatedCollections } from '#/api/routes/collections/get-paginated-collections/get-paginated-collections.react-query';
 import { useUpdateCollectionById } from '#/api/routes/collections/update-collection-by-id/update-collection-by-id.react-query';
 import { Button } from '#/components/Button';
 import { Table, tableCellClasses } from '#/components/Table';
@@ -43,8 +44,12 @@ export const useCollectionsListFormStore = create<{
 });
 
 export const CollectionsListPage: RouteComponent = () => {
-  // TODO - REPLACE WITH USEQUERY FETCH HOOK
-  const { collections, pagination } = Route.useLoaderData();
+  const search = Route.useSearch();
+
+  const { data } = useGetPaginatedCollections({
+    requestArgs: { params: search },
+  });
+  const { collections, pagination } = data;
 
   const { collectionFormValues, resetCollectionFormValues } =
     useCollectionsListFormStore();

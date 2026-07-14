@@ -3,21 +3,25 @@ import type { RouteComponent } from '@tanstack/react-router';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import { Outlet, useRouter } from '@tanstack/react-router';
-import { ErrorBoundary } from 'react-error-boundary';
 
 import type { NavMenuItem } from './components/NavMenu/NavMenu.types';
 import type { RouterPath } from './types';
 
+import { useGetNavMenuCollections } from './api/routes/collections/get-nav-menu-collections/get-nav-menu-collections.react-query';
 import { authClient } from './auth/auth-client';
 import { FullPageLoadingSpinner } from './components/FullPageLoadingSpinner';
 import { NavMenu } from './components/NavMenu';
 import { Notifications } from './components/Notifications';
-import { Route as RootRoute } from './routes/__root';
+import { SimpleErrorBoundary } from './components/SimpleErrorBoundary';
 import { Route as CollectionsRoute } from './routes/_protected/collections';
 import { Route as CollectionRoute } from './routes/_protected/collections/$id';
 
 export const Layout: RouteComponent = () => {
-  const { collections } = RootRoute.useLoaderData();
+  const { data } = useGetNavMenuCollections({
+    requestArgs: {},
+  });
+
+  const { collections } = data;
 
   const router = useRouter();
 
@@ -57,40 +61,35 @@ export const Layout: RouteComponent = () => {
   ];
 
   return (
-    <>
+    <SimpleErrorBoundary>
       <FullPageLoadingSpinner />
       <Notifications />
       <header className="grid justify-items-center px-4 py-4">
         <div className="w-full max-w-7xl">
-          <div className="flex items-center gap-4 mb-8">
-            <SportsEsportsIcon className="text-4xl" fontSize="large" />
-            <h1 className="text-white">Start tracking your collection!</h1>
+          <div className="flex items-center gap-4 mb-4 text-white">
+            <SportsEsportsIcon
+              className="text-inherit text-4xl"
+              fontSize="large"
+            />
+            <h1 className="text-inherit">Start tracking your collection!</h1>
           </div>
 
-          <ErrorBoundary
-            FallbackComponent={() => {
-              return <p>An error occurred...</p>;
-            }}
-          >
+          <SimpleErrorBoundary>
             <NavMenu items={navItems} />
-          </ErrorBoundary>
+          </SimpleErrorBoundary>
         </div>
       </header>
 
       <div className="grid justify-items-center px-4">
         <main className="w-full max-w-7xl px-4 py-12 bg-white text-black rounded-xl">
-          <ErrorBoundary
-            FallbackComponent={() => {
-              return <p>An error occurred...</p>;
-            }}
-          >
+          <SimpleErrorBoundary>
             <Outlet />
-          </ErrorBoundary>
+          </SimpleErrorBoundary>
         </main>
       </div>
       <footer className="grid justify-items-center px-4 py-4">
         <div className="w-full max-w-7xl">PLACEHOLDER FOOTER CONTENT</div>
       </footer>
-    </>
+    </SimpleErrorBoundary>
   );
 };
