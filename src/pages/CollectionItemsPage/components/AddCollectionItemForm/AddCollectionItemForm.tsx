@@ -58,9 +58,9 @@ export const AddCollectionItemFormTableRow = withAddCollectionItemForm({
                     return (
                       <field.InputField
                         autoFocus
-                        error={field.state.meta.errors.join(',')}
+                        // error={errors.join(',')}
+                        hideLabel
                         name={field.name}
-
                         onValueChange={field.handleChange}
                         placeholder="Input name..."
                         required

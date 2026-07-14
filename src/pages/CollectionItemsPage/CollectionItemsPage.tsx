@@ -1,13 +1,10 @@
 import type { RouteComponent } from '@tanstack/react-router';
 
 import ControlPointIcon from '@mui/icons-material/ControlPoint';
-import { revalidateLogic } from '@tanstack/react-form';
 import { useEffect, useMemo } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 import type { CollectionItemsTableColumn } from '#/api/routes/collection-items/collection-item.types';
-import type { CreateCollectionItemFormSchemaDef } from '#/api/routes/collection-items/create-collection-item/create-collection-item.types';
-import type { UpdateCollectionItemFormSchemaDef } from '#/api/routes/collection-items/update-collection-item-by-id/update-collection-item-by-id.types';
 
 import { useCreateCollectionItem } from '#/api/routes/collection-items/create-collection-item/create-collection-item.react-query';
 import {
@@ -44,26 +41,18 @@ const createFormStore = <TData extends Record<string, any>>(
   const createState = getCreateDefaultZustandState(defaultValues);
 
   return () => {
-    const { restoreFromSnapshot, saveSnapshot, setValue, value } =
+    const { restoreFromSnapshot, saveSnapshot, setValue, snapshot, value } =
       createState();
 
-    const resetWithLastAddedValues = (customFields: {
-      customField1Value: string;
-      customField2Value: string;
-      customField3Value: string;
-    }) => {
-      setValue({
-        ...defaultValues,
-        ...customFields,
-      });
-      saveSnapshot();
-    };
-
     return {
+      defaultValues: snapshot,
       formValues: value,
+      /** Resets form to the default values. */
       resetFormValues: restoreFromSnapshot,
-      resetWithLastAddedValues,
       setFormValues: setValue,
+      updateDefaultValues: (newValues: Partial<TData>) => {
+        saveSnapshot({ ...defaultValues, ...newValues });
+      },
     };
   };
 };
@@ -82,7 +71,7 @@ export const CollectionItemsPage: RouteComponent = () => {
   });
   const { collection, customFields, items, lastAddedItem, pagination } = data;
 
-  const { formValues, resetWithLastAddedValues } =
+  const { formValues, resetFormValues, updateDefaultValues } =
     useCollectionItemsFormStore();
 
   const invalidateGetCollectionDetailsById =
@@ -111,22 +100,26 @@ export const CollectionItemsPage: RouteComponent = () => {
     defaultValues: formValues,
     onSubmit: async ({ value }) => {
       if (typeof value.id === 'number') {
-        const data = value as UpdateCollectionItemFormSchemaDef;
-        await onUpdateCollectionItemById(data);
+        await onUpdateCollectionItemById(value);
       } else {
-        const data = value as CreateCollectionItemFormSchemaDef;
-        await onCreateCollectionItem(data);
+        await onCreateCollectionItem(value);
       }
 
       form.reset();
       resetEditingRowIds();
     },
-    validationLogic: revalidateLogic({
-      mode: 'submit',
-      modeAfterSubmission: 'change',
-    }),
+    // validationLogic: revalidateLogic({
+    //   mode: 'submit',
+    //   modeAfterSubmission: 'change',
+    // }),
+    // validators: {
+    //   onChange: addOrUpdateCollectionItemFormSchema,
+    //   onMount: addOrUpdateCollectionItemFormSchema,
+    //   onSubmit: addOrUpdateCollectionItemFormSchema,
+    // },
     validators: {
-      onChange: addOrUpdateCollectionItemFormSchema,
+      // onChange: addOrUpdateCollectionItemFormSchema,
+      // onMount: addOrUpdateCollectionItemFormSchema,
       onSubmit: addOrUpdateCollectionItemFormSchema,
     },
   });
@@ -168,16 +161,24 @@ export const CollectionItemsPage: RouteComponent = () => {
   useSetCollectionItemsFiltersFromQueries();
 
   useEffect(() => {
-    resetWithLastAddedValues({
+    const newFormValues = {
+      collectionId,
       customField1Value: lastAddedItem.customField1Value,
       customField2Value: lastAddedItem.customField2Value,
       customField3Value: lastAddedItem.customField3Value,
-    });
+    };
+    // setFormValues((prevValues) => {
+    //   return { ...prevValues, ...newFormValues };
+    // });
+    updateDefaultValues(newFormValues);
+    resetFormValues();
   }, [lastAddedItem]);
 
   useEffect(() => {
     if (!isEditing) {
       form.reset();
+    } else {
+      form.validate('mount');
     }
   }, [isEditing]);
 
@@ -203,13 +204,7 @@ export const CollectionItemsPage: RouteComponent = () => {
         </div>
       )}
 
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          form.handleSubmit();
-        }}
-      >
+      <form.AppForm>
         <Table
           BodyTopRow={
             isEditing
@@ -267,7 +262,7 @@ export const CollectionItemsPage: RouteComponent = () => {
           search={searchProps}
           sort={sortProps}
         />
-      </form>
+      </form.AppForm>
     </PageWrapper>
   );
 };

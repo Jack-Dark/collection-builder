@@ -9,8 +9,8 @@ export const getCreateDefaultZustandState = <T extends Exclude<any, Function>>(
     getValue: () => T;
     resetValue: () => void;
     restoreFromSnapshot: () => void;
-    /** Create a cached value saved as `snapshot`. */
-    saveSnapshot: () => void;
+    /** Create a cached value saved as `snapshot`. If no new value is provided, the current value is used. */
+    saveSnapshot: (updatedValue?: T) => void;
     setValue: SetZustandStateFnDef<T>;
     /** Used in conjunction with `setSnapshot` to create a cached value. */
     snapshot: T;
@@ -35,10 +35,14 @@ export const getCreateDefaultZustandState = <T extends Exclude<any, Function>>(
 
         set({ value: snapshot });
       },
-      saveSnapshot: () => {
-        const { value } = get();
+      saveSnapshot: (updatedValue) => {
+        if (updatedValue) {
+          set({ snapshot: updatedValue });
+        } else {
+          const { value } = get();
 
-        set({ snapshot: value });
+          set({ snapshot: value });
+        }
       },
       set,
       setValue: (valueOrCallback) => {

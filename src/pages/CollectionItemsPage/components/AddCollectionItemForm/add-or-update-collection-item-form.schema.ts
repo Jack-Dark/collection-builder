@@ -18,7 +18,6 @@ export const addCollectionItemFormDefaultValues: AddOrUpdateCollectionItemFormSc
     customField2Value: '',
     customField3Value: '',
     editionDetails: '',
-    // @ts-expect-error
     id: undefined,
     images: [],
     isSpecialEdition: Boolean(),
