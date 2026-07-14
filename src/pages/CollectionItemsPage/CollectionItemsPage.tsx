@@ -112,14 +112,9 @@ export const CollectionItemsPage: RouteComponent = () => {
     //   mode: 'submit',
     //   modeAfterSubmission: 'change',
     // }),
-    // validators: {
-    //   onChange: addOrUpdateCollectionItemFormSchema,
-    //   onMount: addOrUpdateCollectionItemFormSchema,
-    //   onSubmit: addOrUpdateCollectionItemFormSchema,
-    // },
     validators: {
-      // onChange: addOrUpdateCollectionItemFormSchema,
-      // onMount: addOrUpdateCollectionItemFormSchema,
+      onChange: addOrUpdateCollectionItemFormSchema,
+      onMount: addOrUpdateCollectionItemFormSchema,
       onSubmit: addOrUpdateCollectionItemFormSchema,
     },
   });
@@ -167,9 +162,6 @@ export const CollectionItemsPage: RouteComponent = () => {
       customField2Value: lastAddedItem.customField2Value,
       customField3Value: lastAddedItem.customField3Value,
     };
-    // setFormValues((prevValues) => {
-    //   return { ...prevValues, ...newFormValues };
-    // });
     updateDefaultValues(newFormValues);
     resetFormValues();
   }, [lastAddedItem]);
@@ -204,7 +196,13 @@ export const CollectionItemsPage: RouteComponent = () => {
         </div>
       )}
 
-      <form.AppForm>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          form.handleSubmit();
+        }}
+      >
         <Table
           BodyTopRow={
             isEditing
@@ -262,7 +260,7 @@ export const CollectionItemsPage: RouteComponent = () => {
           search={searchProps}
           sort={sortProps}
         />
-      </form.AppForm>
+      </form>
     </PageWrapper>
   );
 };
