@@ -10,7 +10,7 @@ import { SimpleErrorBoundary } from '#/components/SimpleErrorBoundary';
 import {
   addCollectionItemFormDefaultValues,
   withAddCollectionItemForm,
-} from './constants';
+} from './add-or-update-collection-item-form.schema';
 
 export const AddCollectionItemFormTableRow = withAddCollectionItemForm({
   /** These values are only used for type-checking, and are not used at runtime */
@@ -186,28 +186,39 @@ export const AddCollectionItemFormTableRow = withAddCollectionItemForm({
                     {isFieldEnabled && (
                       <form.Subscribe
                         selector={(state) => {
+                          const value = state.values[`customField${num}Value`];
+
                           return {
                             errors: state.errors,
-                            value: state.values[`customField${num}Value`],
+                            value,
                           };
                         }}
                       >
                         {({ errors: _errors, value }) => {
+                          const items = customFields[`customField${num}Values`];
+
                           return (
                             <div className="flex gap-1 items-center">
                               <field.ComboboxField
-                                allowCreatable
-                                defaultValue={{ id: value, label: value }}
+                                createCreatable={(query) => {
+                                  return query;
+                                }}
                                 error={field.state.meta.errors.join(',')}
                                 hideLabel
-                                items={customFields[
-                                  `customField${num}Values`
-                                ].map((label) => {
-                                  return { id: label, label };
-                                })}
+                                inputValue={value}
+                                isItemEqualToValue={(item, value) => {
+                                  return item === value;
+                                }}
+                                items={items}
+                                itemToStringLabel={(item) => {
+                                  return item;
+                                }}
+                                itemToStringValue={(item) => {
+                                  return item;
+                                }}
                                 label={fieldLabel}
                                 onValueChange={(value) => {
-                                  field.setValue(String(value?.id));
+                                  field.setValue(value || '');
                                 }}
                                 placeholder={`${fieldLabel || ''}...`}
                                 required

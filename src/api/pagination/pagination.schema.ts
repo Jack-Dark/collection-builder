@@ -23,5 +23,6 @@ export const requiredPaginationQueriesSchema = z.object({
     .default(paginationDefaultValues.sort),
 });
 
-export const optionalPaginationQueriesSchema =
-  requiredPaginationQueriesSchema.default(paginationDefaultValues);
+export const optionalPaginationQueriesSchema = requiredPaginationQueriesSchema
+  .optional()
+  .default(paginationDefaultValues);

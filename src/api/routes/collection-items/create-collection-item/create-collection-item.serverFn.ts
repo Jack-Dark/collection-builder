@@ -3,22 +3,16 @@ import { createServerFn } from '@tanstack/react-start';
 import { authApiRouteMiddleware } from '#/auth/auth-middleware';
 
 import { createCollectionItemDbQuery } from './create-collection-item.db-query';
-import { createCollectionItemSchema } from './create-collection-item.schema';
+import { createCollectionItemServerFnSchema } from './create-collection-item.schema';
 
 export const createCollectionItemServerFn = createServerFn({
   method: 'POST',
 })
   .middleware([authApiRouteMiddleware])
-  .validator(createCollectionItemSchema)
+  .validator(createCollectionItemServerFnSchema)
   .handler(async ({ context, data }) => {
-    const { createdAt: _createdAt, id: _id, userId: _userId, ...rest } = data;
-
     return createCollectionItemDbQuery({
-      ...rest,
-      createdAt: undefined,
-      id: undefined,
-      // TODO - RESOLVE TYPE ERROR
-      // @ts-expect-error
+      ...data,
       userId: context.user.id,
     });
   });

@@ -11,6 +11,7 @@ export type FieldWrapperProps = Pick<
 > & {
   description?: string;
   error?: string;
+  hideLabel?: boolean;
   label?: string;
   required?: boolean;
 };

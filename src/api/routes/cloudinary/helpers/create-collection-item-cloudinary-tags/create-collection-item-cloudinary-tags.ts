@@ -9,9 +9,9 @@ export const createCloudinaryTags = (
     `user-${userId}`,
     `collection-${collectionId}`,
     createCollectionItemCloudinaryTag(collectionItemId),
-  ] as const;
+  ];
 };
 
 export const createCollectionItemCloudinaryTag = (collectionItemId: number) => {
-  return `collection-item-${collectionItemId}` as const;
+  return `collection-item-${collectionItemId}`;
 };

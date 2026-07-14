@@ -142,8 +142,7 @@ const CollectionDetailsActionsCell = ({
       },
     });
 
-  const { resetCollectionItemFormValues, setCollectionItemFormValues } =
-    useCollectionItemsFormStore();
+  const { resetFormValues, setFormValues } = useCollectionItemsFormStore();
 
   const collectionItemId = getValue();
 
@@ -161,14 +160,14 @@ const CollectionDetailsActionsCell = ({
         });
       }}
       editIsDisabled={isDeletePending}
-      editOnClick={async (row) => {
+      editOnClick={async (record) => {
+        setFormValues(record);
         setEditingRowIds([collectionItemId]);
-        setCollectionItemFormValues(row);
       }}
       isEditing={isEditingRow}
       onCancelEdit={() => {
+        resetFormValues();
         resetEditingRowIds();
-        resetCollectionItemFormValues();
       }}
       row={row}
     />

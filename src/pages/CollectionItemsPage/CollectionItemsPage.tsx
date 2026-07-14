@@ -2,11 +2,12 @@ import type { RouteComponent } from '@tanstack/react-router';
 
 import ControlPointIcon from '@mui/icons-material/ControlPoint';
 import { revalidateLogic } from '@tanstack/react-form';
-import { useRouterState } from '@tanstack/react-router';
 import { useEffect, useMemo } from 'react';
-import { create } from 'zustand';
+import { v4 as uuidv4 } from 'uuid';
 
 import type { CollectionItemsTableColumn } from '#/api/routes/collection-items/collection-item.types';
+import type { CreateCollectionItemFormSchemaDef } from '#/api/routes/collection-items/create-collection-item/create-collection-item.types';
+import type { UpdateCollectionItemFormSchemaDef } from '#/api/routes/collection-items/update-collection-item-by-id/update-collection-item-by-id.types';
 
 import { useCreateCollectionItem } from '#/api/routes/collection-items/create-collection-item/create-collection-item.react-query';
 import {
@@ -15,12 +16,10 @@ import {
 } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.react-query';
 import { useUpdateCollectionItemById } from '#/api/routes/collection-items/update-collection-item-by-id/update-collection-item-by-id.react-query';
 import { Button } from '#/components/Button';
-import { useSpinner } from '#/components/FullPageLoadingSpinner/useSpinner';
 import { Table, tableCellClasses } from '#/components/Table';
+import { getCreateDefaultZustandState } from '#/helpers/get-create-default-zustand-state';
 import { PageWrapper } from '#/page-wrapper';
 import { Route as CollectionRoute } from '#/routes/_protected/collections/$id';
-
-import type { AddCollectionItemFormSchemaDef } from './components/AddCollectionItemForm/types';
 
 import { useEditingCollectionItemsRowIds } from '../CollectionsListPage/hooks/use-editing-collections-row-ids';
 import { addOrUpdateCollectionItemFormSchema } from './addOrUpdateCollectionItemForm.schema';
@@ -29,7 +28,7 @@ import { AddCollectionItemFormTableRow } from './components/AddCollectionItemFor
 import {
   addCollectionItemFormDefaultValues,
   useAddCollectionItemForm,
-} from './components/AddCollectionItemForm/constants';
+} from './components/AddCollectionItemForm/add-or-update-collection-item-form.schema';
 import {
   CollectionItemsFiltersContent,
   useCollectionItemsFilterActions,
@@ -39,43 +38,39 @@ import {
   useSetCollectionItemsFiltersFromQueries,
 } from './components/CollectionItemsFiltersContent';
 
-export const useCollectionItemsFormStore = create<{
-  collectionItemFormValues: AddCollectionItemFormSchemaDef;
-  resetCollectionItemFormValues: () => void;
-  setCollectionItemFormValues: (values: AddCollectionItemFormSchemaDef) => void;
-}>((set) => {
-  return {
-    collectionItemFormValues: addCollectionItemFormDefaultValues,
-    resetCollectionItemFormValues: () => {
-      set({
-        collectionItemFormValues: addCollectionItemFormDefaultValues,
+const createFormStore = <TData extends Record<string, any>>(
+  defaultValues: TData,
+) => {
+  const createState = getCreateDefaultZustandState(defaultValues);
+
+  return () => {
+    const { restoreFromSnapshot, saveSnapshot, setValue, value } =
+      createState();
+
+    const resetWithLastAddedValues = (customFields: {
+      customField1Value: string;
+      customField2Value: string;
+      customField3Value: string;
+    }) => {
+      setValue({
+        ...defaultValues,
+        ...customFields,
       });
-    },
-    setCollectionItemFormValues: (values) => {
-      set({
-        collectionItemFormValues: values,
-      });
-    },
+      saveSnapshot();
+    };
+
+    return {
+      formValues: value,
+      resetFormValues: restoreFromSnapshot,
+      resetWithLastAddedValues,
+      setFormValues: setValue,
+    };
   };
-});
-
-const useSpinnerWhenRouterLoading = () => {
-  const isLoading = useRouterState({
-    select: (state) => {
-      return state.status === 'pending';
-    },
-  });
-
-  const { hideSpinner, showSpinner } = useSpinner();
-
-  useEffect(() => {
-    if (isLoading) {
-      showSpinner();
-    } else {
-      hideSpinner();
-    }
-  }, [isLoading]);
 };
+
+export const useCollectionItemsFormStore = createFormStore(
+  addCollectionItemFormDefaultValues,
+);
 
 export const CollectionItemsPage: RouteComponent = () => {
   const { id } = CollectionRoute.useParams();
@@ -87,13 +82,8 @@ export const CollectionItemsPage: RouteComponent = () => {
   });
   const { collection, customFields, items, lastAddedItem, pagination } = data;
 
-  useSpinnerWhenRouterLoading();
-
-  const {
-    collectionItemFormValues,
-    resetCollectionItemFormValues,
-    setCollectionItemFormValues,
-  } = useCollectionItemsFormStore();
+  const { formValues, resetWithLastAddedValues } =
+    useCollectionItemsFormStore();
 
   const invalidateGetCollectionDetailsById =
     useInvalidateGetCollectionDetailsById();
@@ -102,7 +92,7 @@ export const CollectionItemsPage: RouteComponent = () => {
     onSuccess: async () => {
       await invalidateGetCollectionDetailsById({ id: collection.id });
 
-      resetCollectionItemFormValues();
+      form.reset();
     },
   });
 
@@ -110,7 +100,7 @@ export const CollectionItemsPage: RouteComponent = () => {
     onSuccess: async () => {
       await invalidateGetCollectionDetailsById({ id: collection.id });
 
-      resetCollectionItemFormValues();
+      form.reset();
     },
   });
 
@@ -118,18 +108,14 @@ export const CollectionItemsPage: RouteComponent = () => {
     useEditingCollectionItemsRowIds();
 
   const form = useAddCollectionItemForm({
-    defaultValues: collectionItemFormValues,
+    defaultValues: formValues,
     onSubmit: async ({ value }) => {
-      if (value.id) {
-        await onUpdateCollectionItemById(value);
+      if (typeof value.id === 'number') {
+        const data = value as UpdateCollectionItemFormSchemaDef;
+        await onUpdateCollectionItemById(data);
       } else {
-        await onCreateCollectionItem({
-          // undefined values added long-hand to resolve type errors
-          ...value,
-          createdAt: undefined,
-          id: undefined,
-          userId: undefined,
-        });
+        const data = value as CreateCollectionItemFormSchemaDef;
+        await onCreateCollectionItem(data);
       }
 
       form.reset();
@@ -140,6 +126,7 @@ export const CollectionItemsPage: RouteComponent = () => {
       modeAfterSubmission: 'change',
     }),
     validators: {
+      onChange: addOrUpdateCollectionItemFormSchema,
       onSubmit: addOrUpdateCollectionItemFormSchema,
     },
   });
@@ -181,18 +168,17 @@ export const CollectionItemsPage: RouteComponent = () => {
   useSetCollectionItemsFiltersFromQueries();
 
   useEffect(() => {
-    setCollectionItemFormValues({
-      ...collectionItemFormValues,
-      collectionId: collection.id,
-      customField1Value: lastAddedItem?.customField1Value || '',
-      customField2Value: lastAddedItem?.customField2Value || '',
-      customField3Value: lastAddedItem?.customField3Value || '',
-      notes: collectionItemFormValues.notes || '',
+    resetWithLastAddedValues({
+      customField1Value: lastAddedItem.customField1Value,
+      customField2Value: lastAddedItem.customField2Value,
+      customField3Value: lastAddedItem.customField3Value,
     });
   }, [lastAddedItem]);
 
   useEffect(() => {
-    form.reset();
+    if (!isEditing) {
+      form.reset();
+    }
   }, [isEditing]);
 
   return (
@@ -209,7 +195,7 @@ export const CollectionItemsPage: RouteComponent = () => {
           <Button
             Icon={ControlPointIcon}
             onClick={() => {
-              addToEditingRowIds('');
+              addToEditingRowIds(uuidv4());
             }}
             text="Add New"
             variant="secondary"
@@ -240,7 +226,7 @@ export const CollectionItemsPage: RouteComponent = () => {
                       form={form}
                       onCancel={() => {
                         resetEditingRowIds();
-                        resetCollectionItemFormValues();
+                        // restoreFormValuesFromSnapshot();
                         form.reset();
                       }}
                       tdClassNames={tableCellClasses}
@@ -279,11 +265,7 @@ export const CollectionItemsPage: RouteComponent = () => {
             },
           }}
           search={searchProps}
-          sort={{
-            items: sortProps.items,
-            onChange: sortProps.onChange,
-            value: sortProps.value,
-          }}
+          sort={sortProps}
         />
       </form>
     </PageWrapper>

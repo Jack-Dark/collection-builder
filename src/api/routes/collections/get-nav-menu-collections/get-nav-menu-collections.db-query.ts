@@ -1,4 +1,4 @@
-import { and, asc, eq, isNull } from 'drizzle-orm';
+import { and, asc, eq, isNull, sql } from 'drizzle-orm';
 
 import { db } from '#/api/db';
 
@@ -18,7 +18,7 @@ export const getNavMenuCollectionsDbQuery = async (props: {
         isNull(collectionsTable.deletedAt),
       ),
     )
-    .orderBy(asc(collectionsTable.name));
+    .orderBy(asc(sql`lower(${collectionsTable.name})`));
 
   return { collections };
 };

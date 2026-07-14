@@ -5,7 +5,7 @@ import type { collectionItemsTable } from '#/api/db-tables-schema';
 
 import type {
   createCollectionItemFormSchema,
-  createCollectionItemSchema,
+  createCollectionItemServerFnSchema,
 } from './create-collection-item.schema';
 
 export type InsertCollectionItemRecordDef = Omit<
@@ -19,5 +19,5 @@ export type CreateCollectionItemFormSchemaDef = z.output<
 >;
 
 export type CreateCollectionItemRequestArgsDef = z.output<
-  typeof createCollectionItemSchema
+  typeof createCollectionItemServerFnSchema
 >;

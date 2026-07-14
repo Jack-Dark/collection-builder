@@ -1,6 +1,16 @@
 import type { InferModelFromColumns, SQL } from 'drizzle-orm';
 
-import { and, desc, asc, eq, isNull, count, ilike, inArray } from 'drizzle-orm';
+import {
+  and,
+  desc,
+  asc,
+  eq,
+  isNull,
+  count,
+  ilike,
+  inArray,
+  sql,
+} from 'drizzle-orm';
 
 import { db } from '#/api/db';
 import { collectionItemsTable, collectionsTable } from '#/api/db-tables-schema';
@@ -108,7 +118,7 @@ export const getCollectionDetailsByIdDbQuery = async (
         sort.direction === sortDirectionOptions.desc
           ? desc(collectionItemsTable[sortingField])
           : asc(collectionItemsTable[sortingField]),
-        asc(collectionItemsTable.name),
+        asc(sql`lower(${collectionItemsTable.name})`),
       );
 
     const [lastAddedItem] = await tx

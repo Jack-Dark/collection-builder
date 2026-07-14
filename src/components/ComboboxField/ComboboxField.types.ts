@@ -2,23 +2,21 @@ import type { ComboboxRootProps, ComboboxInputProps } from '@base-ui/react';
 
 import type { FieldWrapperProps } from '../FieldWrapper/FieldWrapper.types';
 
-export type ComboboxFieldProps<TValue extends Record<string, any>> = Pick<
+export type ComboboxFieldProps<TValue> = Pick<
   ComboboxRootProps<TValue>,
-  'name' | 'onValueChange' | 'required' | 'value' | 'defaultValue'
+  | 'itemToStringLabel'
+  | 'itemToStringValue'
+  | 'filter'
+  | 'name'
+  | 'onValueChange'
+  | 'required'
+  | 'isItemEqualToValue'
 > &
   Pick<ComboboxInputProps, 'placeholder'> &
   FieldWrapperProps & {
-    allowCreatable?: boolean;
+    createCreatable?: (query: string) => TValue;
     hideLabel?: boolean;
-    idProperty?: keyof TValue;
+    identifyCreatable?: (item: TValue) => boolean;
+    inputValue: string;
     items: TValue[];
-    labelProperty?: keyof TValue;
-    onValueChange: (item: ComboboxFieldItemProps | undefined) => void;
   };
-
-export type ComboboxFieldItemProps = {
-  id: string | number;
-  /** Only used internally when a new item can be created. */
-  isCreatable?: boolean;
-  label: string;
-};

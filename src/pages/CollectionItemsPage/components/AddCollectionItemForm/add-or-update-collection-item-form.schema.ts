@@ -7,17 +7,17 @@ import { InputField } from '#/components/InputField';
 import { SwitchField } from '#/components/SwitchField';
 import { TextAreaField } from '#/components/TextAreaField';
 
-import type { AddCollectionItemFormSchemaDef } from './types';
+import type { AddOrUpdateCollectionItemFormSchemaDef } from './types';
 
-export const addCollectionItemFormDefaultValues: AddCollectionItemFormSchemaDef =
+export const addCollectionItemFormDefaultValues: AddOrUpdateCollectionItemFormSchemaDef =
   {
-    collectionId: 0,
+    collectionId: undefined,
     createdAt: undefined,
     customField1Value: '',
     customField2Value: '',
     customField3Value: '',
     editionDetails: '',
-    id: undefined,
+    id: '',
     images: [],
     isSpecialEdition: Boolean(),
     name: '',

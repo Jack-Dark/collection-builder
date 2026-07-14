@@ -6,7 +6,9 @@ import type { CreateCollectionItemRequestArgsDef } from './create-collection-ite
 import { collectionItemsTable } from '../../../db-tables-schema';
 
 export const createCollectionItemDbQuery = async (
-  data: CreateCollectionItemRequestArgsDef,
+  data: Omit<CreateCollectionItemRequestArgsDef, 'userId'> & {
+    userId: string;
+  },
 ): Promise<CollectionItemRecordDef> => {
   const [record] = await db
     .insert(collectionItemsTable)
