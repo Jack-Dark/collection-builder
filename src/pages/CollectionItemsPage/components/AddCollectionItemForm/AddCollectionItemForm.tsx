@@ -82,12 +82,11 @@ export const AddCollectionItemFormTableRow = withAddCollectionItemForm({
                   selector={(state) => {
                     return {
                       errors: state.errors,
-                      name: state.values.name,
                       value: state.values.images,
                     };
                   }}
                 >
-                  {({ errors: _errors, name, value }) => {
+                  {({ errors: _errors, value }) => {
                     // TODO - EXTRACT ERROR MESSAGE (AND IDEALLY SUBSCRIBE) LOGIC
                     // const errorMsg = errors?.[0]?.[field.name]?.[0]?.message;
 

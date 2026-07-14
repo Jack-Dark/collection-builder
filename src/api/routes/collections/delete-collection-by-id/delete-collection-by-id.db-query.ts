@@ -1,6 +1,7 @@
+import { and, eq, isNull } from 'drizzle-orm';
+
 import { db } from '#/api/db';
 import { collectionsTable } from '#/api/db-tables-schema';
-import { and, eq, isNull } from 'drizzle-orm';
 
 export const deleteCollectionDbQuery = async (props: {
   id: number;

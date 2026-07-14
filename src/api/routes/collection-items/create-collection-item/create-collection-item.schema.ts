@@ -9,8 +9,8 @@ const createCollectionItemBaseSchema = baseCollectionItemSchema.extend({
 
 export const createCollectionItemFormSchema =
   createCollectionItemBaseSchema.extend({
-    collectionId: z.undefined().describe('Collection ID'),
-    id: z.string().describe('ID'),
+    collectionId: z.number().describe('Collection ID'),
+    id: z.never().describe('ID'),
     images: z
       .array(
         z.union([

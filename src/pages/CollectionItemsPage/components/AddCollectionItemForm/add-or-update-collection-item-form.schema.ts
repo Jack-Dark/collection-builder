@@ -11,13 +11,15 @@ import type { AddOrUpdateCollectionItemFormSchemaDef } from './types';
 
 export const addCollectionItemFormDefaultValues: AddOrUpdateCollectionItemFormSchemaDef =
   {
+    // @ts-expect-error
     collectionId: undefined,
     createdAt: undefined,
     customField1Value: '',
     customField2Value: '',
     customField3Value: '',
     editionDetails: '',
-    id: '',
+    // @ts-expect-error
+    id: undefined,
     images: [],
     isSpecialEdition: Boolean(),
     name: '',
