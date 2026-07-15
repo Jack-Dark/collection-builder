@@ -84,10 +84,11 @@ export const CollectionItemsFiltersContent = (
   } = useCollectionItemsFilters();
 
   const getOnCheckedChange = (props: {
+    index: number;
     setValue: SetZustandStoreFnDef<string[]>;
     value: string;
   }) => {
-    const { setValue, value } = props;
+    const { index, setValue, value } = props;
 
     return (checked: boolean) => {
       if (checked) {
@@ -96,9 +97,10 @@ export const CollectionItemsFiltersContent = (
         });
       } else {
         setValue((prevFilters) => {
-          return prevFilters.filter((item) => {
-            return item !== value;
-          });
+          const newValues = [...prevFilters];
+          newValues.splice(index, 1);
+
+          return newValues;
         });
       }
     };
@@ -115,8 +117,9 @@ export const CollectionItemsFiltersContent = (
           label={collection.customField1Label}
           onReset={customField1Store.resetValue}
         >
-          {customFields.customField1Values.map((value) => {
+          {customFields.customField1Values.map((value, index) => {
             const onCheckedChange = getOnCheckedChange({
+              index,
               setValue: customField1Store.setValue,
               value,
             });
@@ -138,8 +141,9 @@ export const CollectionItemsFiltersContent = (
           label={collection.customField2Label}
           onReset={customField2Store.resetValue}
         >
-          {customFields.customField2Values.map((value) => {
+          {customFields.customField2Values.map((value, index) => {
             const onCheckedChange = getOnCheckedChange({
+              index,
               setValue: customField2Store.setValue,
               value,
             });
@@ -161,8 +165,9 @@ export const CollectionItemsFiltersContent = (
           label={collection.customField3Label}
           onReset={customField3Store.resetValue}
         >
-          {customFields.customField3Values.map((value) => {
+          {customFields.customField3Values.map((value, index) => {
             const onCheckedChange = getOnCheckedChange({
+              index,
               setValue: customField3Store.setValue,
               value,
             });

@@ -62,36 +62,38 @@ export const getCreateDefaultZustandStore = <T extends Exclude<any, Function>>(
         return value;
       },
       logSnapshotToConsole: (...firstLogs: any[]) => {
-        const { snapshot } = get();
+        const { getSnapshot } = get();
 
-        console.log(...firstLogs, snapshot);
+        console.log(...firstLogs, getSnapshot());
       },
       logValueToConsole: (...firstLogs: any[]) => {
-        const { value } = get();
+        const { getValue } = get();
 
-        console.log(...firstLogs, value);
+        console.log(...firstLogs, getValue());
       },
       resetValue: () => {
         set({ value: defaultValue });
       },
       restoreFromSnapshot: () => {
-        const { snapshot } = get();
+        const { getSnapshot } = get();
 
-        set({ value: snapshot });
+        set({ value: getSnapshot() });
       },
       saveSnapshot: (updatedValue) => {
         if (updatedValue) {
           set({ snapshot: updatedValue });
         } else {
-          const { value } = get();
+          const { getValue } = get();
 
-          set({ snapshot: value });
+          set({ snapshot: getValue() });
         }
       },
       set,
       setValue: (valueOrCallback) => {
         if (typeof valueOrCallback === 'function') {
-          const { value: prevValue } = get();
+          const { getValue } = get();
+
+          const prevValue = getValue();
 
           // @ts-expect-error
           const newValue = valueOrCallback(prevValue);
