@@ -1,4 +1,9 @@
-import type { SortDirection, TableOptions } from '@tanstack/react-table';
+import type {
+  Row,
+  RowData,
+  SortDirection,
+  TableOptions,
+} from '@tanstack/react-table';
 import type { JSXElementConstructor } from 'react';
 
 import { ScrollArea } from '@base-ui/react';
@@ -8,7 +13,9 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
+
+import { getCreateDefaultZustandState } from '#/helpers/get-create-default-zustand-state';
 
 import type { FiltersButtonPropsDef } from './components/FilterButton/FilterButton.types';
 
@@ -60,10 +67,81 @@ export type TablePropsDef<T> = Omit<
     };
   };
 
-export const Table = <TData,>({
+const createSelectedTableRowsStore = () => {
+  const createStore = getCreateDefaultZustandState<
+    Record<string, boolean | undefined>
+  >({});
+
+  return () => {
+    const { logValueToConsole, resetValue, setValue, value } = createStore();
+
+    const getSelectedRowIds = () => {
+      const rows = Object.entries(value);
+
+      return rows.reduce<string[]>((acc, row) => {
+        const [rowId, isSelected] = row;
+        if (isSelected) {
+          return [...acc, rowId];
+        }
+
+        return acc;
+      }, []);
+    };
+
+    return {
+      getSelectedRowIds,
+      logValueToConsole,
+      resetSelectedTableRows: resetValue,
+      selectedTableRows: value,
+      setSelectedTableRows: setValue,
+    };
+  };
+};
+
+export const useSelectedTableRowsStore = createSelectedTableRowsStore();
+
+const createLastSelectedRowIdStore = () => {
+  const createStore = getCreateDefaultZustandState<string | undefined>(
+    undefined,
+  );
+
+  return () => {
+    const { resetValue, setValue, value } = createStore();
+
+    return {
+      lastSelectedRowId: value,
+      resetLastSelectedRowId: resetValue,
+      setLastSelectedRowId: setValue,
+    };
+  };
+};
+
+export const useLastSelectedTableRowsStore = createLastSelectedRowIdStore();
+
+export interface GetRowRangeProps<TData extends RowData> {
+  currentIndex: number;
+  prevIndex: number;
+  rows: Row<TData>[];
+}
+
+export const getRowRange = <TData extends RowData>(
+  props: GetRowRangeProps<TData>,
+): Row<TData>[] => {
+  const { currentIndex, prevIndex, rows } = props;
+
+  const rangeStart = prevIndex > currentIndex ? currentIndex : prevIndex;
+  const rangeEnd = rangeStart === currentIndex ? prevIndex : currentIndex;
+
+  return rows.slice(rangeStart, rangeEnd + 1);
+};
+
+export const Table = <TData extends Record<'id', string | number>>({
   BodyTopRow,
   data = [],
   filters,
+  getRowId = ({ id }) => {
+    return String(id);
+  },
   pagination,
   search,
   sort,
@@ -74,6 +152,7 @@ export const Table = <TData,>({
   const table = useReactTable<TData>({
     data,
     getCoreRowModel: getCoreRowModel(),
+    getRowId,
     ...rest,
   });
 
@@ -106,6 +185,25 @@ export const Table = <TData,>({
 
     return '';
   }, [!!filters, !!search, !!sort]);
+
+  const isAllRowsSelected = table.getIsAllRowsSelected();
+  const isSomeRowsSelected = table.getIsSomeRowsSelected();
+  const { resetSelectedTableRows, setSelectedTableRows } =
+    useSelectedTableRowsStore();
+
+  useEffect(() => {
+    if (isAllRowsSelected) {
+      const allRowIds = data.map((record, index) => {
+        return getRowId(record, index);
+      });
+      const selectedTableRows = allRowIds.reduce((acc, id) => {
+        return { ...acc, [id]: true };
+      }, {});
+      setSelectedTableRows(selectedTableRows);
+    } else if (!isSomeRowsSelected) {
+      resetSelectedTableRows();
+    }
+  }, [isAllRowsSelected]);
 
   return (
     <div

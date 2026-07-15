@@ -1,7 +1,8 @@
 import { Field } from '@base-ui/react';
 import { Checkbox } from '@base-ui/react/checkbox';
-import CheckBox from '@mui/icons-material/CheckBox';
-import CheckBoxOutlineBlank from '@mui/icons-material/CheckBoxOutlineBlank';
+import CheckBoxIcon from '@mui/icons-material/CheckBox';
+import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
+import IndeterminateCheckBoxIcon from '@mui/icons-material/IndeterminateCheckBox';
 import { useCallback } from 'react';
 
 import type { CheckboxFieldProps } from './CheckboxField.types';
@@ -15,6 +16,7 @@ export const CheckboxField = (props: CheckboxFieldProps) => {
     description,
     disabled,
     error,
+    indeterminate,
     invalid,
     label,
     labelPosition = 'right',
@@ -47,16 +49,18 @@ export const CheckboxField = (props: CheckboxFieldProps) => {
       validationMode={validationMode}
     >
       <div
-        className={`grid gap-1 items-center ${label && 'grid-cols-[max-content_1fr]'}`}
+        className={`grid gap-1 items-center ${label && 'grid-cols-[max-content_1fr]'} ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
       >
         {labelPosition === 'left' && <Label />}
 
         <Checkbox.Root checked={checked} onCheckedChange={onCheckedChange}>
           <Checkbox.Indicator keepMounted>
             {checked ? (
-              <CheckBox className="text-primary-900" />
+              <CheckBoxIcon className="text-primary-900" />
+            ) : indeterminate ? (
+              <IndeterminateCheckBoxIcon className="text-primary-900" />
             ) : (
-              <CheckBoxOutlineBlank />
+              <CheckBoxOutlineBlankIcon />
             )}
           </Checkbox.Indicator>
         </Checkbox.Root>

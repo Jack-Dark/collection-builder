@@ -1,5 +1,37 @@
 import { create } from 'zustand';
 
+/**
+ * @example
+ * const create[STORE_NAME]Store = <TData extends DATA_TYPE>(defaultValue: TData) => {
+ *   const createStore = getCreateDefaultZustandState<TData>(defaultValue);
+ *
+ *   return () => {
+ *     const {
+ *       getSnapshot,
+ *       getValue,
+ *       resetValue,
+ *       restoreFromSnapshot,
+ *       saveSnapshot,
+ *       setValue,
+ *       snapshot,
+ *       value,
+ *     } = createStore();
+ *
+ *     return {
+ *       getSnapshot,
+ *       getValue,
+ *       resetValue,
+ *       restoreFromSnapshot,
+ *       saveSnapshot,
+ *       setValue,
+ *       snapshot,
+ *       value,
+ *     };
+ *   };
+ * }
+ *
+ * export const use[STORE_NAME]Store = create[STORE_NAME]Store();
+ */
 // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
 export const getCreateDefaultZustandState = <T extends Exclude<any, Function>>(
   defaultValue: T,
@@ -7,6 +39,8 @@ export const getCreateDefaultZustandState = <T extends Exclude<any, Function>>(
   return create<{
     getSnapshot: () => T;
     getValue: () => T;
+    logSnapshotToConsole: (...firstLogs: any[]) => void;
+    logValueToConsole: (...firstLogs: any[]) => void;
     resetValue: () => void;
     restoreFromSnapshot: () => void;
     /** Create a cached value saved as `snapshot`. If no new value is provided, the current value is used. */
@@ -26,6 +60,16 @@ export const getCreateDefaultZustandState = <T extends Exclude<any, Function>>(
         const { value } = get();
 
         return value;
+      },
+      logSnapshotToConsole: (...firstLogs: any[]) => {
+        const { snapshot } = get();
+
+        console.log(...firstLogs, snapshot);
+      },
+      logValueToConsole: (...firstLogs: any[]) => {
+        const { value } = get();
+
+        console.log(...firstLogs, value);
       },
       resetValue: () => {
         set({ value: defaultValue });

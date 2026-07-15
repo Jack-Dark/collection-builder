@@ -3,6 +3,7 @@ import type {
   CellContext,
 } from '@tanstack/react-table';
 
+import { useKeyHold } from '@tanstack/react-hotkeys';
 import { createColumnHelper } from '@tanstack/react-table';
 import formatDate, { masks } from 'dateformat';
 
@@ -12,6 +13,12 @@ import type { CollectionRecordDef } from '#/api/routes/collections/collection.ty
 import { thumbnailSize } from '#/api/routes/cloudinary/cloudinary-url';
 import { useDeleteCollectionItemById } from '#/api/routes/collection-items/delete-collection-item-by-id/delete-collection-item-by-id.react-query';
 import { useInvalidateGetCollectionDetailsById } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.react-query';
+import { CheckboxField } from '#/components/Fields/CheckboxField';
+import {
+  getRowRange,
+  useLastSelectedTableRowsStore,
+  useSelectedTableRowsStore,
+} from '#/components/Table';
 import { ZoomableThumbnail } from '#/components/ZoomableThumbnail';
 import { Route as CollectionRoute } from '#/routes/_protected/collections/$id';
 
@@ -33,11 +40,91 @@ export const getCollectionItemsTableColumns = (props: CollectionRecordDef) => {
 
   return [
     columnHelper.accessor('name', {
-      cell: ({ getValue }) => {
-        return <p>{getValue()}</p>;
+      cell: ({ getValue, row, table }) => {
+        const { lastSelectedRowId, setLastSelectedRowId } =
+          useLastSelectedTableRowsStore();
+
+        const { setSelectedTableRows } = useSelectedTableRowsStore();
+
+        const isShiftHeld = useKeyHold('Shift');
+
+        return (
+          <div className="flex items-center gap-2">
+            <CheckboxField
+              checked={row.getIsSelected()}
+              disabled={!row.getCanSelect()}
+              onCheckedChange={(checked) => {
+                const { rows } = table.getRowModel();
+                const rowId = row.id;
+
+                if (isShiftHeld && lastSelectedRowId) {
+                  const currentIndex = row.index;
+                  const prevIndex = rows.findIndex(({ id }) => {
+                    return id === lastSelectedRowId;
+                  });
+
+                  const rowsToToggle = getRowRange({
+                    currentIndex,
+                    prevIndex,
+                    rows,
+                  });
+
+                  rowsToToggle.forEach((row) => {
+                    row.toggleSelected(checked);
+                  });
+                } else {
+                  row.toggleSelected();
+                }
+
+                table.setRowSelection((prevSelectedRows) => {
+                  const selectedRows = {
+                    ...prevSelectedRows,
+                  };
+                  if (checked) {
+                    selectedRows[rowId] = true;
+                  } else {
+                    delete selectedRows[rowId];
+                  }
+
+                  setSelectedTableRows(selectedRows);
+
+                  return selectedRows;
+                });
+                setLastSelectedRowId(rowId);
+
+                // clears any text highlighting
+                document.getSelection()?.removeAllRanges();
+              }}
+            />
+            <p>{getValue()}</p>
+          </div>
+        );
       },
-      header: 'Name',
-      size: 200,
+      header: ({ table }) => {
+        const { resetLastSelectedRowId } = useLastSelectedTableRowsStore();
+
+        const title = 'Name';
+
+        return table.getRowCount() ? (
+          <div className="flex items-center gap-2">
+            <CheckboxField
+              checked={table.getIsAllRowsSelected()}
+              indeterminate={table.getIsSomeRowsSelected()}
+              onCheckedChange={(_checked, { event }) => {
+                const toggleAllRowsSelectedHandler =
+                  table.getToggleAllRowsSelectedHandler();
+
+                resetLastSelectedRowId();
+                toggleAllRowsSelectedHandler(event);
+              }}
+            />
+            <span>{title}</span>
+          </div>
+        ) : (
+          title
+        );
+      },
+      size: 250,
     }),
     columnHelper.accessor('images', {
       cell: ({ getValue, row }) => {
