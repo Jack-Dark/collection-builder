@@ -3,8 +3,9 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import SaveIcon from '@mui/icons-material/Save';
 import { useRef } from 'react';
 
-import { createCloudinaryThumbnail } from '#/api/routes/cloudinary/cloudinary-url';
+import { createCloudinaryUrl } from '#/api/routes/cloudinary/cloudinary-url';
 import { Button } from '#/components/Button';
+import { Image } from '#/components/Image';
 import { Popover } from '#/components/Popover';
 import { SimpleErrorBoundary } from '#/components/SimpleErrorBoundary';
 
@@ -86,12 +87,11 @@ export const AddCollectionItemFormTableRow = withAddCollectionItemForm({
                       previewUrl = image.previewUrl;
                     }
 
-                    const src =
-                      previewUrl || createCloudinaryThumbnail({ publicId });
+                    const src = previewUrl || createCloudinaryUrl({ publicId });
 
                     return (
                       <SimpleErrorBoundary key={src}>
-                        <div className="relative grid grid-rows-[auto_1fr] items-center p-1 size-20 bg-white border border-gray-400 text-gray-500">
+                        <div className="relative grid grid-rows-[auto_1fr] items-center p-1 size-14 bg-white border border-gray-400 text-gray-500">
                           <div
                             className="absolute right-0 top-0 flex justify-end p-4px bg-white border-l border-b border-gray-400 rounded-bl-sm text-lg hover:text-red-600 cursor-pointer"
                             onClick={() => {
@@ -104,9 +104,8 @@ export const AddCollectionItemFormTableRow = withAddCollectionItemForm({
                             <DeleteIcon fontSize="inherit" />
                           </div>
                           <div className="w-full h-full overflow-hidden">
-                            <img
+                            <Image
                               alt={`${field.name} thumbnail ${index + 1}`}
-                              className="w-full h-full object-contain"
                               src={src}
                             />
                           </div>
@@ -116,7 +115,7 @@ export const AddCollectionItemFormTableRow = withAddCollectionItemForm({
                   })}
                   <SimpleErrorBoundary>
                     <div
-                      className="grid items-center justify-center size-20 border border-gray-400 text-gray-500 cursor-pointer"
+                      className="grid items-center justify-center size-14 border border-gray-400 text-gray-500 cursor-pointer"
                       onClick={() => {
                         fileInputRef.current?.click();
                       }}

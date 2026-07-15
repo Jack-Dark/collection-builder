@@ -33,7 +33,8 @@ export const uploadFileToCloudinary = async (
     const arrayBuffer = await file.arrayBuffer();
     const bytes = new Uint8Array(arrayBuffer);
     const totalChunks = Math.max(1, Math.ceil(bytes.length / chunkSize));
-    const uploadId = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    // const uploadId = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    const uploadId = 'MOCK_DATA`';
 
     let photo: UploadApiResponse | null = null;
 

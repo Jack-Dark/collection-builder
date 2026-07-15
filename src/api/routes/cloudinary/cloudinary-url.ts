@@ -1,3 +1,5 @@
+import type { CropMode } from 'cloudinary';
+
 import { Cloudinary } from '@cloudinary/url-gen';
 
 const cloudinaryUrl = new Cloudinary({
@@ -6,27 +8,32 @@ const cloudinaryUrl = new Cloudinary({
   },
 });
 
-export const createCloudinaryUrl = (props: {
-  publicId: string;
-  transformations?: string;
-}) => {
-  const { publicId, transformations = '' } = props;
+export const createCloudinaryUrl = (
+  props: {
+    cropMode?: CropMode;
+    height?: number;
+    publicId: string;
+    width?: number;
+  },
+  ...transformations: string[]
+) => {
+  const { cropMode = 'limit', height, publicId, width } = props;
 
-  return cloudinaryUrl
-    .image(publicId)
-    .addTransformation(transformations)
-    .toURL();
-};
+  const cloudinary = cloudinaryUrl.image(publicId);
 
-export const createCloudinaryThumbnail = (props: {
-  height?: number;
-  publicId: string;
-  width?: number;
-}) => {
-  const { height = 100, publicId, width = 100 } = props;
+  if (height || width) {
+    cloudinary.addTransformation(
+      [`c_${cropMode}`, width && `w_${width}`, height && `h_${height}`]
+        .filter(Boolean)
+        .join(),
+    );
+  }
 
-  return createCloudinaryUrl({
-    publicId,
-    transformations: `c_limit,w_${width},h_${height}`,
+  transformations.forEach((transform) => {
+    cloudinary.addTransformation(transform);
   });
+
+  return cloudinary.toURL();
 };
+
+export const thumbnailSize = 100;

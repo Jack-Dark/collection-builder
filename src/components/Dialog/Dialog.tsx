@@ -12,49 +12,50 @@ export type DialogPropsDef = PropsWithChildren<{
 }>;
 
 export const Dialog = (props: DialogPropsDef) => {
-  const {
-    children,
-    Footer,
-    Header,
-    hideClose = false,
-    isFullScreen,
-    onClose,
-  } = props;
+  const { children, Footer, Header, hideClose, isFullScreen, onClose } = props;
 
   return (
-    <MuiDialog.Viewport
-      className={`fixed inset-0 flex md:items-center md:justify-center overflow-hidden ${isFullScreen ? '' : 'md:p-6'}`}
-    >
-      <MuiDialog.Popup
-        className={`relative grid auto-rows-[max-content_1fr_max-content] w-full h-full max-h-full max-w-full min-h-0 ${isFullScreen ? '' : `md:w-120 md:h-auto md:max-h-200`} flex-col bg-white duration-100 ease-out`}
+    <MuiDialog.Root disablePointerDismissal={hideClose} modal open>
+      <MuiDialog.Viewport
+        className={`fixed inset-0 flex md:items-center md:justify-center overflow-hidden ${isFullScreen ? '' : 'md:p-6'}`}
+        onClick={hideClose ? undefined : onClose}
       >
-        <div
-          className={`flex ${Header ? 'justify-between' : 'justify-end'} items-center gap-2 px-4 py-2 border-b border-gray-400`}
+        <MuiDialog.Popup
+          className={`relative grid auto-rows-[max-content_1fr_max-content] w-full h-full max-h-full max-w-full min-h-0 ${isFullScreen ? '' : `md:w-auto md:max-w-[70dvw] md:h-auto md:max-h-[90dvh]`} flex-col bg-white duration-100 ease-out`}
         >
-          {!hideClose && <CloseIcon className="opacity-0" />}
+          {!isFullScreen && <MuiDialog.Backdrop />}
+          {(Header || !hideClose) && (
+            <div
+              className={`flex ${Header && hideClose ? 'justify-center' : Header ? 'justify-between' : 'justify-end'} items-center gap-2 px-4 py-2 border-b border-gray-400`}
+            >
+              {!hideClose && <CloseIcon className="opacity-0" />}
 
-          {Header &&
-            (typeof Header === 'string' ? (
-              <MuiDialog.Title>{Header}</MuiDialog.Title>
-            ) : (
-              <Header />
-            ))}
+              {Header &&
+                (typeof Header === 'string' ? (
+                  <MuiDialog.Title className="text-center">
+                    {Header}
+                  </MuiDialog.Title>
+                ) : (
+                  <Header />
+                ))}
 
-          {!hideClose && (
-            <MuiDialog.Close className="cursor-pointer" onClick={onClose}>
-              <CloseIcon />
-            </MuiDialog.Close>
+              {!hideClose && (
+                <MuiDialog.Close className="cursor-pointer" onClick={onClose}>
+                  <CloseIcon />
+                </MuiDialog.Close>
+              )}
+            </div>
           )}
-        </div>
 
-        <div className="overflow-y-auto py-8 px-4">{children}</div>
+          <div className="overflow-y-auto py-8 px-4">{children}</div>
 
-        {Footer && (
-          <div className="grid grid-flow-col gap-1 p-1 border-t border-gray-400">
-            <Footer />
-          </div>
-        )}
-      </MuiDialog.Popup>
-    </MuiDialog.Viewport>
+          {Footer && (
+            <div className="grid grid-flow-col gap-1 p-1 border-t border-gray-400">
+              <Footer />
+            </div>
+          )}
+        </MuiDialog.Popup>
+      </MuiDialog.Viewport>
+    </MuiDialog.Root>
   );
 };
