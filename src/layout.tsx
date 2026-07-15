@@ -81,7 +81,7 @@ export const Layout: RouteComponent = () => {
       </header>
 
       <div className="grid justify-items-center px-4">
-        <main className="w-full max-w-7xl px-4 py-12 bg-white text-black rounded-xl">
+        <main className="w-full max-w-7xl pt-8 px-4 pb-4 bg-white text-black rounded-xs">
           <SimpleErrorBoundary>
             <Outlet />
           </SimpleErrorBoundary>

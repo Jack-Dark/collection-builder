@@ -11,7 +11,7 @@ export const NavMenu = (props: { items: NavMenuItem[] }) => {
   const { items } = props;
 
   return (
-    <NavigationMenu.Root className="min-w-max rounded-lg bg-gray-50 p-1 text-gray-900">
+    <NavigationMenu.Root className="min-w-max rounded-xs bg-gray-50 p-1 text-gray-900">
       <NavigationMenu.List className="relative flex items-center gap-2">
         {items.map(({ hidden, href, Icon, items, label, onClick }) => {
           const hasSubMenu = !!items?.some(({ hidden }) => {
@@ -22,7 +22,7 @@ export const NavMenu = (props: { items: NavMenuItem[] }) => {
             <NavigationMenu.Item
               className={
                 (hasSubMenu ? '' : 'px-3 py-2 ') +
-                'rounded-md no-underline text-black ' +
+                'rounded-xs no-underline text-black ' +
                 'hover:bg-primary-800 hover:text-white ' +
                 'data-[status="active"]:bg-primary-900 hover:data-[status="active"]:bg-primary-800 data-[status="active"]:text-white'
               }
@@ -37,7 +37,7 @@ export const NavMenu = (props: { items: NavMenuItem[] }) => {
                       className={
                         'px-3 py-2 ' +
                         'flex items-center justify-center gap-1.5 ' +
-                        'rounded-md bg-inherit text-inherit font-medium ' +
+                        'rounded-xs bg-inherit text-inherit font-medium ' +
                         'text-[0.925rem] [@media(min-width:32rem)]:text-base leading-6 select-none no-underline '
                       }
                     >
@@ -119,7 +119,7 @@ export const NavMenu = (props: { items: NavMenuItem[] }) => {
             ['--easing' as string]: 'cubic-bezier(0.22, 1, 0.36, 1)',
           }}
         >
-          <NavigationMenu.Popup className="data-[ending-style]:easing-[ease] relative h-[var(--popup-height)] origin-[var(--transform-origin)] rounded-lg bg-[canvas] text-gray-900 shadow-lg shadow-gray-200 outline-1 outline-gray-200 transition-[opacity,transform,width,height,scale,translate] duration-[var(--duration)] ease-[var(--easing)] data-[ending-style]:scale-90 data-[ending-style]:opacity-0 data-[ending-style]:duration-150 data-[starting-style]:scale-90 data-[starting-style]:opacity-0 w-[var(--popup-width)] dark:shadow-none dark:-outline-offset-1 dark:outline-gray-300">
+          <NavigationMenu.Popup className="data-[ending-style]:easing-[ease] relative h-[var(--popup-height)] origin-[var(--transform-origin)] rounded-xs bg-[canvas] text-gray-900 shadow-lg shadow-gray-200 outline-1 outline-gray-200 transition-[opacity,transform,width,height,scale,translate] duration-[var(--duration)] ease-[var(--easing)] data-[ending-style]:scale-90 data-[ending-style]:opacity-0 data-[ending-style]:duration-150 data-[starting-style]:scale-90 data-[starting-style]:opacity-0 w-[var(--popup-width)] dark:shadow-none dark:-outline-offset-1 dark:outline-gray-300">
             <NavigationMenu.Arrow className="flex transition-[left] duration-[var(--duration)] ease-[var(--easing)] data-[side=bottom]:top-[-8px] data-[side=left]:right-[-13px] data-[side=left]:rotate-90 data-[side=right]:left-[-13px] data-[side=right]:-rotate-90 data-[side=top]:bottom-[-8px] data-[side=top]:rotate-180">
               <MenuArrowSvg />
             </NavigationMenu.Arrow>
