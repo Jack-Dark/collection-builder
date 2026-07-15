@@ -99,24 +99,10 @@ export const AddCollectionItemFormTableRow = withAddCollectionItemForm({
                           <div
                             className="absolute right-0 top-0 flex justify-end p-4px bg-white border-l border-b border-gray-400 rounded-bl-sm text-lg hover:text-red-600 cursor-pointer"
                             onClick={() => {
-                              const matchesDeletedFile = (
-                                valueAtIndex:
-                                  | string
-                                  | {
-                                      file: File;
-                                      previewUrl: string;
-                                    },
-                              ) => {
-                                if (typeof valueAtIndex === 'string') {
-                                  return valueAtIndex !== publicId;
-                                } else {
-                                  return valueAtIndex.previewUrl !== previewUrl;
-                                }
-                              };
+                              const images = [...value];
+                              images.splice(index, 1);
 
-                              return field.handleChange(
-                                value.filter(matchesDeletedFile),
-                              );
+                              return field.handleChange(images);
                             }}
                           >
                             <DeleteIcon fontSize="inherit" />
