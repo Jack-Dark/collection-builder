@@ -3,7 +3,7 @@ import type { CellContext, Getter, Row } from '@tanstack/react-table';
 import { Link } from '@tanstack/react-router';
 import { createColumnHelper } from '@tanstack/react-table';
 
-import type { CollectionRecordDef } from '#/api/routes/collections/collection.types';
+import type { GetPaginatedCollectionsResponseDef } from '#/api/routes/collections/get-paginated-collections/get-paginated-collections.types';
 
 import { useDeleteCollectionById } from '#/api/routes/collections/delete-collection-by-id/delete-collection-by-id.react-query';
 import { useInvalidateGetPaginatedCollections } from '#/api/routes/collections/get-paginated-collections/get-paginated-collections.react-query';
@@ -12,12 +12,15 @@ import { TableCellActionsMenu } from '#/components/TableCellActionsMenu';
 import { useCollectionsListFormStore } from './CollectionsListPage';
 import { useEditingCollectionsRowIds } from './hooks/use-editing-collections-row-ids';
 
-const columnHelper = createColumnHelper<CollectionRecordDef>();
+const columnHelper =
+  createColumnHelper<
+    GetPaginatedCollectionsResponseDef['collections'][number]
+  >();
 
 const CustomFieldCell = <TNum extends 1 | 2 | 3>(props: {
   customFieldNum: TNum;
   getValue: Getter<string | null>;
-  row: Row<CollectionRecordDef>;
+  row: Row<GetPaginatedCollectionsResponseDef['collections'][number]>;
 }) => {
   const { customFieldNum, getValue, row } = props;
 
@@ -98,7 +101,10 @@ export const getCollectionsListTableColumns = () => {
 const CollectionsListActionsCell = ({
   getValue,
   row,
-}: CellContext<CollectionRecordDef, number>) => {
+}: CellContext<
+  GetPaginatedCollectionsResponseDef['collections'][number],
+  number
+>) => {
   const invalidateGetCollectionDetailsById =
     useInvalidateGetPaginatedCollections();
 
