@@ -22,7 +22,6 @@ export const Dialog = (props: DialogPropsDef) => {
         <MuiDialog.Popup
           className={`relative grid auto-rows-[max-content_1fr_max-content] w-full h-full max-h-full max-w-full min-h-0 ${isFullScreen ? '' : `md:w-auto md:max-w-[70dvw] md:h-auto md:max-h-[90dvh]`} flex-col bg-white duration-100 ease-out`}
         >
-          {!isFullScreen && <MuiDialog.Backdrop />}
           {(Header || !hideClose) && (
             <div
               className={`flex ${Header && hideClose ? 'justify-center' : Header ? 'justify-between' : 'justify-end'} items-center gap-2 px-4 py-2 border-b border-gray-400`}
