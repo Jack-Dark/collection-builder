@@ -133,7 +133,7 @@ export const ComboboxField = <TValue,>(props: ComboboxFieldProps<TValue>) => {
               {(item: TValue) => {
                 return (
                   <Combobox.Input
-                    className="input w-full pr-8"
+                    className="input w-full"
                     key={itemToStringValue(item)}
                     placeholder={placeholder}
                     value={query}

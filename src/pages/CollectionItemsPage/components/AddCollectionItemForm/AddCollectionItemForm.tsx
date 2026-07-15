@@ -81,19 +81,22 @@ export const AddCollectionItemFormTableRow = withAddCollectionItemForm({
 
                     return (
                       <SimpleErrorBoundary key={src}>
-                        <div className="grid grid-rows-[auto_1fr] items-center w-25 h-25  bg-white border border-gray-400 text-gray-500">
-                          <div className="flex justify-end p-1 border-b border-gray-400">
-                            <DeleteIcon
-                              className="cursor-pointer"
-                              fontSize="small"
-                              onClick={() => {
-                                return field.handleChange(
-                                  value.filter((string) => {
-                                    return string !== src;
-                                  }),
-                                );
-                              }}
-                            />
+                        <div className="relative grid grid-rows-[auto_1fr] items-center p-1 size-20 bg-white border border-gray-400 text-gray-500">
+                          <div
+                            className="absolute right-0 top-0 flex justify-end p-4px bg-white border-l border-b border-gray-400 rounded-bl-sm text-lg hover:text-red-600 cursor-pointer"
+                            onClick={() => {
+                              return field.handleChange(
+                                value.filter((image) => {
+                                  if (typeof image === 'string') {
+                                    return image !== src;
+                                  } else {
+                                    return image.previewUrl !== src;
+                                  }
+                                }),
+                              );
+                            }}
+                          >
+                            <DeleteIcon fontSize="inherit" />
                           </div>
                           <div className="w-full h-full overflow-hidden">
                             <img
@@ -108,7 +111,7 @@ export const AddCollectionItemFormTableRow = withAddCollectionItemForm({
                   })}
                   <SimpleErrorBoundary>
                     <div
-                      className="grid items-center justify-center w-25 h-25 border border-gray-400 text-gray-500 cursor-pointer"
+                      className="grid items-center justify-center size-20 border border-gray-400 text-gray-500 cursor-pointer"
                       onClick={() => {
                         fileInputRef.current?.click();
                       }}
@@ -117,7 +120,7 @@ export const AddCollectionItemFormTableRow = withAddCollectionItemForm({
                       <AddIcon fontSize="large" />
                     </div>
                     <input
-                      accept="image/*"
+                      accept=".jpg,.jpeg,.png,.webp"
                       autoFocus
                       capture="environment"
                       className="hidden"

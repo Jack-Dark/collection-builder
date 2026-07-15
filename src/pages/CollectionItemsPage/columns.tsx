@@ -42,22 +42,24 @@ export const getCollectionItemsTableColumns = (props: CollectionRecordDef) => {
         const images = getValue();
 
         return images.length ? (
-          images.map((src, index) => {
-            return (
-              <div
-                className="grid grid-rows-[auto_1fr] items-center w-25 h-25  bg-white border border-gray-400 text-gray-500"
-                key={src}
-              >
-                <div className="w-full h-full overflow-hidden">
-                  <img
-                    alt={`${row.original.name} thumbnail ${index + 1}`}
-                    className="w-full h-full object-contain"
-                    src={src}
-                  />
+          <div className="flex flex-wrap gap-1 items-center">
+            {images.map((src, index) => {
+              return (
+                <div
+                  className="p-1 size-14 bg-white border border-gray-400 text-gray-500"
+                  key={src}
+                >
+                  <div className="w-full h-full overflow-hidden">
+                    <img
+                      alt={`${row.original.name} thumbnail ${index + 1}`}
+                      className="w-full h-full object-contain"
+                      src={src}
+                    />
+                  </div>
                 </div>
-              </div>
-            );
-          })
+              );
+            })}
+          </div>
         ) : (
           <p>-</p>
         );
