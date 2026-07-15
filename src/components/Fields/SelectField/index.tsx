@@ -10,6 +10,7 @@ export type SelectFieldPropsDef<TItem extends Record<string, any>> = Omit<
 > & {
   idProperty?: keyof TItem;
   items: TItem[];
+  keyPrefix?: string;
   labelProperty?: keyof TItem;
   onValueChange: (item: TItem | null) => void | Promise<void>;
   RenderItem?: JSXElementConstructor<TItem>;
@@ -22,6 +23,7 @@ export const SelectField = <TItem extends Record<string, any>>(
   const {
     idProperty = 'id',
     items,
+    keyPrefix = 'key',
     labelProperty = 'label',
     onValueChange,
     RenderItem = (item) => {
@@ -62,7 +64,7 @@ export const SelectField = <TItem extends Record<string, any>>(
                   <Select.Item
                     className="p-2 hover:bg-menu-primary-hover data-selected:bg-menu-primary-selected data-highlighted:bg-menu-primary-hover cursor-pointer
                         flex align-items-center"
-                    key={item[idProperty]}
+                    key={`${keyPrefix}-${item[idProperty]}`}
                     value={item}
                   >
                     <Select.ItemText>

@@ -1,4 +1,4 @@
-import type { Getter, Row } from '@tanstack/react-table';
+import type { CellContext, Getter, Row } from '@tanstack/react-table';
 
 import { Link } from '@tanstack/react-router';
 import { createColumnHelper } from '@tanstack/react-table';
@@ -6,6 +6,7 @@ import { createColumnHelper } from '@tanstack/react-table';
 import type { CollectionRecordDef } from '#/api/routes/collections/collection.types';
 
 import { useDeleteCollectionById } from '#/api/routes/collections/delete-collection-by-id/delete-collection-by-id.react-query';
+import { useInvalidateGetPaginatedCollections } from '#/api/routes/collections/get-paginated-collections/get-paginated-collections.react-query';
 import { TableCellActionsMenu } from '#/components/TableCellActionsMenu';
 
 import { useCollectionsListFormStore } from './CollectionsListPage';
@@ -85,43 +86,60 @@ export const getCollectionsListTableColumns = () => {
       minSize: 210,
     }),
     columnHelper.accessor('id', {
-      cell: ({ getValue, row }) => {
-        const { isPending: isDeletePending, onDeleteCollectionById } =
-          useDeleteCollectionById();
-
-        const { resetCollectionFormValues, setCollectionFormValues } =
-          useCollectionsListFormStore();
-
-        const collectionId = getValue();
-
-        const { getIsEditingRowId, resetEditingRowIds, setEditingRowIds } =
-          useEditingCollectionsRowIds();
-
-        const isEditingRow = getIsEditingRowId(collectionId);
-
-        return (
-          <TableCellActionsMenu
-            deleteIsDisabled={isDeletePending}
-            deleteOnClick={async () => {
-              await onDeleteCollectionById({ collectionId });
-            }}
-            editIsDisabled={isDeletePending}
-            editOnClick={async (row) => {
-              setEditingRowIds([collectionId]);
-              setCollectionFormValues(row);
-            }}
-            isEditing={isEditingRow}
-            onCancelEdit={() => {
-              resetEditingRowIds();
-              resetCollectionFormValues();
-            }}
-            row={row}
-          />
-        );
+      cell: (context) => {
+        return <CollectionsListActionsCell {...context} />;
       },
       header: '',
       id: 'actions',
       size: 40,
     }),
   ];
+};
+
+const CollectionsListActionsCell = ({
+  getValue,
+  row,
+}: CellContext<CollectionRecordDef, number>) => {
+  const invalidateGetCollectionDetailsById =
+    useInvalidateGetPaginatedCollections();
+
+  const { isPending: isDeletePending, onDeleteCollectionById } =
+    useDeleteCollectionById({
+      onSuccess: async () => {
+        await invalidateGetCollectionDetailsById({
+          id: collectionId,
+        });
+      },
+    });
+
+  const { resetFormValues, setFormValues } = useCollectionsListFormStore();
+
+  const collectionId = getValue();
+
+  const { getIsEditingRowId, resetEditingRowIds, setEditingRowIds } =
+    useEditingCollectionsRowIds();
+
+  const isEditingRow = getIsEditingRowId(collectionId);
+
+  return (
+    <TableCellActionsMenu
+      deleteIsDisabled={isDeletePending}
+      deleteOnClick={async () => {
+        await onDeleteCollectionById({
+          collectionId,
+        });
+      }}
+      editIsDisabled={isDeletePending}
+      editOnClick={async (record) => {
+        setFormValues(record);
+        setEditingRowIds([collectionId]);
+      }}
+      isEditing={isEditingRow}
+      onCancelEdit={() => {
+        resetFormValues();
+        resetEditingRowIds();
+      }}
+      row={row}
+    />
+  );
 };

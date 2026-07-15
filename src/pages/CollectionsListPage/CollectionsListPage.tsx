@@ -4,7 +4,6 @@ import ControlPointIcon from '@mui/icons-material/ControlPoint';
 import { revalidateLogic } from '@tanstack/react-form';
 import _ from 'lodash';
 import { useMemo } from 'react';
-import { create } from 'zustand';
 
 import type { CollectionTableColumnsDef } from '#/api/routes/collections/collection.types';
 import type { SortItemDef } from '#/components/Table';
@@ -20,8 +19,8 @@ import { createOrUpdateCollectionFormSchema } from '#/pages/CollectionsListPage/
 import { Route } from '#/routes/_protected/collections';
 
 import type { UnformattedSortItemDef } from '../CollectionItemsPage/components/CollectionItemsFiltersContent';
-import type { AddCollectionFormSchemaDef } from './components/AddCollectionFormTableRow/types';
 
+import { createFormStore } from '../CollectionItemsPage';
 import { formatSortItems } from '../CollectionItemsPage/components/CollectionItemsFiltersContent';
 import { getCollectionsListTableColumns } from './columns';
 import { AddCollectionFormTableRow } from './components/AddCollectionFormTableRow';
@@ -31,25 +30,9 @@ import {
 } from './components/AddCollectionFormTableRow/constants';
 import { useEditingCollectionsRowIds } from './hooks/use-editing-collections-row-ids';
 
-export const useCollectionsListFormStore = create<{
-  collectionFormValues: AddCollectionFormSchemaDef;
-  resetCollectionFormValues: () => void;
-  setCollectionFormValues: (values: AddCollectionFormSchemaDef) => void;
-}>((set) => {
-  return {
-    collectionFormValues: addCollectionFormDefaultValues,
-    resetCollectionFormValues: () => {
-      set({
-        collectionFormValues: addCollectionFormDefaultValues,
-      });
-    },
-    setCollectionFormValues: (values) => {
-      set({
-        collectionFormValues: values,
-      });
-    },
-  };
-});
+export const useCollectionsListFormStore = createFormStore(
+  addCollectionFormDefaultValues,
+);
 
 export const CollectionsListPage: RouteComponent = () => {
   const search = Route.useSearch();
@@ -59,39 +42,30 @@ export const CollectionsListPage: RouteComponent = () => {
   });
   const { collections, pagination } = data;
 
-  const { collectionFormValues, resetCollectionFormValues } =
-    useCollectionsListFormStore();
+  const { formValues, resetFormValues } = useCollectionsListFormStore();
 
   const { onCreateCollection } = useCreateCollection({
     onSuccess: async () => {
-      resetCollectionFormValues();
+      resetFormValues();
     },
   });
 
   const { onUpdateCollectionById } = useUpdateCollectionById({
     onSuccess: async () => {
-      resetCollectionFormValues();
+      resetFormValues();
     },
   });
 
   const form = useAddCollectionForm({
-    defaultValues: collectionFormValues,
+    defaultValues: formValues,
     onSubmit: async ({ value }) => {
-      if (value.id) {
+      if (typeof value.id === 'number') {
         await onUpdateCollectionById(value);
-
-        resetEditingRowIds();
       } else {
-        await onCreateCollection({
-          // undefined values added long-hand to resolve type errors
-          // TODO - LOOK AT USING `NewCollectionRecordDef` INSTEAD
-          ...value,
-          createdAt: undefined,
-          id: undefined,
-          userId: undefined,
-        });
+        await onCreateCollection(value);
       }
 
+      resetEditingRowIds();
       form.reset();
     },
     validationLogic: revalidateLogic({
@@ -147,7 +121,6 @@ export const CollectionsListPage: RouteComponent = () => {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          e.stopPropagation();
           form.handleSubmit();
         }}
       >
@@ -160,7 +133,7 @@ export const CollectionsListPage: RouteComponent = () => {
                       form={form}
                       onCancel={() => {
                         resetEditingRowIds();
-                        resetCollectionFormValues();
+                        resetFormValues();
                         form.reset();
                       }}
                       tdClassNames={tableCellClasses}

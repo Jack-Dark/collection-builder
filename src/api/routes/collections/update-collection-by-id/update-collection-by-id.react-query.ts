@@ -3,7 +3,7 @@ import type { GenericMutateQueryProps } from '#/api/react-query-hooks/use-generi
 import { useGenericMutateQuery } from '#/api/react-query-hooks/use-generic-mutate-query';
 
 import type {
-  UpdateCollectionRequestArgsDef,
+  UpdateCollectionFormSchemaDef,
   UpdateCollectionResponseDef,
 } from './update-collection-by-id.types';
 
@@ -15,7 +15,7 @@ export const useUpdateCollectionById = <
   TTransformedData = UpdateCollectionResponseDef,
 >(
   props?: GenericMutateQueryProps<
-    UpdateCollectionRequestArgsDef,
+    UpdateCollectionFormSchemaDef,
     UpdateCollectionResponseDef,
     TTransformedData
   >,

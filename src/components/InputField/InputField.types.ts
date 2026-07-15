@@ -11,7 +11,6 @@ export type InputFieldProps = Pick<
   | 'required'
   | 'type'
   | 'value'
-  | 'defaultValue'
   | 'multiple'
   | 'accept'
   | 'capture'

@@ -35,7 +35,7 @@ import {
   useSetCollectionItemsFiltersFromQueries,
 } from './components/CollectionItemsFiltersContent';
 
-const createFormStore = <TData extends Record<string, any>>(
+export const createFormStore = <TData extends Record<string, any>>(
   defaultValues: TData,
 ) => {
   const createFormValuesStore = getCreateDefaultZustandState(defaultValues);
@@ -105,8 +105,8 @@ export const CollectionItemsPage: RouteComponent = () => {
         await onCreateCollectionItem(value);
       }
 
-      form.reset();
       resetEditingRowIds();
+      form.reset();
     },
     validators: {
       onChange: addOrUpdateCollectionItemFormSchema,
