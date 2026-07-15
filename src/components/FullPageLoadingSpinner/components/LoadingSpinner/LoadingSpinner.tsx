@@ -18,7 +18,7 @@ export const LoadingSpinner = (props: LoadingSpinnerPropsDef) => {
   return (
     <div
       aria-label="Loading…"
-      className={`${size} ${borderColorClasses} ${border} rounded-full animate-spin ${enableShadow ? 'shadow-[0_0_5px_rgba(0,0,0,0.25)]' : ''}`}
+      className={`${size} ${borderColorClasses} ${border} rounded-full animate-spin ${enableShadow ? 'shadow-[0_0_5px_rgba(0,0,0,0.25),inset_0_0_5px_rgba(0,0,0,0.25)]' : ''}`}
       role="status"
     />
   );
