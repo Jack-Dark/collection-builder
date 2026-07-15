@@ -16,7 +16,6 @@ export const addCollectionFormDefaultValues: AddCollectionFormSchemaDef = {
   customField3Enabled: false,
   customField3Label: '',
   id: undefined,
-  images: [],
   name: '',
   notes: '',
   userId: undefined,
