@@ -1,6 +1,6 @@
 @import "tailwindcss";
 @import "./components/Button/styles.css";
-@import "./components/InputField/styles.css";
+@import "./components/Fields/InputField/styles.css";
 @import "./components/MoreMenu/components/MenuList/styles.css";
 @import "./components/Table/styles.css";
 
