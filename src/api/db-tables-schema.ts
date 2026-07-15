@@ -128,7 +128,6 @@ export const collectionsTable = pgTable(
     customField3Enabled: boolean().notNull().default(false),
     customField3Label: text(),
     id: serial().primaryKey(),
-    images: json().notNull().$type<string[]>().default([]),
     name: text().notNull(),
     notes: text().notNull(),
     userId: text()

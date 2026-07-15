@@ -8,22 +8,6 @@ const createCollectionBaseSchema = baseCollectionSchema.extend({
   userId: z.undefined().describe('User ID'),
 });
 
-export const createCollectionFormSchema = createCollectionBaseSchema.extend({
-  images: z
-    .array(
-      z.union([
-        z.string(),
-        z.object({
-          file: z.file(),
-          previewUrl: z.string(),
-        }),
-      ]),
-    )
-    .describe('Images'),
-});
+export const createCollectionFormSchema = createCollectionBaseSchema;
 
-export const createCollectionServerFnSchema = createCollectionBaseSchema.extend(
-  {
-    images: z.array(z.string()).describe('Images'),
-  },
-);
+export const createCollectionServerFnSchema = createCollectionBaseSchema;

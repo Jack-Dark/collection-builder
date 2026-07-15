@@ -8,22 +8,7 @@ const updateCollectionByIdBaseSchema = baseCollectionSchema.extend({
   userId: z.string().describe('User ID').min(1),
 });
 
-export const updateCollectionByIdFormSchema =
-  updateCollectionByIdBaseSchema.extend({
-    images: z
-      .array(
-        z.union([
-          z.string(),
-          z.object({
-            file: z.file(),
-            previewUrl: z.string(),
-          }),
-        ]),
-      )
-      .describe('Images'),
-  });
+export const updateCollectionByIdFormSchema = updateCollectionByIdBaseSchema;
 
 export const updateCollectionByIdServerFnSchema =
-  updateCollectionByIdBaseSchema.extend({
-    images: z.array(z.string()).describe('Images'),
-  });
+  updateCollectionByIdBaseSchema;
