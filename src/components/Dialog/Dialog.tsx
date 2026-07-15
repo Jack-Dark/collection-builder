@@ -18,7 +18,6 @@ export const Dialog = (props: DialogPropsDef) => {
     <MuiDialog.Root disablePointerDismissal={hideClose} modal open>
       <MuiDialog.Viewport
         className={`fixed inset-0 flex md:items-center md:justify-center overflow-hidden ${isFullScreen ? '' : 'md:p-6'}`}
-        onClick={hideClose ? undefined : onClose}
       >
         <MuiDialog.Popup
           className={`relative grid auto-rows-[max-content_1fr_max-content] w-full h-full max-h-full max-w-full min-h-0 ${isFullScreen ? '' : `md:w-auto md:max-w-[70dvw] md:h-auto md:max-h-[90dvh]`} flex-col bg-white duration-100 ease-out`}
