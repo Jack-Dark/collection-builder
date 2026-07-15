@@ -92,7 +92,7 @@ export const getCollectionItemsTableColumns = (props: CollectionRecordDef) => {
                 });
                 setLastSelectedRowId(rowId);
 
-                // clears any text highlighting
+                // ? clears any text highlighting
                 document.getSelection()?.removeAllRanges();
               }}
             />

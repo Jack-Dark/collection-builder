@@ -7,6 +7,8 @@ import type {
 import type { JSXElementConstructor } from 'react';
 
 import { ScrollArea } from '@base-ui/react';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 import SwapVertIcon from '@mui/icons-material/SwapVert';
 import {
   flexRender,
@@ -19,6 +21,7 @@ import { getCreateDefaultZustandStore } from '#/helpers/get-create-default-zusta
 
 import type { FiltersButtonPropsDef } from './components/FilterButton/FilterButton.types';
 
+import { Button } from '../Button';
 import { InputField } from '../Fields/InputField';
 import { SelectField } from '../Fields/SelectField';
 import { FilterButton } from './components/FilterButton';
@@ -172,7 +175,17 @@ export const Table = <TData extends Record<'id', string | number>>({
     return '';
   }, [showActionsRow, !!pagination]);
 
+  const isAllRowsSelected = table.getIsAllRowsSelected();
+  const isSomeRowsSelected = table.getIsSomeRowsSelected();
+  const showSelectionActions = isAllRowsSelected || isSomeRowsSelected;
+
+  const { resetSelectedTableRows, setSelectedTableRows } =
+    useSelectedTableRowsStore();
+
   const actionsColumns = useMemo(() => {
+    if (showSelectionActions && filters && sort) {
+      return 'grid-cols-[auto_auto_1fr_auto]';
+    }
     if (filters && sort) {
       return 'grid-cols-[auto_1fr_auto]';
     }
@@ -184,12 +197,7 @@ export const Table = <TData extends Record<'id', string | number>>({
     }
 
     return '';
-  }, [!!filters, !!search, !!sort]);
-
-  const isAllRowsSelected = table.getIsAllRowsSelected();
-  const isSomeRowsSelected = table.getIsSomeRowsSelected();
-  const { resetSelectedTableRows, setSelectedTableRows } =
-    useSelectedTableRowsStore();
+  }, [showSelectionActions, !!filters, !!search, !!sort]);
 
   useEffect(() => {
     if (isAllRowsSelected) {
@@ -211,6 +219,26 @@ export const Table = <TData extends Record<'id', string | number>>({
     >
       {showActionsRow && (
         <div className={`grid ${actionsColumns} items-stretch gap-4`}>
+          {showSelectionActions && (
+            <div className="flex gap-2 items-end">
+              <Button
+                aria-label="Edit"
+                className="text-gray-500 hover:text-primary-700"
+                size="xs"
+                variant="ghost"
+              >
+                <EditIcon />
+              </Button>
+              <Button
+                aria-label="Delete"
+                className="text-gray-500 hover:text-red-700"
+                size="xs"
+                variant="ghost"
+              >
+                <DeleteIcon />
+              </Button>
+            </div>
+          )}
           {filters && <FilterButton {...filters} />}
           {search && (
             <InputField
