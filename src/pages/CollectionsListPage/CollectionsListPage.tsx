@@ -1,10 +1,15 @@
-import type { RouteComponent } from '@tanstack/react-router';
+import type { NavigateOptions, RouteComponent } from '@tanstack/react-router';
 
 import ControlPointIcon from '@mui/icons-material/ControlPoint';
 import { revalidateLogic } from '@tanstack/react-form';
+import _ from 'lodash';
 import { useMemo } from 'react';
 import { create } from 'zustand';
 
+import type { CollectionTableColumnsDef } from '#/api/routes/collections/collection.types';
+import type { SortItemDef } from '#/components/Table';
+
+import { sortDirectionOptions } from '#/api/pagination/pagination.constants';
 import { useCreateCollection } from '#/api/routes/collections/create-collection/create-collection.react-query';
 import { useGetPaginatedCollections } from '#/api/routes/collections/get-paginated-collections/get-paginated-collections.react-query';
 import { useUpdateCollectionById } from '#/api/routes/collections/update-collection-by-id/update-collection-by-id.react-query';
@@ -14,8 +19,10 @@ import { PageWrapper } from '#/page-wrapper';
 import { createOrUpdateCollectionFormSchema } from '#/pages/CollectionsListPage/collection-form.schema';
 import { Route } from '#/routes/_protected/collections';
 
+import type { UnformattedSortItemDef } from '../CollectionItemsPage/components/CollectionItemsFiltersContent';
 import type { AddCollectionFormSchemaDef } from './components/AddCollectionFormTableRow/types';
 
+import { formatSortItems } from '../CollectionItemsPage/components/CollectionItemsFiltersContent';
 import { getCollectionsListTableColumns } from './columns';
 import { AddCollectionFormTableRow } from './components/AddCollectionFormTableRow';
 import {
@@ -103,6 +110,24 @@ export const CollectionsListPage: RouteComponent = () => {
     return getCollectionsListTableColumns();
   }, []);
 
+  const { onUpdateCollectionsQueries } = useOnUpdateCollectionQueries();
+
+  const searchProps = useCollectionSearch();
+  const sortProps = useCollectionSort<CollectionTableColumnsDef>({
+    items: [
+      {
+        bidirectional: true,
+        field: 'name',
+        label: 'Name',
+      },
+      {
+        bidirectional: true,
+        field: 'createdAt',
+        label: 'Added',
+      },
+    ],
+  });
+
   return (
     <PageWrapper title="Collections">
       <div className="grid gap-4">
@@ -149,17 +174,97 @@ export const CollectionsListPage: RouteComponent = () => {
           data={collections}
           pagination={{
             limit: {
-              onChange: (limit) => {},
-              value: pagination.pageSize,
+              onChange: (limit) => {
+                onUpdateCollectionsQueries({ limit });
+              },
+              value: search.limit || 100,
             },
             page: {
               max: pagination.totalPages,
-              onChange: (page) => {},
-              value: pagination.currentPage,
+              onChange: (page) => {
+                onUpdateCollectionsQueries({ page });
+              },
+              value: search.page || 1,
             },
           }}
+          search={searchProps}
+          sort={sortProps}
         />
       </form>
     </PageWrapper>
   );
+};
+
+export const useOnUpdateCollectionQueries = () => {
+  const navigate = Route.useNavigate();
+  const searchQueries = Route.useSearch();
+
+  const onUpdateCollectionsQueries = async (
+    updatedQueries: Partial<typeof searchQueries>,
+    options?: NavigateOptions,
+  ) => {
+    const { limit, search } = updatedQueries;
+
+    await navigate({
+      search: {
+        ...searchQueries,
+        ...updatedQueries,
+        page: limit || search ? 1 : searchQueries.page || 1,
+      },
+      ...options,
+    });
+  };
+
+  return { onUpdateCollectionsQueries, searchQueries };
+};
+
+export const useCollectionSearch = () => {
+  const { onUpdateCollectionsQueries, searchQueries } =
+    useOnUpdateCollectionQueries();
+
+  const onChange = _.debounce(async (searchValue: string) => {
+    const search = searchValue.trim();
+
+    onUpdateCollectionsQueries({ search });
+  }, 200);
+
+  return {
+    onChange,
+    value: searchQueries.search,
+  };
+};
+
+export const useCollectionSort = <
+  TField extends CollectionTableColumnsDef,
+>(props: {
+  items: UnformattedSortItemDef<TField>[];
+}) => {
+  const { items } = props;
+
+  const { onUpdateCollectionsQueries, searchQueries } =
+    useOnUpdateCollectionQueries();
+
+  const formattedItems = useMemo(() => {
+    return formatSortItems(items);
+  }, [...items]);
+
+  const onChange = (sort: SortItemDef<TField> | null) => {
+    onUpdateCollectionsQueries({
+      sort: {
+        direction: sort?.direction || sortDirectionOptions.asc,
+        field: sort?.field || 'name',
+      },
+    });
+  };
+
+  const { direction, field } = searchQueries.sort;
+  const defaultValue = formattedItems.find((item) => {
+    return item.field === field && item.direction === direction;
+  });
+
+  return {
+    items: formattedItems,
+    onChange,
+    value: defaultValue,
+  };
 };

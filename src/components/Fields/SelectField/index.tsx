@@ -6,7 +6,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 export type SelectFieldPropsDef<TItem extends Record<string, any>> = Omit<
   SelectRootProps<TItem>,
-  'items' | 'onValueChange'
+  'items' | 'onValueChange' | 'defaultValue'
 > & {
   idProperty?: keyof TItem;
   items: TItem[];
@@ -20,9 +20,8 @@ export const SelectField = <TItem extends Record<string, any>>(
   props: SelectFieldPropsDef<TItem>,
 ) => {
   const {
-    items,
-    defaultValue = items[0],
     idProperty = 'id',
+    items,
     labelProperty = 'label',
     onValueChange,
     RenderItem = (item) => {
@@ -37,7 +36,6 @@ export const SelectField = <TItem extends Record<string, any>>(
   return (
     <Select.Root
       {...rest}
-      defaultValue={defaultValue}
       itemToStringValue={(item) => {
         return String(item[idProperty]);
       }}
@@ -64,7 +62,7 @@ export const SelectField = <TItem extends Record<string, any>>(
                   <Select.Item
                     className="p-2 hover:bg-menu-primary-hover data-selected:bg-menu-primary-selected data-highlighted:bg-menu-primary-hover cursor-pointer
                         flex align-items-center"
-                    key={item.id}
+                    key={item[idProperty]}
                     value={item}
                   >
                     <Select.ItemText>

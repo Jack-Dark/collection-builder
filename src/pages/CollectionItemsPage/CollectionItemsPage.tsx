@@ -244,14 +244,14 @@ export const CollectionItemsPage: RouteComponent = () => {
               onChange: (limit) => {
                 onUpdateCollectionItemsQueries({ limit });
               },
-              value: pagination.pageSize,
+              value: search.limit || 100,
             },
             page: {
               max: pagination.totalPages,
               onChange: (page) => {
                 onUpdateCollectionItemsQueries({ page });
               },
-              value: pagination.currentPage,
+              value: search.page || 1,
             },
           }}
           search={searchProps}

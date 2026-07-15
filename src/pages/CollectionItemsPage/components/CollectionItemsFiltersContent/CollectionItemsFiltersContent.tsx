@@ -230,7 +230,7 @@ export const useCollectionItemsSearch = () => {
   };
 };
 
-type UnformattedSortItemDef<TField extends string> = (
+export type UnformattedSortItemDef<TField extends string> = (
   | {
       bidirectional: true;
       direction?: never;
@@ -340,10 +340,12 @@ export const useOnUpdateCollectionItemsQueries = () => {
     updatedQueries: Partial<typeof searchQueries>,
     options?: NavigateOptions,
   ) => {
+    const { filters, limit, search } = updatedQueries;
     await navigate({
       search: {
         ...searchQueries,
         ...updatedQueries,
+        page: filters || limit || search ? 1 : searchQueries.page || 1,
       },
       ...options,
     });

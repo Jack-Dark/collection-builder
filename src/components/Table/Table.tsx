@@ -102,7 +102,7 @@ export const Table = <TData,>({
     ...rest,
   });
 
-  const showActionsRow = !!filters && !!search && !!sort;
+  const showActionsRow = !!filters || !!search || !!sort;
 
   const containerRows = useMemo(() => {
     if (showActionsRow && pagination) {
@@ -279,10 +279,6 @@ export const Table = <TData,>({
 
           {pagination.page && (
             <SelectField
-              defaultValue={{
-                label: pagination.page.value,
-                value: pagination.page.value,
-              }}
               items={new Array(pagination.page.max)
                 .fill(null)
                 .map((_, index) => {
@@ -297,6 +293,10 @@ export const Table = <TData,>({
                 if (item?.value) {
                   pagination?.page?.onChange?.(item.value);
                 }
+              }}
+              value={{
+                label: pagination.page.value,
+                value: pagination.page.value,
               }}
             />
           )}
