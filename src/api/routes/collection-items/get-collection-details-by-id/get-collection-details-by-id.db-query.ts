@@ -39,7 +39,7 @@ export const getCollectionDetailsByIdDbQuery = async (
       .from(collectionItemsTable)
       .where(
         and(
-          eq(collectionItemsTable.id, collectionId),
+          eq(collectionItemsTable.collectionId, collectionId),
           eq(collectionItemsTable.userId, userId),
           isNull(collectionItemsTable.deletedAt),
         ),
