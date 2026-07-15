@@ -1,13 +1,8 @@
-import type {
-  FilterFn,
-  SortDirection,
-  TableOptions,
-} from '@tanstack/react-table';
+import type { SortDirection, TableOptions } from '@tanstack/react-table';
 import type { JSXElementConstructor } from 'react';
 
 import { ScrollArea } from '@base-ui/react';
 import SwapVertIcon from '@mui/icons-material/SwapVert';
-import { rankItem } from '@tanstack/match-sorter-utils';
 import {
   flexRender,
   getCoreRowModel,
@@ -20,17 +15,6 @@ import type { FiltersButtonPropsDef } from './components/FilterButton/FilterButt
 import { InputField } from '../Fields/InputField';
 import { SelectField } from '../Fields/SelectField';
 import { FilterButton } from './components/FilterButton';
-
-const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
-  // Rank the item
-  const itemRank = rankItem(row.getValue(columnId), value);
-
-  // Store the itemRank info
-  addMeta({ itemRank });
-
-  // Return if the item should be filtered in/out
-  return itemRank.passed;
-};
 
 export const tableCellClasses =
   'text-left px-2 py-1 border-b z-0 first:sticky first:left-0 first:z-1 first:group-data-overflow-x-start:border-r last:sticky last:right-0 last:z-1 last:group-data-overflow-x-end:border-l';
@@ -89,16 +73,7 @@ export const Table = <TData,>({
 
   const table = useReactTable<TData>({
     data,
-    filterFns: {
-      fuzzy: fuzzyFilter,
-    },
     getCoreRowModel: getCoreRowModel(),
-    initialState: {
-      columnPinning: {
-        left: ['name'],
-        right: ['actions'],
-      },
-    },
     ...rest,
   });
 
