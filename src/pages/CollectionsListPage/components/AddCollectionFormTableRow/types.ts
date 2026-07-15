@@ -1,5 +1,7 @@
 import type z from 'zod';
 
-import type { collectionFormSchema } from '#/pages/CollectionsListPage/collection-form.schema';
+import type { createOrUpdateCollectionFormSchema } from '#/pages/CollectionsListPage/collection-form.schema';
 
-export type AddCollectionFormSchemaDef = z.output<typeof collectionFormSchema>;
+export type AddCollectionFormSchemaDef = z.output<
+  typeof createOrUpdateCollectionFormSchema
+>;

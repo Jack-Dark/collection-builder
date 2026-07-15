@@ -2,6 +2,7 @@ import SaveIcon from '@mui/icons-material/Save';
 
 import { Button } from '#/components/Button';
 import { CheckboxField } from '#/components/CheckboxField';
+import { SwitchField } from '#/components/SwitchField';
 
 import {
   addCollectionFormDefaultValues,
@@ -76,7 +77,7 @@ export const AddCollectionFormTableRow = withAddCollectionForm({
                             //   errors?.[0]?.[field.name]?.[0]?.message;
 
                             return (
-                              <CheckboxField
+                              <SwitchField
                                 checked={isEnabled}
                                 // error={errorMsg}
                                 label="Enable"

@@ -2,6 +2,7 @@ import type { RouteComponent } from '@tanstack/react-router';
 
 import ControlPointIcon from '@mui/icons-material/ControlPoint';
 import { revalidateLogic } from '@tanstack/react-form';
+import { useMemo } from 'react';
 import { create } from 'zustand';
 
 import { useCreateCollection } from '#/api/routes/collections/create-collection/create-collection.react-query';
@@ -10,7 +11,7 @@ import { useUpdateCollectionById } from '#/api/routes/collections/update-collect
 import { Button } from '#/components/Button';
 import { Table, tableCellClasses } from '#/components/Table';
 import { PageWrapper } from '#/page-wrapper';
-import { collectionFormSchema } from '#/pages/CollectionsListPage/collection-form.schema';
+import { createOrUpdateCollectionFormSchema } from '#/pages/CollectionsListPage/collection-form.schema';
 import { Route } from '#/routes/_protected/collections';
 
 import type { AddCollectionFormSchemaDef } from './components/AddCollectionFormTableRow/types';
@@ -91,14 +92,16 @@ export const CollectionsListPage: RouteComponent = () => {
       modeAfterSubmission: 'change',
     }),
     validators: {
-      onSubmit: collectionFormSchema,
+      onSubmit: createOrUpdateCollectionFormSchema,
     },
   });
 
   const { addToEditingRowIds, isEditing, resetEditingRowIds } =
     useEditingCollectionsRowIds();
 
-  const columns = getCollectionsListTableColumns();
+  const columns = useMemo(() => {
+    return getCollectionsListTableColumns();
+  }, []);
 
   return (
     <PageWrapper title="Collections">

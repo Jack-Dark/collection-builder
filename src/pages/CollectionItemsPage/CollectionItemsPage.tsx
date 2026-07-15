@@ -160,9 +160,9 @@ export const CollectionItemsPage: RouteComponent = () => {
   useEffect(() => {
     const newFormValues = {
       collectionId,
-      customField1Value: lastAddedItem.customField1Value,
-      customField2Value: lastAddedItem.customField2Value,
-      customField3Value: lastAddedItem.customField3Value,
+      customField1Value: lastAddedItem?.customField1Value || '',
+      customField2Value: lastAddedItem?.customField2Value || '',
+      customField3Value: lastAddedItem?.customField3Value || '',
     };
     updateDefaultValues(newFormValues);
     resetFormValues();

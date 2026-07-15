@@ -36,7 +36,14 @@ export const getCollectionDetailsByIdDbQuery = async (
   return db.transaction(async (tx) => {
     const [{ totalRecords }] = await tx
       .select({ totalRecords: count() })
-      .from(collectionItemsTable);
+      .from(collectionItemsTable)
+      .where(
+        and(
+          eq(collectionItemsTable.id, collectionId),
+          eq(collectionItemsTable.userId, userId),
+          isNull(collectionItemsTable.deletedAt),
+        ),
+      );
 
     const pagination = getPaginationMetadataQuery({
       currentPage: page,

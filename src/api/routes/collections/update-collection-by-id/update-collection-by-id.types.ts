@@ -7,7 +7,7 @@ import type {
 
 import type { CollectionRecordDef } from '../collection.types';
 import type { updateCollectionByIdDbQuery } from './update-collection-by-id.db-query';
-import type { updateCollectionByIdSchema } from './update-collection-by-id.schema';
+import type { updateCollectionByIdFormSchema } from './update-collection-by-id.schema';
 
 export type UpdateCollectionRecordDef = Partial<
   Omit<CollectionRecordDef, 'id' | 'userId' | keyof TimestampsDef>
@@ -15,7 +15,7 @@ export type UpdateCollectionRecordDef = Partial<
   Pick<CollectionRecordDef, 'id' | 'userId'>;
 
 export type UpdateCollectionRequestArgsDef = z.output<
-  typeof updateCollectionByIdSchema
+  typeof updateCollectionByIdFormSchema
 >;
 
 export type UpdateCollectionResponseDef = QueryResponseDef<
