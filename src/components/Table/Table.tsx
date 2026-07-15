@@ -138,12 +138,13 @@ export const getRowRange = <TData extends RowData>(
   return rows.slice(rangeStart, rangeEnd + 1);
 };
 
-export const Table = <TData extends Record<'id', string | number>>({
+export const Table = <TData,>({
   BodyTopRow,
   data = [],
   filters,
-  getRowId = ({ id }) => {
-    return String(id);
+  getRowId = (row, index) => {
+    // @ts-expect-error
+    return String(row?.id || index);
   },
   pagination,
   search,
