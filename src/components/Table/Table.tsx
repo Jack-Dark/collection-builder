@@ -17,8 +17,8 @@ import { useMemo, useRef } from 'react';
 
 import type { FiltersButtonPropsDef } from './components/FilterButton/FilterButton.types';
 
+import { InputField } from '../Fields/InputField';
 import { SelectField } from '../Fields/SelectField';
-import { InputField } from '../InputField';
 import { FilterButton } from './components/FilterButton';
 
 const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {

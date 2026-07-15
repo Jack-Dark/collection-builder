@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import type { ComboboxFieldProps } from './ComboboxField.types';
 
-import { ConditionalWrapper } from '../ConditionalWrapper';
+import { ConditionalWrapper } from '../../ConditionalWrapper';
 import { FieldWrapper } from '../FieldWrapper';
 
 const getLowerTrimmedValue = (value: string) => {

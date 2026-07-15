@@ -1,7 +1,7 @@
 import SaveIcon from '@mui/icons-material/Save';
 
 import { Button } from '#/components/Button';
-import { SwitchField } from '#/components/SwitchField';
+import { SwitchField } from '#/components/Fields/SwitchField';
 
 import {
   addCollectionFormDefaultValues,

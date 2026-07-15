@@ -1,9 +1,9 @@
 import { createFormHook, createFormHookContexts } from '@tanstack/react-form';
 
 import { Button } from '#/components/Button';
-import { CheckboxField } from '#/components/CheckboxField';
-import { InputField } from '#/components/InputField';
-import { TextAreaField } from '#/components/TextAreaField';
+import { CheckboxField } from '#/components/Fields/CheckboxField';
+import { InputField } from '#/components/Fields/InputField';
+import { TextAreaField } from '#/components/Fields/TextAreaField';
 
 import type { AddCollectionFormSchemaDef } from './types';
 

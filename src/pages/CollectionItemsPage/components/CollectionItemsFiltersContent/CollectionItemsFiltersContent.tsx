@@ -15,7 +15,7 @@ import type { SetZustandStateFnDef } from '#/helpers/get-create-default-zustand-
 
 import { sortDirectionOptions } from '#/api/pagination/pagination.constants';
 import { Button } from '#/components/Button';
-import { CheckboxField } from '#/components/CheckboxField';
+import { CheckboxField } from '#/components/Fields/CheckboxField';
 import { getCreateDefaultZustandState } from '#/helpers/get-create-default-zustand-state';
 import { Route } from '#/routes/_protected/collections/$id';
 

@@ -5,7 +5,7 @@ import type { RouterPath } from '#/types';
 
 import { authClient } from '#/auth/auth-client';
 import { Button } from '#/components/Button';
-import { InputField } from '#/components/InputField';
+import { InputField } from '#/components/Fields/InputField';
 
 import { defaultValues, signInFormSchema } from './SignInForm.schema';
 

@@ -1,11 +1,11 @@
 import { createFormHook, createFormHookContexts } from '@tanstack/react-form';
 
 import { Button } from '#/components/Button';
-import { CheckboxField } from '#/components/CheckboxField';
-import { ComboboxField } from '#/components/ComboboxField';
-import { InputField } from '#/components/InputField';
-import { SwitchField } from '#/components/SwitchField';
-import { TextAreaField } from '#/components/TextAreaField';
+import { CheckboxField } from '#/components/Fields/CheckboxField';
+import { ComboboxField } from '#/components/Fields/ComboboxField';
+import { InputField } from '#/components/Fields/InputField';
+import { SwitchField } from '#/components/Fields/SwitchField';
+import { TextAreaField } from '#/components/Fields/TextAreaField';
 
 import type { AddOrUpdateCollectionItemFormSchemaDef } from './types';
 
