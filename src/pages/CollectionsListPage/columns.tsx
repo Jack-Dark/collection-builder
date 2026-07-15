@@ -22,13 +22,9 @@ const CustomFieldCell = <TNum extends 1 | 2 | 3>(props: {
   const { customFieldNum, getValue, row } = props;
 
   const isEnabled = row.original[`customField${customFieldNum}Enabled`];
-  const isRequired = row.original[`customField${customFieldNum}Required`];
 
   return isEnabled ? (
-    <p className="flex align-items-center">
-      {getValue()}
-      {` - (${isRequired ? 'required' : 'optional'})`}
-    </p>
+    <p className="flex align-items-center">{getValue()}</p>
   ) : (
     <p>-</p>
   );

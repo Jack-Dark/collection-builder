@@ -1,7 +1,6 @@
 import SaveIcon from '@mui/icons-material/Save';
 
 import { Button } from '#/components/Button';
-import { CheckboxField } from '#/components/CheckboxField';
 import { SwitchField } from '#/components/SwitchField';
 
 import {
@@ -62,12 +61,11 @@ export const AddCollectionFormTableRow = withAddCollectionForm({
                     return {
                       errors: state.errors,
                       isEnabled: state.values[`customField${num}Enabled`],
-                      isRequired: state.values[`customField${num}Required`],
                       label: state.values[`customField${num}Label`] || '',
                     };
                   }}
                 >
-                  {({ errors: _errors, isEnabled, isRequired, label }) => {
+                  {({ errors: _errors, isEnabled, label }) => {
                     return (
                       <>
                         <form.AppField name={`customField${num}Enabled`}>
@@ -89,39 +87,19 @@ export const AddCollectionFormTableRow = withAddCollectionForm({
                         </form.AppField>
 
                         {isEnabled && (
-                          <>
-                            <form.AppField name={`customField${num}Label`}>
-                              {(field) => {
-                                return (
-                                  <field.InputField
-                                    onValueChange={field.handleChange}
-                                    // error={errorMsg}
-                                    placeholder="Input label..."
-                                    required
-                                    value={label}
-                                  />
-                                );
-                              }}
-                            </form.AppField>
-
-                            <form.AppField name={`customField${num}Required`}>
-                              {(field) => {
-                                // TODO - EXTRACT ERROR MESSAGE (AND IDEALLY SUBSCRIBE) LOGIC
-                                // const errorMsg =
-                                //   errors?.[0]?.[field.name]?.[0]?.message;
-
-                                return (
-                                  <CheckboxField
-                                    checked={isRequired}
-                                    // error={errorMsg}
-                                    label="Require"
-                                    name={field.name}
-                                    onCheckedChange={field.handleChange}
-                                  />
-                                );
-                              }}
-                            </form.AppField>
-                          </>
+                          <form.AppField name={`customField${num}Label`}>
+                            {(field) => {
+                              return (
+                                <field.InputField
+                                  onValueChange={field.handleChange}
+                                  // error={errorMsg}
+                                  placeholder="Input label..."
+                                  required
+                                  value={label}
+                                />
+                              );
+                            }}
+                          </form.AppField>
                         )}
                       </>
                     );

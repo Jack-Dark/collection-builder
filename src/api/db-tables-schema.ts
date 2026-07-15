@@ -123,13 +123,10 @@ export const collectionsTable = pgTable(
   {
     customField1Enabled: boolean().notNull().default(false),
     customField1Label: text(),
-    customField1Required: boolean().notNull().default(false),
     customField2Enabled: boolean().notNull().default(false),
     customField2Label: text(),
-    customField2Required: boolean().notNull().default(false),
     customField3Enabled: boolean().notNull().default(false),
     customField3Label: text(),
-    customField3Required: boolean().notNull().default(false),
     id: serial().primaryKey(),
     images: json().notNull().$type<string[]>().default([]),
     name: text().notNull(),
