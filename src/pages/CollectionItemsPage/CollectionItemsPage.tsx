@@ -144,6 +144,11 @@ export const CollectionItemsPage: RouteComponent = () => {
         hide: !collection.customField3Enabled,
         label: collection.customField3Label,
       },
+      {
+        bidirectional: true,
+        field: 'createdAt',
+        label: 'Date added',
+      },
     ],
   });
 

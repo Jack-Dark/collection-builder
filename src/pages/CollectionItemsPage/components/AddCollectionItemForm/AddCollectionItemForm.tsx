@@ -39,7 +39,7 @@ export const AddCollectionItemFormTableRow = withAddCollectionItemForm({
     tdClassNames: '',
   },
   render: ({ customFields, form, onCancel, tdClassNames, ...rest }) => {
-    const enabledFieldNums = [
+    const enabledFieldNumbers = [
       rest.customField1Enabled && 1,
       rest.customField2Enabled && 2,
       rest.customField3Enabled && 3,
@@ -146,7 +146,7 @@ export const AddCollectionItemFormTableRow = withAddCollectionItemForm({
           </form.AppField>
         </td>
 
-        {enabledFieldNums.map((num) => {
+        {enabledFieldNumbers.map((num) => {
           const isFieldEnabled = rest[`customField${num}Enabled`];
           const fieldLabel = rest[`customField${num}Label`];
           const fieldName = `customField${num}Value` as const;
