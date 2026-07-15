@@ -54,6 +54,7 @@ export const getCollectionsListTableColumns = () => {
         );
       },
       header: 'Custom Field 1',
+      size: 200,
     }),
     columnHelper.accessor('customField2Label', {
       cell: ({ getValue, row }) => {
@@ -62,6 +63,7 @@ export const getCollectionsListTableColumns = () => {
         );
       },
       header: 'Custom Field 2',
+      size: 200,
     }),
     columnHelper.accessor('customField3Label', {
       cell: ({ getValue, row }) => {
@@ -70,6 +72,7 @@ export const getCollectionsListTableColumns = () => {
         );
       },
       header: 'Custom Field 3',
+      size: 200,
     }),
     columnHelper.accessor('notes', {
       cell: ({ getValue }) => {

@@ -93,7 +93,7 @@ export const AddCollectionFormTableRow = withAddCollectionForm({
                                 <field.InputField
                                   onValueChange={field.handleChange}
                                   // error={errorMsg}
-                                  placeholder="Input label..."
+                                  placeholder="Field name..."
                                   required
                                   value={label}
                                 />
