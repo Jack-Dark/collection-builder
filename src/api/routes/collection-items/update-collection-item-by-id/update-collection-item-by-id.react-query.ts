@@ -35,12 +35,12 @@ export const useUpdateCollectionItemById = <
                 collectionItemId,
                 userId,
               });
-              const response = await uploadFileToCloudinary({
+              const { public_id } = await uploadFileToCloudinary({
                 file: image.file,
                 tags,
               });
 
-              return response.secure_url;
+              return public_id;
             }
           }),
         );

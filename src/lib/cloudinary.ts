@@ -1,10 +1,8 @@
-import type { UploadApiOptions } from 'cloudinary';
+import type { UploadApiOptions, UploadApiResponse } from 'cloudinary';
 
 import { v2 as cloudinary } from 'cloudinary';
 
 import { configs } from '#/configs';
-
-import type { CloudinaryUploadResult } from './cloudinary.types';
 
 cloudinary.config({
   api_key: configs.cloudinaryApiKey,
@@ -32,7 +30,7 @@ export const uploadChunkToCloudinary = async (props: {
   fileBuffer: Buffer;
   filename: string;
   tags: string[];
-}): Promise<CloudinaryUploadResult> => {
+}): Promise<UploadApiResponse> => {
   const { fileBuffer, filename, tags } = props;
 
   const uploadOptions: UploadApiOptions = {
@@ -77,4 +75,8 @@ export const uploadChunkToCloudinary = async (props: {
 
 export const deleteCloudinaryAssetsByTag = (tag: string) => {
   return cloudinary.api.delete_resources_by_tag(tag);
+};
+
+export const deleteCloudinaryAssetsByPublicIds = (...publicIds: string[]) => {
+  return cloudinary.api.delete_resources(publicIds);
 };

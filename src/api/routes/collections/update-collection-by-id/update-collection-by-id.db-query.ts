@@ -9,7 +9,7 @@ export const updateCollectionByIdDbQuery = async (
   data: UpdateCollectionRecordDef,
 ) => {
   const { userId } = data;
-  // TODO - MAY HAVE TO MERGE OLD AND NEW DATA. GET COLLECTION BY ID, IF NEEDED
+
   const [record] = await db
     .update(collectionsTable)
     .set({ ...data, updatedAt: new Date().toDateString() })

@@ -3,6 +3,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import SaveIcon from '@mui/icons-material/Save';
 import { useRef } from 'react';
 
+import { createCloudinaryUrl } from '#/api/routes/cloudinary/cloudinary-url';
 import { Button } from '#/components/Button';
 import { Popover } from '#/components/Popover';
 import { SimpleErrorBoundary } from '#/components/SimpleErrorBoundary';
@@ -75,9 +76,22 @@ export const AddCollectionItemFormTableRow = withAddCollectionItemForm({
 
               return (
                 <div className="flex gap-2 flex-wrap">
-                  {value.map((file, index) => {
+                  {value.map((image, index) => {
+                    let publicId = '';
+                    let previewUrl = '';
+
+                    if (typeof image === 'string') {
+                      publicId = image;
+                    } else {
+                      previewUrl = image.previewUrl;
+                    }
+
                     const src =
-                      typeof file === 'string' ? file : file.previewUrl;
+                      previewUrl ||
+                      createCloudinaryUrl
+                        .image(publicId)
+                        .addTransformation('c_limit,w_100,h_100')
+                        .toURL();
 
                     return (
                       <SimpleErrorBoundary key={src}>
@@ -85,14 +99,23 @@ export const AddCollectionItemFormTableRow = withAddCollectionItemForm({
                           <div
                             className="absolute right-0 top-0 flex justify-end p-4px bg-white border-l border-b border-gray-400 rounded-bl-sm text-lg hover:text-red-600 cursor-pointer"
                             onClick={() => {
+                              const matchesDeletedFile = (
+                                valueAtIndex:
+                                  | string
+                                  | {
+                                      file: File;
+                                      previewUrl: string;
+                                    },
+                              ) => {
+                                if (typeof valueAtIndex === 'string') {
+                                  return valueAtIndex !== publicId;
+                                } else {
+                                  return valueAtIndex.previewUrl !== previewUrl;
+                                }
+                              };
+
                               return field.handleChange(
-                                value.filter((image) => {
-                                  if (typeof image === 'string') {
-                                    return image !== src;
-                                  } else {
-                                    return image.previewUrl !== src;
-                                  }
-                                }),
+                                value.filter(matchesDeletedFile),
                               );
                             }}
                           >

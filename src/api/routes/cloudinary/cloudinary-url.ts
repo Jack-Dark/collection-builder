@@ -1,9 +1,7 @@
 import { Cloudinary } from '@cloudinary/url-gen';
 
-import { configs } from '#/configs';
-
-export const cloudinaryUrl = new Cloudinary({
+export const createCloudinaryUrl = new Cloudinary({
   cloud: {
-    cloudName: configs.cloudinaryCloudName,
+    cloudName: 'collection-builder',
   },
 });
