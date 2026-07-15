@@ -12,6 +12,14 @@ import {
   withAddCollectionItemForm,
 } from './add-or-update-collection-item-form.schema';
 
+const getFieldError = (field: any) => {
+  return field?.state?.meta?.errors
+    ?.map((error: Record<'message', string>) => {
+      return error?.message;
+    })
+    ?.join(' ');
+};
+
 export const AddCollectionItemFormTableRow = withAddCollectionItemForm({
   /** These values are only used for type-checking, and are not used at runtime */
   defaultValues: addCollectionItemFormDefaultValues,
@@ -37,38 +45,24 @@ export const AddCollectionItemFormTableRow = withAddCollectionItemForm({
       rest.customField3Enabled && 3,
     ].filter(Boolean) as (1 | 2 | 3)[];
 
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
     return (
       <tr className="align-top">
         <td className={tdClassNames}>
           <form.AppField name="name">
             {(field) => {
               return (
-                <form.Subscribe
-                  selector={(state) => {
-                    return {
-                      errors: state.errors,
-                      value: state.values.name,
-                    };
-                  }}
-                >
-                  {({ errors: _errors, value }) => {
-                    // TODO - EXTRACT ERROR MESSAGE (AND IDEALLY SUBSCRIBE) LOGIC
-                    // const errorMsg = errors?.[0]?.[field.name]?.[0]?.message;
-
-                    return (
-                      <field.InputField
-                        autoFocus
-                        // error={errors.join(',')}
-                        hideLabel
-                        name={field.name}
-                        onValueChange={field.handleChange}
-                        placeholder="Input name..."
-                        required
-                        value={value}
-                      />
-                    );
-                  }}
-                </form.Subscribe>
+                <field.InputField
+                  autoFocus
+                  error={getFieldError(field)}
+                  hideLabel
+                  name={field.name}
+                  onValueChange={field.handleChange}
+                  placeholder="Input name..."
+                  required
+                  value={field.state.value}
+                />
               );
             }}
           </form.AppField>
@@ -77,93 +71,76 @@ export const AddCollectionItemFormTableRow = withAddCollectionItemForm({
         <td className={tdClassNames}>
           <form.AppField name="images">
             {(field) => {
-              return (
-                <form.Subscribe
-                  selector={(state) => {
-                    return {
-                      errors: state.errors,
-                      value: state.values.images,
-                    };
-                  }}
-                >
-                  {({ errors: _errors, value }) => {
-                    // TODO - EXTRACT ERROR MESSAGE (AND IDEALLY SUBSCRIBE) LOGIC
-                    // const errorMsg = errors?.[0]?.[field.name]?.[0]?.message;
+              const { value } = field.state;
 
-                    const inputRef = useRef<HTMLInputElement>(null);
+              return (
+                <div className="flex gap-2 flex-wrap">
+                  {value.map((file, index) => {
+                    const src =
+                      typeof file === 'string' ? file : file.previewUrl;
 
                     return (
-                      <div className="flex gap-2 flex-wrap">
-                        {value.map((file, index) => {
-                          const src =
-                            typeof file === 'string' ? file : file.previewUrl;
-
-                          return (
-                            <SimpleErrorBoundary key={src}>
-                              <div className="grid grid-rows-[auto_1fr] items-center w-25 h-25  bg-white border border-gray-400 text-gray-500">
-                                <div className="flex justify-end p-1 border-b border-gray-400">
-                                  <DeleteIcon
-                                    className="cursor-pointer"
-                                    fontSize="small"
-                                    onClick={() => {
-                                      return field.handleChange(
-                                        value.filter((string) => {
-                                          return string !== src;
-                                        }),
-                                      );
-                                    }}
-                                  />
-                                </div>
-                                <div className="w-full h-full overflow-hidden">
-                                  <img
-                                    alt={`${field.name} thumbnail ${index + 1}`}
-                                    className="w-full h-full object-contain"
-                                    src={src}
-                                  />
-                                </div>
-                              </div>
-                            </SimpleErrorBoundary>
-                          );
-                        })}
-                        <SimpleErrorBoundary>
-                          <div
-                            className="grid items-center justify-center w-25 h-25 border border-gray-400 text-gray-500 cursor-pointer"
-                            onClick={() => {
-                              inputRef.current?.click();
-                            }}
-                            title="Upload"
-                          >
-                            <AddIcon fontSize="large" />
+                      <SimpleErrorBoundary key={src}>
+                        <div className="grid grid-rows-[auto_1fr] items-center w-25 h-25  bg-white border border-gray-400 text-gray-500">
+                          <div className="flex justify-end p-1 border-b border-gray-400">
+                            <DeleteIcon
+                              className="cursor-pointer"
+                              fontSize="small"
+                              onClick={() => {
+                                return field.handleChange(
+                                  value.filter((string) => {
+                                    return string !== src;
+                                  }),
+                                );
+                              }}
+                            />
                           </div>
-                          <input
-                            accept="image/*"
-                            autoFocus
-                            capture="environment"
-                            className="size-0 overflow-hidden"
-                            multiple
-                            name={field.name}
-                            onChange={async (event) => {
-                              const selectedFiles = event?.target?.files || [];
-
-                              const files = [...selectedFiles].map((file) => {
-                                return {
-                                  file,
-                                  previewUrl: URL.createObjectURL(file),
-                                };
-                              });
-
-                              return field.handleChange([...value, ...files]);
-                            }}
-                            placeholder="Input name..."
-                            ref={inputRef}
-                            required
-                            type="file"
-                          />
-                        </SimpleErrorBoundary>
-                      </div>
+                          <div className="w-full h-full overflow-hidden">
+                            <img
+                              alt={`${field.name} thumbnail ${index + 1}`}
+                              className="w-full h-full object-contain"
+                              src={src}
+                            />
+                          </div>
+                        </div>
+                      </SimpleErrorBoundary>
                     );
-                  }}
-                </form.Subscribe>
+                  })}
+                  <SimpleErrorBoundary>
+                    <div
+                      className="grid items-center justify-center w-25 h-25 border border-gray-400 text-gray-500 cursor-pointer"
+                      onClick={() => {
+                        fileInputRef.current?.click();
+                      }}
+                      title="Upload"
+                    >
+                      <AddIcon fontSize="large" />
+                    </div>
+                    <input
+                      accept="image/*"
+                      autoFocus
+                      capture="environment"
+                      className="hidden"
+                      multiple
+                      name={field.name}
+                      onChange={async (event) => {
+                        const selectedFiles = event?.target?.files || [];
+
+                        const files = [...selectedFiles].map((file) => {
+                          return {
+                            file,
+                            previewUrl: URL.createObjectURL(file),
+                          };
+                        });
+
+                        return field.handleChange([...value, ...files]);
+                      }}
+                      placeholder="Input name..."
+                      ref={fileInputRef}
+                      type="file"
+                    />
+                  </SimpleErrorBoundary>
+                </div>
               );
             }}
           </form.AppField>
@@ -177,58 +154,40 @@ export const AddCollectionItemFormTableRow = withAddCollectionItemForm({
           return (
             <form.AppField key={fieldName} name={fieldName}>
               {(field) => {
-                // const errorMsg =
-                // errors?.[0]?.[field.name]?.[0]?.message;
+                const items = customFields[`customField${num}Values`];
 
                 return (
                   <td className={tdClassNames}>
                     {isFieldEnabled && (
-                      <form.Subscribe
-                        selector={(state) => {
-                          const value = state.values[`customField${num}Value`];
-
-                          return {
-                            errors: state.errors,
-                            value,
-                          };
-                        }}
-                      >
-                        {({ errors: _errors, value }) => {
-                          const items = customFields[`customField${num}Values`];
-
-                          return (
-                            <div className="flex gap-1 items-center">
-                              <field.ComboboxField
-                                createCreatable={(query) => {
-                                  return query;
-                                }}
-                                error={field.state.meta.errors.join(',')}
-                                hideLabel
-                                inputValue={value}
-                                isItemEqualToValue={(item, value) => {
-                                  return item === value;
-                                }}
-                                items={items}
-                                itemToStringLabel={(item) => {
-                                  return item;
-                                }}
-                                itemToStringValue={(item) => {
-                                  return item;
-                                }}
-                                label={fieldLabel}
-                                onValueChange={(value) => {
-                                  field.setValue(value || '');
-                                }}
-                                placeholder={`${fieldLabel || ''}...`}
-                                required
-                              />
-                              <Popover
-                                Description={`Want to add a new item to the list? Just type it out and click on the "Add" option.`}
-                              />
-                            </div>
-                          );
-                        }}
-                      </form.Subscribe>
+                      <div className="flex gap-1 items-center">
+                        <field.ComboboxField
+                          createCreatable={(query) => {
+                            return query;
+                          }}
+                          error={getFieldError(field)}
+                          hideLabel
+                          inputValue={field.state.value}
+                          isItemEqualToValue={(item, value) => {
+                            return item === value;
+                          }}
+                          items={items}
+                          itemToStringLabel={(item) => {
+                            return item;
+                          }}
+                          itemToStringValue={(item) => {
+                            return item;
+                          }}
+                          label={fieldLabel}
+                          onValueChange={(value) => {
+                            field.setValue(value || '');
+                          }}
+                          placeholder={`${fieldLabel || ''}...`}
+                          required
+                        />
+                        <Popover
+                          Description={`Want to add a new item to the list? Just type it out and click on the "Add" option.`}
+                        />
+                      </div>
                     )}
                   </td>
                 );
@@ -252,28 +211,12 @@ export const AddCollectionItemFormTableRow = withAddCollectionItemForm({
             >
               {(field) => {
                 return (
-                  <form.Subscribe
-                    selector={(state) => {
-                      return {
-                        errors: state.errors,
-                        value: state.values.isSpecialEdition,
-                      };
-                    }}
-                  >
-                    {({ errors: _errors, value }) => {
-                      // TODO - EXTRACT ERROR MESSAGE (AND IDEALLY SUBSCRIBE) LOGIC
-                      // const errorMsg = errors?.[0]?.[field.name]?.[0]?.message;
-
-                      return (
-                        <field.SwitchField
-                          checked={value}
-                          error={field.state.meta.errors.join(',')}
-                          label="Special edition"
-                          onCheckedChange={field.handleChange}
-                        />
-                      );
-                    }}
-                  </form.Subscribe>
+                  <field.SwitchField
+                    checked={field.state.value}
+                    error={getFieldError(field)}
+                    label="Special edition"
+                    onCheckedChange={field.handleChange}
+                  />
                 );
               }}
             </form.AppField>
@@ -283,24 +226,19 @@ export const AddCollectionItemFormTableRow = withAddCollectionItemForm({
                   <form.Subscribe
                     selector={(state) => {
                       return {
-                        errors: state.errors,
                         isSpecialEdition: state.values.isSpecialEdition,
-                        value: state.values.editionDetails,
                       };
                     }}
                   >
-                    {({ errors: _errors, isSpecialEdition, value }) => {
-                      // TODO - EXTRACT ERROR MESSAGE (AND IDEALLY SUBSCRIBE) LOGIC
-                      // const errorMsg = errors?.[0]?.[field.name]?.[0]?.message;
-
+                    {({ isSpecialEdition }) => {
                       return (
                         isSpecialEdition && (
                           <field.TextAreaField
-                            error={field.state.meta.errors.join(',')}
+                            error={getFieldError(field)}
                             name={field.name}
                             onValueChange={field.handleChange}
                             required
-                            value={value}
+                            value={field.state.value}
                           />
                         )
                       );
@@ -317,29 +255,13 @@ export const AddCollectionItemFormTableRow = withAddCollectionItemForm({
             <form.AppField name="notes">
               {(field) => {
                 return (
-                  <form.Subscribe
-                    selector={(state) => {
-                      return {
-                        errors: state.errors,
-                        value: state.values.notes,
-                      };
-                    }}
-                  >
-                    {({ errors: _errors, value }) => {
-                      // TODO - EXTRACT ERROR MESSAGE (AND IDEALLY SUBSCRIBE) LOGIC
-                      // const errorMsg = errors?.[0]?.[field.name]?.[0]?.message;
-
-                      return (
-                        <field.TextAreaField
-                          error={field.state.meta.errors.join(',')}
-                          name={field.name}
-                          onValueChange={field.handleChange}
-                          placeholder="Input notes..."
-                          value={value}
-                        />
-                      );
-                    }}
-                  </form.Subscribe>
+                  <field.TextAreaField
+                    error={getFieldError(field)}
+                    name={field.name}
+                    onValueChange={field.handleChange}
+                    placeholder="Input notes..."
+                    value={field.state.value}
+                  />
                 );
               }}
             </form.AppField>
@@ -347,17 +269,31 @@ export const AddCollectionItemFormTableRow = withAddCollectionItemForm({
             <div className="flex align-items-center gap-2 justify-end">
               <Button onClick={onCancel} text="Cancel" variant="mono" />
 
-              <form.AppForm>
-                <form.Button
-                  className="flex flex-nowrap gap-2"
-                  disabled={!form.state.isFormValid}
-                  processing={form.state.isSubmitting}
-                  type="submit"
-                >
-                  <SaveIcon />
-                  Save
-                </form.Button>
-              </form.AppForm>
+              <form.Subscribe
+                selector={(state) => {
+                  const { isFormValid, isPristine } = state;
+
+                  return {
+                    isFormValid,
+                    isPristine,
+                  };
+                }}
+              >
+                {({ isFormValid, isPristine }) => {
+                  return (
+                    <form.AppForm>
+                      <form.Button
+                        className="flex flex-nowrap gap-2"
+                        disabled={isPristine || !isFormValid}
+                        type="submit"
+                      >
+                        <SaveIcon />
+                        Save
+                      </form.Button>
+                    </form.AppForm>
+                  );
+                }}
+              </form.Subscribe>
             </div>
           </div>
         </td>

@@ -38,11 +38,11 @@ import {
 const createFormStore = <TData extends Record<string, any>>(
   defaultValues: TData,
 ) => {
-  const createState = getCreateDefaultZustandState(defaultValues);
+  const createFormValuesStore = getCreateDefaultZustandState(defaultValues);
 
   return () => {
     const { restoreFromSnapshot, saveSnapshot, setValue, snapshot, value } =
-      createState();
+      createFormValuesStore();
 
     return {
       defaultValues: snapshot,
@@ -108,12 +108,9 @@ export const CollectionItemsPage: RouteComponent = () => {
       form.reset();
       resetEditingRowIds();
     },
-    // validationLogic: revalidateLogic({
-    //   mode: 'submit',
-    //   modeAfterSubmission: 'change',
-    // }),
     validators: {
       onChange: addOrUpdateCollectionItemFormSchema,
+      onDynamic: addOrUpdateCollectionItemFormSchema,
       onMount: addOrUpdateCollectionItemFormSchema,
       onSubmit: addOrUpdateCollectionItemFormSchema,
     },
@@ -167,11 +164,7 @@ export const CollectionItemsPage: RouteComponent = () => {
   }, [lastAddedItem]);
 
   useEffect(() => {
-    if (!isEditing) {
-      form.reset();
-    } else {
-      form.validate('mount');
-    }
+    form.reset();
   }, [isEditing]);
 
   return (
@@ -199,7 +192,6 @@ export const CollectionItemsPage: RouteComponent = () => {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          e.stopPropagation();
           form.handleSubmit();
         }}
       >
@@ -219,7 +211,7 @@ export const CollectionItemsPage: RouteComponent = () => {
                       form={form}
                       onCancel={() => {
                         resetEditingRowIds();
-                        // restoreFormValuesFromSnapshot();
+                        resetFormValues();
                         form.reset();
                       }}
                       tdClassNames={tableCellClasses}

@@ -24,7 +24,7 @@ export const FieldWrapper = (props: PropsWithChildren<FieldWrapperProps>) => {
   return (
     <Field.Root
       aria-label={hideLabel ? label : undefined}
-      className={`grid gap-2 ${className || ''}`}
+      className={`grid gap-1 ${className || ''}`}
       disabled={disabled}
       invalid={invalid}
       name={name}
@@ -45,20 +45,7 @@ export const FieldWrapper = (props: PropsWithChildren<FieldWrapperProps>) => {
       {/* Groups individual items in a checkbox group or radio group with a label and description. Renders a <div> element. */}
       {/* <Field.Item /> */}
 
-      {error && (
-        <>
-          <Field.Error>{error}</Field.Error>
-
-          <Field.Validity>
-            {/*
-         // TODO - MIGHT BE ABLE TO ACCESS ERROR IN THE PROPS BELOW 
-         */}
-            {() => {
-              return <p>{error}</p>;
-            }}
-          </Field.Validity>
-        </>
-      )}
+      {error && <p className="text-red-500 text-xs">{error}</p>}
     </Field.Root>
   );
 };
