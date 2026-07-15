@@ -3,7 +3,7 @@ import { create } from 'zustand';
 /**
  * @example
  * const create[STORE_NAME]Store = <TData extends DATA_TYPE>(defaultValue: TData) => {
- *   const createStore = getCreateDefaultZustandState<TData>(defaultValue);
+ *   const createStore = getCreateDefaultZustandStore<TData>(defaultValue);
  *
  *   return () => {
  *     const {
@@ -33,7 +33,7 @@ import { create } from 'zustand';
  * export const use[STORE_NAME]Store = create[STORE_NAME]Store();
  */
 // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-export const getCreateDefaultZustandState = <T extends Exclude<any, Function>>(
+export const getCreateDefaultZustandStore = <T extends Exclude<any, Function>>(
   defaultValue: T,
 ) => {
   return create<{
@@ -45,7 +45,7 @@ export const getCreateDefaultZustandState = <T extends Exclude<any, Function>>(
     restoreFromSnapshot: () => void;
     /** Create a cached value saved as `snapshot`. If no new value is provided, the current value is used. */
     saveSnapshot: (updatedValue?: T) => void;
-    setValue: SetZustandStateFnDef<T>;
+    setValue: SetZustandStoreFnDef<T>;
     /** Used in conjunction with `setSnapshot` to create a cached value. */
     snapshot: T;
     value: T;
@@ -107,6 +107,6 @@ export const getCreateDefaultZustandState = <T extends Exclude<any, Function>>(
   });
 };
 
-export type SetZustandStateFnDef<T> = (
+export type SetZustandStoreFnDef<T> = (
   value: T | ((prevValue: T) => T),
 ) => void;

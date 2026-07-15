@@ -1,9 +1,9 @@
-import { getCreateDefaultZustandState } from '#/helpers/get-create-default-zustand-state';
+import { getCreateDefaultZustandStore } from '#/helpers/get-create-default-zustand-state';
 
 import type { NotificationDetails } from './Notifications.types';
 
 const createNotificationsStore = () => {
-  const createNotificationsStore = getCreateDefaultZustandState<
+  const createNotificationsStore = getCreateDefaultZustandStore<
     NotificationDetails[]
   >([]);
 

@@ -1,9 +1,9 @@
-import { getCreateDefaultZustandState } from '../../../../helpers/get-create-default-zustand-state';
+import { getCreateDefaultZustandStore } from '../../../../helpers/get-create-default-zustand-state';
 
-const createEditingRowIdsState = <TData extends string | number>(
+const createEditingRowIdsStore = <TData extends string | number>(
   defaultValue: TData[] = [],
 ) => {
-  const createState = getCreateDefaultZustandState<TData[]>(defaultValue);
+  const createState = getCreateDefaultZustandStore<TData[]>(defaultValue);
 
   return () => {
     const { getValue, resetValue, setValue, value } = createState();
@@ -36,6 +36,6 @@ const createEditingRowIdsState = <TData extends string | number>(
   };
 };
 
-export const useEditingCollectionsRowIds = createEditingRowIdsState();
+export const useEditingCollectionsRowIds = createEditingRowIdsStore();
 
-export const useEditingCollectionItemsRowIds = createEditingRowIdsState();
+export const useEditingCollectionItemsRowIds = createEditingRowIdsStore();

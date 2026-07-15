@@ -15,7 +15,7 @@ import {
 } from '@tanstack/react-table';
 import { useEffect, useMemo, useRef } from 'react';
 
-import { getCreateDefaultZustandState } from '#/helpers/get-create-default-zustand-state';
+import { getCreateDefaultZustandStore } from '#/helpers/get-create-default-zustand-state';
 
 import type { FiltersButtonPropsDef } from './components/FilterButton/FilterButton.types';
 
@@ -68,7 +68,7 @@ export type TablePropsDef<T> = Omit<
   };
 
 const createSelectedTableRowsStore = () => {
-  const createStore = getCreateDefaultZustandState<
+  const createStore = getCreateDefaultZustandStore<
     Record<string, boolean | undefined>
   >({});
 
@@ -101,7 +101,7 @@ const createSelectedTableRowsStore = () => {
 export const useSelectedTableRowsStore = createSelectedTableRowsStore();
 
 const createLastSelectedRowIdStore = () => {
-  const createStore = getCreateDefaultZustandState<string | undefined>(
+  const createStore = getCreateDefaultZustandStore<string | undefined>(
     undefined,
   );
 

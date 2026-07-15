@@ -14,7 +14,7 @@ import {
 import { useUpdateCollectionItemById } from '#/api/routes/collection-items/update-collection-item-by-id/update-collection-item-by-id.react-query';
 import { Button } from '#/components/Button';
 import { Table, tableCellClasses } from '#/components/Table';
-import { getCreateDefaultZustandState } from '#/helpers/get-create-default-zustand-state';
+import { getCreateDefaultZustandStore } from '#/helpers/get-create-default-zustand-state';
 import { PageWrapper } from '#/page-wrapper';
 import { Route as CollectionRoute } from '#/routes/_protected/collections/$id';
 
@@ -38,7 +38,7 @@ import {
 export const createFormStore = <TData extends Record<string, any>>(
   defaultValues: TData,
 ) => {
-  const createFormValuesStore = getCreateDefaultZustandState(defaultValues);
+  const createFormValuesStore = getCreateDefaultZustandStore(defaultValues);
 
   return () => {
     const { restoreFromSnapshot, saveSnapshot, setValue, snapshot, value } =

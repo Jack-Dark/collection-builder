@@ -11,12 +11,12 @@ import type { CollectionItemsFiltersSchemaDef } from '#/api/routes/collection-it
 import type { CollectionRecordDef } from '#/api/routes/collections/collection.types';
 import type { SortItemDef } from '#/components/Table';
 import type { FiltersButtonPropsDef } from '#/components/Table/components/FilterButton/FilterButton.types';
-import type { SetZustandStateFnDef } from '#/helpers/get-create-default-zustand-state';
+import type { SetZustandStoreFnDef } from '#/helpers/get-create-default-zustand-state';
 
 import { sortDirectionOptions } from '#/api/pagination/pagination.constants';
 import { Button } from '#/components/Button';
 import { CheckboxField } from '#/components/Fields/CheckboxField';
-import { getCreateDefaultZustandState } from '#/helpers/get-create-default-zustand-state';
+import { getCreateDefaultZustandStore } from '#/helpers/get-create-default-zustand-state';
 import { Route } from '#/routes/_protected/collections/$id';
 
 export const useSetCollectionItemsFiltersFromQueries = () => {
@@ -77,25 +77,25 @@ export const CollectionItemsFiltersContent = (
   const { collection, customFields } = props;
 
   const {
-    customField1State,
-    customField2State,
-    customField3State,
+    customField1Store,
+    customField2Store,
+    customField3Store,
     saveAllFiltersSnapshot,
   } = useCollectionItemsFilters();
 
   const getOnCheckedChange = (props: {
-    setState: SetZustandStateFnDef<string[]>;
+    setValue: SetZustandStoreFnDef<string[]>;
     value: string;
   }) => {
-    const { setState, value } = props;
+    const { setValue, value } = props;
 
     return (checked: boolean) => {
       if (checked) {
-        setState((prevFilters) => {
+        setValue((prevFilters) => {
           return [...prevFilters, value];
         });
       } else {
-        setState((prevFilters) => {
+        setValue((prevFilters) => {
           return prevFilters.filter((item) => {
             return item !== value;
           });
@@ -113,17 +113,17 @@ export const CollectionItemsFiltersContent = (
       {collection.customField1Enabled && (
         <FiltersBlock
           label={collection.customField1Label}
-          onReset={customField1State.resetValue}
+          onReset={customField1Store.resetValue}
         >
           {customFields.customField1Values.map((value) => {
             const onCheckedChange = getOnCheckedChange({
-              setState: customField1State.setValue,
+              setValue: customField1Store.setValue,
               value,
             });
 
             return (
               <CheckboxField
-                checked={customField1State.value.includes(value)}
+                checked={customField1Store.value.includes(value)}
                 key={value}
                 label={value}
                 onCheckedChange={onCheckedChange}
@@ -136,17 +136,17 @@ export const CollectionItemsFiltersContent = (
       {collection.customField2Enabled && (
         <FiltersBlock
           label={collection.customField2Label}
-          onReset={customField2State.resetValue}
+          onReset={customField2Store.resetValue}
         >
           {customFields.customField2Values.map((value) => {
             const onCheckedChange = getOnCheckedChange({
-              setState: customField2State.setValue,
+              setValue: customField2Store.setValue,
               value,
             });
 
             return (
               <CheckboxField
-                checked={customField2State.value.includes(value)}
+                checked={customField2Store.value.includes(value)}
                 key={value}
                 label={value}
                 onCheckedChange={onCheckedChange}
@@ -159,17 +159,17 @@ export const CollectionItemsFiltersContent = (
       {collection.customField3Enabled && (
         <FiltersBlock
           label={collection.customField3Label}
-          onReset={customField3State.resetValue}
+          onReset={customField3Store.resetValue}
         >
           {customFields.customField3Values.map((value) => {
             const onCheckedChange = getOnCheckedChange({
-              setState: customField3State.setValue,
+              setValue: customField3Store.setValue,
               value,
             });
 
             return (
               <CheckboxField
-                checked={customField3State.value.includes(value)}
+                checked={customField3Store.value.includes(value)}
                 key={value}
                 label={value}
                 onCheckedChange={onCheckedChange}
@@ -354,86 +354,86 @@ export const useOnUpdateCollectionItemsQueries = () => {
   return { onUpdateCollectionItemsQueries, searchQueries };
 };
 
-const createFiltersState = (defaultValues: CollectionItemsFiltersSchemaDef) => {
-  const createCustomField1State = getCreateDefaultZustandState<string[]>(
+const createFiltersStore = (defaultValues: CollectionItemsFiltersSchemaDef) => {
+  const createCustomField1Store = getCreateDefaultZustandStore<string[]>(
     defaultValues.customField1,
   );
-  const createCustomField2State = getCreateDefaultZustandState<string[]>(
+  const createCustomField2Store = getCreateDefaultZustandStore<string[]>(
     defaultValues.customField2,
   );
-  const createCustomField3State = getCreateDefaultZustandState<string[]>(
+  const createCustomField3Store = getCreateDefaultZustandStore<string[]>(
     defaultValues.customField3,
   );
 
   return () => {
-    const customField1State = createCustomField1State();
-    const customField2State = createCustomField2State();
-    const customField3State = createCustomField3State();
+    const customField1Store = createCustomField1Store();
+    const customField2Store = createCustomField2Store();
+    const customField3Store = createCustomField3Store();
 
     const numApplied = [
-      customField1State.value.length,
-      customField2State.value.length,
-      customField3State.value.length,
+      customField1Store.value.length,
+      customField2Store.value.length,
+      customField3Store.value.length,
     ].filter(Boolean).length;
 
     const getAllFilters = (): CollectionItemsFiltersSchemaDef => {
       return {
-        customField1: customField1State.getValue(),
-        customField2: customField2State.getValue(),
-        customField3: customField3State.getValue(),
+        customField1: customField1Store.getValue(),
+        customField2: customField2Store.getValue(),
+        customField3: customField3Store.getValue(),
       };
     };
 
     return {
-      customField1State,
-      customField2State,
-      customField3State,
+      customField1Store,
+      customField2Store,
+      customField3Store,
       defaultValues,
       filters: {
-        customField1: customField1State.value,
-        customField2: customField2State.value,
-        customField3: customField3State.value,
+        customField1: customField1Store.value,
+        customField2: customField2Store.value,
+        customField3: customField3Store.value,
       },
       getAllFilters,
       numApplied,
       resetAllFilters: () => {
-        customField1State.resetValue();
-        customField2State.resetValue();
-        customField3State.resetValue();
+        customField1Store.resetValue();
+        customField2Store.resetValue();
+        customField3Store.resetValue();
       },
       restoreAllFiltersFromSnapshot: () => {
-        customField1State.restoreFromSnapshot();
-        customField2State.restoreFromSnapshot();
-        customField3State.restoreFromSnapshot();
+        customField1Store.restoreFromSnapshot();
+        customField2Store.restoreFromSnapshot();
+        customField3Store.restoreFromSnapshot();
       },
       saveAllFiltersSnapshot: () => {
         return {
-          customField1: customField1State.saveSnapshot(),
-          customField2: customField2State.saveSnapshot(),
-          customField3: customField3State.saveSnapshot(),
+          customField1: customField1Store.saveSnapshot(),
+          customField2: customField2Store.saveSnapshot(),
+          customField3: customField3Store.saveSnapshot(),
         };
       },
       setAllFilters: (
-        stateOrSetState:
+        valueOrSetStore:
           | CollectionItemsFiltersSchemaDef
-          | ((prevState: CollectionItemsFiltersSchemaDef) => void),
+          | ((prevValue: CollectionItemsFiltersSchemaDef) => void),
       ) => {
-        if (typeof stateOrSetState === 'function') {
-          const currentState = getAllFilters();
-          stateOrSetState(currentState);
+        if (typeof valueOrSetStore === 'function') {
+          const currentValue = getAllFilters();
+          valueOrSetStore(currentValue);
         } else {
-          const { customField1, customField2, customField3 } = stateOrSetState;
+          const { customField1, customField2, customField3 } = valueOrSetStore;
 
-          customField1State.setValue(customField1);
-          customField2State.setValue(customField2);
-          customField3State.setValue(customField3);
+          customField1Store.setValue(customField1);
+          customField2Store.setValue(customField2);
+          customField3Store.setValue(customField3);
         }
       },
     };
   };
 };
 
-export const useCollectionItemsFilters = createFiltersState({
+export const useCollectionItemsFilters = createFiltersStore({
   customField1: [],
   customField2: [],
   customField3: [],

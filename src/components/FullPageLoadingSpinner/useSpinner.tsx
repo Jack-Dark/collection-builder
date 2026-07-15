@@ -1,9 +1,9 @@
 import { useState } from 'react';
 
-import { getCreateDefaultZustandState } from '#/helpers/get-create-default-zustand-state';
+import { getCreateDefaultZustandStore } from '#/helpers/get-create-default-zustand-state';
 
 const createSpinnerStore = () => {
-  const createNotificationsStore = getCreateDefaultZustandState<boolean>(false);
+  const createNotificationsStore = getCreateDefaultZustandStore<boolean>(false);
 
   return () => {
     const { setValue, value } = createNotificationsStore();
