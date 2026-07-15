@@ -3,7 +3,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import SaveIcon from '@mui/icons-material/Save';
 import { useRef } from 'react';
 
-import { createCloudinaryUrl } from '#/api/routes/cloudinary/cloudinary-url';
+import { createCloudinaryThumbnail } from '#/api/routes/cloudinary/cloudinary-url';
 import { Button } from '#/components/Button';
 import { Popover } from '#/components/Popover';
 import { SimpleErrorBoundary } from '#/components/SimpleErrorBoundary';
@@ -87,11 +87,7 @@ export const AddCollectionItemFormTableRow = withAddCollectionItemForm({
                     }
 
                     const src =
-                      previewUrl ||
-                      createCloudinaryUrl
-                        .image(publicId)
-                        .addTransformation('c_limit,w_100,h_100')
-                        .toURL();
+                      previewUrl || createCloudinaryThumbnail({ publicId });
 
                     return (
                       <SimpleErrorBoundary key={src}>

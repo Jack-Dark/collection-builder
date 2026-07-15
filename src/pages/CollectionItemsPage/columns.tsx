@@ -9,7 +9,7 @@ import formatDate, { masks } from 'dateformat';
 import type { CollectionItemRecordDef } from '#/api/routes/collection-items/collection-item.types';
 import type { CollectionRecordDef } from '#/api/routes/collections/collection.types';
 
-import { createCloudinaryUrl } from '#/api/routes/cloudinary/cloudinary-url';
+import { createCloudinaryThumbnail } from '#/api/routes/cloudinary/cloudinary-url';
 import { useDeleteCollectionItemById } from '#/api/routes/collection-items/delete-collection-item-by-id/delete-collection-item-by-id.react-query';
 import { useInvalidateGetCollectionDetailsById } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.react-query';
 import { Route as CollectionRoute } from '#/routes/_protected/collections/$id';
@@ -54,10 +54,9 @@ export const getCollectionItemsTableColumns = (props: CollectionRecordDef) => {
                     <img
                       alt={`${row.original.name} thumbnail ${index + 1}`}
                       className="w-full h-full object-contain"
-                      src={createCloudinaryUrl
-                        .image(publicId)
-                        .addTransformation('c_limit,w_100,h_100')
-                        .toURL()}
+                      src={createCloudinaryThumbnail({
+                        publicId,
+                      })}
                     />
                   </div>
                 </div>
