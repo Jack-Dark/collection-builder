@@ -1,6 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router';
 
-import { optionalPaginationQueriesSchema } from '#/api/pagination/pagination.schema';
+import type { CollectionTableColumnsDef } from '#/api/routes/collections/collection.types';
+
+import { getRequiredPaginationQueriesSchema } from '#/api/pagination/pagination.schema';
 import { getGenericFetchQueryOptions } from '#/api/react-query-hooks/use-generic-fetch-query/get-generic-fetch-query-options';
 import { reactQueryKeys } from '#/api/react-query-hooks/use-generic-fetch-query/react-query-keys';
 import { getPaginatedCollectionsServerFn } from '#/api/routes/collections/get-paginated-collections/get-paginated-collections.serverFn';
@@ -24,5 +26,6 @@ export const Route = createFileRoute('/_protected/collections/')({
   loaderDeps: ({ search }) => {
     return search;
   },
-  validateSearch: optionalPaginationQueriesSchema,
+  validateSearch:
+    getRequiredPaginationQueriesSchema<CollectionTableColumnsDef>('name'),
 });

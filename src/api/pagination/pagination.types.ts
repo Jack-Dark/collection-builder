@@ -1,6 +1,6 @@
 import type z from 'zod';
 
-import type { optionalPaginationQueriesSchema } from './pagination.schema';
+import type { getRequiredPaginationQueriesSchema } from './pagination.schema';
 
 export type PaginationMetadata = {
   currentPage: number;
@@ -19,5 +19,5 @@ export type PaginatedResponseData<TKey extends string, TData> = Record<
 };
 
 export type PaginationQueriesSchemaDef = z.output<
-  typeof optionalPaginationQueriesSchema
+  ReturnType<typeof getRequiredPaginationQueriesSchema>
 >;

@@ -1,7 +1,9 @@
 import z from 'zod';
 
-import { optionalPaginationQueriesSchema } from '#/api/pagination/pagination.schema';
+import { getRequiredPaginationQueriesSchema } from '#/api/pagination/pagination.schema';
+
+import type { CollectionTableColumnsDef } from '../collection.types';
 
 export const getPaginatedCollectionsSchema = z.object({
-  params: optionalPaginationQueriesSchema,
+  params: getRequiredPaginationQueriesSchema<CollectionTableColumnsDef>('name'),
 });

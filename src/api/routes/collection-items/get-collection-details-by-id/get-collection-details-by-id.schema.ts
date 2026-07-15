@@ -1,6 +1,8 @@
 import z from 'zod';
 
-import { requiredPaginationQueriesSchema } from '../../../pagination/pagination.schema';
+import type { CollectionItemsTableColumn } from '../collection-item.types';
+
+import { getRequiredPaginationQueriesSchema } from '../../../pagination/pagination.schema';
 
 export const collectionItemsFiltersSchema = z
   .object({
@@ -16,7 +18,9 @@ export const collectionItemsFiltersSchema = z
   });
 
 export const collectionItemsSearchQueriesSchema =
-  requiredPaginationQueriesSchema.and(
+  getRequiredPaginationQueriesSchema<CollectionItemsTableColumn>(
+    'customField1Value',
+  ).and(
     z.object({
       filters: collectionItemsFiltersSchema,
     }),

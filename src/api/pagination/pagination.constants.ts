@@ -11,7 +11,6 @@ export const paginationDefaultValues = {
   search: '',
   sort: {
     direction: sortDirectionOptions.asc,
-    field: 'name',
   },
 };
 
