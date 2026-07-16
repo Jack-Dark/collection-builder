@@ -2,6 +2,7 @@ import type {
   Row,
   RowData,
   SortDirection,
+  Table as TableDef,
   TableOptions,
 } from '@tanstack/react-table';
 import type { JSXElementConstructor, PropsWithChildren } from 'react';
@@ -49,11 +50,16 @@ export type RenderRowTypeDef<TData> = JSXElementConstructor<
   }>
 >;
 
+export type AboveTableComponentDef<TData> = JSXElementConstructor<{
+  table: TableDef<TData>;
+}>;
+
 export type TablePropsDef<T> = Omit<
   TableOptions<T>,
   'filterFns' | 'getCoreRowModel'
 > &
   Partial<Pick<TableOptions<T>, 'filterFns' | 'getCoreRowModel'>> & {
+    AboveTableComponent?: AboveTableComponentDef<T>;
     filters?: FiltersButtonPropsDef;
     pagination?: {
       limit?: {
@@ -66,7 +72,6 @@ export type TablePropsDef<T> = Omit<
         value: number;
       };
     };
-
     search?: {
       onChange: (search: string) => void | Promise<void>;
       value: string;
@@ -147,6 +152,7 @@ export const getRowRange = <TData extends RowData>(
 };
 
 export const Table = <TData,>({
+  AboveTableComponent,
   data = [],
   filters,
   getRowId = (row, index) => {
@@ -224,6 +230,7 @@ export const Table = <TData,>({
     <div
       className={`grid gap-4 h-full max-h-[calc(100dvh-4rem)]  ${containerRows}`}
     >
+      {AboveTableComponent && <AboveTableComponent table={table} />}
       {showActionsRow && (
         <div className={`grid ${actionsColumns} items-stretch gap-4`}>
           {filters && <FilterButton {...filters} />}

@@ -124,7 +124,7 @@ const CollectionsListActionsCell = ({
   const { getIsEditingRowId, resetEditingRowIds, setEditingRowIds } =
     useEditingCollectionsRowIds();
 
-  const isEditingRow = getIsEditingRowId(collectionId);
+  const isEditingRow = getIsEditingRowId(row.id);
 
   return (
     <TableCellActionsMenu
@@ -137,7 +137,7 @@ const CollectionsListActionsCell = ({
       editIsDisabled={isDeletePending}
       editOnClick={async (record) => {
         setFormValues(record);
-        setEditingRowIds([collectionId]);
+        setEditingRowIds([row.id]);
       }}
       isEditing={isEditingRow}
       onCancelEdit={() => {

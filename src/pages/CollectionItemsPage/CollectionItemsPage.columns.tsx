@@ -30,7 +30,7 @@ import {
   CreateOrUpdateCollectionItemFormImagesField,
   CreateOrUpdateCollectionItemFormNameField,
   CreateOrUpdateCollectionItemFormNoteField,
-  CreateOrUpdateCollectionItemFormSubmitButton,
+  CreateOrUpdateCollectionItemFormActions,
 } from './components/CreateOrUpdateCollectionItemForm';
 import { useCollectionItemsFormStore } from './hooks/use-collection-items-form-store';
 
@@ -305,7 +305,7 @@ export const getCollectionItemsTableColumns = (
         const date = getValue();
 
         return isEditingRow && editingRowIds.length === 1 ? (
-          <CreateOrUpdateCollectionItemFormSubmitButton
+          <CreateOrUpdateCollectionItemFormActions
             form={form}
             onCancel={onCancel}
           />

@@ -272,7 +272,7 @@ export const CreateOrUpdateCollectionItemFormNoteField =
     },
   });
 
-export const CreateOrUpdateCollectionItemFormSubmitButton =
+export const CreateOrUpdateCollectionItemFormActions =
   withAddCollectionItemForm({
     /** These values are only used for type-checking, and are not used at runtime */
     defaultValues: addCollectionItemFormDefaultValues,
@@ -282,30 +282,7 @@ export const CreateOrUpdateCollectionItemFormSubmitButton =
     render: ({ form, onCancel }) => {
       return (
         <div className="grid gap-2 justify-start">
-          <form.Subscribe
-            selector={(state) => {
-              const { isFormValid, isPristine } = state;
-
-              return {
-                isFormValid,
-                isPristine,
-              };
-            }}
-          >
-            {({ isFormValid, isPristine }) => {
-              return (
-                <form.AppForm>
-                  <form.Button
-                    className="flex flex-nowrap gap-2"
-                    disabled={isPristine || !isFormValid}
-                    Icon={SaveIcon}
-                    text="Save"
-                    type="submit"
-                  />
-                </form.AppForm>
-              );
-            }}
-          </form.Subscribe>
+          <CreateOrUpdateCollectionItemSubmitButton form={form} />
 
           <Button
             Icon={ClearIcon}
@@ -314,6 +291,40 @@ export const CreateOrUpdateCollectionItemFormSubmitButton =
             variant="mono"
           />
         </div>
+      );
+    },
+  });
+
+export const CreateOrUpdateCollectionItemSubmitButton =
+  withAddCollectionItemForm({
+    /** These values are only used for type-checking, and are not used at runtime */
+    defaultValues: addCollectionItemFormDefaultValues,
+    render: ({ form }) => {
+      return (
+        <form.Subscribe
+          selector={(state) => {
+            const { isFormValid, isPristine } = state;
+
+            return {
+              isFormValid,
+              isPristine,
+            };
+          }}
+        >
+          {({ isFormValid, isPristine }) => {
+            return (
+              <form.AppForm>
+                <form.Button
+                  className="flex flex-nowrap gap-2"
+                  disabled={isPristine || !isFormValid}
+                  Icon={SaveIcon}
+                  text="Save"
+                  type="submit"
+                />
+              </form.AppForm>
+            );
+          }}
+        </form.Subscribe>
       );
     },
   });

@@ -22,6 +22,7 @@ import type { CreateOrUpdateCollectionItemFormDataDef } from './components/Creat
 import { useEditingCollectionItemsRowIds } from '../CollectionsListPage/hooks/use-editing-collections-row-ids';
 import { getCollectionItemsTableColumns } from './CollectionItemsPage.columns';
 import { CollectionItemsFiltersContent } from './components/CollectionItemsFiltersContent';
+import { CreateOrUpdateCollectionItemSubmitButton } from './components/CreateOrUpdateCollectionItemForm';
 import {
   addCollectionItemFormDefaultValues,
   tempNewCollectionItemId,
@@ -194,7 +195,7 @@ export const CreateOrUpdateCollectionItemFormTable = withAddCollectionItemForm({
       editingRowIds,
     ]);
 
-    const { resetFormValues } = useCollectionItemsFormStore();
+    const { resetFormValues, setFormValues } = useCollectionItemsFormStore();
 
     const filtersProps = useCollectionItemsFilters();
     const searchProps = useCollectionItemsSearch();
@@ -207,57 +208,73 @@ export const CreateOrUpdateCollectionItemFormTable = withAddCollectionItemForm({
 
     return (
       <div className="grid gap-4">
-        <div className="flex justify-between">
-          <div className="flex gap-2">
-            {!!selectedRowIds.length && (
-              <>
-                <Button
-                  disabled={isEditing}
-                  Icon={EditIcon}
-                  onClick={() => {
-                    addToEditingRowIds(...selectedRowIds);
-                    // TODO - ADD SELECTED ITEMS TO FORM DATA
-                  }}
-                  text="Edit Items"
-                  variant="secondary"
-                />
-
-                <Button
-                  disabled={isEditing}
-                  Icon={DeleteIcon}
-                  onClick={() => {
-                    // TODO - ADD DELETE LOGIC
-                  }}
-                  text="Delete Items"
-                  variant="alert"
-                />
-              </>
-            )}
-          </div>
-
-          {isEditing ? (
-            <Button
-              Icon={ClearIcon}
-              onClick={onCancel}
-              text="Cancel"
-              variant="mono"
-            />
-          ) : (
-            <Button
-              Icon={AddIcon}
-              onClick={() => {
-                addToEditingRowIds(tempNewCollectionItemId);
-                setTableData((prevData) => {
-                  return [addCollectionItemFormDefaultValues, ...prevData];
-                });
-              }}
-              text="Add New"
-              variant="secondary"
-            />
-          )}
-        </div>
-
         <Table
+          AboveTableComponent={({ table }) => {
+            return (
+              <div className="flex justify-between">
+                <div className="flex gap-2">
+                  {!!selectedRowIds.length && (
+                    <>
+                      <Button
+                        disabled={isEditing}
+                        Icon={EditIcon}
+                        onClick={() => {
+                          addToEditingRowIds(...selectedRowIds);
+                          const selectedRowData = selectedRowIds.map(
+                            (rowId) => {
+                              return table.getRow(rowId)?.original;
+                            },
+                          );
+                          setFormValues(selectedRowData[0]);
+                        }}
+                        text="Edit Items"
+                        variant="secondary"
+                      />
+
+                      <Button
+                        disabled={isEditing}
+                        Icon={DeleteIcon}
+                        onClick={() => {
+                          // TODO - ADD DELETE LOGIC
+                        }}
+                        text="Delete Items"
+                        variant="alert"
+                      />
+                    </>
+                  )}
+                </div>
+
+                <div className="flex gap-2">
+                  {isEditing ? (
+                    <>
+                      <Button
+                        Icon={ClearIcon}
+                        onClick={onCancel}
+                        text="Cancel"
+                        variant="mono"
+                      />
+                      <CreateOrUpdateCollectionItemSubmitButton form={form} />
+                    </>
+                  ) : (
+                    <Button
+                      Icon={AddIcon}
+                      onClick={() => {
+                        addToEditingRowIds(tempNewCollectionItemId);
+                        setTableData((prevData) => {
+                          return [
+                            addCollectionItemFormDefaultValues,
+                            ...prevData,
+                          ];
+                        });
+                      }}
+                      text="Add New"
+                      variant="secondary"
+                    />
+                  )}
+                </div>
+              </div>
+            );
+          }}
           columns={columns}
           // @ts-expect-error // TODO - INVESTIGATE TS SOLUTION
           data={tableData}
