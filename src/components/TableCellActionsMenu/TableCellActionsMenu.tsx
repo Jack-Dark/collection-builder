@@ -24,7 +24,7 @@ export const TableCellActionsMenu = <
     row,
   } = props;
 
-  const [showConfirmDelete, hideConfirmDelete] = useDialog(() => {
+  const [showConfirmDeleteDialog, hideConfirmDeleteDialog] = useDialog(() => {
     const recordName = row.original.name;
 
     const { onInterceptProcessingRequest, processing } = useSpinner();
@@ -35,7 +35,7 @@ export const TableCellActionsMenu = <
           return (
             <>
               <Button
-                onClick={hideConfirmDelete}
+                onClick={hideConfirmDeleteDialog}
                 text="Cancel"
                 variant="mono"
               />
@@ -43,7 +43,7 @@ export const TableCellActionsMenu = <
                 onClick={async () => {
                   onInterceptProcessingRequest(async () => {
                     await deleteOnClick(row.original);
-                    hideConfirmDelete();
+                    hideConfirmDeleteDialog();
                   });
                 }}
                 processing={processing}
@@ -86,7 +86,7 @@ export const TableCellActionsMenu = <
           {
             disabled: deleteIsDisabled,
             label: deleteLabel,
-            onClick: showConfirmDelete,
+            onClick: showConfirmDeleteDialog,
           },
         ]}
       />
