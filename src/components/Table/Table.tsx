@@ -160,7 +160,15 @@ export const Table = <TData,>({
     ...rest,
   });
 
-  const showActionsRow = !!filters || !!search || !!sort;
+  const { resetSelectedTableRows, setSelectedTableRows } =
+    useSelectedTableRowsStore();
+
+  const isAllRowsSelected = table.getIsAllRowsSelected();
+  const isSomeRowsSelected = table.getIsSomeRowsSelected();
+  const showSelectionActions = isAllRowsSelected || isSomeRowsSelected;
+
+  const showActionsRow =
+    !!filters || !!search || !!sort || !showSelectionActions;
 
   const containerRows = useMemo(() => {
     if (showActionsRow && pagination) {
@@ -175,13 +183,6 @@ export const Table = <TData,>({
 
     return '';
   }, [showActionsRow, !!pagination]);
-
-  const isAllRowsSelected = table.getIsAllRowsSelected();
-  const isSomeRowsSelected = table.getIsSomeRowsSelected();
-  const showSelectionActions = isAllRowsSelected || isSomeRowsSelected;
-
-  const { resetSelectedTableRows, setSelectedTableRows } =
-    useSelectedTableRowsStore();
 
   const actionsColumns = useMemo(() => {
     if (showSelectionActions && filters && sort) {
@@ -221,22 +222,22 @@ export const Table = <TData,>({
       {showActionsRow && (
         <div className={`grid ${actionsColumns} items-stretch gap-4`}>
           {showSelectionActions && (
-            <div className="flex gap-2 items-end">
+            <div className="flex gap-2 items-stretch">
               <Button
                 aria-label="Edit"
-                className="text-gray-500 hover:text-primary-700"
+                className="text-primary-900 hover:text-primary-800 text-xs"
                 size="xs"
                 variant="ghost"
               >
-                <EditIcon />
+                <EditIcon className="text-xs" />
               </Button>
               <Button
                 aria-label="Delete"
-                className="text-gray-500 hover:text-red-700"
+                className="text-red-700 hover:text-red-600 text-xs"
                 size="xs"
                 variant="ghost"
               >
-                <DeleteIcon />
+                <DeleteIcon className="text-xs" />
               </Button>
             </div>
           )}

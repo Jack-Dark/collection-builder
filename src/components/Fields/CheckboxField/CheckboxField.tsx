@@ -56,9 +56,9 @@ export const CheckboxField = (props: CheckboxFieldProps) => {
         <Checkbox.Root checked={checked} onCheckedChange={onCheckedChange}>
           <Checkbox.Indicator keepMounted>
             {checked ? (
-              <CheckBoxIcon className="text-primary-900" />
+              <CheckBoxIcon className="text-primary-900 hover:text-primary-800" />
             ) : indeterminate ? (
-              <IndeterminateCheckBoxIcon className="text-primary-900" />
+              <IndeterminateCheckBoxIcon className="text-primary-900 hover:text-primary-800" />
             ) : (
               <CheckBoxOutlineBlankIcon />
             )}
