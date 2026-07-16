@@ -2,17 +2,17 @@ import { createServerFn } from '@tanstack/react-start';
 
 import { authApiRouteMiddleware } from '#/auth/auth-middleware';
 
-import { deleteCollectionItemByIdDbQuery } from './delete-collection-item-by-id.db-query';
-import { deleteCollectionItemByIdSchema } from './delete-collection-item-by-id.schema';
+import { deleteCollectionItemsByIdDbQuery } from './delete-collection-items-by-ids.db-query';
+import { deleteCollectionItemsByIdsSchema } from './delete-collection-items-by-ids.schema';
 
-export const deleteCollectionItemByIdServerFn = createServerFn({
+export const deleteCollectionItemsByIdsServerFn = createServerFn({
   // ? DELETE is not yet supported via createServerFn, but the API route utilizes this via POST
   method: 'POST',
 })
   .middleware([authApiRouteMiddleware])
-  .validator(deleteCollectionItemByIdSchema)
+  .validator(deleteCollectionItemsByIdsSchema)
   .handler(async ({ context, data: { collectionItemIds } }) => {
-    return deleteCollectionItemByIdDbQuery({
+    return deleteCollectionItemsByIdDbQuery({
       ids: collectionItemIds,
       userId: context.user.id,
     });

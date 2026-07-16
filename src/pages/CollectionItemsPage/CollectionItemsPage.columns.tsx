@@ -11,7 +11,7 @@ import type { CollectionItemRecordDef } from '#/api/routes/collection-items/coll
 import type { CollectionRecordDef } from '#/api/routes/collections/collection.types';
 
 import { thumbnailSize } from '#/api/routes/cloudinary/cloudinary-url';
-import { useDeleteCollectionItemById } from '#/api/routes/collection-items/delete-collection-item-by-id/delete-collection-item-by-id.react-query';
+import { useDeleteCollectionItemsByIds } from '#/api/routes/collection-items/delete-collection-items-by-ids/delete-collection-items-by-ids.react-query';
 import { useInvalidateGetCollectionDetailsById } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.react-query';
 import { CheckboxField } from '#/components/Fields/CheckboxField';
 import {
@@ -341,8 +341,8 @@ const CollectionDetailsActionsCell = ({
   const { id } = CollectionRoute.useParams();
   const collectionId = Number(id);
 
-  const { isPending: isDeletePending, onDeleteCollectionItemById } =
-    useDeleteCollectionItemById({
+  const { isPending: isDeletePending, onDeleteCollectionItemsByIds } =
+    useDeleteCollectionItemsByIds({
       onSuccess: async () => {
         await invalidateGetCollectionDetailsById({
           id: collectionId,
@@ -371,7 +371,7 @@ const CollectionDetailsActionsCell = ({
     <TableCellActionsMenu
       deleteIsDisabled={isEditing || isDeletePending}
       deleteOnClick={async () => {
-        await onDeleteCollectionItemById({
+        await onDeleteCollectionItemsByIds({
           collectionItemIds: [collectionItemId],
         });
       }}

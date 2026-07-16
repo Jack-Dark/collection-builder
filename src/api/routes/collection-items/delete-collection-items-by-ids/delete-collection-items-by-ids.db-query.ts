@@ -4,7 +4,7 @@ import { db } from '#/api/db';
 import { collectionItemsTable } from '#/api/db-tables-schema';
 import { deleteCloudinaryAssetsByPublicIds } from '#/lib/cloudinary';
 
-export const deleteCollectionItemByIdDbQuery = async (props: {
+export const deleteCollectionItemsByIdDbQuery = async (props: {
   ids: number[];
   userId: string;
 }) => {

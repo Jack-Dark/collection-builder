@@ -7,7 +7,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import { useEffect, useMemo, useState } from 'react';
 
 import { useCreateCollectionItem } from '#/api/routes/collection-items/create-collection-item/create-collection-item.react-query';
-import { useDeleteCollectionItemById } from '#/api/routes/collection-items/delete-collection-item-by-id/delete-collection-item-by-id.react-query';
+import { useDeleteCollectionItemsByIds } from '#/api/routes/collection-items/delete-collection-items-by-ids/delete-collection-items-by-ids.react-query';
 import {
   useGetCollectionDetailsById,
   useInvalidateGetCollectionDetailsById,
@@ -210,8 +210,8 @@ export const CreateOrUpdateCollectionItemFormTable = withAddCollectionItemForm({
     const invalidateGetCollectionDetailsById =
       useInvalidateGetCollectionDetailsById();
 
-    const { isPending: isDeletePending, onDeleteCollectionItemById } =
-      useDeleteCollectionItemById({
+    const { isPending: isDeletePending, onDeleteCollectionItemsByIds } =
+      useDeleteCollectionItemsByIds({
         onSuccess: async () => {
           await invalidateGetCollectionDetailsById({
             id: collectionId,
@@ -248,7 +248,7 @@ export const CreateOrUpdateCollectionItemFormTable = withAddCollectionItemForm({
                         disabled={isEditing}
                         Icon={DeleteIcon}
                         onClick={() => {
-                          onDeleteCollectionItemById({
+                          onDeleteCollectionItemsByIds({
                             collectionItemIds: selectedRowIds.map((id) => {
                               return Number(id);
                             }),
