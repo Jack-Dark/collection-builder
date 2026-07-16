@@ -52,6 +52,7 @@ export const getCollectionItemsTableColumns = (
       customField3Values: string[];
     };
     form: any;
+    onCancel: () => void;
   },
 ) => {
   const {
@@ -63,6 +64,7 @@ export const getCollectionItemsTableColumns = (
     customField3Label,
     customFields,
     form,
+    onCancel,
   } = props;
 
   return [
@@ -296,23 +298,28 @@ export const getCollectionItemsTableColumns = (
     }),
     columnHelper.accessor('createdAt', {
       cell: ({ getValue, row }) => {
-        const { getIsEditingRowId } = useEditingCollectionItemsRowIds();
+        const { editingRowIds, getIsEditingRowId } =
+          useEditingCollectionItemsRowIds();
         const isEditingRow = getIsEditingRowId(row.id);
 
         const date = getValue();
 
-        return isEditingRow ? (
-          <CreateOrUpdateCollectionItemFormSubmitButton form={form} />
+        return isEditingRow && editingRowIds.length === 1 ? (
+          <CreateOrUpdateCollectionItemFormSubmitButton
+            form={form}
+            onCancel={onCancel}
+          />
         ) : date ? (
           <p>{formatDate(date, masks.paddedShortDate)}</p>
         ) : null;
       },
       header: 'Added',
-      size: 120,
     }),
     columnHelper.accessor('id', {
       cell: (context) => {
-        return <CollectionDetailsActionsCell {...context} />;
+        return (
+          <CollectionDetailsActionsCell onCancel={onCancel} {...context} />
+        );
       },
       header: '',
       id: 'actions',
@@ -323,8 +330,11 @@ export const getCollectionItemsTableColumns = (
 
 const CollectionDetailsActionsCell = ({
   getValue,
+  onCancel,
   row,
-}: CellContext<CollectionItemRecordDef, number>) => {
+}: CellContext<CollectionItemRecordDef, number> & {
+  onCancel: () => void;
+}) => {
   const invalidateGetCollectionDetailsById =
     useInvalidateGetCollectionDetailsById();
 
@@ -340,33 +350,40 @@ const CollectionDetailsActionsCell = ({
       },
     });
 
-  const { resetFormValues, setFormValues } = useCollectionItemsFormStore();
+  const { setFormValues } = useCollectionItemsFormStore();
 
   const collectionItemId = getValue();
 
-  const { getIsEditingRowId, resetEditingRowIds, setEditingRowIds } =
+  const { editingRowIds, getIsEditingRowId, isEditing, setEditingRowIds } =
     useEditingCollectionItemsRowIds();
 
   const isEditingRow = getIsEditingRowId(row.id);
 
+  const isCreatingRecord = editingRowIds.some((id) => {
+    return Number.isNaN(Number(id));
+  });
+
+  if (isCreatingRecord) {
+    console.log({ editingRowIds });
+  }
+
   return (
     <TableCellActionsMenu
-      deleteIsDisabled={isDeletePending}
+      deleteIsDisabled={isEditing || isDeletePending}
       deleteOnClick={async () => {
         await onDeleteCollectionItemById({
           collectionItemId,
         });
       }}
-      editIsDisabled={isDeletePending}
+      editIsDisabled={isCreatingRecord || isDeletePending}
       editOnClick={async (record) => {
         setFormValues(record);
-        setEditingRowIds([row.id]);
+        setEditingRowIds((prevRowIds) => {
+          return [...prevRowIds, row.id];
+        });
       }}
       isEditing={isEditingRow}
-      onCancelEdit={() => {
-        resetFormValues();
-        resetEditingRowIds();
-      }}
+      onCancelEdit={onCancel}
       row={row}
     />
   );

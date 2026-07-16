@@ -1,4 +1,5 @@
 import AddIcon from '@mui/icons-material/Add';
+import ClearIcon from '@mui/icons-material/Clear';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SaveIcon from '@mui/icons-material/Save';
 import { useRef } from 'react';
@@ -8,10 +9,8 @@ import { Button } from '#/components/Button';
 import { Image } from '#/components/Image';
 import { Popover } from '#/components/Popover';
 import { SimpleErrorBoundary } from '#/components/SimpleErrorBoundary';
-import { useEditingCollectionItemsRowIds } from '#/pages/CollectionsListPage/hooks/use-editing-collections-row-ids';
 
 import { getFieldError } from '../../../../helpers/get-field-error';
-import { useCollectionItemsFormStore } from '../../hooks/use-collection-items-form-store';
 import {
   addCollectionItemFormDefaultValues,
   withAddCollectionItemForm,
@@ -277,23 +276,12 @@ export const CreateOrUpdateCollectionItemFormSubmitButton =
   withAddCollectionItemForm({
     /** These values are only used for type-checking, and are not used at runtime */
     defaultValues: addCollectionItemFormDefaultValues,
-    render: ({ form }) => {
-      const { resetFormValues } = useCollectionItemsFormStore();
-
-      const { resetEditingRowIds } = useEditingCollectionItemsRowIds();
-
+    props: {
+      onCancel: () => {},
+    },
+    render: ({ form, onCancel }) => {
       return (
-        <div className="flex align-items-center gap-2 justify-end">
-          <Button
-            onClick={() => {
-              resetEditingRowIds();
-              resetFormValues();
-              form.reset();
-            }}
-            text="Cancel"
-            variant="mono"
-          />
-
+        <div className="grid gap-2 justify-start">
           <form.Subscribe
             selector={(state) => {
               const { isFormValid, isPristine } = state;
@@ -310,15 +298,21 @@ export const CreateOrUpdateCollectionItemFormSubmitButton =
                   <form.Button
                     className="flex flex-nowrap gap-2"
                     disabled={isPristine || !isFormValid}
+                    Icon={SaveIcon}
+                    text="Save"
                     type="submit"
-                  >
-                    <SaveIcon />
-                    Save
-                  </form.Button>
+                  />
                 </form.AppForm>
               );
             }}
           </form.Subscribe>
+
+          <Button
+            Icon={ClearIcon}
+            onClick={onCancel}
+            text="Cancel"
+            variant="mono"
+          />
         </div>
       );
     },

@@ -155,6 +155,17 @@ export const CreateOrUpdateCollectionItemFormTable = withAddCollectionItemForm({
 
     const { collection, customFields, pagination } = data;
 
+    const onCancel = () => {
+      resetEditingRowIds();
+      setTableData((prevValues) => {
+        return prevValues.filter(({ createdAt }) => {
+          return createdAt;
+        });
+      });
+
+      resetFormValues();
+      form.reset();
+    };
     const { addToEditingRowIds, editingRowIds, isEditing, resetEditingRowIds } =
       useEditingCollectionItemsRowIds();
 
@@ -171,6 +182,7 @@ export const CreateOrUpdateCollectionItemFormTable = withAddCollectionItemForm({
         customField3Label: collection.customField3Label,
         customFields,
         form,
+        onCancel,
       });
     }, [
       collection.customField1Enabled,
@@ -181,6 +193,8 @@ export const CreateOrUpdateCollectionItemFormTable = withAddCollectionItemForm({
       collection.customField3Label,
       editingRowIds,
     ]);
+
+    const { resetFormValues } = useCollectionItemsFormStore();
 
     const filtersProps = useCollectionItemsFilters();
     const searchProps = useCollectionItemsSearch();
@@ -198,6 +212,7 @@ export const CreateOrUpdateCollectionItemFormTable = withAddCollectionItemForm({
             {!!selectedRowIds.length && (
               <>
                 <Button
+                  disabled={isEditing}
                   Icon={EditIcon}
                   onClick={() => {
                     addToEditingRowIds(...selectedRowIds);
@@ -208,6 +223,7 @@ export const CreateOrUpdateCollectionItemFormTable = withAddCollectionItemForm({
                 />
 
                 <Button
+                  disabled={isEditing}
                   Icon={DeleteIcon}
                   onClick={() => {
                     // TODO - ADD DELETE LOGIC
@@ -222,17 +238,9 @@ export const CreateOrUpdateCollectionItemFormTable = withAddCollectionItemForm({
           {isEditing ? (
             <Button
               Icon={ClearIcon}
-              onClick={() => {
-                resetEditingRowIds();
-                setTableData((prevValues) => {
-                  return prevValues.filter(({ createdAt }) => {
-                    return createdAt;
-                  });
-                });
-                // TODO - SOLVE INDETERMINATE SELECTED TABLE ROWS AFTER CLEAR
-              }}
+              onClick={onCancel}
               text="Cancel"
-              variant="secondary"
+              variant="mono"
             />
           ) : (
             <Button
