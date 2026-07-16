@@ -1,9 +1,12 @@
 import { Select } from '@base-ui/react';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { Fragment } from 'react/jsx-runtime';
 
 import type { SelectFieldPropsDef } from './SelectField.types';
 
-export const SelectField = <TItem extends Record<string, any>>(
+export const SelectField = <
+  TItem extends { [k: string]: any; separator?: true },
+>(
   props: SelectFieldPropsDef<TItem>,
 ) => {
   const {
@@ -47,16 +50,20 @@ export const SelectField = <TItem extends Record<string, any>>(
             <Select.List>
               {items.map((item) => {
                 return (
-                  <Select.Item
-                    className="p-2 hover:bg-menu-primary-hover data-selected:bg-menu-primary-selected data-highlighted:bg-menu-primary-hover cursor-pointer
-                        flex align-items-center"
-                    key={`${keyPrefix}-${item[idProperty]}`}
-                    value={item}
-                  >
-                    <Select.ItemText>
-                      <RenderItem {...item} />
-                    </Select.ItemText>
-                  </Select.Item>
+                  <Fragment key={`${keyPrefix}-${item[idProperty]}`}>
+                    {item.separator ? (
+                      <Select.Separator className="mx-2 my-0.5 h-px bg-gray-300" />
+                    ) : (
+                      <Select.Item
+                        className="p-2 hover:bg-menu-primary-hover data-selected:bg-menu-primary-selected data-highlighted:bg-menu-primary-hover cursor-pointer flex align-items-center"
+                        value={item}
+                      >
+                        <Select.ItemText>
+                          <RenderItem {...item} />
+                        </Select.ItemText>
+                      </Select.Item>
+                    )}
+                  </Fragment>
                 );
               })}
             </Select.List>

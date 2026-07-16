@@ -34,12 +34,21 @@ export type BodyTopRowPropsDef = {
   tdClassNames: string;
 };
 
-export type SortItemDef<TField = string> = {
-  direction: SortDirection;
-  field: TField;
-  id: string;
-  label: string;
-};
+export type SortItemDef<TField = string> =
+  | {
+      direction: SortDirection;
+      field: TField;
+      id: string;
+      label: string;
+      separator?: never;
+    }
+  | {
+      direction?: never;
+      field?: never;
+      id?: never;
+      label?: never;
+      separator: true;
+    };
 
 export type TablePropsDef<T> = Omit<
   TableOptions<T>,

@@ -235,70 +235,80 @@ export const useCollectionItemsSearch = () => {
   };
 };
 
-export type UnformattedSortItemDef<TField extends string> = (
-  | {
-      bidirectional: true;
-      direction?: never;
-    }
-  | {
-      bidirectional?: never;
-      direction: SortDirection;
-    }
-) & {
-  field: TField;
-  /** Pass `true` to remove the item from the formatted output. */
-  hide?: boolean;
-  label?: string | null;
-};
+export type UnformattedSortItemDef<TField extends string> =
+  | ((
+      | {
+          bidirectional: true;
+          direction?: never;
+        }
+      | {
+          bidirectional?: never;
+          direction: SortDirection;
+        }
+    ) & {
+      field: TField;
+      /** Pass `true` to remove the item from the formatted output. */
+      hide?: boolean;
+      label?: string | null;
+      separator?: never;
+    })
+  | { hide?: boolean; separator: true };
 
 export const formatSortItems = <TField extends string>(
   items: UnformattedSortItemDef<TField>[],
 ): SortItemDef<TField>[] => {
   const initialItems: SortItemDef<TField>[] = [];
 
-  return items.reduce((accumulator, item) => {
-    const { bidirectional, direction, field, hide, label } = item;
+  return items.reduce((acc, item) => {
+    const { hide, separator } = item;
 
-    const getFormattedLabel = (direction: SortDirection) => {
-      const prefix =
-        label ?? `${field.substring(0, 1).toUpperCase()}${field.substring(1)}`;
+    if (separator) {
+      return hide ? acc : [...acc, { separator }];
+    } else {
+      const { bidirectional, direction, field, label } = item;
 
-      return `${prefix}, ${direction}.`;
-    };
+      const getFormattedLabel = (direction: SortDirection) => {
+        const prefix =
+          label ??
+          `${field.substring(0, 1).toUpperCase()}${field.substring(1)}`;
 
-    const getId = (direction: SortDirection) => {
-      return `${field}_${direction}`;
-    };
-
-    if (hide) {
-      return accumulator;
-    }
-
-    if (bidirectional) {
-      const itemAsc: SortItemDef<TField> = {
-        direction: sortDirectionOptions.asc,
-        field,
-        id: getId(sortDirectionOptions.asc),
-        label: getFormattedLabel(sortDirectionOptions.asc),
-      };
-      const itemDesc: SortItemDef<TField> = {
-        direction: sortDirectionOptions.desc,
-        field,
-        id: getId(sortDirectionOptions.desc),
-        label: getFormattedLabel(sortDirectionOptions.desc),
+        return `${prefix}, ${direction}.`;
       };
 
-      return [...accumulator, itemAsc, itemDesc];
+      const getId = (direction: SortDirection) => {
+        return `${field}_${direction}`;
+      };
+
+      if (hide) {
+        return acc;
+      }
+
+      if (bidirectional) {
+        const itemAsc: SortItemDef<TField> = {
+          direction: sortDirectionOptions.asc,
+          field,
+          id: getId(sortDirectionOptions.asc),
+          label: getFormattedLabel(sortDirectionOptions.asc),
+        };
+        const itemDesc: SortItemDef<TField> = {
+          direction: sortDirectionOptions.desc,
+          field,
+          id: getId(sortDirectionOptions.desc),
+          label: getFormattedLabel(sortDirectionOptions.desc),
+        };
+
+        return [...acc, itemAsc, itemDesc];
+      }
+
+      const formattedItem: SortItemDef<TField> = {
+        direction,
+        field,
+        id: getId(direction),
+        label: getFormattedLabel(direction),
+      };
+
+      return [...acc, formattedItem];
     }
-
-    const formattedItem: SortItemDef<TField> = {
-      direction,
-      field,
-      id: getId(direction),
-      label: getFormattedLabel(direction),
-    };
-
-    return [...accumulator, formattedItem];
   }, initialItems);
 };
 
