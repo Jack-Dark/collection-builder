@@ -4,8 +4,11 @@ import ControlPointIcon from '@mui/icons-material/ControlPoint';
 import { useEffect, useMemo } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
+import type { PaginationMetadata } from '#/api/pagination/pagination.types';
 import type { CollectionItemsTableColumn } from '#/api/routes/collection-items/collection-item.types';
+import type { CollectionRecordDef } from '#/api/routes/collections/collection.types';
 
+import { sortDirectionOptions } from '#/api/pagination/pagination.constants';
 import { useCreateCollectionItem } from '#/api/routes/collection-items/create-collection-item/create-collection-item.react-query';
 import {
   useGetCollectionDetailsById,
@@ -30,7 +33,7 @@ import {
   CollectionItemsFiltersContent,
   useCollectionItemsFilterActions,
   useCollectionItemsSearch,
-  useCollectionItemsSort,
+  useFormatSortProps,
   useOnUpdateCollectionItemsQueries,
   useSetCollectionItemsFiltersFromQueries,
 } from './components/CollectionItemsFiltersContent';
@@ -121,48 +124,9 @@ export const CollectionItemsPage: RouteComponent = () => {
   }, [collection.id]);
 
   const filtersProps = useCollectionItemsFilterActions();
-
   const searchProps = useCollectionItemsSearch();
-
-  const sortProps = useCollectionItemsSort<CollectionItemsTableColumn>({
-    items: [
-      {
-        bidirectional: true,
-        field: 'name',
-        label: 'Name',
-      },
-      { separator: true },
-      {
-        bidirectional: true,
-        field: 'customField1Value',
-        hide: !collection.customField1Enabled,
-        label: collection.customField1Label,
-      },
-      { hide: !collection.customField1Enabled, separator: true },
-      {
-        bidirectional: true,
-        field: 'customField2Value',
-        hide: !collection.customField2Enabled,
-        label: collection.customField2Label,
-      },
-      { hide: !collection.customField2Enabled, separator: true },
-      {
-        bidirectional: true,
-        field: 'customField3Value',
-        hide: !collection.customField3Enabled,
-        label: collection.customField3Label,
-      },
-      { hide: !collection.customField3Enabled, separator: true },
-      {
-        bidirectional: true,
-        field: 'createdAt',
-        label: 'Date added',
-      },
-    ],
-  });
-
-  const { onUpdateCollectionItemsQueries } =
-    useOnUpdateCollectionItemsQueries();
+  const paginationProps = useCollectionItemsPagination({ pagination });
+  const sortProps = useCollectionItemsSort({ collection });
 
   useSetCollectionItemsFiltersFromQueries();
 
@@ -248,25 +212,94 @@ export const CollectionItemsPage: RouteComponent = () => {
             },
             ...filtersProps,
           }}
-          pagination={{
-            limit: {
-              onChange: (limit) => {
-                onUpdateCollectionItemsQueries({ limit });
-              },
-              value: search.limit || 100,
-            },
-            page: {
-              max: pagination.totalPages,
-              onChange: (page) => {
-                onUpdateCollectionItemsQueries({ page });
-              },
-              value: search.page || 1,
-            },
-          }}
+          pagination={paginationProps}
           search={searchProps}
           sort={sortProps}
         />
       </form>
     </PageWrapper>
   );
+};
+
+const useCollectionItemsPagination = (props: {
+  pagination: PaginationMetadata;
+}) => {
+  const { pagination } = props;
+
+  const search = CollectionRoute.useSearch();
+
+  const { onUpdateCollectionItemsQueries } =
+    useOnUpdateCollectionItemsQueries();
+
+  const paginationProps = {
+    limit: {
+      onChange: (limit: number) => {
+        onUpdateCollectionItemsQueries({ limit });
+      },
+      value: search.limit || 100,
+    },
+    page: {
+      max: pagination.totalPages,
+      onChange: (page: number) => {
+        onUpdateCollectionItemsQueries({ page });
+      },
+      value: search.page || 1,
+    },
+  };
+
+  return paginationProps;
+};
+const useCollectionItemsSort = (props: { collection: CollectionRecordDef }) => {
+  const { collection } = props;
+
+  const { onUpdateCollectionItemsQueries, searchQueries } =
+    useOnUpdateCollectionItemsQueries();
+
+  const sortProps = useFormatSortProps<CollectionItemsTableColumn>({
+    items: [
+      {
+        bidirectional: true,
+        field: 'name',
+        label: 'Name',
+      },
+      { separator: true },
+      {
+        bidirectional: true,
+        field: 'customField1Value',
+        hide: !collection.customField1Enabled,
+        label: collection.customField1Label,
+      },
+      { hide: !collection.customField1Enabled, separator: true },
+      {
+        bidirectional: true,
+        field: 'customField2Value',
+        hide: !collection.customField2Enabled,
+        label: collection.customField2Label,
+      },
+      { hide: !collection.customField2Enabled, separator: true },
+      {
+        bidirectional: true,
+        field: 'customField3Value',
+        hide: !collection.customField3Enabled,
+        label: collection.customField3Label,
+      },
+      { hide: !collection.customField3Enabled, separator: true },
+      {
+        bidirectional: true,
+        field: 'createdAt',
+        label: 'Date added',
+      },
+    ],
+    onChange: (sort) => {
+      onUpdateCollectionItemsQueries({
+        sort: {
+          direction: sort?.direction || sortDirectionOptions.asc,
+          field: sort?.field || 'name',
+        },
+      });
+    },
+    searchQueries,
+  });
+
+  return sortProps;
 };

@@ -6,7 +6,7 @@ import { useSearch } from '@tanstack/react-router';
 import _ from 'lodash';
 import { useEffect, useMemo } from 'react';
 
-import type { CollectionItemsTableColumn } from '#/api/routes/collection-items/collection-item.types';
+import type { PaginationQueriesSchemaDef } from '#/api/pagination/pagination.types';
 import type { CollectionItemsFiltersSchemaDef } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.types';
 import type { CollectionRecordDef } from '#/api/routes/collections/collection.types';
 import type { SortItemDef } from '#/components/Table';
@@ -312,28 +312,68 @@ export const formatSortItems = <TField extends string>(
   }, initialItems);
 };
 
-export const useCollectionItemsSort = <
-  TField extends CollectionItemsTableColumn,
->(props: {
+export const useFormatSortProps = <TField extends string>(props: {
   items: UnformattedSortItemDef<TField>[];
+  onChange: (sort: SortItemDef<TField> | null) => void;
+  searchQueries: PaginationQueriesSchemaDef;
 }) => {
-  const { items } = props;
-
-  const { onUpdateCollectionItemsQueries, searchQueries } =
-    useOnUpdateCollectionItemsQueries();
+  const { items, onChange, searchQueries } = props;
 
   const formattedItems = useMemo(() => {
-    return formatSortItems(items);
-  }, [...items]);
+    const initialItems: SortItemDef<TField>[] = [];
 
-  const onChange = (sort: SortItemDef<TField> | null) => {
-    onUpdateCollectionItemsQueries({
-      sort: {
-        direction: sort?.direction || sortDirectionOptions.asc,
-        field: sort?.field || 'name',
-      },
-    });
-  };
+    return items.reduce((acc, item) => {
+      const { hide, separator } = item;
+
+      if (separator) {
+        return hide ? acc : [...acc, { separator }];
+      } else {
+        const { bidirectional, direction, field, label } = item;
+
+        const getFormattedLabel = (direction: SortDirection) => {
+          const prefix =
+            label ??
+            `${field.substring(0, 1).toUpperCase()}${field.substring(1)}`;
+
+          return `${prefix}, ${direction}.`;
+        };
+
+        const getId = (direction: SortDirection) => {
+          return `${field}_${direction}`;
+        };
+
+        if (hide) {
+          return acc;
+        }
+
+        if (bidirectional) {
+          const itemAsc: SortItemDef<TField> = {
+            direction: sortDirectionOptions.asc,
+            field,
+            id: getId(sortDirectionOptions.asc),
+            label: getFormattedLabel(sortDirectionOptions.asc),
+          };
+          const itemDesc: SortItemDef<TField> = {
+            direction: sortDirectionOptions.desc,
+            field,
+            id: getId(sortDirectionOptions.desc),
+            label: getFormattedLabel(sortDirectionOptions.desc),
+          };
+
+          return [...acc, itemAsc, itemDesc];
+        }
+
+        const formattedItem: SortItemDef<TField> = {
+          direction,
+          field,
+          id: getId(direction),
+          label: getFormattedLabel(direction),
+        };
+
+        return [...acc, formattedItem];
+      }
+    }, initialItems);
+  }, [...items]);
 
   const { direction, field } = searchQueries.sort;
   const defaultValue = formattedItems.find((item) => {
