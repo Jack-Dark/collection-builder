@@ -118,7 +118,7 @@ export const CollectionItemsPage: RouteComponent = () => {
 
   const columns = useMemo(() => {
     return getCollectionItemsTableColumns(collection);
-  }, []);
+  }, [collection.id]);
 
   const filtersProps = useCollectionItemsFilterActions();
 
