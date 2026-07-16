@@ -3,14 +3,12 @@ import type { SortDirection } from '@tanstack/react-table';
 import type { PropsWithChildren } from 'react';
 
 import { useSearch } from '@tanstack/react-router';
-import _ from 'lodash';
 import { useEffect, useMemo } from 'react';
 
 import type { PaginationQueriesSchemaDef } from '#/api/pagination/pagination.types';
 import type { CollectionItemsFiltersSchemaDef } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.types';
 import type { CollectionRecordDef } from '#/api/routes/collections/collection.types';
 import type { SortItemDef } from '#/components/Table';
-import type { FiltersButtonPropsDef } from '#/components/Table/components/FilterButton/FilterButton.types';
 import type { SetZustandStoreFnDef } from '#/helpers/get-create-default-zustand-state';
 
 import { sortDirectionOptions } from '#/api/pagination/pagination.constants';
@@ -26,7 +24,7 @@ export const useSetCollectionItemsFiltersFromQueries = () => {
 
   const searchQueryFilters = queries?.filters;
 
-  const { setAllFilters: setFilters } = useCollectionItemsFilters();
+  const { setAllFilters: setFilters } = useCollectionItemsFiltersStore();
 
   useEffect(() => {
     if (searchQueryFilters) {
@@ -81,7 +79,7 @@ export const CollectionItemsFiltersContent = (
     customField2Store,
     customField3Store,
     saveAllFiltersSnapshot,
-  } = useCollectionItemsFilters();
+  } = useCollectionItemsFiltersStore();
 
   const getOnCheckedChange = (props: {
     index: number;
@@ -185,54 +183,6 @@ export const CollectionItemsFiltersContent = (
       )}
     </div>
   );
-};
-
-export const useCollectionItemsFilterActions = (): Omit<
-  FiltersButtonPropsDef,
-  'FiltersContent'
-> => {
-  const {
-    defaultValues,
-    getAllFilters: getFilters,
-    numApplied,
-    restoreAllFiltersFromSnapshot,
-  } = useCollectionItemsFilters();
-
-  const { onUpdateCollectionItemsQueries } =
-    useOnUpdateCollectionItemsQueries();
-
-  const onReset = () => {
-    onUpdateCollectionItemsQueries({ filters: defaultValues });
-  };
-
-  const onSubmit = () => {
-    const filters = getFilters();
-
-    onUpdateCollectionItemsQueries({ filters });
-  };
-
-  return {
-    numApplied,
-    onCancel: restoreAllFiltersFromSnapshot,
-    onReset,
-    onSubmit,
-  };
-};
-
-export const useCollectionItemsSearch = () => {
-  const { onUpdateCollectionItemsQueries, searchQueries } =
-    useOnUpdateCollectionItemsQueries();
-
-  const onChange = _.debounce(async (searchValue: string) => {
-    const search = searchValue.trim();
-
-    onUpdateCollectionItemsQueries({ search });
-  }, 200);
-
-  return {
-    onChange,
-    value: searchQueries.search,
-  };
 };
 
 export type UnformattedSortItemDef<TField extends string> =
@@ -488,7 +438,7 @@ const createFiltersStore = (defaultValues: CollectionItemsFiltersSchemaDef) => {
   };
 };
 
-export const useCollectionItemsFilters = createFiltersStore({
+export const useCollectionItemsFiltersStore = createFiltersStore({
   customField1: [],
   customField2: [],
   customField3: [],

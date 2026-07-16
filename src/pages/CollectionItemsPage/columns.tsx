@@ -24,7 +24,7 @@ import { Route as CollectionRoute } from '#/routes/_protected/collections/$id';
 
 import { TableCellActionsMenu } from '../../components/TableCellActionsMenu';
 import { useEditingCollectionItemsRowIds } from '../CollectionsListPage/hooks/use-editing-collections-row-ids';
-import { useCollectionItemsFormStore } from './CollectionItemsPage';
+import { useCollectionItemsFormStore } from './hooks/use-collection-items-form-store';
 
 const columnHelper = createColumnHelper<CollectionItemRecordDef>();
 

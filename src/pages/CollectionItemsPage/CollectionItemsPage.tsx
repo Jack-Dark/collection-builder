@@ -4,11 +4,6 @@ import ControlPointIcon from '@mui/icons-material/ControlPoint';
 import { useEffect, useMemo } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
-import type { PaginationMetadata } from '#/api/pagination/pagination.types';
-import type { CollectionItemsTableColumn } from '#/api/routes/collection-items/collection-item.types';
-import type { CollectionRecordDef } from '#/api/routes/collections/collection.types';
-
-import { sortDirectionOptions } from '#/api/pagination/pagination.constants';
 import { useCreateCollectionItem } from '#/api/routes/collection-items/create-collection-item/create-collection-item.react-query';
 import {
   useGetCollectionDetailsById,
@@ -17,7 +12,6 @@ import {
 import { useUpdateCollectionItemById } from '#/api/routes/collection-items/update-collection-item-by-id/update-collection-item-by-id.react-query';
 import { Button } from '#/components/Button';
 import { Table, tableCellClasses } from '#/components/Table';
-import { getCreateDefaultZustandStore } from '#/helpers/get-create-default-zustand-state';
 import { PageWrapper } from '#/page-wrapper';
 import { Route as CollectionRoute } from '#/routes/_protected/collections/$id';
 
@@ -25,44 +19,16 @@ import { useEditingCollectionItemsRowIds } from '../CollectionsListPage/hooks/us
 import { addOrUpdateCollectionItemFormSchema } from './addOrUpdateCollectionItemForm.schema';
 import { getCollectionItemsTableColumns } from './columns';
 import { AddCollectionItemFormTableRow } from './components/AddCollectionItemForm';
-import {
-  addCollectionItemFormDefaultValues,
-  useAddCollectionItemForm,
-} from './components/AddCollectionItemForm/add-or-update-collection-item-form.schema';
+import { useAddCollectionItemForm } from './components/AddCollectionItemForm/add-or-update-collection-item-form.schema';
 import {
   CollectionItemsFiltersContent,
-  useCollectionItemsFilterActions,
-  useCollectionItemsSearch,
-  useFormatSortProps,
-  useOnUpdateCollectionItemsQueries,
   useSetCollectionItemsFiltersFromQueries,
 } from './components/CollectionItemsFiltersContent';
-
-export const createFormStore = <TData extends Record<string, any>>(
-  defaultValues: TData,
-) => {
-  const createFormValuesStore = getCreateDefaultZustandStore(defaultValues);
-
-  return () => {
-    const { restoreFromSnapshot, saveSnapshot, setValue, snapshot, value } =
-      createFormValuesStore();
-
-    return {
-      defaultValues: snapshot,
-      formValues: value,
-      /** Resets form to the default values. */
-      resetFormValues: restoreFromSnapshot,
-      setFormValues: setValue,
-      updateDefaultValues: (newValues: Partial<TData>) => {
-        saveSnapshot({ ...defaultValues, ...newValues });
-      },
-    };
-  };
-};
-
-export const useCollectionItemsFormStore = createFormStore(
-  addCollectionItemFormDefaultValues,
-);
+import { useCollectionItemsFilters } from './hooks/use-collection-items-filters';
+import { useCollectionItemsFormStore } from './hooks/use-collection-items-form-store';
+import { useCollectionItemsPagination } from './hooks/use-collection-items-pagination';
+import { useCollectionItemsSearch } from './hooks/use-collection-items-search';
+import { useCollectionItemsSort } from './hooks/use-collection-items-sort';
 
 export const CollectionItemsPage: RouteComponent = () => {
   const { id } = CollectionRoute.useParams();
@@ -72,6 +38,7 @@ export const CollectionItemsPage: RouteComponent = () => {
   const { data } = useGetCollectionDetailsById({
     requestArgs: { collectionId, params: search },
   });
+
   const { collection, customFields, items, lastAddedItem, pagination } = data;
 
   const { formValues, resetFormValues, updateDefaultValues } =
@@ -80,20 +47,19 @@ export const CollectionItemsPage: RouteComponent = () => {
   const invalidateGetCollectionDetailsById =
     useInvalidateGetCollectionDetailsById();
 
-  const { onCreateCollectionItem } = useCreateCollectionItem({
-    onSuccess: async () => {
-      await invalidateGetCollectionDetailsById({ id: collection.id });
+  const onFormSubmitSuccess = async () => {
+    await invalidateGetCollectionDetailsById({ id: collection.id });
 
-      form.reset();
-    },
+    resetEditingRowIds();
+    form.reset();
+  };
+
+  const { onCreateCollectionItem } = useCreateCollectionItem({
+    onSuccess: onFormSubmitSuccess,
   });
 
   const { onUpdateCollectionItemById } = useUpdateCollectionItemById({
-    onSuccess: async () => {
-      await invalidateGetCollectionDetailsById({ id: collection.id });
-
-      form.reset();
-    },
+    onSuccess: onFormSubmitSuccess,
   });
 
   const { addToEditingRowIds, isEditing, resetEditingRowIds } =
@@ -107,9 +73,6 @@ export const CollectionItemsPage: RouteComponent = () => {
       } else {
         await onCreateCollectionItem(value);
       }
-
-      resetEditingRowIds();
-      form.reset();
     },
     validators: {
       onChange: addOrUpdateCollectionItemFormSchema,
@@ -123,7 +86,7 @@ export const CollectionItemsPage: RouteComponent = () => {
     return getCollectionItemsTableColumns(collection);
   }, [collection.id]);
 
-  const filtersProps = useCollectionItemsFilterActions();
+  const filtersProps = useCollectionItemsFilters();
   const searchProps = useCollectionItemsSearch();
   const paginationProps = useCollectionItemsPagination({ pagination });
   const sortProps = useCollectionItemsSort({ collection });
@@ -219,87 +182,4 @@ export const CollectionItemsPage: RouteComponent = () => {
       </form>
     </PageWrapper>
   );
-};
-
-const useCollectionItemsPagination = (props: {
-  pagination: PaginationMetadata;
-}) => {
-  const { pagination } = props;
-
-  const search = CollectionRoute.useSearch();
-
-  const { onUpdateCollectionItemsQueries } =
-    useOnUpdateCollectionItemsQueries();
-
-  const paginationProps = {
-    limit: {
-      onChange: (limit: number) => {
-        onUpdateCollectionItemsQueries({ limit });
-      },
-      value: search.limit || 100,
-    },
-    page: {
-      max: pagination.totalPages,
-      onChange: (page: number) => {
-        onUpdateCollectionItemsQueries({ page });
-      },
-      value: search.page || 1,
-    },
-  };
-
-  return paginationProps;
-};
-const useCollectionItemsSort = (props: { collection: CollectionRecordDef }) => {
-  const { collection } = props;
-
-  const { onUpdateCollectionItemsQueries, searchQueries } =
-    useOnUpdateCollectionItemsQueries();
-
-  const sortProps = useFormatSortProps<CollectionItemsTableColumn>({
-    items: [
-      {
-        bidirectional: true,
-        field: 'name',
-        label: 'Name',
-      },
-      { separator: true },
-      {
-        bidirectional: true,
-        field: 'customField1Value',
-        hide: !collection.customField1Enabled,
-        label: collection.customField1Label,
-      },
-      { hide: !collection.customField1Enabled, separator: true },
-      {
-        bidirectional: true,
-        field: 'customField2Value',
-        hide: !collection.customField2Enabled,
-        label: collection.customField2Label,
-      },
-      { hide: !collection.customField2Enabled, separator: true },
-      {
-        bidirectional: true,
-        field: 'customField3Value',
-        hide: !collection.customField3Enabled,
-        label: collection.customField3Label,
-      },
-      { hide: !collection.customField3Enabled, separator: true },
-      {
-        bidirectional: true,
-        field: 'createdAt',
-        label: 'Date added',
-      },
-    ],
-    onChange: (sort) => {
-      onUpdateCollectionItemsQueries({
-        sort: {
-          direction: sort?.direction || sortDirectionOptions.asc,
-          field: sort?.field || 'name',
-        },
-      });
-    },
-    searchQueries,
-  });
-
-  return sortProps;
 };
