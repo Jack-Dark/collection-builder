@@ -372,7 +372,7 @@ const CollectionDetailsActionsCell = ({
       deleteIsDisabled={isEditing || isDeletePending}
       deleteOnClick={async () => {
         await onDeleteCollectionItemById({
-          collectionItemId,
+          collectionItemIds: [collectionItemId],
         });
       }}
       editIsDisabled={isCreatingRecord || isDeletePending}

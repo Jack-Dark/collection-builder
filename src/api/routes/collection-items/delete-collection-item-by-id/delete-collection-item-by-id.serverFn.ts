@@ -11,9 +11,9 @@ export const deleteCollectionItemByIdServerFn = createServerFn({
 })
   .middleware([authApiRouteMiddleware])
   .validator(deleteCollectionItemByIdSchema)
-  .handler(async ({ context, data: { collectionItemId } }) => {
+  .handler(async ({ context, data: { collectionItemIds } }) => {
     return deleteCollectionItemByIdDbQuery({
-      id: collectionItemId,
+      ids: collectionItemIds,
       userId: context.user.id,
     });
   });

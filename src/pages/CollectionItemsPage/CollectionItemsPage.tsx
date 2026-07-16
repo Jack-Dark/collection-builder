@@ -7,6 +7,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import { useEffect, useMemo, useState } from 'react';
 
 import { useCreateCollectionItem } from '#/api/routes/collection-items/create-collection-item/create-collection-item.react-query';
+import { useDeleteCollectionItemById } from '#/api/routes/collection-items/delete-collection-item-by-id/delete-collection-item-by-id.react-query';
 import {
   useGetCollectionDetailsById,
   useInvalidateGetCollectionDetailsById,
@@ -206,6 +207,18 @@ export const CreateOrUpdateCollectionItemFormTable = withAddCollectionItemForm({
       return getSelectedRowIds();
     }, [selectedTableRows]);
 
+    const invalidateGetCollectionDetailsById =
+      useInvalidateGetCollectionDetailsById();
+
+    const { isPending: isDeletePending, onDeleteCollectionItemById } =
+      useDeleteCollectionItemById({
+        onSuccess: async () => {
+          await invalidateGetCollectionDetailsById({
+            id: collectionId,
+          });
+        },
+      });
+
     return (
       <div className="grid gap-4">
         <Table
@@ -235,8 +248,13 @@ export const CreateOrUpdateCollectionItemFormTable = withAddCollectionItemForm({
                         disabled={isEditing}
                         Icon={DeleteIcon}
                         onClick={() => {
-                          // TODO - ADD DELETE LOGIC
+                          onDeleteCollectionItemById({
+                            collectionItemIds: selectedRowIds.map((id) => {
+                              return Number(id);
+                            }),
+                          });
                         }}
+                        processing={isDeletePending}
                         text="Delete Items"
                         variant="alert"
                       />

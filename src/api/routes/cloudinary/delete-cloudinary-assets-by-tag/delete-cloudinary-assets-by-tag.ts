@@ -9,6 +9,5 @@ export const deleteCloudinaryAssetsByTagServerFn = createServerFn({
 })
   .validator(deleteCloudinaryAssetsByTagSchema)
   .handler(async ({ data }) => {
-    const result = await deleteCloudinaryAssetsByTag(data.tag);
-    console.log('🚀 ~ result:', result);
+    await deleteCloudinaryAssetsByTag(data.tag);
   });

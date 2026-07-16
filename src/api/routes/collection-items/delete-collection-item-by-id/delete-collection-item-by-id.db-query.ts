@@ -1,30 +1,31 @@
-import { and, eq, isNull } from 'drizzle-orm';
+import { and, eq, inArray, isNull } from 'drizzle-orm';
 
 import { db } from '#/api/db';
 import { collectionItemsTable } from '#/api/db-tables-schema';
-import { deleteCloudinaryAssetsByTag } from '#/lib/cloudinary';
-
-import { createCollectionItemCloudinaryTag } from '../../cloudinary/helpers/create-collection-item-cloudinary-tags';
+import { deleteCloudinaryAssetsByPublicIds } from '#/lib/cloudinary';
 
 export const deleteCollectionItemByIdDbQuery = async (props: {
-  id: number;
+  ids: number[];
   userId: string;
 }) => {
-  const { id, userId } = props;
+  const { ids, userId } = props;
 
-  return db.transaction(async (tx) => {
-    await tx
+  await db.transaction(async (tx) => {
+    const images = await tx
       .delete(collectionItemsTable)
       .where(
         and(
-          eq(collectionItemsTable.id, id),
+          inArray(collectionItemsTable.id, ids),
           eq(collectionItemsTable.userId, userId),
           isNull(collectionItemsTable.deletedAt),
         ),
-      );
+      )
+      .returning({ images: collectionItemsTable.images });
 
-    const tag = createCollectionItemCloudinaryTag(id);
+    const publicIds = images.reduce<string[]>((acc, { images }) => {
+      return [...acc, ...images];
+    }, []);
 
-    await deleteCloudinaryAssetsByTag(tag);
+    await deleteCloudinaryAssetsByPublicIds(...publicIds);
   });
 };
