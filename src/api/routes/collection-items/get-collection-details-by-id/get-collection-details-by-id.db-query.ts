@@ -94,17 +94,23 @@ export const getCollectionDetailsByIdDbQuery = async (
         .orderBy(asc(collectionItemsTable.customField3Value)),
     ]);
 
-    const customField1Values = customField1.map(({ value }) => {
-      return value;
-    });
+    const customField1Values = customField1
+      .map(({ value }) => {
+        return value;
+      })
+      .filter(Boolean);
 
-    const customField2Values = customField2.map(({ value }) => {
-      return value;
-    });
+    const customField2Values = customField2
+      .map(({ value }) => {
+        return value;
+      })
+      .filter(Boolean);
 
-    const customField3Values = customField3.map(({ value }) => {
-      return value;
-    });
+    const customField3Values = customField3
+      .map(({ value }) => {
+        return value;
+      })
+      .filter(Boolean);
 
     const items = await tx
       .select()
