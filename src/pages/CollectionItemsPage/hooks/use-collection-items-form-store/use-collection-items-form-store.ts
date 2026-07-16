@@ -1,5 +1,5 @@
 import { createFormStore } from '../../../../helpers/create-form-store';
-import { addCollectionItemFormDefaultValues } from '../../add-or-update-collection-item-form.form';
+import { addCollectionItemFormDefaultValues } from '../../components/CreateOrUpdateCollectionItemForm/CreateOrUpdateCollectionItemForm.form';
 
 export const useCollectionItemsFormStore = createFormStore(
   addCollectionItemFormDefaultValues,

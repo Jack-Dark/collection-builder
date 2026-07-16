@@ -13,9 +13,9 @@ import { getFieldError } from '../../../../helpers/get-field-error';
 import {
   addCollectionItemFormDefaultValues,
   withAddCollectionItemForm,
-} from '../../add-or-update-collection-item-form.form';
+} from './CreateOrUpdateCollectionItemForm.form';
 
-export const AddCollectionItemFormTableRow = withAddCollectionItemForm({
+export const CreateOrUpdateCollectionItemForm = withAddCollectionItemForm({
   /** These values are only used for type-checking, and are not used at runtime */
   defaultValues: addCollectionItemFormDefaultValues,
   props: {

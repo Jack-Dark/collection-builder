@@ -16,11 +16,11 @@ import { PageWrapper } from '#/page-wrapper';
 import { Route as CollectionRoute } from '#/routes/_protected/collections/$id';
 
 import { useEditingCollectionItemsRowIds } from '../CollectionsListPage/hooks/use-editing-collections-row-ids';
-import { useAddCollectionItemForm } from './add-or-update-collection-item-form.form';
 import { getCollectionItemsTableColumns } from './CollectionItemsPage.columns';
-import { AddCollectionItemFormTableRow } from './components/AddCollectionItemForm';
 import { CollectionItemsFiltersContent } from './components/CollectionItemsFiltersContent';
-import { createOrUpdateCollectionItemFormSchema } from './create-or-update-collection-item-form.schema';
+import { CreateOrUpdateCollectionItemForm } from './components/CreateOrUpdateCollectionItemForm';
+import { useAddCollectionItemForm } from './components/CreateOrUpdateCollectionItemForm/CreateOrUpdateCollectionItemForm.form';
+import { createOrUpdateCollectionItemFormSchema } from './components/CreateOrUpdateCollectionItemForm/CreateOrUpdateCollectionItemForm.schema';
 import { useCollectionItemsFilters } from './hooks/use-collection-items-filters';
 import { useCollectionItemsFormStore } from './hooks/use-collection-items-form-store';
 import { useCollectionItemsPagination } from './hooks/use-collection-items-pagination';
@@ -139,7 +139,7 @@ export const CollectionItemsPage: RouteComponent = () => {
             isEditing
               ? ({ tdClassNames: _tdClassNames, ...rest }) => {
                   return (
-                    <AddCollectionItemFormTableRow
+                    <CreateOrUpdateCollectionItemForm
                       customField1Enabled={collection.customField1Enabled}
                       customField1Label={collection.customField1Label || ''}
                       customField2Enabled={collection.customField2Enabled}
