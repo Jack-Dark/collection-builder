@@ -19,16 +19,14 @@ import { useEditingCollectionItemsRowIds } from '../CollectionsListPage/hooks/us
 import { useAddCollectionItemForm } from './add-or-update-collection-item-form.form';
 import { getCollectionItemsTableColumns } from './CollectionItemsPage.columns';
 import { AddCollectionItemFormTableRow } from './components/AddCollectionItemForm';
-import {
-  CollectionItemsFiltersContent,
-  useSetCollectionItemsFiltersFromQueries,
-} from './components/CollectionItemsFiltersContent';
+import { CollectionItemsFiltersContent } from './components/CollectionItemsFiltersContent';
 import { createOrUpdateCollectionItemFormSchema } from './create-or-update-collection-item-form.schema';
 import { useCollectionItemsFilters } from './hooks/use-collection-items-filters';
 import { useCollectionItemsFormStore } from './hooks/use-collection-items-form-store';
 import { useCollectionItemsPagination } from './hooks/use-collection-items-pagination';
 import { useCollectionItemsSearch } from './hooks/use-collection-items-search';
 import { useCollectionItemsSort } from './hooks/use-collection-items-sort';
+import { useSetCollectionItemsFiltersFromQueries } from './hooks/use-set-collection-items-filters-from-queries';
 
 export const CollectionItemsPage: RouteComponent = () => {
   const { id } = CollectionRoute.useParams();

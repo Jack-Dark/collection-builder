@@ -48,9 +48,9 @@ export const SelectField = <
         <Select.Positioner>
           <Select.Popup className="bg-white text-black py-2 rounded-sm shadow-lg max-h-100 overflow-auto">
             <Select.List>
-              {items.map((item) => {
+              {items.map((item, index) => {
                 return (
-                  <Fragment key={`${keyPrefix}-${item[idProperty]}`}>
+                  <Fragment key={`${keyPrefix}-${item[idProperty] || index}`}>
                     {item.separator ? (
                       <Select.Separator className="mx-2 my-0.5 h-px bg-gray-300" />
                     ) : (

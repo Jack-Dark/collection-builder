@@ -1,9 +1,7 @@
 import type { FiltersButtonPropsDef } from '#/components/Table/components/FilterButton/FilterButton.types';
 
-import {
-  useCollectionItemsFiltersStore,
-  useOnUpdateCollectionItemsQueries,
-} from '../../components/CollectionItemsFiltersContent';
+import { useOnUpdateCollectionItemsQueries } from '../../components/CollectionItemsFiltersContent';
+import { useCollectionItemsFiltersStore } from '../use-collection-items-filters-store';
 
 export const useCollectionItemsFilters = (): Omit<
   FiltersButtonPropsDef,

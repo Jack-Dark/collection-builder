@@ -2,11 +2,8 @@ import type { NavigateOptions } from '@tanstack/react-router';
 import type { SortDirection } from '@tanstack/react-table';
 import type { PropsWithChildren } from 'react';
 
-import { useSearch } from '@tanstack/react-router';
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 
-import type { PaginationQueriesSchemaDef } from '#/api/pagination/pagination.types';
-import type { CollectionItemsFiltersSchemaDef } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.types';
 import type { CollectionRecordDef } from '#/api/routes/collections/collection.types';
 import type { SortItemDef } from '#/components/Table';
 import type { SetZustandStoreFnDef } from '#/helpers/get-create-default-zustand-state';
@@ -14,24 +11,9 @@ import type { SetZustandStoreFnDef } from '#/helpers/get-create-default-zustand-
 import { sortDirectionOptions } from '#/api/pagination/pagination.constants';
 import { Button } from '#/components/Button';
 import { CheckboxField } from '#/components/Fields/CheckboxField';
-import { getCreateDefaultZustandStore } from '#/helpers/get-create-default-zustand-state';
 import { Route } from '#/routes/_protected/collections/$id';
 
-export const useSetCollectionItemsFiltersFromQueries = () => {
-  const queries = useSearch({
-    from: '/_protected/collections/$id',
-  });
-
-  const searchQueryFilters = queries?.filters;
-
-  const { setAllFilters: setFilters } = useCollectionItemsFiltersStore();
-
-  useEffect(() => {
-    if (searchQueryFilters) {
-      setFilters(searchQueryFilters);
-    }
-  }, [searchQueryFilters]);
-};
+import { useCollectionItemsFiltersStore } from '../../hooks/use-collection-items-filters-store';
 
 type CollectionItemsFiltersContentPropsDef = {
   collection: CollectionRecordDef;
@@ -262,81 +244,6 @@ export const formatSortItems = <TField extends string>(
   }, initialItems);
 };
 
-export const useFormatSortProps = <TField extends string>(props: {
-  items: UnformattedSortItemDef<TField>[];
-  onChange: (sort: SortItemDef<TField> | null) => void;
-  searchQueries: PaginationQueriesSchemaDef;
-}) => {
-  const { items, onChange, searchQueries } = props;
-
-  const formattedItems = useMemo(() => {
-    const initialItems: SortItemDef<TField>[] = [];
-
-    return items.reduce((acc, item) => {
-      const { hide, separator } = item;
-
-      if (separator) {
-        return hide ? acc : [...acc, { separator }];
-      } else {
-        const { bidirectional, direction, field, label } = item;
-
-        const getFormattedLabel = (direction: SortDirection) => {
-          const prefix =
-            label ??
-            `${field.substring(0, 1).toUpperCase()}${field.substring(1)}`;
-
-          return `${prefix}, ${direction}.`;
-        };
-
-        const getId = (direction: SortDirection) => {
-          return `${field}_${direction}`;
-        };
-
-        if (hide) {
-          return acc;
-        }
-
-        if (bidirectional) {
-          const itemAsc: SortItemDef<TField> = {
-            direction: sortDirectionOptions.asc,
-            field,
-            id: getId(sortDirectionOptions.asc),
-            label: getFormattedLabel(sortDirectionOptions.asc),
-          };
-          const itemDesc: SortItemDef<TField> = {
-            direction: sortDirectionOptions.desc,
-            field,
-            id: getId(sortDirectionOptions.desc),
-            label: getFormattedLabel(sortDirectionOptions.desc),
-          };
-
-          return [...acc, itemAsc, itemDesc];
-        }
-
-        const formattedItem: SortItemDef<TField> = {
-          direction,
-          field,
-          id: getId(direction),
-          label: getFormattedLabel(direction),
-        };
-
-        return [...acc, formattedItem];
-      }
-    }, initialItems);
-  }, [...items]);
-
-  const { direction, field } = searchQueries.sort;
-  const defaultValue = formattedItems.find((item) => {
-    return item.field === field && item.direction === direction;
-  });
-
-  return {
-    items: formattedItems,
-    onChange,
-    value: defaultValue,
-  };
-};
-
 export const useOnUpdateCollectionItemsQueries = () => {
   const navigate = Route.useNavigate();
   const searchQueries = Route.useSearch();
@@ -358,88 +265,3 @@ export const useOnUpdateCollectionItemsQueries = () => {
 
   return { onUpdateCollectionItemsQueries, searchQueries };
 };
-
-const createFiltersStore = (defaultValues: CollectionItemsFiltersSchemaDef) => {
-  const createCustomField1Store = getCreateDefaultZustandStore<string[]>(
-    defaultValues.customField1,
-  );
-  const createCustomField2Store = getCreateDefaultZustandStore<string[]>(
-    defaultValues.customField2,
-  );
-  const createCustomField3Store = getCreateDefaultZustandStore<string[]>(
-    defaultValues.customField3,
-  );
-
-  return () => {
-    const customField1Store = createCustomField1Store();
-    const customField2Store = createCustomField2Store();
-    const customField3Store = createCustomField3Store();
-
-    const numApplied = [
-      customField1Store.value.length,
-      customField2Store.value.length,
-      customField3Store.value.length,
-    ].filter(Boolean).length;
-
-    const getAllFilters = (): CollectionItemsFiltersSchemaDef => {
-      return {
-        customField1: customField1Store.getValue(),
-        customField2: customField2Store.getValue(),
-        customField3: customField3Store.getValue(),
-      };
-    };
-
-    return {
-      customField1Store,
-      customField2Store,
-      customField3Store,
-      defaultValues,
-      filters: {
-        customField1: customField1Store.value,
-        customField2: customField2Store.value,
-        customField3: customField3Store.value,
-      },
-      getAllFilters,
-      numApplied,
-      resetAllFilters: () => {
-        customField1Store.resetValue();
-        customField2Store.resetValue();
-        customField3Store.resetValue();
-      },
-      restoreAllFiltersFromSnapshot: () => {
-        customField1Store.restoreFromSnapshot();
-        customField2Store.restoreFromSnapshot();
-        customField3Store.restoreFromSnapshot();
-      },
-      saveAllFiltersSnapshot: () => {
-        return {
-          customField1: customField1Store.saveSnapshot(),
-          customField2: customField2Store.saveSnapshot(),
-          customField3: customField3Store.saveSnapshot(),
-        };
-      },
-      setAllFilters: (
-        valueOrSetStore:
-          | CollectionItemsFiltersSchemaDef
-          | ((prevValue: CollectionItemsFiltersSchemaDef) => void),
-      ) => {
-        if (typeof valueOrSetStore === 'function') {
-          const currentValue = getAllFilters();
-          valueOrSetStore(currentValue);
-        } else {
-          const { customField1, customField2, customField3 } = valueOrSetStore;
-
-          customField1Store.setValue(customField1);
-          customField2Store.setValue(customField2);
-          customField3Store.setValue(customField3);
-        }
-      },
-    };
-  };
-};
-
-export const useCollectionItemsFiltersStore = createFiltersStore({
-  customField1: [],
-  customField2: [],
-  customField3: [],
-});

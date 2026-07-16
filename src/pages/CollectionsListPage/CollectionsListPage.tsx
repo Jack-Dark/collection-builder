@@ -14,13 +14,13 @@ import { useGetPaginatedCollections } from '#/api/routes/collections/get-paginat
 import { useUpdateCollectionById } from '#/api/routes/collections/update-collection-by-id/update-collection-by-id.react-query';
 import { Button } from '#/components/Button';
 import { Table, tableCellClasses } from '#/components/Table';
+import { createFormStore } from '#/helpers/create-form-store';
 import { PageWrapper } from '#/page-wrapper';
 import { createOrUpdateCollectionFormSchema } from '#/pages/CollectionsListPage/collection-form.schema';
 import { Route } from '#/routes/_protected/collections';
 
 import type { UnformattedSortItemDef } from '../CollectionItemsPage/components/CollectionItemsFiltersContent';
 
-import { createFormStore } from '../CollectionItemsPage';
 import { formatSortItems } from '../CollectionItemsPage/components/CollectionItemsFiltersContent';
 import { getCollectionsListTableColumns } from './columns';
 import { AddCollectionFormTableRow } from './components/AddCollectionFormTableRow';

@@ -2,11 +2,9 @@ import type { CollectionItemsTableColumn } from '#/api/routes/collection-items/c
 import type { CollectionRecordDef } from '#/api/routes/collections/collection.types';
 
 import { sortDirectionOptions } from '#/api/pagination/pagination.constants';
+import { useFormatSortProps } from '#/hooks/use-format-sort-props';
 
-import {
-  useOnUpdateCollectionItemsQueries,
-  useFormatSortProps,
-} from '../../components/CollectionItemsFiltersContent';
+import { useOnUpdateCollectionItemsQueries } from '../../components/CollectionItemsFiltersContent';
 
 export const useCollectionItemsSort = (props: {
   collection: CollectionRecordDef;
