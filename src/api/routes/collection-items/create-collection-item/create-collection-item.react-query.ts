@@ -24,7 +24,7 @@ export const useCreateCollectionItem = <
     mutationFn: async (data) => {
       const images: string[] = [];
       const record = await createCollectionItemServerFn({
-        data: { ...data, images },
+        data: { ...data, id: undefined, images },
       });
 
       const { collectionId, id: collectionItemId, userId } = record;

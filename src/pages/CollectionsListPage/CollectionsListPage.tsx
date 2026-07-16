@@ -1,9 +1,10 @@
 import type { NavigateOptions, RouteComponent } from '@tanstack/react-router';
 
+import ClearIcon from '@mui/icons-material/Clear';
 import ControlPointIcon from '@mui/icons-material/ControlPoint';
 import { revalidateLogic } from '@tanstack/react-form';
 import _ from 'lodash';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 
 import type { CollectionTableColumnsDef } from '#/api/routes/collections/collection.types';
 import type { SortItemDef } from '#/components/Table';
@@ -13,19 +14,20 @@ import { useCreateCollection } from '#/api/routes/collections/create-collection/
 import { useGetPaginatedCollections } from '#/api/routes/collections/get-paginated-collections/get-paginated-collections.react-query';
 import { useUpdateCollectionById } from '#/api/routes/collections/update-collection-by-id/update-collection-by-id.react-query';
 import { Button } from '#/components/Button';
-import { Table, tableCellClasses } from '#/components/Table';
+import { Table } from '#/components/Table';
 import { createFormStore } from '#/helpers/create-form-store';
 import { PageWrapper } from '#/page-wrapper';
 import { createOrUpdateCollectionFormSchema } from '#/pages/CollectionsListPage/collection-form.schema';
 import { Route } from '#/routes/_protected/collections';
 
 import type { UnformattedSortItemDef } from '../CollectionItemsPage/components/CollectionItemsFiltersContent';
+import type { CreateOrUpdateCollectionFormDataSchemaDef } from './components/AddCollectionFormTableRow/types';
 
 import { formatSortItems } from '../CollectionItemsPage/components/CollectionItemsFiltersContent';
 import { getCollectionsListTableColumns } from './columns';
-import { AddCollectionFormTableRow } from './components/AddCollectionFormTableRow';
 import {
   addCollectionFormDefaultValues,
+  tempNewCollectionId,
   useAddCollectionForm,
 } from './components/AddCollectionFormTableRow/constants';
 import { useEditingCollectionsRowIds } from './hooks/use-editing-collections-row-ids';
@@ -35,12 +37,19 @@ export const useCollectionsListFormStore = createFormStore(
 );
 
 export const CollectionsListPage: RouteComponent = () => {
+  const [tableData, setTableData] = useState<
+    CreateOrUpdateCollectionFormDataSchemaDef[]
+  >([]);
+
   const search = Route.useSearch();
 
   const { data } = useGetPaginatedCollections({
+    onSuccess: ({ collections }) => {
+      setTableData(collections);
+    },
     requestArgs: { params: search },
   });
-  const { collections, pagination } = data;
+  const { pagination } = data;
 
   const { formValues, resetFormValues } = useCollectionsListFormStore();
 
@@ -59,10 +68,15 @@ export const CollectionsListPage: RouteComponent = () => {
   const form = useAddCollectionForm({
     defaultValues: formValues,
     onSubmit: async ({ value }) => {
-      if (typeof value.id === 'number') {
+      if (value.createdAt) {
         await onUpdateCollectionById(value);
       } else {
-        await onCreateCollection(value);
+        await onCreateCollection({
+          ...value,
+          createdAt: undefined,
+          id: String(value.id),
+          userId: undefined,
+        });
       }
 
       resetEditingRowIds();
@@ -77,8 +91,12 @@ export const CollectionsListPage: RouteComponent = () => {
     },
   });
 
-  const { addToEditingRowIds, isEditing, resetEditingRowIds } =
-    useEditingCollectionsRowIds();
+  const {
+    addToEditingRowIds,
+    isEditing,
+    removeFromIsEditingRowIds,
+    resetEditingRowIds,
+  } = useEditingCollectionsRowIds();
 
   const columns = useMemo(() => {
     return getCollectionsListTableColumns();
@@ -104,65 +122,68 @@ export const CollectionsListPage: RouteComponent = () => {
 
   return (
     <PageWrapper title="Collections">
-      <div className="grid gap-4">
-        {!isEditing && (
-          <div className="flex justify-end">
-            <Button
-              Icon={ControlPointIcon}
-              onClick={() => {
-                addToEditingRowIds('');
-              }}
-              text="Add New"
-              variant="secondary"
-            />
-          </div>
-        )}
-      </div>
       <form
         onSubmit={(e) => {
           e.preventDefault();
           form.handleSubmit();
         }}
       >
-        <Table
-          BodyTopRow={
-            isEditing
-              ? ({ tdClassNames: _tdClassNames, ...rest }) => {
-                  return (
-                    <AddCollectionFormTableRow
-                      form={form}
-                      onCancel={() => {
-                        resetEditingRowIds();
-                        resetFormValues();
-                        form.reset();
-                      }}
-                      tdClassNames={tableCellClasses}
-                      {...rest}
-                    />
-                  );
-                }
-              : undefined
-          }
-          columns={columns}
-          data={collections}
-          pagination={{
-            limit: {
-              onChange: (limit) => {
-                onUpdateCollectionsQueries({ limit });
+        <div className="grid gap-4">
+          <div className="flex justify-end">
+            {isEditing ? (
+              <Button
+                Icon={ClearIcon}
+                onClick={() => {
+                  removeFromIsEditingRowIds(tempNewCollectionId);
+
+                  setTableData((prevValues) => {
+                    return prevValues.slice(1);
+                  });
+                }}
+                text="Cancel"
+                variant="secondary"
+              />
+            ) : (
+              <Button
+                Icon={ControlPointIcon}
+                onClick={() => {
+                  addToEditingRowIds(tempNewCollectionId);
+
+                  setTableData((prevValues) => {
+                    const newRecord: CreateOrUpdateCollectionFormDataSchemaDef =
+                      addCollectionFormDefaultValues;
+
+                    return [newRecord, ...prevValues];
+                  });
+                }}
+                text="Add New"
+                variant="secondary"
+              />
+            )}
+          </div>
+
+          <Table
+            columns={columns}
+            data={tableData}
+            pagination={{
+              limit: {
+                onChange: (limit) => {
+                  onUpdateCollectionsQueries({ limit });
+                },
+                value: search.limit || 100,
               },
-              value: search.limit || 100,
-            },
-            page: {
-              max: pagination.totalPages,
-              onChange: (page) => {
-                onUpdateCollectionsQueries({ page });
+              page: {
+                max: pagination.totalPages,
+                onChange: (page) => {
+                  onUpdateCollectionsQueries({ page });
+                },
+                value: search.page || 1,
               },
-              value: search.page || 1,
-            },
-          }}
-          search={searchProps}
-          sort={sortProps}
-        />
+            }}
+            search={searchProps}
+            sort={sortProps}
+          />
+        </div>
       </form>
     </PageWrapper>
   );

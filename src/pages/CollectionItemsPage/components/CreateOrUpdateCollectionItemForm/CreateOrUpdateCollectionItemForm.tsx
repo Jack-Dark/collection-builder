@@ -8,102 +8,14 @@ import { Button } from '#/components/Button';
 import { Image } from '#/components/Image';
 import { Popover } from '#/components/Popover';
 import { SimpleErrorBoundary } from '#/components/SimpleErrorBoundary';
+import { useEditingCollectionItemsRowIds } from '#/pages/CollectionsListPage/hooks/use-editing-collections-row-ids';
 
 import { getFieldError } from '../../../../helpers/get-field-error';
+import { useCollectionItemsFormStore } from '../../hooks/use-collection-items-form-store';
 import {
   addCollectionItemFormDefaultValues,
   withAddCollectionItemForm,
 } from './CreateOrUpdateCollectionItemForm.form';
-
-export const CreateOrUpdateCollectionItemForm = withAddCollectionItemForm({
-  /** These values are only used for type-checking, and are not used at runtime */
-  defaultValues: addCollectionItemFormDefaultValues,
-  props: {
-    customField1Enabled: false,
-    customField1Label: '',
-    customField2Enabled: false,
-    customField2Label: '',
-    customField3Enabled: false,
-    customField3Label: '',
-    customFields: {
-      customField1Values: [''],
-      customField2Values: [''],
-      customField3Values: [''],
-    },
-    onCancel: () => {},
-    tdClassNames: '',
-  },
-  render: ({
-    customField1Enabled,
-    customField1Label,
-    customField2Enabled,
-    customField2Label,
-    customField3Enabled,
-    customField3Label,
-    customFields,
-    form,
-    onCancel,
-    tdClassNames,
-  }) => {
-    return (
-      <tr className="align-top">
-        <td className={tdClassNames}>
-          <CreateOrUpdateCollectionItemFormNameField form={form} />
-        </td>
-
-        <td className={tdClassNames}>
-          <CreateOrUpdateCollectionItemFormImagesField form={form} />
-        </td>
-
-        {customField1Enabled && (
-          <td className={tdClassNames}>
-            <CreateOrUpdateCollectionItemFormCustomField
-              fieldName="customField1Value"
-              form={form}
-              items={customFields.customField1Values}
-              label={customField1Label}
-            />
-          </td>
-        )}
-
-        {customField2Enabled && (
-          <td className={tdClassNames}>
-            <CreateOrUpdateCollectionItemFormCustomField
-              fieldName="customField2Value"
-              form={form}
-              items={customFields.customField2Values}
-              label={customField2Label}
-            />
-          </td>
-        )}
-
-        {customField3Enabled && (
-          <td className={tdClassNames}>
-            <CreateOrUpdateCollectionItemFormCustomField
-              fieldName="customField3Value"
-              form={form}
-              items={customFields.customField3Values}
-              label={customField3Label}
-            />
-          </td>
-        )}
-
-        <td className={tdClassNames}>
-          <CreateOrUpdateCollectionItemFormEditionFields form={form} />
-        </td>
-
-        <td className={tdClassNames} colSpan={2}>
-          <CreateOrUpdateCollectionItemFormNoteField
-            form={form}
-            onCancel={onCancel}
-          />
-        </td>
-
-        <td className={tdClassNames} />
-      </tr>
-    );
-  },
-});
 
 export const CreateOrUpdateCollectionItemFormNameField =
   withAddCollectionItemForm({
@@ -144,7 +56,7 @@ export const CreateOrUpdateCollectionItemFormImagesField =
             const { value } = field.state;
 
             return (
-              <div className="flex gap-2 flex-wrap">
+              <>
                 {value.map((image, index) => {
                   let publicId = '';
                   let previewUrl = '';
@@ -215,7 +127,7 @@ export const CreateOrUpdateCollectionItemFormImagesField =
                     type="file"
                   />
                 </SimpleErrorBoundary>
-              </div>
+              </>
             );
           }}
         </form.AppField>
@@ -342,31 +254,21 @@ export const CreateOrUpdateCollectionItemFormNoteField =
   withAddCollectionItemForm({
     /** These values are only used for type-checking, and are not used at runtime */
     defaultValues: addCollectionItemFormDefaultValues,
-    props: {
-      onCancel: () => {},
-    },
-    render: ({ form, onCancel }) => {
+    render: ({ form }) => {
       return (
-        <div className="grid gap-2">
-          <form.AppField name="notes">
-            {(field) => {
-              return (
-                <field.TextAreaField
-                  error={getFieldError(field)}
-                  name={field.name}
-                  onValueChange={field.handleChange}
-                  placeholder="Input notes..."
-                  value={field.state.value}
-                />
-              );
-            }}
-          </form.AppField>
-
-          <CreateOrUpdateCollectionItemFormSubmitButton
-            form={form}
-            onCancel={onCancel}
-          />
-        </div>
+        <form.AppField name="notes">
+          {(field) => {
+            return (
+              <field.TextAreaField
+                error={getFieldError(field)}
+                name={field.name}
+                onValueChange={field.handleChange}
+                placeholder="Input notes..."
+                value={field.state.value}
+              />
+            );
+          }}
+        </form.AppField>
       );
     },
   });
@@ -375,13 +277,22 @@ export const CreateOrUpdateCollectionItemFormSubmitButton =
   withAddCollectionItemForm({
     /** These values are only used for type-checking, and are not used at runtime */
     defaultValues: addCollectionItemFormDefaultValues,
-    props: {
-      onCancel: () => {},
-    },
-    render: ({ form, onCancel }) => {
+    render: ({ form }) => {
+      const { resetFormValues } = useCollectionItemsFormStore();
+
+      const { resetEditingRowIds } = useEditingCollectionItemsRowIds();
+
       return (
         <div className="flex align-items-center gap-2 justify-end">
-          <Button onClick={onCancel} text="Cancel" variant="mono" />
+          <Button
+            onClick={() => {
+              resetEditingRowIds();
+              resetFormValues();
+              form.reset();
+            }}
+            text="Cancel"
+            variant="mono"
+          />
 
           <form.Subscribe
             selector={(state) => {

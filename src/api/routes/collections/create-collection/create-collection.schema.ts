@@ -4,10 +4,15 @@ import { baseCollectionSchema } from '../base-collection.schema';
 
 const createCollectionBaseSchema = baseCollectionSchema.extend({
   createdAt: z.undefined().describe('Created At'),
-  id: z.undefined().describe('ID'),
   userId: z.undefined().describe('User ID'),
 });
 
-export const createCollectionFormSchema = createCollectionBaseSchema;
+export const createCollectionFormSchema = createCollectionBaseSchema.extend({
+  id: z.string().describe('ID'),
+});
 
-export const createCollectionServerFnSchema = createCollectionBaseSchema;
+export const createCollectionServerFnSchema = createCollectionBaseSchema.extend(
+  {
+    id: z.undefined().describe('ID'),
+  },
+);

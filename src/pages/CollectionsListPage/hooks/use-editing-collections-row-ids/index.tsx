@@ -1,29 +1,27 @@
 import { getCreateDefaultZustandStore } from '../../../../helpers/get-create-default-zustand-state';
 
-const createEditingRowIdsStore = <TData extends string | number>(
-  defaultValue: TData[] = [],
-) => {
-  const createState = getCreateDefaultZustandStore<TData[]>(defaultValue);
+const createEditingRowIdsStore = (defaultValue: string[] = []) => {
+  const createState = getCreateDefaultZustandStore<string[]>(defaultValue);
 
   return () => {
     const { getValue, resetValue, setValue, value } = createState();
 
     return {
-      addToEditingRowIds: (...valuesToAdd: TData[]) => {
-        setValue((prev) => {
-          return [...prev, ...valuesToAdd];
+      addToEditingRowIds: (...valuesToAdd: string[]) => {
+        setValue((prevValues) => {
+          return [...prevValues, ...valuesToAdd];
         });
       },
       editingRowIds: value,
-      getIsEditingRowId: (id: TData) => {
+      getIsEditingRowId: (id: string) => {
         const currentValue = getValue();
 
         return currentValue.includes(id);
       },
       isEditing: !!value.length,
-      removeFromIsEditingRowIds: (...valuesToRemove: TData[]) => {
-        setValue((prev) => {
-          return prev.filter((prevValue) => {
+      removeFromIsEditingRowIds: (...valuesToRemove: string[]) => {
+        setValue((prevValues) => {
+          return prevValues.filter((prevValue) => {
             const isInPrevValues = valuesToRemove.includes(prevValue);
 
             return !isInPrevValues;

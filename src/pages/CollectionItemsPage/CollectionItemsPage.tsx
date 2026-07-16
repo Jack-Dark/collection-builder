@@ -1,8 +1,8 @@
 import type { RouteComponent } from '@tanstack/react-router';
 
-import ControlPointIcon from '@mui/icons-material/ControlPoint';
-import { useEffect, useMemo } from 'react';
-import { v4 as uuidv4 } from 'uuid';
+import AddIcon from '@mui/icons-material/Add';
+import ClearIcon from '@mui/icons-material/Clear';
+import { useEffect, useMemo, useState } from 'react';
 
 import { useCreateCollectionItem } from '#/api/routes/collection-items/create-collection-item/create-collection-item.react-query';
 import {
@@ -11,15 +11,21 @@ import {
 } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.react-query';
 import { useUpdateCollectionItemById } from '#/api/routes/collection-items/update-collection-item-by-id/update-collection-item-by-id.react-query';
 import { Button } from '#/components/Button';
-import { Table, tableCellClasses } from '#/components/Table';
+import { Table } from '#/components/Table';
 import { PageWrapper } from '#/page-wrapper';
 import { Route as CollectionRoute } from '#/routes/_protected/collections/$id';
+
+import type { CreateOrUpdateCollectionItemFormDataDef } from './components/CreateOrUpdateCollectionItemForm/CreateOrUpdateCollectionItemForm.types';
 
 import { useEditingCollectionItemsRowIds } from '../CollectionsListPage/hooks/use-editing-collections-row-ids';
 import { getCollectionItemsTableColumns } from './CollectionItemsPage.columns';
 import { CollectionItemsFiltersContent } from './components/CollectionItemsFiltersContent';
-import { CreateOrUpdateCollectionItemForm } from './components/CreateOrUpdateCollectionItemForm';
-import { useAddCollectionItemForm } from './components/CreateOrUpdateCollectionItemForm/CreateOrUpdateCollectionItemForm.form';
+import {
+  addCollectionItemFormDefaultValues,
+  tempNewCollectionItemId,
+  useAddCollectionItemForm,
+  withAddCollectionItemForm,
+} from './components/CreateOrUpdateCollectionItemForm/CreateOrUpdateCollectionItemForm.form';
 import { createOrUpdateCollectionItemFormSchema } from './components/CreateOrUpdateCollectionItemForm/CreateOrUpdateCollectionItemForm.schema';
 import { useCollectionItemsFilters } from './hooks/use-collection-items-filters';
 import { useCollectionItemsFormStore } from './hooks/use-collection-items-form-store';
@@ -37,7 +43,7 @@ export const CollectionItemsPage: RouteComponent = () => {
     requestArgs: { collectionId, params: search },
   });
 
-  const { collection, customFields, items, lastAddedItem, pagination } = data;
+  const { collection, lastAddedItem, pagination } = data;
 
   const { formValues, resetFormValues, updateDefaultValues } =
     useCollectionItemsFormStore();
@@ -60,16 +66,22 @@ export const CollectionItemsPage: RouteComponent = () => {
     onSuccess: onFormSubmitSuccess,
   });
 
-  const { addToEditingRowIds, isEditing, resetEditingRowIds } =
-    useEditingCollectionItemsRowIds();
+  const { isEditing, resetEditingRowIds } = useEditingCollectionItemsRowIds();
 
   const form = useAddCollectionItemForm({
     defaultValues: formValues,
     onSubmit: async ({ value }) => {
-      if (typeof value.id === 'number') {
+      if (value.createdAt) {
         await onUpdateCollectionItemById(value);
       } else {
-        await onCreateCollectionItem(value);
+        await onCreateCollectionItem({
+          ...value,
+          createdAt: undefined,
+          deletedAt: undefined,
+          id: String(value.id),
+          updatedAt: undefined,
+          userId: undefined,
+        });
       }
     },
     validators: {
@@ -79,15 +91,6 @@ export const CollectionItemsPage: RouteComponent = () => {
       onSubmit: createOrUpdateCollectionItemFormSchema,
     },
   });
-
-  const columns = useMemo(() => {
-    return getCollectionItemsTableColumns(collection);
-  }, [collection.id]);
-
-  const filtersProps = useCollectionItemsFilters();
-  const searchProps = useCollectionItemsSearch();
-  const paginationProps = useCollectionItemsPagination({ pagination });
-  const sortProps = useCollectionItemsSort({ collection });
 
   useSetCollectionItemsFiltersFromQueries();
 
@@ -108,60 +111,113 @@ export const CollectionItemsPage: RouteComponent = () => {
 
   return (
     <PageWrapper
-      childrenClassName="grid gap-4"
+      // childrenClassName="grid gap-4"
       title={
         collection?.name
           ? `${collection.name} (${pagination.totalRecords})`
           : '-'
       }
     >
-      {!isEditing && (
-        <div className="flex justify-end">
-          <Button
-            Icon={ControlPointIcon}
-            onClick={() => {
-              addToEditingRowIds(uuidv4());
-            }}
-            text="Add New"
-            variant="secondary"
-          />
-        </div>
-      )}
-
       <form
         onSubmit={(e) => {
           e.preventDefault();
           form.handleSubmit();
         }}
       >
+        <CreateOrUpdateCollectionItemFormTable form={form} />
+      </form>
+    </PageWrapper>
+  );
+};
+
+export const CreateOrUpdateCollectionItemFormTable = withAddCollectionItemForm({
+  /** These values are only used for type-checking, and are not used at runtime */
+  defaultValues: addCollectionItemFormDefaultValues,
+  render: ({ form }) => {
+    const [tableData, setTableData] = useState<
+      CreateOrUpdateCollectionItemFormDataDef[]
+    >([]);
+
+    const { id } = CollectionRoute.useParams();
+    const collectionId = Number(id);
+    const search = CollectionRoute.useSearch();
+
+    const { data } = useGetCollectionDetailsById({
+      onSuccess: ({ items }) => {
+        setTableData(items);
+      },
+      requestArgs: { collectionId, params: search },
+    });
+
+    const { collection, customFields, pagination } = data;
+
+    const {
+      addToEditingRowIds,
+      editingRowIds,
+      isEditing,
+      removeFromIsEditingRowIds,
+    } = useEditingCollectionItemsRowIds();
+
+    const columns = useMemo(() => {
+      return getCollectionItemsTableColumns({
+        customField1Enabled: collection.customField1Enabled,
+        customField1Label: collection.customField1Label,
+        customField2Enabled: collection.customField2Enabled,
+        customField2Label: collection.customField2Label,
+        customField3Enabled: collection.customField3Enabled,
+        customField3Label: collection.customField3Label,
+        customFields,
+        form,
+      });
+    }, [
+      collection.customField1Enabled,
+      collection.customField1Label,
+      collection.customField2Enabled,
+      collection.customField2Label,
+      collection.customField3Enabled,
+      collection.customField3Label,
+      editingRowIds,
+    ]);
+
+    const filtersProps = useCollectionItemsFilters();
+    const searchProps = useCollectionItemsSearch();
+    const paginationProps = useCollectionItemsPagination({ pagination });
+    const sortProps = useCollectionItemsSort({ collection });
+
+    return (
+      <div className="grid gap-4">
+        <div className="flex justify-end">
+          {isEditing ? (
+            <Button
+              Icon={ClearIcon}
+              onClick={() => {
+                removeFromIsEditingRowIds(tempNewCollectionItemId);
+
+                setTableData((prevValues) => {
+                  return prevValues.slice(1);
+                });
+              }}
+              text="Cancel"
+              variant="secondary"
+            />
+          ) : (
+            <Button
+              Icon={AddIcon}
+              onClick={() => {
+                addToEditingRowIds(tempNewCollectionItemId);
+                setTableData((prevData) => {
+                  return [addCollectionItemFormDefaultValues, ...prevData];
+                });
+              }}
+              text="Add New"
+              variant="secondary"
+            />
+          )}
+        </div>
+
         <Table
-          BodyTopRow={
-            isEditing
-              ? ({ tdClassNames: _tdClassNames, ...rest }) => {
-                  return (
-                    <CreateOrUpdateCollectionItemForm
-                      customField1Enabled={collection.customField1Enabled}
-                      customField1Label={collection.customField1Label || ''}
-                      customField2Enabled={collection.customField2Enabled}
-                      customField2Label={collection.customField2Label || ''}
-                      customField3Enabled={collection.customField3Enabled}
-                      customField3Label={collection.customField3Label || ''}
-                      customFields={customFields}
-                      form={form}
-                      onCancel={() => {
-                        resetEditingRowIds();
-                        resetFormValues();
-                        form.reset();
-                      }}
-                      tdClassNames={tableCellClasses}
-                      {...rest}
-                    />
-                  );
-                }
-              : undefined
-          }
           columns={columns}
-          data={items || []}
+          data={tableData}
           filters={{
             FiltersContent: () => {
               return (
@@ -177,7 +233,7 @@ export const CollectionItemsPage: RouteComponent = () => {
           search={searchProps}
           sort={sortProps}
         />
-      </form>
-    </PageWrapper>
-  );
-};
+      </div>
+    );
+  },
+});

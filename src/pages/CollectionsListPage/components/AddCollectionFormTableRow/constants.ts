@@ -1,25 +1,29 @@
 import { createFormHook, createFormHookContexts } from '@tanstack/react-form';
+import { v4 as uuidv4 } from 'uuid';
 
 import { Button } from '#/components/Button';
 import { CheckboxField } from '#/components/Fields/CheckboxField';
 import { InputField } from '#/components/Fields/InputField';
 import { TextAreaField } from '#/components/Fields/TextAreaField';
 
-import type { AddCollectionFormSchemaDef } from './types';
+import type { CreateOrUpdateCollectionFormDataSchemaDef } from './types';
 
-export const addCollectionFormDefaultValues: AddCollectionFormSchemaDef = {
-  createdAt: undefined,
-  customField1Enabled: false,
-  customField1Label: '',
-  customField2Enabled: false,
-  customField2Label: '',
-  customField3Enabled: false,
-  customField3Label: '',
-  id: undefined,
-  name: '',
-  notes: '',
-  userId: undefined,
-};
+export const tempNewCollectionId = uuidv4();
+
+export const addCollectionFormDefaultValues: CreateOrUpdateCollectionFormDataSchemaDef =
+  {
+    createdAt: undefined,
+    customField1Enabled: false,
+    customField1Label: '',
+    customField2Enabled: false,
+    customField2Label: '',
+    customField3Enabled: false,
+    customField3Label: '',
+    id: tempNewCollectionId,
+    name: '',
+    notes: '',
+    userId: undefined,
+  };
 
 export const {
   fieldContext: addCollectionFormFieldContext,

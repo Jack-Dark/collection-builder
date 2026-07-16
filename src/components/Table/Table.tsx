@@ -4,7 +4,7 @@ import type {
   SortDirection,
   TableOptions,
 } from '@tanstack/react-table';
-import type { JSXElementConstructor } from 'react';
+import type { JSXElementConstructor, PropsWithChildren } from 'react';
 
 import { ScrollArea } from '@base-ui/react';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -29,11 +29,6 @@ import { FilterButton } from './components/FilterButton';
 export const tableCellClasses =
   'text-left px-2 py-1 border-b z-0 first:sticky first:left-0 first:z-1 first:group-data-overflow-x-start:border-r last:sticky last:right-0 last:z-1 last:group-data-overflow-x-end:border-l';
 
-export type BodyTopRowPropsDef = {
-  numColumns: number;
-  tdClassNames: string;
-};
-
 export type SortItemDef<TField = string> =
   | {
       direction: SortDirection;
@@ -50,12 +45,18 @@ export type SortItemDef<TField = string> =
       separator: true;
     };
 
+export type RenderRowTypeDef<TData> = JSXElementConstructor<
+  PropsWithChildren<{
+    row: Row<TData>;
+    trClassName: string;
+  }>
+>;
+
 export type TablePropsDef<T> = Omit<
   TableOptions<T>,
   'filterFns' | 'getCoreRowModel'
 > &
   Partial<Pick<TableOptions<T>, 'filterFns' | 'getCoreRowModel'>> & {
-    BodyTopRow?: JSXElementConstructor<BodyTopRowPropsDef>;
     filters?: FiltersButtonPropsDef;
     pagination?: {
       limit?: {
@@ -68,6 +69,7 @@ export type TablePropsDef<T> = Omit<
         value: number;
       };
     };
+
     search?: {
       onChange: (search: string) => void | Promise<void>;
       value: string;
@@ -148,7 +150,6 @@ export const getRowRange = <TData extends RowData>(
 };
 
 export const Table = <TData,>({
-  BodyTopRow,
   data = [],
   filters,
   getRowId = (row, index) => {
@@ -312,15 +313,15 @@ export const Table = <TData,>({
                   })}
                 </thead>
                 <tbody>
-                  {BodyTopRow && (
-                    <BodyTopRow
-                      numColumns={table.getAllColumns().length}
-                      tdClassNames="px-2 py-1"
-                    />
-                  )}
                   {table.getRowModel().rows.map((row) => {
+                    const trClassName = 'not-last:*:border-b';
+
                     return (
-                      <tr className="not-last:*:border-b" key={row.id}>
+                      <tr
+                        className={trClassName}
+                        data-row-id={row.id}
+                        key={row.id}
+                      >
                         {row.getVisibleCells().map((cell) => {
                           const { column } = cell;
 
