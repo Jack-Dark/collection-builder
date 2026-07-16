@@ -9,18 +9,11 @@ import { Image } from '#/components/Image';
 import { Popover } from '#/components/Popover';
 import { SimpleErrorBoundary } from '#/components/SimpleErrorBoundary';
 
+import { getFieldError } from '../../../../helpers/get-field-error';
 import {
   addCollectionItemFormDefaultValues,
   withAddCollectionItemForm,
-} from './add-or-update-collection-item-form.schema';
-
-const getFieldError = (field: any) => {
-  return field?.state?.meta?.errors
-    ?.map((error: Record<'message', string>) => {
-      return error?.message;
-    })
-    ?.join(' ');
-};
+} from '../../add-or-update-collection-item-form.form';
 
 export const AddCollectionItemFormTableRow = withAddCollectionItemForm({
   /** These values are only used for type-checking, and are not used at runtime */

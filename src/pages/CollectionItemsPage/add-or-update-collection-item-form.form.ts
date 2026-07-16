@@ -7,9 +7,9 @@ import { InputField } from '#/components/Fields/InputField';
 import { SwitchField } from '#/components/Fields/SwitchField';
 import { TextAreaField } from '#/components/Fields/TextAreaField';
 
-import type { AddOrUpdateCollectionItemFormSchemaDef } from './types';
+import type { CreateOrUpdateCollectionItemFormDataDef } from './add-or-update-collection-item-form.types';
 
-export const addCollectionItemFormDefaultValues: AddOrUpdateCollectionItemFormSchemaDef =
+export const addCollectionItemFormDefaultValues: CreateOrUpdateCollectionItemFormDataDef =
   {
     // @ts-expect-error
     collectionId: undefined,

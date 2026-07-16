@@ -16,14 +16,14 @@ import { PageWrapper } from '#/page-wrapper';
 import { Route as CollectionRoute } from '#/routes/_protected/collections/$id';
 
 import { useEditingCollectionItemsRowIds } from '../CollectionsListPage/hooks/use-editing-collections-row-ids';
-import { addOrUpdateCollectionItemFormSchema } from './addOrUpdateCollectionItemForm.schema';
-import { getCollectionItemsTableColumns } from './columns';
+import { useAddCollectionItemForm } from './add-or-update-collection-item-form.form';
+import { getCollectionItemsTableColumns } from './CollectionItemsPage.columns';
 import { AddCollectionItemFormTableRow } from './components/AddCollectionItemForm';
-import { useAddCollectionItemForm } from './components/AddCollectionItemForm/add-or-update-collection-item-form.schema';
 import {
   CollectionItemsFiltersContent,
   useSetCollectionItemsFiltersFromQueries,
 } from './components/CollectionItemsFiltersContent';
+import { createOrUpdateCollectionItemFormSchema } from './create-or-update-collection-item-form.schema';
 import { useCollectionItemsFilters } from './hooks/use-collection-items-filters';
 import { useCollectionItemsFormStore } from './hooks/use-collection-items-form-store';
 import { useCollectionItemsPagination } from './hooks/use-collection-items-pagination';
@@ -75,10 +75,10 @@ export const CollectionItemsPage: RouteComponent = () => {
       }
     },
     validators: {
-      onChange: addOrUpdateCollectionItemFormSchema,
-      onDynamic: addOrUpdateCollectionItemFormSchema,
-      onMount: addOrUpdateCollectionItemFormSchema,
-      onSubmit: addOrUpdateCollectionItemFormSchema,
+      onChange: createOrUpdateCollectionItemFormSchema,
+      onDynamic: createOrUpdateCollectionItemFormSchema,
+      onMount: createOrUpdateCollectionItemFormSchema,
+      onSubmit: createOrUpdateCollectionItemFormSchema,
     },
   });
 

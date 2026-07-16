@@ -1,6 +1,6 @@
 import { getCreateDefaultZustandStore } from '#/helpers/get-create-default-zustand-state';
 
-import { addCollectionItemFormDefaultValues } from '../../components/AddCollectionItemForm/add-or-update-collection-item-form.schema';
+import { addCollectionItemFormDefaultValues } from '../../add-or-update-collection-item-form.form';
 
 export const createFormStore = <TData extends Record<string, any>>(
   defaultValues: TData,
