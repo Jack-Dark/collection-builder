@@ -1,9 +1,14 @@
 import { db } from '#/api/db';
 import { collectionsTable } from '#/api/db-tables-schema';
 
-import type { NewCollectionRecordDef } from '../collection.types';
+import type {
+  CollectionRecordDef,
+  InsertCollectionRecordDef,
+} from '../collection.types';
 
-export const createCollectionDbQuery = async (data: NewCollectionRecordDef) => {
+export const createCollectionDbQuery = async (
+  data: InsertCollectionRecordDef,
+): Promise<CollectionRecordDef> => {
   const [newCollection] = await db
     .insert(collectionsTable)
     .values(data)

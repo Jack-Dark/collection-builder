@@ -74,13 +74,16 @@ export const CollectionItemsPage: RouteComponent = () => {
       if (value.createdAt) {
         await onUpdateCollectionItemById(value);
       } else {
+        const {
+          createdAt: _createdAt,
+          id,
+          updatedAt: _updatedAt,
+          userId: _userId,
+          ...newCollectionItemData
+        } = value;
         await onCreateCollectionItem({
-          ...value,
-          createdAt: undefined,
-          deletedAt: undefined,
-          id: String(value.id),
-          updatedAt: undefined,
-          userId: undefined,
+          ...newCollectionItemData,
+          id: String(id),
         });
       }
     },
@@ -111,7 +114,6 @@ export const CollectionItemsPage: RouteComponent = () => {
 
   return (
     <PageWrapper
-      // childrenClassName="grid gap-4"
       title={
         collection?.name
           ? `${collection.name} (${pagination.totalRecords})`

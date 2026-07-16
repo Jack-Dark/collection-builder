@@ -1,6 +1,8 @@
 import { createFormHook, createFormHookContexts } from '@tanstack/react-form';
 import { v4 as uuidv4 } from 'uuid';
 
+import type { CreateCollectionFormDataSchemaDef } from '#/api/routes/collections/create-collection/create-collection.types';
+
 import { Button } from '#/components/Button';
 import { CheckboxField } from '#/components/Fields/CheckboxField';
 import { InputField } from '#/components/Fields/InputField';
@@ -22,8 +24,9 @@ export const addCollectionFormDefaultValues: CreateOrUpdateCollectionFormDataSch
     id: tempNewCollectionId,
     name: '',
     notes: '',
+    updatedAt: undefined,
     userId: undefined,
-  };
+  } satisfies CreateCollectionFormDataSchemaDef;
 
 export const {
   fieldContext: addCollectionFormFieldContext,

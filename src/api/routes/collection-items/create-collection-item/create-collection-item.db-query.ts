@@ -1,14 +1,14 @@
 import { db } from '#/api/db';
 
-import type { CollectionItemRecordDef } from '../collection-item.types';
-import type { CreateCollectionItemRequestArgsDef } from './create-collection-item.types';
+import type {
+  CollectionItemRecordDef,
+  InsertCollectionItemRecordDef,
+} from '../collection-item.types';
 
 import { collectionItemsTable } from '../../../db-tables-schema';
 
 export const createCollectionItemDbQuery = async (
-  data: Omit<CreateCollectionItemRequestArgsDef, 'userId'> & {
-    userId: string;
-  },
+  data: InsertCollectionItemRecordDef,
 ): Promise<CollectionItemRecordDef> => {
   const [record] = await db
     .insert(collectionItemsTable)

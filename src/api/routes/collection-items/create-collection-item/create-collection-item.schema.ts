@@ -3,15 +3,14 @@ import z from 'zod';
 import { baseCollectionItemSchema } from '../base-collection-item.schema';
 
 const createCollectionItemBaseSchema = baseCollectionItemSchema.extend({
-  createdAt: z.undefined().describe('Created At'),
-  deletedAt: z.undefined().describe('Deleted At'),
-  updatedAt: z.undefined().describe('Updated At'),
-  userId: z.undefined().describe('User ID'),
+  collectionId: z.number().describe('Collection ID'),
+  createdAt: z.undefined().optional().describe('Created At'),
+  updatedAt: z.undefined().optional().describe('Updated At'),
+  userId: z.undefined().optional().describe('User ID'),
 });
 
 export const createCollectionItemFormSchema =
   createCollectionItemBaseSchema.extend({
-    collectionId: z.number().describe('Collection ID'),
     id: z.string().describe('ID'),
     images: z
       .array(
@@ -28,7 +27,6 @@ export const createCollectionItemFormSchema =
 
 export const createCollectionItemServerFnSchema =
   createCollectionItemBaseSchema.extend({
-    collectionId: z.number().describe('Collection ID'),
-    id: z.undefined().describe('ID'),
+    id: z.undefined().optional().describe('ID'),
     images: z.array(z.string()).describe('Images'),
   });

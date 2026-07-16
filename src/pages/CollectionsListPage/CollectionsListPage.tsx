@@ -29,7 +29,7 @@ import {
   addCollectionFormDefaultValues,
   tempNewCollectionId,
   useAddCollectionForm,
-} from './components/AddCollectionFormTableRow/constants';
+} from './components/AddCollectionFormTableRow/AddCollectionFormTableRow.form';
 import { useEditingCollectionsRowIds } from './hooks/use-editing-collections-row-ids';
 
 export const useCollectionsListFormStore = createFormStore(
@@ -71,11 +71,16 @@ export const CollectionsListPage: RouteComponent = () => {
       if (value.createdAt) {
         await onUpdateCollectionById(value);
       } else {
+        const {
+          createdAt: _createdAt,
+          id,
+          updatedAt: _updatedAt,
+          userId: _userId,
+          ...newCollectionData
+        } = value;
         await onCreateCollection({
-          ...value,
-          createdAt: undefined,
-          id: String(value.id),
-          userId: undefined,
+          ...newCollectionData,
+          id: String(id),
         });
       }
 

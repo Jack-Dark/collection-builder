@@ -6,6 +6,7 @@ const updateCollectionBaseSchema = baseCollectionItemSchema.extend({
   collectionId: z.number().describe('Collection ID'),
   createdAt: z.string().describe('Created At').min(1),
   id: z.number().describe('ID').min(1),
+  updatedAt: z.string().describe('Updated At').min(1),
   userId: z.string().describe('User ID').min(1),
 });
 

@@ -3,10 +3,17 @@ import type z from 'zod';
 import type { QueryResponseDef } from '#/api/db-tables-schema.types';
 
 import type { createCollectionDbQuery } from './create-collection.db-query';
-import type { createCollectionFormSchema } from './create-collection.schema';
+import type {
+  createCollectionFormSchema,
+  createCollectionServerFnSchema,
+} from './create-collection.schema';
+
+export type CreateCollectionFormDataSchemaDef = z.output<
+  typeof createCollectionFormSchema
+>;
 
 export type CreateCollectionRequestArgsDef = z.output<
-  typeof createCollectionFormSchema
+  typeof createCollectionServerFnSchema
 >;
 
 export type CreateCollectionResponseDef = QueryResponseDef<

@@ -3,8 +3,9 @@ import z from 'zod';
 import { baseCollectionSchema } from '../base-collection.schema';
 
 const createCollectionBaseSchema = baseCollectionSchema.extend({
-  createdAt: z.undefined().describe('Created At'),
-  userId: z.undefined().describe('User ID'),
+  createdAt: z.undefined().optional().describe('Created At'),
+  updatedAt: z.undefined().optional().describe('Updated At'),
+  userId: z.undefined().optional().describe('User ID'),
 });
 
 export const createCollectionFormSchema = createCollectionBaseSchema.extend({
@@ -13,6 +14,6 @@ export const createCollectionFormSchema = createCollectionBaseSchema.extend({
 
 export const createCollectionServerFnSchema = createCollectionBaseSchema.extend(
   {
-    id: z.undefined().describe('ID'),
+    id: z.undefined().optional().describe('ID'),
   },
 );

@@ -1,18 +1,12 @@
-import type { InferInsertModel } from 'drizzle-orm';
 import type z from 'zod';
 
-import type { collectionItemsTable } from '#/api/db-tables-schema';
+import type { QueryResponseDef } from '#/api/db-tables-schema.types';
 
+import type { createCollectionItemDbQuery } from './create-collection-item.db-query';
 import type {
   createCollectionItemFormSchema,
   createCollectionItemServerFnSchema,
 } from './create-collection-item.schema';
-
-export type InsertCollectionItemRecordDef = Omit<
-  InferInsertModel<typeof collectionItemsTable>,
-  'images'
-> &
-  Pick<CreateCollectionItemFormSchemaDef, 'images'>;
 
 export type CreateCollectionItemFormSchemaDef = z.output<
   typeof createCollectionItemFormSchema
@@ -20,4 +14,8 @@ export type CreateCollectionItemFormSchemaDef = z.output<
 
 export type CreateCollectionItemRequestArgsDef = z.output<
   typeof createCollectionItemServerFnSchema
+>;
+
+export type CreateCollectionItemResponseDef = QueryResponseDef<
+  typeof createCollectionItemDbQuery
 >;

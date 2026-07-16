@@ -6,7 +6,7 @@ import { SwitchField } from '#/components/Fields/SwitchField';
 import {
   addCollectionFormDefaultValues,
   withAddCollectionForm,
-} from './constants';
+} from './AddCollectionFormTableRow.form';
 
 export const AddCollectionFormTableRow = withAddCollectionForm({
   /** These values are only used for type-checking, and are not used at runtime */

@@ -4,7 +4,7 @@ import { useGenericMutateQuery } from '#/api/react-query-hooks/use-generic-mutat
 
 import type {
   CreateCollectionResponseDef,
-  CreateCollectionRequestArgsDef,
+  CreateCollectionFormDataSchemaDef,
 } from './create-collection.types';
 
 import { useInvalidateGetNavMenuCollections } from '../get-nav-menu-collections/get-nav-menu-collections.react-query';
@@ -15,7 +15,7 @@ export const useCreateCollection = <
   TTransformedData = CreateCollectionResponseDef,
 >(
   props?: GenericMutateQueryProps<
-    CreateCollectionRequestArgsDef,
+    CreateCollectionFormDataSchemaDef,
     CreateCollectionResponseDef,
     TTransformedData
   >,
@@ -27,8 +27,10 @@ export const useCreateCollection = <
 
   const { onMutate: onCreateCollection, ...rest } = useGenericMutateQuery({
     fallbackErrorMessage: 'Unable to add collection.',
-    mutationFn: (data) => {
-      return createCollectionServerFn({ data });
+    mutationFn: (createCollectionFormData) => {
+      return createCollectionServerFn({
+        data: { ...createCollectionFormData, id: undefined },
+      });
     },
     showLoading: true,
     ...props,
