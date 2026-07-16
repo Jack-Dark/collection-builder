@@ -7,8 +7,6 @@ import type {
 import type { JSXElementConstructor, PropsWithChildren } from 'react';
 
 import { ScrollArea } from '@base-ui/react';
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
 import SwapVertIcon from '@mui/icons-material/SwapVert';
 import {
   flexRender,
@@ -21,7 +19,6 @@ import { getCreateDefaultZustandStore } from '#/helpers/get-create-default-zusta
 
 import type { FiltersButtonPropsDef } from './components/FilterButton/FilterButton.types';
 
-import { Button } from '../Button';
 import { InputField } from '../Fields/InputField';
 import { SelectField } from '../Fields/SelectField';
 import { FilterButton } from './components/FilterButton';
@@ -175,10 +172,8 @@ export const Table = <TData,>({
 
   const isAllRowsSelected = table.getIsAllRowsSelected();
   const isSomeRowsSelected = table.getIsSomeRowsSelected();
-  const showSelectionActions = isAllRowsSelected || isSomeRowsSelected;
 
-  const showActionsRow =
-    !!filters || !!search || !!sort || !showSelectionActions;
+  const showActionsRow = !!filters || !!search || !!sort;
 
   const containerRows = useMemo(() => {
     if (showActionsRow && pagination) {
@@ -195,7 +190,7 @@ export const Table = <TData,>({
   }, [showActionsRow, !!pagination]);
 
   const actionsColumns = useMemo(() => {
-    if (showSelectionActions && filters && sort) {
+    if (filters && sort) {
       return 'grid-cols-[auto_auto_1fr_auto]';
     }
     if (filters && sort) {
@@ -209,7 +204,7 @@ export const Table = <TData,>({
     }
 
     return '';
-  }, [showSelectionActions, !!filters, !!search, !!sort]);
+  }, [!!filters, !!search, !!sort]);
 
   useEffect(() => {
     if (isAllRowsSelected) {
@@ -231,26 +226,6 @@ export const Table = <TData,>({
     >
       {showActionsRow && (
         <div className={`grid ${actionsColumns} items-stretch gap-4`}>
-          {showSelectionActions && (
-            <div className="flex gap-2 items-stretch">
-              <Button
-                aria-label="Edit"
-                className="text-primary-900 hover:text-primary-800 text-xs"
-                size="xs"
-                variant="ghost"
-              >
-                <EditIcon className="text-xs" />
-              </Button>
-              <Button
-                aria-label="Delete"
-                className="text-red-700 hover:text-red-600 text-xs"
-                size="xs"
-                variant="ghost"
-              >
-                <DeleteIcon className="text-xs" />
-              </Button>
-            </div>
-          )}
           {filters && <FilterButton {...filters} />}
           {search && (
             <InputField

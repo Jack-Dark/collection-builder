@@ -2,6 +2,8 @@ import type { RouteComponent } from '@tanstack/react-router';
 
 import AddIcon from '@mui/icons-material/Add';
 import ClearIcon from '@mui/icons-material/Clear';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 import { useEffect, useMemo, useState } from 'react';
 
 import { useCreateCollectionItem } from '#/api/routes/collection-items/create-collection-item/create-collection-item.react-query';
@@ -11,7 +13,7 @@ import {
 } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.react-query';
 import { useUpdateCollectionItemById } from '#/api/routes/collection-items/update-collection-item-by-id/update-collection-item-by-id.react-query';
 import { Button } from '#/components/Button';
-import { Table } from '#/components/Table';
+import { Table, useSelectedTableRowsStore } from '#/components/Table';
 import { PageWrapper } from '#/page-wrapper';
 import { Route as CollectionRoute } from '#/routes/_protected/collections/$id';
 
@@ -153,12 +155,11 @@ export const CreateOrUpdateCollectionItemFormTable = withAddCollectionItemForm({
 
     const { collection, customFields, pagination } = data;
 
-    const {
-      addToEditingRowIds,
-      editingRowIds,
-      isEditing,
-      removeFromIsEditingRowIds,
-    } = useEditingCollectionItemsRowIds();
+    const { addToEditingRowIds, editingRowIds, isEditing, resetEditingRowIds } =
+      useEditingCollectionItemsRowIds();
+
+    const { getSelectedRowIds, selectedTableRows } =
+      useSelectedTableRowsStore();
 
     const columns = useMemo(() => {
       return getCollectionItemsTableColumns({
@@ -186,18 +187,49 @@ export const CreateOrUpdateCollectionItemFormTable = withAddCollectionItemForm({
     const paginationProps = useCollectionItemsPagination({ pagination });
     const sortProps = useCollectionItemsSort({ collection });
 
+    const selectedRowIds = useMemo(() => {
+      return getSelectedRowIds();
+    }, [selectedTableRows]);
+
     return (
       <div className="grid gap-4">
-        <div className="flex justify-end">
+        <div className="flex justify-between">
+          <div className="flex gap-2">
+            {!!selectedRowIds.length && (
+              <>
+                <Button
+                  Icon={EditIcon}
+                  onClick={() => {
+                    addToEditingRowIds(...selectedRowIds);
+                    // TODO - ADD SELECTED ITEMS TO FORM DATA
+                  }}
+                  text="Edit Items"
+                  variant="secondary"
+                />
+
+                <Button
+                  Icon={DeleteIcon}
+                  onClick={() => {
+                    // TODO - ADD DELETE LOGIC
+                  }}
+                  text="Delete Items"
+                  variant="alert"
+                />
+              </>
+            )}
+          </div>
+
           {isEditing ? (
             <Button
               Icon={ClearIcon}
               onClick={() => {
-                removeFromIsEditingRowIds(tempNewCollectionItemId);
-
+                resetEditingRowIds();
                 setTableData((prevValues) => {
-                  return prevValues.slice(1);
+                  return prevValues.filter(({ createdAt }) => {
+                    return createdAt;
+                  });
                 });
+                // TODO - SOLVE INDETERMINATE SELECTED TABLE ROWS AFTER CLEAR
               }}
               text="Cancel"
               variant="secondary"
