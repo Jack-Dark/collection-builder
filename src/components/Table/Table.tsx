@@ -365,6 +365,9 @@ export const Table = <TData,>({
                   pagination?.limit?.onChange?.(item.value);
                 }
               }}
+              RenderValue={({ label }) => {
+                return <span>Per page: {label}</span>;
+              }}
               value={{
                 label: pagination.limit.value,
                 value: pagination.limit.value,
@@ -390,6 +393,9 @@ export const Table = <TData,>({
                 if (item?.value) {
                   pagination?.page?.onChange?.(item.value);
                 }
+              }}
+              RenderValue={({ label }) => {
+                return <span>Page: {label}</span>;
               }}
               value={{
                 label: pagination.page.value,
