@@ -55,35 +55,38 @@ export const CreateOrUpdateCollectionItemForm = withAddCollectionItemForm({
           <CreateOrUpdateCollectionItemFormImagesField form={form} />
         </td>
 
-        <td className={tdClassNames}>
-          <CreateOrUpdateCollectionItemFormCustomField
-            enabled={customField1Enabled}
-            fieldName="customField1Value"
-            form={form}
-            items={customFields.customField1Values}
-            label={customField1Label}
-          />
-        </td>
+        {customField1Enabled && (
+          <td className={tdClassNames}>
+            <CreateOrUpdateCollectionItemFormCustomField
+              fieldName="customField1Value"
+              form={form}
+              items={customFields.customField1Values}
+              label={customField1Label}
+            />
+          </td>
+        )}
 
-        <td className={tdClassNames}>
-          <CreateOrUpdateCollectionItemFormCustomField
-            enabled={customField2Enabled}
-            fieldName="customField2Value"
-            form={form}
-            items={customFields.customField2Values}
-            label={customField2Label}
-          />
-        </td>
+        {customField2Enabled && (
+          <td className={tdClassNames}>
+            <CreateOrUpdateCollectionItemFormCustomField
+              fieldName="customField2Value"
+              form={form}
+              items={customFields.customField2Values}
+              label={customField2Label}
+            />
+          </td>
+        )}
 
-        <td className={tdClassNames}>
-          <CreateOrUpdateCollectionItemFormCustomField
-            enabled={customField3Enabled}
-            fieldName="customField3Value"
-            form={form}
-            items={customFields.customField3Values}
-            label={customField3Label}
-          />
-        </td>
+        {customField3Enabled && (
+          <td className={tdClassNames}>
+            <CreateOrUpdateCollectionItemFormCustomField
+              fieldName="customField3Value"
+              form={form}
+              items={customFields.customField3Values}
+              label={customField3Label}
+            />
+          </td>
+        )}
 
         <td className={tdClassNames}>
           <CreateOrUpdateCollectionItemFormEditionFields form={form} />
@@ -225,49 +228,46 @@ export const CreateOrUpdateCollectionItemFormCustomField =
     /** These values are only used for type-checking, and are not used at runtime */
     defaultValues: addCollectionItemFormDefaultValues,
     props: {
-      enabled: false,
       fieldName: '',
       items: [''],
       label: '',
     },
-    render: ({ enabled, fieldName, form, items, label }) => {
+    render: ({ fieldName, form, items, label }) => {
       const name = fieldName as `customField${1 | 2 | 3}Value`;
 
       return (
         <form.AppField name={name}>
           {(field) => {
             return (
-              enabled && (
-                <div className="flex gap-1 items-center">
-                  <field.ComboboxField
-                    createCreatable={(query) => {
-                      return query;
-                    }}
-                    error={getFieldError(field)}
-                    hideLabel
-                    inputValue={field.state.value}
-                    isItemEqualToValue={(item, value) => {
-                      return item === value;
-                    }}
-                    items={items}
-                    itemToStringLabel={(item) => {
-                      return item;
-                    }}
-                    itemToStringValue={(item) => {
-                      return item;
-                    }}
-                    label={label}
-                    onValueChange={(value) => {
-                      field.setValue(value || '');
-                    }}
-                    placeholder={`${label || ''}...`}
-                    required
-                  />
-                  <Popover
-                    Description={`Want to add a new item to the list? Just type it out and click on the "Add" option.`}
-                  />
-                </div>
-              )
+              <div className="flex gap-1 items-center">
+                <field.ComboboxField
+                  createCreatable={(query) => {
+                    return query;
+                  }}
+                  error={getFieldError(field)}
+                  hideLabel
+                  inputValue={field.state.value}
+                  isItemEqualToValue={(item, value) => {
+                    return item === value;
+                  }}
+                  items={items}
+                  itemToStringLabel={(item) => {
+                    return item;
+                  }}
+                  itemToStringValue={(item) => {
+                    return item;
+                  }}
+                  label={label}
+                  onValueChange={(value) => {
+                    field.setValue(value || '');
+                  }}
+                  placeholder={`${label || ''}...`}
+                  required
+                />
+                <Popover
+                  Description={`Want to add a new item to the list? Just type it out and click on the "Add" option.`}
+                />
+              </div>
             );
           }}
         </form.AppField>
