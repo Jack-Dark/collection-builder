@@ -128,6 +128,11 @@ export const CollectionItemsPage: RouteComponent = () => {
     items: [
       {
         bidirectional: true,
+        field: 'name',
+        label: 'Name',
+      },
+      {
+        bidirectional: true,
         field: 'customField1Value',
         hide: !collection.customField1Enabled,
         label: collection.customField1Label,
