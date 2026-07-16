@@ -197,9 +197,6 @@ export const Table = <TData,>({
 
   const actionsColumns = useMemo(() => {
     if (filters && sort) {
-      return 'grid-cols-[auto_auto_1fr_auto]';
-    }
-    if (filters && sort) {
       return 'grid-cols-[auto_1fr_auto]';
     }
     if (filters) {
