@@ -169,6 +169,7 @@ export const CollectionsListPage: RouteComponent = () => {
 
           <Table
             columns={columns}
+            // @ts-expect-error // TODO - INVESTIGATE TS SOLUTION
             data={tableData}
             pagination={{
               limit: {

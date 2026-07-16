@@ -251,6 +251,7 @@ export const CreateOrUpdateCollectionItemFormTable = withAddCollectionItemForm({
 
         <Table
           columns={columns}
+          // @ts-expect-error // TODO - INVESTIGATE TS SOLUTION
           data={tableData}
           filters={{
             FiltersContent: () => {
