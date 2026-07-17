@@ -9,3 +9,18 @@ export const baseCollectionItemSchema = z.object({
   name: z.string().describe('Name').min(1),
   notes: z.string().describe('Notes'),
 });
+
+export const imagesSchema = {
+  form: z
+    .array(
+      z.union([
+        z.string(),
+        z.object({
+          file: z.file(),
+          previewUrl: z.string(),
+        }),
+      ]),
+    )
+    .describe('Images'),
+  serverFn: z.array(z.string()).describe('Images'),
+};

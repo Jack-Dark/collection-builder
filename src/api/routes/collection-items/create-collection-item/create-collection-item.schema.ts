@@ -1,9 +1,12 @@
 import z from 'zod';
 
-import { baseCollectionItemSchema } from '../base-collection-item.schema';
+import {
+  baseCollectionItemSchema,
+  imagesSchema,
+} from '../base-collection-item.schema';
 
 const createCollectionItemBaseSchema = baseCollectionItemSchema.extend({
-  collectionId: z.number().describe('Collection ID'),
+  collectionId: z.number().min(1).describe('Collection ID'),
   createdAt: z.undefined().optional().describe('Created At'),
   updatedAt: z.undefined().optional().describe('Updated At'),
   userId: z.undefined().optional().describe('User ID'),
@@ -12,21 +15,11 @@ const createCollectionItemBaseSchema = baseCollectionItemSchema.extend({
 export const createCollectionItemFormSchema =
   createCollectionItemBaseSchema.extend({
     id: z.string().describe('ID'),
-    images: z
-      .array(
-        z.union([
-          z.string(),
-          z.object({
-            file: z.file(),
-            previewUrl: z.string(),
-          }),
-        ]),
-      )
-      .describe('Images'),
+    images: imagesSchema.form,
   });
 
 export const createCollectionItemServerFnSchema =
   createCollectionItemBaseSchema.extend({
     id: z.undefined().optional().describe('ID'),
-    images: z.array(z.string()).describe('Images'),
+    images: imagesSchema.serverFn,
   });

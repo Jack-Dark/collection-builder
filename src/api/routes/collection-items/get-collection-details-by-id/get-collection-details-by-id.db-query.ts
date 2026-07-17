@@ -134,17 +134,6 @@ export const getCollectionDetailsByIdDbQuery = async (
         asc(sql`lower(${collectionItemsTable.name})`),
       );
 
-    const [lastAddedItem] = await tx
-      .select({
-        customField1Value: collectionItemsTable.customField1Value,
-        customField2Value: collectionItemsTable.customField2Value,
-        customField3Value: collectionItemsTable.customField3Value,
-      })
-      .from(collectionItemsTable)
-      .where(matchesCollectionIdAndUserIdAndNotDeleted)
-      .orderBy(desc(collectionItemsTable.createdAt))
-      .limit(1);
-
     return {
       collection,
       customFields: {
@@ -153,7 +142,6 @@ export const getCollectionDetailsByIdDbQuery = async (
         customField3Values,
       },
       items,
-      lastAddedItem,
       pagination,
     };
   });

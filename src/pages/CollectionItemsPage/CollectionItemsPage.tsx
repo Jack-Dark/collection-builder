@@ -1,10 +1,9 @@
 import type { RouteComponent } from '@tanstack/react-router';
 
-import AddIcon from '@mui/icons-material/Add';
 import ClearIcon from '@mui/icons-material/Clear';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 
 import { useCreateCollectionItem } from '#/api/routes/collection-items/create-collection-item/create-collection-item.react-query';
 import { useDeleteCollectionItemsByIds } from '#/api/routes/collection-items/delete-collection-items-by-ids/delete-collection-items-by-ids.react-query';
@@ -18,21 +17,20 @@ import { Table, useSelectedTableRowsStore } from '#/components/Table';
 import { PageWrapper } from '#/page-wrapper';
 import { Route as CollectionRoute } from '#/routes/_protected/collections/$id';
 
-import type { CreateOrUpdateCollectionItemFormDataDef } from './components/CreateOrUpdateCollectionItemForm/CreateOrUpdateCollectionItemForm.types';
-
 import { useEditingCollectionItemsRowIds } from '../CollectionsListPage/hooks/use-editing-collections-row-ids';
 import { getCollectionItemsTableColumns } from './CollectionItemsPage.columns';
 import { CollectionItemsFiltersContent } from './components/CollectionItemsFiltersContent';
-import { CreateOrUpdateCollectionItemSubmitButton } from './components/CreateOrUpdateCollectionItemForm';
+import {
+  AddNewCollectionItemButton,
+  CreateOrUpdateCollectionItemSubmitButton,
+} from './components/CreateOrUpdateCollectionItemForm';
 import {
   addCollectionItemFormDefaultValues,
-  tempNewCollectionItemId,
   useAddCollectionItemForm,
   withAddCollectionItemForm,
 } from './components/CreateOrUpdateCollectionItemForm/CreateOrUpdateCollectionItemForm.form';
 import { createOrUpdateCollectionItemFormSchema } from './components/CreateOrUpdateCollectionItemForm/CreateOrUpdateCollectionItemForm.schema';
 import { useCollectionItemsFilters } from './hooks/use-collection-items-filters';
-import { useCollectionItemsFormStore } from './hooks/use-collection-items-form-store';
 import { useCollectionItemsPagination } from './hooks/use-collection-items-pagination';
 import { useCollectionItemsSearch } from './hooks/use-collection-items-search';
 import { useCollectionItemsSort } from './hooks/use-collection-items-sort';
@@ -47,10 +45,7 @@ export const CollectionItemsPage: RouteComponent = () => {
     requestArgs: { collectionId, params: search },
   });
 
-  const { collection, lastAddedItem, pagination } = data;
-
-  const { formValues, resetFormValues, updateDefaultValues } =
-    useCollectionItemsFormStore();
+  const { collection, pagination } = data;
 
   const invalidateGetCollectionDetailsById =
     useInvalidateGetCollectionDetailsById();
@@ -59,7 +54,6 @@ export const CollectionItemsPage: RouteComponent = () => {
     await invalidateGetCollectionDetailsById({ id: collection.id });
 
     resetEditingRowIds();
-    form.reset();
   };
 
   const { onCreateCollectionItem } = useCreateCollectionItem({
@@ -70,13 +64,15 @@ export const CollectionItemsPage: RouteComponent = () => {
     onSuccess: onFormSubmitSuccess,
   });
 
-  const { isEditing, resetEditingRowIds } = useEditingCollectionItemsRowIds();
+  const { resetEditingRowIds } = useEditingCollectionItemsRowIds();
 
   const form = useAddCollectionItemForm({
-    defaultValues: formValues,
-    onSubmit: async ({ value }) => {
-      if (value.createdAt) {
-        await onUpdateCollectionItemById(value);
+    defaultValues: addCollectionItemFormDefaultValues,
+    onSubmit: async ({ value: { collectionItems } }) => {
+      // TODO - UPDATE REQUESTS TO SUPPORT ADDING/UPDATING MULTIPLE RECORDS
+      const [record] = collectionItems;
+      if (record.createdAt) {
+        await onUpdateCollectionItemById(record);
       } else {
         const {
           createdAt: _createdAt,
@@ -84,7 +80,7 @@ export const CollectionItemsPage: RouteComponent = () => {
           updatedAt: _updatedAt,
           userId: _userId,
           ...newCollectionItemData
-        } = value;
+        } = record;
         await onCreateCollectionItem({
           ...newCollectionItemData,
           id: String(id),
@@ -93,28 +89,13 @@ export const CollectionItemsPage: RouteComponent = () => {
     },
     validators: {
       onChange: createOrUpdateCollectionItemFormSchema,
-      onDynamic: createOrUpdateCollectionItemFormSchema,
-      onMount: createOrUpdateCollectionItemFormSchema,
+      // onDynamic: createOrUpdateCollectionItemFormSchema,
+      // onMount: createOrUpdateCollectionItemFormSchema,
       onSubmit: createOrUpdateCollectionItemFormSchema,
     },
   });
 
   useSetCollectionItemsFiltersFromQueries();
-
-  useEffect(() => {
-    const newFormValues = {
-      collectionId,
-      customField1Value: lastAddedItem?.customField1Value || '',
-      customField2Value: lastAddedItem?.customField2Value || '',
-      customField3Value: lastAddedItem?.customField3Value || '',
-    };
-    updateDefaultValues(newFormValues);
-    resetFormValues();
-  }, [lastAddedItem]);
-
-  useEffect(() => {
-    form.reset();
-  }, [isEditing]);
 
   return (
     <PageWrapper
@@ -140,17 +121,13 @@ export const CreateOrUpdateCollectionItemFormTable = withAddCollectionItemForm({
   /** These values are only used for type-checking, and are not used at runtime */
   defaultValues: addCollectionItemFormDefaultValues,
   render: ({ form }) => {
-    const [tableData, setTableData] = useState<
-      CreateOrUpdateCollectionItemFormDataDef[]
-    >([]);
-
     const { id } = CollectionRoute.useParams();
     const collectionId = Number(id);
     const search = CollectionRoute.useSearch();
 
     const { data } = useGetCollectionDetailsById({
       onSuccess: ({ items }) => {
-        setTableData(items);
+        form.setFieldValue('collectionItems', items);
       },
       requestArgs: { collectionId, params: search },
     });
@@ -159,14 +136,8 @@ export const CreateOrUpdateCollectionItemFormTable = withAddCollectionItemForm({
 
     const onCancel = () => {
       resetEditingRowIds();
-      setTableData((prevValues) => {
-        return prevValues.filter(({ createdAt }) => {
-          return createdAt;
-        });
-      });
 
-      resetFormValues();
-      form.reset();
+      form.setFieldValue('collectionItems', data.items);
     };
     const { addToEditingRowIds, editingRowIds, isEditing, resetEditingRowIds } =
       useEditingCollectionItemsRowIds();
@@ -196,8 +167,6 @@ export const CreateOrUpdateCollectionItemFormTable = withAddCollectionItemForm({
       editingRowIds,
     ]);
 
-    const { resetFormValues, setFormValues } = useCollectionItemsFormStore();
-
     const filtersProps = useCollectionItemsFilters();
     const searchProps = useCollectionItemsSearch();
     const paginationProps = useCollectionItemsPagination({ pagination });
@@ -220,98 +189,94 @@ export const CreateOrUpdateCollectionItemFormTable = withAddCollectionItemForm({
       });
 
     return (
-      <div className="grid gap-4">
-        <Table
-          AboveTableComponent={({ table }) => {
-            return (
-              <div className="flex justify-between">
-                <div className="flex gap-2">
-                  {!!selectedRowIds.length && (
-                    <>
-                      <Button
-                        disabled={isEditing}
-                        Icon={EditIcon}
-                        onClick={() => {
-                          addToEditingRowIds(...selectedRowIds);
-                          const selectedRowData = selectedRowIds.map(
-                            (rowId) => {
-                              return table.getRow(rowId)?.original;
-                            },
-                          );
-                          setFormValues(selectedRowData[0]);
-                        }}
-                        text="Edit Items"
-                        variant="secondary"
-                      />
+      <form.AppField mode="array" name="collectionItems">
+        {(collectionItemsField) => {
+          return (
+            <div className="grid gap-4">
+              <Table
+                AboveTableComponent={() => {
+                  return (
+                    <div className="flex justify-between">
+                      <div className="flex gap-2">
+                        {!!selectedRowIds.length && (
+                          <>
+                            <Button
+                              disabled={isEditing}
+                              Icon={EditIcon}
+                              onClick={() => {
+                                addToEditingRowIds(...selectedRowIds);
+                              }}
+                              text="Edit Items"
+                              variant="secondary"
+                            />
 
-                      <Button
-                        disabled={isEditing}
-                        Icon={DeleteIcon}
-                        onClick={() => {
-                          onDeleteCollectionItemsByIds({
-                            collectionItemIds: selectedRowIds.map((id) => {
-                              return Number(id);
-                            }),
-                          });
-                        }}
-                        processing={isDeletePending}
-                        text="Delete Items"
-                        variant="alert"
-                      />
-                    </>
-                  )}
-                </div>
+                            <Button
+                              disabled={isEditing}
+                              Icon={DeleteIcon}
+                              onClick={() => {
+                                onDeleteCollectionItemsByIds({
+                                  collectionItemIds: selectedRowIds.map(
+                                    (id) => {
+                                      return Number(id);
+                                    },
+                                  ),
+                                });
+                              }}
+                              processing={isDeletePending}
+                              text="Delete Items"
+                              variant="alert"
+                            />
+                          </>
+                        )}
+                      </div>
 
-                <div className="flex gap-2">
-                  {isEditing ? (
-                    <>
-                      <Button
-                        Icon={ClearIcon}
-                        onClick={onCancel}
-                        text="Cancel"
-                        variant="mono"
+                      <div className="flex gap-2">
+                        {isEditing ? (
+                          <>
+                            <Button
+                              Icon={ClearIcon}
+                              onClick={onCancel}
+                              text="Cancel"
+                              variant="mono"
+                            />
+                            <CreateOrUpdateCollectionItemSubmitButton
+                              form={form}
+                            />
+                          </>
+                        ) : (
+                          <AddNewCollectionItemButton
+                            disabled={false}
+                            form={form}
+                            insertAtIndex={0}
+                            text="Add New"
+                          />
+                        )}
+                      </div>
+                    </div>
+                  );
+                }}
+                columns={columns}
+                // @ts-expect-error // TODO - INVESTIGATE TS SOLUTION
+                data={collectionItemsField.state.value}
+                filters={{
+                  FiltersContent: () => {
+                    return (
+                      <CollectionItemsFiltersContent
+                        collection={collection}
+                        customFields={customFields}
                       />
-                      <CreateOrUpdateCollectionItemSubmitButton form={form} />
-                    </>
-                  ) : (
-                    <Button
-                      Icon={AddIcon}
-                      onClick={() => {
-                        addToEditingRowIds(tempNewCollectionItemId);
-                        setTableData((prevData) => {
-                          return [
-                            addCollectionItemFormDefaultValues,
-                            ...prevData,
-                          ];
-                        });
-                      }}
-                      text="Add New"
-                      variant="secondary"
-                    />
-                  )}
-                </div>
-              </div>
-            );
-          }}
-          columns={columns}
-          // @ts-expect-error // TODO - INVESTIGATE TS SOLUTION
-          data={tableData}
-          filters={{
-            FiltersContent: () => {
-              return (
-                <CollectionItemsFiltersContent
-                  collection={collection}
-                  customFields={customFields}
-                />
-              );
-            },
-            ...filtersProps,
-          }}
-          pagination={paginationProps}
-          search={searchProps}
-          sort={sortProps}
-        />
-      </div>
+                    );
+                  },
+                  ...filtersProps,
+                }}
+                pagination={paginationProps}
+                search={searchProps}
+                sort={sortProps}
+              />
+            </div>
+          );
+        }}
+      </form.AppField>
     );
   },
 });

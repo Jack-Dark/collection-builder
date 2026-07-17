@@ -29,10 +29,9 @@ import {
   CreateOrUpdateCollectionItemFormEditionFields,
   CreateOrUpdateCollectionItemFormImagesField,
   CreateOrUpdateCollectionItemFormNameField,
-  CreateOrUpdateCollectionItemFormNoteField,
+  CreateOrUpdateCollectionItemFormNotesField,
   CreateOrUpdateCollectionItemFormActions,
 } from './components/CreateOrUpdateCollectionItemForm';
-import { useCollectionItemsFormStore } from './hooks/use-collection-items-form-store';
 
 const columnHelper = createColumnHelper<CollectionItemRecordDef>();
 
@@ -130,7 +129,10 @@ export const getCollectionItemsTableColumns = (
               }}
             />
             {isEditingRow ? (
-              <CreateOrUpdateCollectionItemFormNameField form={form} />
+              <CreateOrUpdateCollectionItemFormNameField
+                form={form}
+                index={row.index}
+              />
             ) : (
               <p>{getValue()}</p>
             )}
@@ -175,7 +177,10 @@ export const getCollectionItemsTableColumns = (
         return (
           <div className="flex flex-wrap gap-1 items-center">
             {isEditingRow ? (
-              <CreateOrUpdateCollectionItemFormImagesField form={form} />
+              <CreateOrUpdateCollectionItemFormImagesField
+                form={form}
+                index={row.index}
+              />
             ) : images.length ? (
               <>
                 {images.map((publicId, index) => {
@@ -218,6 +223,7 @@ export const getCollectionItemsTableColumns = (
             <CreateOrUpdateCollectionItemFormCustomField
               fieldName="customField1Value"
               form={form}
+              index={row.index}
               items={customFields.customField1Values}
               label={customField1Label || ''}
             />
@@ -238,6 +244,7 @@ export const getCollectionItemsTableColumns = (
             <CreateOrUpdateCollectionItemFormCustomField
               fieldName="customField2Value"
               form={form}
+              index={row.index}
               items={customFields.customField2Values}
               label={customField2Label || ''}
             />
@@ -258,6 +265,7 @@ export const getCollectionItemsTableColumns = (
             <CreateOrUpdateCollectionItemFormCustomField
               fieldName="customField3Value"
               form={form}
+              index={row.index}
               items={customFields.customField3Values}
               label={customField3Label || ''}
             />
@@ -274,7 +282,10 @@ export const getCollectionItemsTableColumns = (
         const isEditingRow = getIsEditingRowId(row.id);
 
         return isEditingRow ? (
-          <CreateOrUpdateCollectionItemFormEditionFields form={form} />
+          <CreateOrUpdateCollectionItemFormEditionFields
+            form={form}
+            index={row.index}
+          />
         ) : (
           <p>{getValue() || '-'}</p>
         );
@@ -288,7 +299,10 @@ export const getCollectionItemsTableColumns = (
         const isEditingRow = getIsEditingRowId(row.id);
 
         return isEditingRow ? (
-          <CreateOrUpdateCollectionItemFormNoteField form={form} />
+          <CreateOrUpdateCollectionItemFormNotesField
+            form={form}
+            index={row.index}
+          />
         ) : (
           <p>{getValue() || '-'}</p>
         );
@@ -298,22 +312,23 @@ export const getCollectionItemsTableColumns = (
     }),
     columnHelper.accessor('createdAt', {
       cell: ({ getValue, row }) => {
-        const { editingRowIds, getIsEditingRowId } =
+        const { getIsCreatingRecord, getIsEditingRowId } =
           useEditingCollectionItemsRowIds();
         const isEditingRow = getIsEditingRowId(row.id);
 
         const date = getValue();
 
-        return isEditingRow && editingRowIds.length === 1 ? (
+        return isEditingRow && getIsCreatingRecord() ? (
           <CreateOrUpdateCollectionItemFormActions
             form={form}
-            onCancel={onCancel}
+            index={row.index}
           />
         ) : date ? (
           <p>{formatDate(date, masks.paddedShortDate)}</p>
         ) : null;
       },
       header: 'Added',
+      size: 160,
     }),
     columnHelper.accessor('id', {
       cell: (context) => {
@@ -350,22 +365,18 @@ const CollectionDetailsActionsCell = ({
       },
     });
 
-  const { setFormValues } = useCollectionItemsFormStore();
-
   const collectionItemId = getValue();
 
-  const { editingRowIds, getIsEditingRowId, isEditing, setEditingRowIds } =
-    useEditingCollectionItemsRowIds();
+  const {
+    getIsCreatingRecord,
+    getIsEditingRowId,
+    isEditing,
+    setEditingRowIds,
+  } = useEditingCollectionItemsRowIds();
 
   const isEditingRow = getIsEditingRowId(row.id);
 
-  const isCreatingRecord = editingRowIds.some((id) => {
-    return Number.isNaN(Number(id));
-  });
-
-  if (isCreatingRecord) {
-    console.log({ editingRowIds });
-  }
+  const isCreatingRecord = getIsCreatingRecord();
 
   return (
     <TableCellActionsMenu
@@ -376,8 +387,7 @@ const CollectionDetailsActionsCell = ({
         });
       }}
       editIsDisabled={isCreatingRecord || isDeletePending}
-      editOnClick={async (record) => {
-        setFormValues(record);
+      editOnClick={async () => {
         setEditingRowIds((prevRowIds) => {
           return [...prevRowIds, row.id];
         });

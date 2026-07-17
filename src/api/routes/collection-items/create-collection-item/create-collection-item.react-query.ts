@@ -3,7 +3,7 @@ import type { GenericMutateQueryProps } from '#/api/react-query-hooks/use-generi
 import { useGenericMutateQuery } from '#/api/react-query-hooks/use-generic-mutate-query';
 
 import type {
-  CreateCollectionItemFormSchemaDef,
+  CreateCollectionItemFormDataSchemaDef,
   CreateCollectionItemResponseDef,
 } from './create-collection-item.types';
 
@@ -16,7 +16,7 @@ export const useCreateCollectionItem = <
   TTransformedData = CreateCollectionItemResponseDef,
 >(
   props?: GenericMutateQueryProps<
-    CreateCollectionItemFormSchemaDef,
+    CreateCollectionItemFormDataSchemaDef,
     CreateCollectionItemResponseDef,
     TTransformedData
   >,

@@ -8,7 +8,7 @@ import type {
   createCollectionItemServerFnSchema,
 } from './create-collection-item.schema';
 
-export type CreateCollectionItemFormSchemaDef = z.output<
+export type CreateCollectionItemFormDataSchemaDef = z.output<
   typeof createCollectionItemFormSchema
 >;
 
