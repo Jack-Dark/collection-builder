@@ -10,7 +10,7 @@ const createEditingRowIdsStore = (defaultValue: string[] = []) => {
       return Number.isNaN(Number(rowId));
     };
 
-    const getIsCreatingRecord = () => {
+    const getHasNewRecord = () => {
       return value.some((id) => {
         return getIsNewRecord(id);
       });
@@ -31,7 +31,7 @@ const createEditingRowIdsStore = (defaultValue: string[] = []) => {
         });
       },
       editingRowIds: value,
-      getIsCreatingRecord,
+      getHasNewRecord,
       getIsEditingRowId: (id: string) => {
         const currentValue = getValue();
 

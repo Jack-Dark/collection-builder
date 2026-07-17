@@ -325,18 +325,18 @@ export const CreateOrUpdateCollectionItemFormActions =
       const { getLastNewRecordIndex, removeFromIsEditingRowIds } =
         useEditingCollectionItemsRowIds();
 
-      const lastNewRecordIndex = getLastNewRecordIndex();
+      const isLastNewRecordIndex = getLastNewRecordIndex() === index;
 
       return (
         <form.AppField mode="array" name="collectionItems">
           {(collectionItemsField) => {
             return (
-              <div className="grid gap-2">
+              <div className="grid gap-2 justify-start">
                 <form.AppField name={`collectionItems[${index}]`}>
                   {(field) => {
                     return (
                       <>
-                        {lastNewRecordIndex === index && (
+                        {isLastNewRecordIndex && (
                           <form.Subscribe
                             selector={(state) => {
                               const { isFormValid, isPristine } = state;
@@ -354,7 +354,7 @@ export const CreateOrUpdateCollectionItemFormActions =
                                     disabled={isPristine || !isFormValid}
                                     form={form}
                                     insertAtIndex={index + 1}
-                                    text="Add More"
+                                    text="Add Another"
                                   />
                                 </form.AppForm>
                               );
@@ -367,7 +367,7 @@ export const CreateOrUpdateCollectionItemFormActions =
                           onClick={() => {
                             collectionItemsField.removeValue(index);
                             removeFromIsEditingRowIds(
-                              String(field.state.value),
+                              String(field.state.value.id),
                             );
                           }}
                           text="Remove"

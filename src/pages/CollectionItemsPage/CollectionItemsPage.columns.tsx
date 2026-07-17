@@ -312,13 +312,13 @@ export const getCollectionItemsTableColumns = (
     }),
     columnHelper.accessor('createdAt', {
       cell: ({ getValue, row }) => {
-        const { getIsCreatingRecord, getIsEditingRowId } =
+        const { getHasNewRecord, getIsEditingRowId } =
           useEditingCollectionItemsRowIds();
         const isEditingRow = getIsEditingRowId(row.id);
 
         const date = getValue();
 
-        return isEditingRow && getIsCreatingRecord() ? (
+        return isEditingRow && getHasNewRecord() ? (
           <CreateOrUpdateCollectionItemFormActions
             form={form}
             index={row.index}
@@ -328,7 +328,7 @@ export const getCollectionItemsTableColumns = (
         ) : null;
       },
       header: 'Added',
-      size: 160,
+      size: 200,
     }),
     columnHelper.accessor('id', {
       cell: (context) => {
@@ -367,16 +367,12 @@ const CollectionDetailsActionsCell = ({
 
   const collectionItemId = getValue();
 
-  const {
-    getIsCreatingRecord,
-    getIsEditingRowId,
-    isEditing,
-    setEditingRowIds,
-  } = useEditingCollectionItemsRowIds();
+  const { getHasNewRecord, getIsEditingRowId, isEditing, setEditingRowIds } =
+    useEditingCollectionItemsRowIds();
 
   const isEditingRow = getIsEditingRowId(row.id);
 
-  const isCreatingRecord = getIsCreatingRecord();
+  const isCreatingRecord = getHasNewRecord();
 
   return (
     <TableCellActionsMenu

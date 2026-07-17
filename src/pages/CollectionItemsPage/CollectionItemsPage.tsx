@@ -206,7 +206,7 @@ export const CreateOrUpdateCollectionItemFormTable = withAddCollectionItemForm({
                               onClick={() => {
                                 addToEditingRowIds(...selectedRowIds);
                               }}
-                              text="Edit Items"
+                              text="Edit"
                               variant="secondary"
                             />
 
@@ -223,7 +223,7 @@ export const CreateOrUpdateCollectionItemFormTable = withAddCollectionItemForm({
                                 });
                               }}
                               processing={isDeletePending}
-                              text="Delete Items"
+                              text="Delete"
                               variant="alert"
                             />
                           </>
