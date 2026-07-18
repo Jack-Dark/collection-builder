@@ -37,7 +37,7 @@ export const Route = createFileRoute('/_protected/collections/$id')({
       queryKey: [
         reactQueryKeys.getCollectionDetailsById,
         requestArgs.collectionId,
-        requestArgs,
+        JSON.stringify(requestArgs),
       ],
       requestArgs,
     });

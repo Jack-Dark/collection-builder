@@ -17,7 +17,10 @@ export const Route = createFileRoute('/_protected/collections/')({
 
     const queryOptions = getGenericFetchQueryOptions({
       queryFn: getPaginatedCollectionsServerFn,
-      queryKey: [reactQueryKeys.getPaginatedCollections, requestArgs],
+      queryKey: [
+        reactQueryKeys.getPaginatedCollections,
+        JSON.stringify(requestArgs),
+      ],
       requestArgs,
     });
 

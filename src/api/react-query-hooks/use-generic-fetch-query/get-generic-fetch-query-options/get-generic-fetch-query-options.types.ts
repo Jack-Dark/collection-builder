@@ -8,12 +8,7 @@ export type GetGenericFetchOptionsProps<
   TTransformedData = TResponseDef,
 > = Partial<
   Omit<
-    QueryOptions<
-      TTransformedData,
-      Error,
-      TTransformedData,
-      QueryKeyDef<TRequestArgs>
-    >,
+    QueryOptions<TTransformedData, Error, TTransformedData, QueryKeyDef>,
     'gcTime' | 'queryFn' | 'queryKey'
   >
 > & {
@@ -24,7 +19,7 @@ export type GetGenericFetchOptionsProps<
   /** This is called on the response every time, even if it's returned from cache. */
   onSuccess?: (data: TTransformedData) => void;
   queryFn: (props: { data: TRequestArgs }) => Promise<TResponseDef>;
-  queryKey: QueryKeyDef<TRequestArgs>;
+  queryKey: QueryKeyDef;
   requestArgs: TRequestArgs;
   transform?: (response: TResponseDef) => TTransformedData;
 };

@@ -10,12 +10,7 @@ export type GenericFetchProps<
   TTransformedData = TResponseDef,
 > = Partial<
   Omit<
-    UseQueryOptions<
-      TTransformedData,
-      Error,
-      TTransformedData,
-      QueryKeyDef<TRequestArgs>
-    >,
+    UseQueryOptions<TTransformedData, Error, TTransformedData, QueryKeyDef>,
     'gcTime' | 'queryFn' | 'queryKey' | 'select'
   >
 > & {
@@ -39,15 +34,11 @@ export type UseGenericFetchProps<
 > = GenericFetchProps<TRequestArgs, TResponseDef, TTransformedData> & {
   fallbackErrorMessage: string;
   queryFn: (props: { data: TRequestArgs }) => Promise<TResponseDef>;
-  queryKey: QueryKeyDef<TRequestArgs>;
+  queryKey: QueryKeyDef;
 };
 
-type RequestId = number | string | undefined;
-
-export type QueryKeyDef<TRequestArgs extends Record<string, any>> = Readonly<
-  | [ReactQueryKeysDef]
-  | [ReactQueryKeysDef, TRequestArgs]
-  | [ReactQueryKeysDef, RequestId, TRequestArgs]
+export type QueryKeyDef = Readonly<
+  [ReactQueryKeysDef] | [ReactQueryKeysDef, ...(string | number)[]]
 >;
 
 export type ReactQueryKeysDef =

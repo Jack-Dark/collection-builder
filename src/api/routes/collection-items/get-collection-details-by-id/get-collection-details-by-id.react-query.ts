@@ -26,6 +26,7 @@ export const useGetCollectionDetailsById = <
     queryKey: [
       reactQueryKeys.getCollectionDetailsById,
       props.requestArgs.collectionId,
+      JSON.stringify(props.requestArgs),
     ],
     showLoading: true,
     ...props,

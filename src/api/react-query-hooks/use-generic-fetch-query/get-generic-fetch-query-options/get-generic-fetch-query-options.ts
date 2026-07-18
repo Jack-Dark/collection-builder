@@ -21,7 +21,7 @@ export const getGenericFetchQueryOptions = <
     TResponseDef,
     Error,
     TTransformedData,
-    QueryKeyDef<TRequestArgs>
+    QueryKeyDef
   >({
     ...configs,
     gcTime: cacheTime,
