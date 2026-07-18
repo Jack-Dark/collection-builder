@@ -32,6 +32,7 @@ import {
   CreateOrUpdateCollectionItemFormNotesField,
   CreateOrUpdateCollectionItemFormActions,
 } from './components/CreateOrUpdateCollectionItemForm';
+import { useCustomFieldsStore } from './hooks/use-custom-fields-store';
 
 const columnHelper = createColumnHelper<CollectionItemRecordDef>();
 
@@ -45,11 +46,6 @@ export const getCollectionItemsTableColumns = (
     | 'customField3Enabled'
     | 'customField3Label'
   > & {
-    customFields: {
-      customField1Values: string[];
-      customField2Values: string[];
-      customField3Values: string[];
-    };
     form: any;
     onCancel: () => void;
   },
@@ -61,7 +57,6 @@ export const getCollectionItemsTableColumns = (
     customField2Label,
     customField3Enabled,
     customField3Label,
-    customFields,
     form,
     onCancel,
   } = props;
@@ -219,12 +214,16 @@ export const getCollectionItemsTableColumns = (
           const { getIsEditingRowId } = useEditingCollectionItemsRowIds();
           const isEditingRow = getIsEditingRowId(row.id);
 
+          const { addToCustomField1Values, customFields } =
+            useCustomFieldsStore();
+
           return isEditingRow ? (
             <CreateOrUpdateCollectionItemFormCustomField
+              addToCustomFieldValues={addToCustomField1Values}
               fieldName="customField1Value"
+              fieldValues={customFields.customField1Values}
               form={form}
               index={row.index}
-              items={customFields.customField1Values}
               label={customField1Label || ''}
             />
           ) : (
@@ -240,12 +239,16 @@ export const getCollectionItemsTableColumns = (
           const { getIsEditingRowId } = useEditingCollectionItemsRowIds();
           const isEditingRow = getIsEditingRowId(row.id);
 
+          const { addToCustomField2Values, customFields } =
+            useCustomFieldsStore();
+
           return isEditingRow ? (
             <CreateOrUpdateCollectionItemFormCustomField
+              addToCustomFieldValues={addToCustomField2Values}
               fieldName="customField2Value"
+              fieldValues={customFields.customField2Values}
               form={form}
               index={row.index}
-              items={customFields.customField2Values}
               label={customField2Label || ''}
             />
           ) : (
@@ -261,12 +264,16 @@ export const getCollectionItemsTableColumns = (
           const { getIsEditingRowId } = useEditingCollectionItemsRowIds();
           const isEditingRow = getIsEditingRowId(row.id);
 
+          const { addToCustomField3Values, customFields } =
+            useCustomFieldsStore();
+
           return isEditingRow ? (
             <CreateOrUpdateCollectionItemFormCustomField
+              addToCustomFieldValues={addToCustomField3Values}
               fieldName="customField3Value"
+              fieldValues={customFields.customField3Values}
               form={form}
               index={row.index}
-              items={customFields.customField3Values}
               label={customField3Label || ''}
             />
           ) : (

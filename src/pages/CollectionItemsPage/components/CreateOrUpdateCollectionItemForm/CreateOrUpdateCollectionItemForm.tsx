@@ -157,19 +157,29 @@ export const CreateOrUpdateCollectionItemFormCustomField =
     /** These values are only used for type-checking, and are not used at runtime */
     defaultValues: addCollectionItemFormDefaultValues,
     props: {
+      addToCustomFieldValues: (value: string) => {},
       fieldName: '',
+      fieldValues: [''],
       index: 0,
-      items: [''],
       label: '',
     },
-    render: ({ fieldName, form, index, items, label }) => {
-      const name = fieldName as `customField${1 | 2 | 3}Value`;
+    render: ({
+      addToCustomFieldValues,
+      fieldName,
+      fieldValues,
+      form,
+      index,
+      label,
+    }) => {
+      const customFieldName = fieldName as `customField${1 | 2 | 3}Value`;
 
       return (
         <form.AppField mode="array" name="collectionItems">
           {() => {
             return (
-              <form.AppField name={`collectionItems[${index}].${name}`}>
+              <form.AppField
+                name={`collectionItems[${index}].${customFieldName}`}
+              >
                 {(field) => {
                   return (
                     <div className="flex gap-1 items-center">
@@ -183,7 +193,7 @@ export const CreateOrUpdateCollectionItemFormCustomField =
                         isItemEqualToValue={(item, value) => {
                           return item === value;
                         }}
-                        items={items}
+                        items={fieldValues}
                         itemToStringLabel={(item) => {
                           return item;
                         }}
@@ -192,7 +202,12 @@ export const CreateOrUpdateCollectionItemFormCustomField =
                         }}
                         label={label}
                         onValueChange={(value) => {
-                          field.setValue(value || '');
+                          if (value) {
+                            field.setValue(value);
+                            if (!fieldValues.includes(value)) {
+                              addToCustomFieldValues(value);
+                            }
+                          }
                         }}
                         placeholder={`${label || ''}...`}
                         required

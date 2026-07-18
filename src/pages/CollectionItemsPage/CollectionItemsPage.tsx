@@ -37,6 +37,7 @@ import { useCollectionItemsFilters } from './hooks/use-collection-items-filters'
 import { useCollectionItemsPagination } from './hooks/use-collection-items-pagination';
 import { useCollectionItemsSearch } from './hooks/use-collection-items-search';
 import { useCollectionItemsSort } from './hooks/use-collection-items-sort';
+import { useCustomFieldsStore } from './hooks/use-custom-fields-store';
 import { useSetCollectionItemsFiltersFromQueries } from './hooks/use-set-collection-items-filters-from-queries';
 
 export const CollectionItemsPage: RouteComponent = () => {
@@ -67,7 +68,13 @@ export const CollectionItemsPage: RouteComponent = () => {
   });
 
   const form = useAddCollectionItemForm({
-    defaultValues: addCollectionItemFormDefaultValues,
+    defaultValues: data?.items
+      ? {
+          collectionItems: data.items.map((item) => {
+            return { ...item, isEditing: false };
+          }),
+        }
+      : addCollectionItemFormDefaultValues,
     onSubmit: async ({ value: { collectionItems } }) => {
       const editedRecords = collectionItems.filter(({ isEditing }) => {
         return isEditing;
@@ -137,17 +144,20 @@ export const CreateOrUpdateCollectionItemFormTable = withAddCollectionItemForm({
     const collectionId = Number(id);
     const search = CollectionRoute.useSearch();
 
+    const { customFields, setCustomFields } = useCustomFieldsStore();
+
     const { data } = useGetCollectionDetailsById({
-      onSuccess: ({ items }) => {
+      onSuccess: ({ customFields, items }) => {
         form.setFieldValue('collectionItems', items);
         resetEditingRowIds();
         resetSelectedTableRows();
         setPageTitle(`${collection.name} (${pagination.totalRecords})`);
+        setCustomFields(customFields);
       },
       requestArgs: { collectionId, params: search },
     });
 
-    const { collection, customFields, pagination } = data;
+    const { collection, pagination } = data;
 
     const onCancel = () => {
       resetEditingRowIds();
@@ -168,7 +178,6 @@ export const CreateOrUpdateCollectionItemFormTable = withAddCollectionItemForm({
         customField2Label: collection.customField2Label,
         customField3Enabled: collection.customField3Enabled,
         customField3Label: collection.customField3Label,
-        customFields,
         form,
         onCancel,
       });
@@ -180,6 +189,7 @@ export const CreateOrUpdateCollectionItemFormTable = withAddCollectionItemForm({
       collection.customField3Enabled,
       collection.customField3Label,
       editingRowIds,
+      customFields,
     ]);
 
     const filtersProps = useCollectionItemsFilters();
@@ -209,7 +219,7 @@ export const CreateOrUpdateCollectionItemFormTable = withAddCollectionItemForm({
           return (
             <div className="grid gap-4">
               <Table
-                AboveTableComponent={() => {
+                AboveTableComponent={(table) => {
                   return (
                     <div className="flex justify-between">
                       <div className="flex gap-2">
@@ -293,7 +303,7 @@ export const CreateOrUpdateCollectionItemFormTable = withAddCollectionItemForm({
                     return (
                       <CollectionItemsFiltersContent
                         collection={collection}
-                        customFields={customFields}
+                        customFields={data.customFields}
                       />
                     );
                   },
