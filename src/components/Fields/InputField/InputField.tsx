@@ -1,4 +1,4 @@
-import { Field } from '@base-ui/react';
+import { Input } from '@base-ui/react';
 
 import type { InputFieldProps } from './InputField.types';
 
@@ -8,9 +8,11 @@ export const InputField = (props: InputFieldProps) => {
   const {
     autoFocus,
     className,
+    defaultValue,
     description,
     disabled,
     error,
+    hideLabel,
     invalid,
     label,
     name,
@@ -30,6 +32,7 @@ export const InputField = (props: InputFieldProps) => {
       description={description}
       disabled={disabled}
       error={error}
+      hideLabel={hideLabel}
       invalid={invalid}
       label={label}
       name={name}
@@ -37,10 +40,11 @@ export const InputField = (props: InputFieldProps) => {
       validationDebounceTime={validationDebounceTime}
       validationMode={validationMode}
     >
-      <Field.Control
+      <Input
         autoComplete={type === 'password' ? 'off' : undefined}
         autoFocus={autoFocus}
         className="input"
+        defaultValue={defaultValue}
         onValueChange={onValueChange}
         placeholder={placeholder}
         ref={ref}

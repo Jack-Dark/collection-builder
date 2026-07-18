@@ -1,20 +1,21 @@
-import type { FieldControlProps } from '@base-ui/react';
-import type { Ref } from 'react';
+import type { InputProps } from '@base-ui/react';
 
 import type { FieldWrapperProps } from '../FieldWrapper/FieldWrapper.types';
 
 export type InputFieldProps = Pick<
-  FieldControlProps,
+  InputProps,
+  | 'accept'
   | 'autoFocus'
+  | 'capture'
+  | 'defaultValue'
+  | 'multiple'
   | 'onValueChange'
   | 'placeholder'
   | 'required'
   | 'type'
   | 'value'
-  | 'multiple'
-  | 'accept'
-  | 'capture'
+  | 'ref'
 > &
   FieldWrapperProps & {
-    ref?: Ref<HTMLElement>;
+    onValueChange?: (value: string) => void;
   };

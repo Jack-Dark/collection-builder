@@ -3,7 +3,6 @@ import type { NavigateOptions, RouteComponent } from '@tanstack/react-router';
 import ClearIcon from '@mui/icons-material/Clear';
 import ControlPointIcon from '@mui/icons-material/ControlPoint';
 import { revalidateLogic } from '@tanstack/react-form';
-import _ from 'lodash';
 import { useMemo, useState } from 'react';
 
 import type { CollectionTableColumnsDef } from '#/api/routes/collections/collection.types';
@@ -222,11 +221,9 @@ export const useCollectionSearch = () => {
   const { onUpdateCollectionsQueries, searchQueries } =
     useOnUpdateCollectionQueries();
 
-  const onChange = _.debounce(async (searchValue: string) => {
-    const search = searchValue.trim();
-
+  const onChange = async (search: string) => {
     onUpdateCollectionsQueries({ search });
-  }, 200);
+  };
 
   return {
     onChange,

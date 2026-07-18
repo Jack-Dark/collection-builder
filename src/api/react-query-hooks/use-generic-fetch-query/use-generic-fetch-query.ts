@@ -73,17 +73,17 @@ export const useGenericFetchQuery = <
 
   const context = useSuspenseQuery(configuredQueryOptions);
 
-  const { data, error, isError, isFetching, isSuccess } = context;
+  const { data, error, isError, isFetching, isPending, isSuccess } = context;
 
   useEffect(() => {
     if (enableSpinner) {
-      if (isFetching) {
+      if (isFetching || isPending) {
         showSpinner();
       } else {
         hideSpinner();
       }
     }
-  }, [isFetching]);
+  }, [isFetching, isPending]);
 
   useEffect(() => {
     if (isSuccess) {

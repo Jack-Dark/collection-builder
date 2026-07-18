@@ -9,7 +9,6 @@ import type { SortItemDef } from '#/components/Table';
 import type { SetZustandStoreFnDef } from '#/helpers/get-create-default-zustand-state';
 
 import { sortDirectionOptions } from '#/api/pagination/pagination.constants';
-import { useInvalidateGetCollectionDetailsById } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.react-query';
 import { Button } from '#/components/Button';
 import { CheckboxField } from '#/components/Fields/CheckboxField';
 import { Route } from '#/routes/_protected/collections/$id';
@@ -241,13 +240,8 @@ export const formatSortItems = <TField extends string>(
 };
 
 export const useOnUpdateCollectionItemsQueries = () => {
-  const { id } = Route.useParams();
-  const collectionId = Number(id);
   const navigate = Route.useNavigate();
   const searchQueries = Route.useSearch();
-
-  const invalidateGetCollectionDetailsById =
-    useInvalidateGetCollectionDetailsById();
 
   const onUpdateCollectionItemsQueries = async (
     updatedQueries: Partial<typeof searchQueries>,
@@ -259,13 +253,10 @@ export const useOnUpdateCollectionItemsQueries = () => {
       ...updatedQueries,
       page: filters || limit || search ? 1 : searchQueries.page || 1,
     };
+
     await navigate({
       search: newSearch,
       ...options,
-    });
-
-    await invalidateGetCollectionDetailsById({
-      id: collectionId,
     });
   };
 

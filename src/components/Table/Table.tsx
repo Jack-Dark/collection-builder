@@ -20,9 +20,9 @@ import { getCreateDefaultZustandStore } from '#/helpers/get-create-default-zusta
 
 import type { FiltersButtonPropsDef } from './components/FilterButton/FilterButton.types';
 
-import { InputField } from '../Fields/InputField';
 import { SelectField } from '../Fields/SelectField';
 import { FilterButton } from './components/FilterButton';
+import { Search } from './components/Search';
 
 export const tableCellClasses =
   'text-left px-2 py-1 border-b z-0 first:sticky first:left-0 first:z-1 first:group-data-overflow-x-start:border-r last:sticky last:right-0 last:z-1 last:group-data-overflow-x-end:border-l';
@@ -232,12 +232,7 @@ export const Table = <TData,>({
         <div className={`grid ${actionsColumns} items-stretch gap-4`}>
           {filters && <FilterButton {...filters} />}
           {search && (
-            <InputField
-              className="w-full"
-              onValueChange={search.onChange}
-              placeholder="Search name..."
-              value={search.value}
-            />
+            <Search onValueChange={search.onChange} value={search.value} />
           )}
           {sort ? (
             <SelectField

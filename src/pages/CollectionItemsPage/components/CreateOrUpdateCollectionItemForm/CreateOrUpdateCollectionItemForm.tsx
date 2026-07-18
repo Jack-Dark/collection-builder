@@ -157,7 +157,7 @@ export const CreateOrUpdateCollectionItemFormCustomField =
     /** These values are only used for type-checking, and are not used at runtime */
     defaultValues: addCollectionItemFormDefaultValues,
     props: {
-      addToCustomFieldValues: (value: string) => {},
+      addToCustomFieldValues: (_value: string) => {},
       fieldName: '',
       fieldValues: [''],
       index: 0,
