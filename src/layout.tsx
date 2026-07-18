@@ -1,7 +1,7 @@
 import type { RouteComponent } from '@tanstack/react-router';
 
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
+import ListAltIcon from '@mui/icons-material/ListAlt';
 import { Outlet, useRouter } from '@tanstack/react-router';
 
 import type { NavMenuItem } from './components/NavMenu/NavMenu.types';
@@ -64,32 +64,26 @@ export const Layout: RouteComponent = () => {
     <SimpleErrorBoundary>
       <FullPageLoadingSpinner />
       <Notifications />
-      <header className="grid justify-items-center px-4 py-4">
-        <div className="w-full max-w-7xl">
-          <div className="flex items-center gap-4 mb-4 text-white">
-            <SportsEsportsIcon
-              className="text-inherit text-4xl"
-              fontSize="large"
-            />
+      <div className="grid h-dvh grid-rows-[auto_1fr] w-full max-w-500 gap-4 p-4">
+        <header className="grid gap-4">
+          <div className="flex items-center gap-2 text-white">
+            <ListAltIcon className="text-inherit text-4xl" fontSize="large" />
             <h1 className="text-inherit">Start tracking your collection!</h1>
           </div>
 
           <SimpleErrorBoundary>
             <NavMenu items={navItems} />
           </SimpleErrorBoundary>
-        </div>
-      </header>
+        </header>
 
-      <div className="grid justify-items-center px-4">
-        <main className="w-full max-w-7xl pt-8 px-4 pb-4 bg-white text-black rounded-xs">
+        <main className="w-full p-4 bg-white text-black rounded-xs">
           <SimpleErrorBoundary>
             <Outlet />
           </SimpleErrorBoundary>
         </main>
+
+        {/* <footer className="grid p-4">PLACEHOLDER FOOTER CONTENT</footer> */}
       </div>
-      <footer className="grid justify-items-center px-4 py-4">
-        <div className="w-full max-w-7xl">PLACEHOLDER FOOTER CONTENT</div>
-      </footer>
     </SimpleErrorBoundary>
   );
 };
