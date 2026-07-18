@@ -33,7 +33,7 @@ import {
   withAddCollectionItemForm,
 } from './components/CreateOrUpdateCollectionItemForm/CreateOrUpdateCollectionItemForm.form';
 import { createOrUpdateCollectionItemFormSchema } from './components/CreateOrUpdateCollectionItemForm/CreateOrUpdateCollectionItemForm.schema';
-import { useCollectionItemsFilters } from './hooks/use-collection-items-filters';
+import { useCollectionItemsFiltersProps } from './hooks/use-collection-items-filters-props';
 import { useCollectionItemsPagination } from './hooks/use-collection-items-pagination';
 import { useCollectionItemsSearch } from './hooks/use-collection-items-search';
 import { useCollectionItemsSort } from './hooks/use-collection-items-sort';
@@ -192,7 +192,7 @@ export const CreateOrUpdateCollectionItemFormTable = withAddCollectionItemForm({
       customFields,
     ]);
 
-    const filtersProps = useCollectionItemsFilters();
+    const filtersProps = useCollectionItemsFiltersProps();
     const searchProps = useCollectionItemsSearch();
     const paginationProps = useCollectionItemsPagination({ pagination });
     const sortProps = useCollectionItemsSort({ collection });

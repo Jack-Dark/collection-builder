@@ -3,7 +3,7 @@ import type { FiltersButtonPropsDef } from '#/components/Table/components/Filter
 import { useOnUpdateCollectionItemsQueries } from '../../components/CollectionItemsFiltersContent';
 import { useCollectionItemsFiltersStore } from '../use-collection-items-filters-store';
 
-export const useCollectionItemsFilters = (): Omit<
+export const useCollectionItemsFiltersProps = (): Omit<
   FiltersButtonPropsDef,
   'FiltersContent'
 > => {
