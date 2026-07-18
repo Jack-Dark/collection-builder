@@ -3,7 +3,7 @@ import type { RouteComponent } from '@tanstack/react-router';
 import ClearIcon from '@mui/icons-material/Clear';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 
 import type { OnCreateCollectionItemsArgsDef } from '#/api/routes/collection-items/create-collection-item/create-collection-item.types';
 import type { OnUpdateCollectionItemsArgsDef } from '#/api/routes/collection-items/update-collection-item-by-id/update-collection-item-by-id.types';
@@ -44,8 +44,6 @@ export const CollectionItemsPage: RouteComponent = () => {
   const { id } = CollectionRoute.useParams();
   const searchParams = CollectionRoute.useSearch();
   const collectionId = Number(id);
-
-  const [pageTitle, setPageTitle] = useState('-');
 
   const invalidateGetCollectionDetailsById =
     useInvalidateGetCollectionDetailsById();
@@ -124,10 +122,7 @@ export const CollectionItemsPage: RouteComponent = () => {
           form.handleSubmit();
         }}
       >
-        <CreateOrUpdateCollectionItemFormTable
-          form={form}
-          setPageTitle={setPageTitle}
-        />
+        <CreateOrUpdateCollectionItemFormTable form={form} />
       </form>
     </PageWrapper>
   );
@@ -136,10 +131,7 @@ export const CollectionItemsPage: RouteComponent = () => {
 export const CreateOrUpdateCollectionItemFormTable = withAddCollectionItemForm({
   /** These values are only used for type-checking, and are not used at runtime */
   defaultValues: addCollectionItemFormDefaultValues,
-  props: {
-    setPageTitle: (_pageTitle: string) => {},
-  },
-  render: ({ form, setPageTitle }) => {
+  render: ({ form }) => {
     const { id } = CollectionRoute.useParams();
     const collectionId = Number(id);
     const search = CollectionRoute.useSearch();
@@ -151,7 +143,6 @@ export const CreateOrUpdateCollectionItemFormTable = withAddCollectionItemForm({
         form.setFieldValue('collectionItems', items);
         resetEditingRowIds();
         resetSelectedTableRows();
-        setPageTitle(`${collection.name} (${pagination.totalRecords})`);
         setCustomFields(customFields);
       },
       requestArgs: { collectionId, params: search },
@@ -219,7 +210,7 @@ export const CreateOrUpdateCollectionItemFormTable = withAddCollectionItemForm({
           return (
             <div className="grid gap-4">
               <Table
-                AboveTableComponent={(table) => {
+                AboveTableComponent={() => {
                   return (
                     <div className="flex justify-between">
                       <div className="flex gap-2">
