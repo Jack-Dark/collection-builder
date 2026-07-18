@@ -9,6 +9,7 @@ import type { SortItemDef } from '#/components/Table';
 import type { SetZustandStoreFnDef } from '#/helpers/get-create-default-zustand-state';
 
 import { sortDirectionOptions } from '#/api/pagination/pagination.constants';
+import { useInvalidateGetCollectionDetailsById } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.react-query';
 import { Button } from '#/components/Button';
 import { CheckboxField } from '#/components/Fields/CheckboxField';
 import { Route } from '#/routes/_protected/collections/$id';
@@ -64,11 +65,10 @@ export const CollectionItemsFiltersContent = (
   } = useCollectionItemsFiltersStore();
 
   const getOnCheckedChange = (props: {
-    index: number;
     setValue: SetZustandStoreFnDef<string[]>;
     value: string;
   }) => {
-    const { index, setValue, value } = props;
+    const { setValue, value } = props;
 
     return (checked: boolean) => {
       if (checked) {
@@ -77,10 +77,9 @@ export const CollectionItemsFiltersContent = (
         });
       } else {
         setValue((prevFilters) => {
-          const newValues = [...prevFilters];
-          newValues.splice(index, 1);
-
-          return newValues;
+          return prevFilters.filter((field) => {
+            return field !== value;
+          });
         });
       }
     };
@@ -97,9 +96,8 @@ export const CollectionItemsFiltersContent = (
           label={collection.customField1Label}
           onReset={customField1Store.resetValue}
         >
-          {customFields.customField1Values.map((value, index) => {
+          {customFields.customField1Values.map((value) => {
             const onCheckedChange = getOnCheckedChange({
-              index,
               setValue: customField1Store.setValue,
               value,
             });
@@ -121,9 +119,8 @@ export const CollectionItemsFiltersContent = (
           label={collection.customField2Label}
           onReset={customField2Store.resetValue}
         >
-          {customFields.customField2Values.map((value, index) => {
+          {customFields.customField2Values.map((value) => {
             const onCheckedChange = getOnCheckedChange({
-              index,
               setValue: customField2Store.setValue,
               value,
             });
@@ -145,9 +142,8 @@ export const CollectionItemsFiltersContent = (
           label={collection.customField3Label}
           onReset={customField3Store.resetValue}
         >
-          {customFields.customField3Values.map((value, index) => {
+          {customFields.customField3Values.map((value) => {
             const onCheckedChange = getOnCheckedChange({
-              index,
               setValue: customField3Store.setValue,
               value,
             });
@@ -245,21 +241,31 @@ export const formatSortItems = <TField extends string>(
 };
 
 export const useOnUpdateCollectionItemsQueries = () => {
+  const { id } = Route.useParams();
+  const collectionId = Number(id);
   const navigate = Route.useNavigate();
   const searchQueries = Route.useSearch();
+
+  const invalidateGetCollectionDetailsById =
+    useInvalidateGetCollectionDetailsById();
 
   const onUpdateCollectionItemsQueries = async (
     updatedQueries: Partial<typeof searchQueries>,
     options?: NavigateOptions,
   ) => {
     const { filters, limit, search } = updatedQueries;
+    const newSearch = {
+      ...searchQueries,
+      ...updatedQueries,
+      page: filters || limit || search ? 1 : searchQueries.page || 1,
+    };
     await navigate({
-      search: {
-        ...searchQueries,
-        ...updatedQueries,
-        page: filters || limit || search ? 1 : searchQueries.page || 1,
-      },
+      search: newSearch,
       ...options,
+    });
+
+    await invalidateGetCollectionDetailsById({
+      id: collectionId,
     });
   };
 
