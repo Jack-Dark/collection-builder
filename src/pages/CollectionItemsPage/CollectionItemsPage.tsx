@@ -3,7 +3,8 @@ import type { RouteComponent } from '@tanstack/react-router';
 import ClearIcon from '@mui/icons-material/Clear';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import { useMemo } from 'react';
+import { useRouterState } from '@tanstack/react-router';
+import { useEffect, useMemo } from 'react';
 
 import type { OnCreateCollectionItemsArgsDef } from '#/api/routes/collection-items/create-collection-item/create-collection-item.types';
 import type { OnUpdateCollectionItemsArgsDef } from '#/api/routes/collection-items/update-collection-item-by-id/update-collection-item-by-id.types';
@@ -16,6 +17,7 @@ import {
 } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.react-query';
 import { useUpdateCollectionItems } from '#/api/routes/collection-items/update-collection-item-by-id/update-collection-item-by-id.react-query';
 import { Button } from '#/components/Button';
+import { useSpinner } from '#/components/FullPageLoadingSpinner/useSpinner';
 import { Table, useSelectedTableRowsStore } from '#/components/Table';
 import { PageWrapper } from '#/page-wrapper';
 import { Route as CollectionRoute } from '#/routes/_protected/collections/$id';
@@ -44,6 +46,11 @@ export const CollectionItemsPage: RouteComponent = () => {
   const { id } = CollectionRoute.useParams();
   const searchParams = CollectionRoute.useSearch();
   const collectionId = Number(id);
+
+  const { isLoading } = useRouterState();
+  const { toggleSpinner } = useSpinner();
+
+  useSetCollectionItemsFiltersFromQueries();
 
   const invalidateGetCollectionDetailsById =
     useInvalidateGetCollectionDetailsById();
@@ -110,7 +117,9 @@ export const CollectionItemsPage: RouteComponent = () => {
     },
   });
 
-  useSetCollectionItemsFiltersFromQueries();
+  useEffect(() => {
+    toggleSpinner(isLoading);
+  }, [isLoading]);
 
   return (
     <PageWrapper

@@ -3,7 +3,8 @@ import type { NavigateOptions, RouteComponent } from '@tanstack/react-router';
 import ClearIcon from '@mui/icons-material/Clear';
 import ControlPointIcon from '@mui/icons-material/ControlPoint';
 import { revalidateLogic } from '@tanstack/react-form';
-import { useMemo, useState } from 'react';
+import { useRouterState } from '@tanstack/react-router';
+import { useEffect, useMemo, useState } from 'react';
 
 import type { CollectionTableColumnsDef } from '#/api/routes/collections/collection.types';
 import type { SortItemDef } from '#/components/Table';
@@ -13,6 +14,7 @@ import { useCreateCollection } from '#/api/routes/collections/create-collection/
 import { useGetPaginatedCollections } from '#/api/routes/collections/get-paginated-collections/get-paginated-collections.react-query';
 import { useUpdateCollectionById } from '#/api/routes/collections/update-collection-by-id/update-collection-by-id.react-query';
 import { Button } from '#/components/Button';
+import { useSpinner } from '#/components/FullPageLoadingSpinner/useSpinner';
 import { Table } from '#/components/Table';
 import { createFormStore } from '#/helpers/create-form-store';
 import { PageWrapper } from '#/page-wrapper';
@@ -39,6 +41,9 @@ export const CollectionsListPage: RouteComponent = () => {
   const [tableData, setTableData] = useState<
     CreateOrUpdateCollectionFormDataSchemaDef[]
   >([]);
+
+  const { isLoading } = useRouterState();
+  const { toggleSpinner } = useSpinner();
 
   const search = Route.useSearch();
 
@@ -123,6 +128,10 @@ export const CollectionsListPage: RouteComponent = () => {
       },
     ],
   });
+
+  useEffect(() => {
+    toggleSpinner(isLoading);
+  }, [isLoading]);
 
   return (
     <PageWrapper title="Collections">

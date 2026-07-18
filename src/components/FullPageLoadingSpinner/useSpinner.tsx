@@ -17,8 +17,8 @@ const createSpinnerStore = () => {
         return setValue(true);
       },
       toggleSpinner: (show?: boolean) => {
-        if (show) {
-          setValue(false);
+        if (show !== undefined) {
+          setValue(show);
         } else
           setValue((prevValue) => {
             return !prevValue;
