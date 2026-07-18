@@ -29,7 +29,7 @@ export function safeCtxValue(s: string | number | undefined): string {
 export const uploadChunkToCloudinary = async (props: {
   fileBuffer: Buffer;
   filename: string;
-  tags: string[];
+  tags?: string[];
 }): Promise<UploadApiResponse> => {
   const { fileBuffer, filename, tags } = props;
 
@@ -74,9 +74,24 @@ export const uploadChunkToCloudinary = async (props: {
 };
 
 export const deleteCloudinaryAssetsByTag = (tag: string) => {
-  return cloudinary.api.delete_resources_by_tag(tag);
+  if (tag) {
+    return cloudinary.api.delete_resources_by_tag(tag);
+  }
 };
 
 export const deleteCloudinaryAssetsByPublicIds = (...publicIds: string[]) => {
-  return cloudinary.api.delete_resources(publicIds);
+  if (publicIds.length) {
+    return cloudinary.api.delete_resources(publicIds);
+  }
+};
+
+export const addCloudinaryTagsToPublicIds = (props: {
+  publicIds: string[];
+  tags: string[];
+}) => {
+  const { publicIds, tags } = props;
+
+  if (tags.length && publicIds.length) {
+    return cloudinary.uploader.add_tag(tags.join(', '), publicIds);
+  }
 };

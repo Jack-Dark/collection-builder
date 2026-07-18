@@ -1,6 +1,7 @@
 import z from 'zod';
 
 export const baseCollectionItemSchema = z.object({
+  collectionId: z.number().min(1).describe('Collection ID'),
   customField1Value: z.string().describe('Custom Field 1'),
   customField2Value: z.string().describe('Custom Field 2'),
   customField3Value: z.string().describe('Custom Field 3'),
@@ -10,17 +11,23 @@ export const baseCollectionItemSchema = z.object({
   notes: z.string().describe('Notes'),
 });
 
+const imagesBaseSchema = {
+  newImageDetails: z
+    .object({
+      file: z.file().describe('Image file'),
+      previewUrl: z.string().describe('Image preview URL'),
+    })
+    .describe('New image details'),
+  publicId: z.string().describe('Image public ID'),
+};
+
 export const imagesSchema = {
-  form: z
+  ...imagesBaseSchema,
+  filesList: z.array(imagesBaseSchema.newImageDetails).describe('Images'),
+  filesOrPublicIdsList: z
     .array(
-      z.union([
-        z.string(),
-        z.object({
-          file: z.file(),
-          previewUrl: z.string(),
-        }),
-      ]),
+      z.union([imagesBaseSchema.publicId, imagesBaseSchema.newImageDetails]),
     )
     .describe('Images'),
-  serverFn: z.array(z.string()).describe('Images'),
+  publicIdsList: z.array(imagesBaseSchema.publicId).describe('Images'),
 };

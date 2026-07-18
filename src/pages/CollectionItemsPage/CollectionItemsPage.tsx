@@ -3,15 +3,18 @@ import type { RouteComponent } from '@tanstack/react-router';
 import ClearIcon from '@mui/icons-material/Clear';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 
-import { useCreateCollectionItem } from '#/api/routes/collection-items/create-collection-item/create-collection-item.react-query';
+import type { OnCreateCollectionItemsArgsDef } from '#/api/routes/collection-items/create-collection-item/create-collection-item.types';
+import type { OnUpdateCollectionItemsArgsDef } from '#/api/routes/collection-items/update-collection-item-by-id/update-collection-item-by-id.types';
+
+import { useCreateCollectionItems } from '#/api/routes/collection-items/create-collection-item/create-collection-item.react-query';
 import { useDeleteCollectionItemsByIds } from '#/api/routes/collection-items/delete-collection-items-by-ids/delete-collection-items-by-ids.react-query';
 import {
   useGetCollectionDetailsById,
   useInvalidateGetCollectionDetailsById,
 } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.react-query';
-import { useUpdateCollectionItemById } from '#/api/routes/collection-items/update-collection-item-by-id/update-collection-item-by-id.react-query';
+import { useUpdateCollectionItems } from '#/api/routes/collection-items/update-collection-item-by-id/update-collection-item-by-id.react-query';
 import { Button } from '#/components/Button';
 import { Table, useSelectedTableRowsStore } from '#/components/Table';
 import { PageWrapper } from '#/page-wrapper';
@@ -38,59 +41,66 @@ import { useSetCollectionItemsFiltersFromQueries } from './hooks/use-set-collect
 
 export const CollectionItemsPage: RouteComponent = () => {
   const { id } = CollectionRoute.useParams();
+  const searchParams = CollectionRoute.useSearch();
   const collectionId = Number(id);
-  const search = CollectionRoute.useSearch();
 
-  const { data } = useGetCollectionDetailsById({
-    requestArgs: { collectionId, params: search },
-  });
-
-  const { collection, pagination } = data;
+  const [pageTitle, setPageTitle] = useState('-');
 
   const invalidateGetCollectionDetailsById =
     useInvalidateGetCollectionDetailsById();
 
   const onFormSubmitSuccess = async () => {
-    await invalidateGetCollectionDetailsById({ id: collection.id });
-
-    resetEditingRowIds();
+    await invalidateGetCollectionDetailsById({ id: collectionId });
   };
 
-  const { onCreateCollectionItem } = useCreateCollectionItem({
+  const { onCreateCollectionItem } = useCreateCollectionItems({
     onSuccess: onFormSubmitSuccess,
   });
 
-  const { onUpdateCollectionItemById } = useUpdateCollectionItemById({
-    onSuccess: onFormSubmitSuccess,
-  });
+  const { onUpdateCollectionItems: onUpdateCollectionItemById } =
+    useUpdateCollectionItems({
+      onSuccess: onFormSubmitSuccess,
+    });
 
-  const { resetEditingRowIds } = useEditingCollectionItemsRowIds();
+  const { data } = useGetCollectionDetailsById({
+    requestArgs: { collectionId, params: searchParams },
+  });
 
   const form = useAddCollectionItemForm({
     defaultValues: addCollectionItemFormDefaultValues,
     onSubmit: async ({ value: { collectionItems } }) => {
-      // TODO - UPDATE REQUESTS TO SUPPORT ADDING/UPDATING MULTIPLE RECORDS
-      const [record] = collectionItems;
-      if (record.createdAt) {
-        await onUpdateCollectionItemById(record);
+      const editedRecords = collectionItems.filter(({ isEditing }) => {
+        return isEditing;
+      });
+
+      const isUpdatedRecords = editedRecords.some(({ createdAt }) => {
+        return createdAt;
+      });
+
+      if (isUpdatedRecords) {
+        await onUpdateCollectionItemById(
+          editedRecords as OnUpdateCollectionItemsArgsDef[],
+        );
       } else {
-        const {
-          createdAt: _createdAt,
-          id,
-          updatedAt: _updatedAt,
-          userId: _userId,
-          ...newCollectionItemData
-        } = record;
-        await onCreateCollectionItem({
-          ...newCollectionItemData,
-          id: String(id),
+        const newRecords = editedRecords.map((record) => {
+          const {
+            createdAt: _createdAt,
+            id,
+            isEditing: _isEditing,
+            updatedAt: _updatedAt,
+            userId: _userId,
+            ...newCollectionItemData
+          } = record;
+
+          return { ...newCollectionItemData, id: String(id) };
         });
+        await onCreateCollectionItem(
+          newRecords as OnCreateCollectionItemsArgsDef[],
+        );
       }
     },
     validators: {
       onChange: createOrUpdateCollectionItemFormSchema,
-      // onDynamic: createOrUpdateCollectionItemFormSchema,
-      // onMount: createOrUpdateCollectionItemFormSchema,
       onSubmit: createOrUpdateCollectionItemFormSchema,
     },
   });
@@ -99,11 +109,7 @@ export const CollectionItemsPage: RouteComponent = () => {
 
   return (
     <PageWrapper
-      title={
-        collection?.name
-          ? `${collection.name} (${pagination.totalRecords})`
-          : '-'
-      }
+      title={`${data?.collection.name} (${data?.pagination.totalRecords})`}
     >
       <form
         onSubmit={(e) => {
@@ -111,7 +117,10 @@ export const CollectionItemsPage: RouteComponent = () => {
           form.handleSubmit();
         }}
       >
-        <CreateOrUpdateCollectionItemFormTable form={form} />
+        <CreateOrUpdateCollectionItemFormTable
+          form={form}
+          setPageTitle={setPageTitle}
+        />
       </form>
     </PageWrapper>
   );
@@ -120,7 +129,10 @@ export const CollectionItemsPage: RouteComponent = () => {
 export const CreateOrUpdateCollectionItemFormTable = withAddCollectionItemForm({
   /** These values are only used for type-checking, and are not used at runtime */
   defaultValues: addCollectionItemFormDefaultValues,
-  render: ({ form }) => {
+  props: {
+    setPageTitle: (_pageTitle: string) => {},
+  },
+  render: ({ form, setPageTitle }) => {
     const { id } = CollectionRoute.useParams();
     const collectionId = Number(id);
     const search = CollectionRoute.useSearch();
@@ -128,6 +140,9 @@ export const CreateOrUpdateCollectionItemFormTable = withAddCollectionItemForm({
     const { data } = useGetCollectionDetailsById({
       onSuccess: ({ items }) => {
         form.setFieldValue('collectionItems', items);
+        resetEditingRowIds();
+        resetSelectedTableRows();
+        setPageTitle(`${collection.name} (${pagination.totalRecords})`);
       },
       requestArgs: { collectionId, params: search },
     });
@@ -142,7 +157,7 @@ export const CreateOrUpdateCollectionItemFormTable = withAddCollectionItemForm({
     const { addToEditingRowIds, editingRowIds, isEditing, resetEditingRowIds } =
       useEditingCollectionItemsRowIds();
 
-    const { getSelectedRowIds, selectedTableRows } =
+    const { getSelectedRowIds, resetSelectedTableRows, selectedTableRows } =
       useSelectedTableRowsStore();
 
     const columns = useMemo(() => {
@@ -205,6 +220,21 @@ export const CreateOrUpdateCollectionItemFormTable = withAddCollectionItemForm({
                               Icon={EditIcon}
                               onClick={() => {
                                 addToEditingRowIds(...selectedRowIds);
+
+                                const selectedRowsInEditMode =
+                                  collectionItemsField.state.value.map(
+                                    (rowRecord) => {
+                                      const isEditing = selectedRowIds.includes(
+                                        String(rowRecord.id),
+                                      );
+
+                                      return { ...rowRecord, isEditing };
+                                    },
+                                  );
+
+                                collectionItemsField.setValue(
+                                  selectedRowsInEditMode,
+                                );
                               }}
                               text="Edit"
                               variant="secondary"
@@ -213,8 +243,8 @@ export const CreateOrUpdateCollectionItemFormTable = withAddCollectionItemForm({
                             <Button
                               disabled={isEditing}
                               Icon={DeleteIcon}
-                              onClick={() => {
-                                onDeleteCollectionItemsByIds({
+                              onClick={async () => {
+                                await onDeleteCollectionItemsByIds({
                                   collectionItemIds: selectedRowIds.map(
                                     (id) => {
                                       return Number(id);

@@ -23,7 +23,7 @@ export const useGetPaginatedCollections = <
   return useGenericFetchQuery({
     fallbackErrorMessage: 'Unable to retrieve collections.',
     queryFn: getPaginatedCollectionsServerFn,
-    queryKey: [reactQueryKeys.getPaginatedCollections, props.requestArgs],
+    queryKey: [reactQueryKeys.getPaginatedCollections],
     ...props,
     showLoading: true,
   });

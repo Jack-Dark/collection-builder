@@ -5,21 +5,25 @@ import {
   imagesSchema,
 } from '../base-collection-item.schema';
 
-const createCollectionItemBaseSchema = baseCollectionItemSchema.extend({
-  collectionId: z.number().min(1).describe('Collection ID'),
+export const createCollectionItemsFormSchema = baseCollectionItemSchema.extend({
   createdAt: z.undefined().optional().describe('Created At'),
+  id: z.string().describe('ID'),
+  images: imagesSchema.filesList,
+  isEditing: z.boolean().describe('Is Editing'),
   updatedAt: z.undefined().optional().describe('Updated At'),
   userId: z.undefined().optional().describe('User ID'),
 });
 
-export const createCollectionItemFormSchema =
-  createCollectionItemBaseSchema.extend({
-    id: z.string().describe('ID'),
-    images: imagesSchema.form,
+export const onCreateCollectionItemsArgsSchema =
+  baseCollectionItemSchema.extend({
+    images: imagesSchema.filesList,
   });
 
-export const createCollectionItemServerFnSchema =
-  createCollectionItemBaseSchema.extend({
-    id: z.undefined().optional().describe('ID'),
-    images: imagesSchema.serverFn,
-  });
+export const createCollectionItemsServerFnSchema = z.object({
+  publicIds: z.array(z.array(z.string())),
+  records: z.array(
+    baseCollectionItemSchema.extend({
+      images: imagesSchema.publicIdsList,
+    }),
+  ),
+});

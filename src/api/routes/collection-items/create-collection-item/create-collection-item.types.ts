@@ -2,20 +2,25 @@ import type z from 'zod';
 
 import type { QueryResponseDef } from '#/api/db-tables-schema.types';
 
-import type { createCollectionItemDbQuery } from './create-collection-item.db-query';
+import type { createCollectionItemsDbQuery } from './create-collection-item.db-query';
 import type {
-  createCollectionItemFormSchema,
-  createCollectionItemServerFnSchema,
+  createCollectionItemsFormSchema,
+  createCollectionItemsServerFnSchema,
+  onCreateCollectionItemsArgsSchema,
 } from './create-collection-item.schema';
 
-export type CreateCollectionItemFormDataSchemaDef = z.output<
-  typeof createCollectionItemFormSchema
+export type CreateCollectionItemsFormDataSchemaDef = z.output<
+  typeof createCollectionItemsFormSchema
 >;
 
-export type CreateCollectionItemRequestArgsDef = z.output<
-  typeof createCollectionItemServerFnSchema
+export type OnCreateCollectionItemsArgsDef = z.output<
+  typeof onCreateCollectionItemsArgsSchema
 >;
 
-export type CreateCollectionItemResponseDef = QueryResponseDef<
-  typeof createCollectionItemDbQuery
+export type CreateCollectionItemsRequestArgsDef = z.output<
+  typeof createCollectionItemsServerFnSchema
+>;
+
+export type CreateCollectionItemsResponseDef = QueryResponseDef<
+  typeof createCollectionItemsDbQuery
 >;

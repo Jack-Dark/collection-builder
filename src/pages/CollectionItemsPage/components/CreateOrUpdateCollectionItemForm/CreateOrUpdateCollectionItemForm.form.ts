@@ -1,7 +1,7 @@
 import { createFormHook, createFormHookContexts } from '@tanstack/react-form';
 import { v4 as uuidv4 } from 'uuid';
 
-import type { CreateCollectionItemFormDataSchemaDef } from '#/api/routes/collection-items/create-collection-item/create-collection-item.types';
+import type { CreateCollectionItemsFormDataSchemaDef } from '#/api/routes/collection-items/create-collection-item/create-collection-item.types';
 
 import { Button } from '#/components/Button';
 import { CheckboxField } from '#/components/Fields/CheckboxField';
@@ -16,7 +16,7 @@ export const createNewCollectionItem = ({
   collectionId,
 }: {
   collectionId: number;
-}): CreateCollectionItemFormDataSchemaDef => {
+}): CreateCollectionItemsFormDataSchemaDef => {
   const id = uuidv4();
 
   return {
@@ -27,6 +27,7 @@ export const createNewCollectionItem = ({
     editionDetails: '',
     id,
     images: [],
+    isEditing: true,
     isSpecialEdition: Boolean(),
     name: '',
     notes: '',

@@ -1,4 +1,4 @@
 export type UploadFileToCloudinaryPropsDef = {
   file: File;
-  tags: string[];
+  tags?: string[];
 };
