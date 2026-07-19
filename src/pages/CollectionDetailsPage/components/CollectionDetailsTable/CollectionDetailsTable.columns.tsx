@@ -26,9 +26,9 @@ import { TableCellActionsMenu } from '../../../../components/TableCellActionsMen
 import { useEditingCollectionItemsRowIds } from '../../../CollectionsListPage/hooks/use-editing-collections-row-ids';
 import { useTableCustomFieldsStore } from '../../hooks/use-table-custom-fields-store';
 import { CollectionDetailsCustomFieldCell } from './components/CollectionDetailsCustomFieldCell';
+import { CollectionDetailsEditionCell } from './components/CollectionDetailsEditionCell';
 import { CollectionDetailsNotesCell } from './components/CollectionDetailsNotesCell';
 import {
-  CreateOrUpdateCollectionItemFormEditionFields,
   CreateOrUpdateCollectionItemFormImagesField,
   CreateOrUpdateCollectionItemFormNameField,
   CreateOrUpdateCollectionItemFormActions,
@@ -278,16 +278,13 @@ export const getCollectionItemsTableColumns = (
       }),
     columnHelper.accessor('editionDetails', {
       cell: ({ getValue, row }) => {
-        const { getIsEditingRowId } = useEditingCollectionItemsRowIds();
-        const isEditingRow = getIsEditingRowId(row.id);
-
-        return isEditingRow ? (
-          <CreateOrUpdateCollectionItemFormEditionFields
+        return (
+          <CollectionDetailsEditionCell
             form={form}
             index={row.index}
+            rowId={row.id}
+            value={getValue()}
           />
-        ) : (
-          <p>{getValue() || '-'}</p>
         );
       },
       header: 'Edition',
