@@ -19,7 +19,7 @@ import {
   CollectionDetailsSubmitButton,
 } from '../CreateOrUpdateCollectionItemForm';
 
-export const CollectionDetailsTableActions = withCollectionDetailsForm({
+export const CollectionDetailsTableRowActions = withCollectionDetailsForm({
   /** These values are only used for type-checking, and are not used at runtime */
   defaultValues: addCollectionItemFormDefaultValues,
   props: {

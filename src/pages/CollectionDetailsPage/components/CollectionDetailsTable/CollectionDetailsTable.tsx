@@ -5,17 +5,17 @@ import { Table, useSelectedTableRowsStore } from '#/components/Table';
 import { Route as CollectionRoute } from '#/routes/_protected/collections/$id';
 
 import { useEditingCollectionItemsRowIds } from '../../../CollectionsListPage/hooks/use-editing-collections-row-ids';
+import {
+  addCollectionItemFormDefaultValues,
+  withCollectionDetailsForm,
+} from '../../CollectionDetailsPage.form';
 import { useCollectionItemsFiltersProps } from '../../hooks/use-collection-items-filters-props';
 import { useCollectionItemsPagination } from '../../hooks/use-collection-items-pagination';
 import { useCollectionItemsSearch } from '../../hooks/use-collection-items-search';
 import { useCollectionItemsSort } from '../../hooks/use-collection-items-sort';
 import { useTableCustomFieldsStore } from '../../hooks/use-table-custom-fields-store';
-import {
-  addCollectionItemFormDefaultValues,
-  withCollectionDetailsForm,
-} from '../../CollectionDetailsPage.form';
 import { getCollectionItemsTableColumns } from './CollectionDetailsTable.columns';
-import { CollectionDetailsTableActions } from './components/CollectionDetailsTableActions';
+import { CollectionDetailsTableRowActions } from './components/CollectionDetailsTableRowActions';
 import { CollectionDetailsFiltersContent } from './components/CollectionItemsFiltersContent';
 
 export const CollectionDetailsTable = withCollectionDetailsForm({
@@ -106,7 +106,7 @@ export const CollectionDetailsTable = withCollectionDetailsForm({
             <Table
               AboveTableComponent={() => {
                 return (
-                  <CollectionDetailsTableActions
+                  <CollectionDetailsTableRowActions
                     form={form}
                     onCancel={onCancel}
                   />

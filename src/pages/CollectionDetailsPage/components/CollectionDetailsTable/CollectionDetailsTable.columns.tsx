@@ -1,11 +1,6 @@
 import type { AppFieldExtendedReactFormApi } from '@tanstack/react-form';
-import type {
-  AccessorKeyColumnDefBase,
-  CellContext,
-} from '@tanstack/react-table';
-import type { PropsWithChildren } from 'react';
+import type { AccessorKeyColumnDefBase } from '@tanstack/react-table';
 
-import { useKeyHold } from '@tanstack/react-hotkeys';
 import { createColumnHelper } from '@tanstack/react-table';
 
 import type { CollectionItemRecordDef } from '#/api/routes/collection-items/collection-item.types';
@@ -13,11 +8,7 @@ import type { CollectionRecordDef } from '#/api/routes/collections/collection.ty
 
 import { thumbnailSize } from '#/api/routes/cloudinary/cloudinary-url';
 import { CheckboxField } from '#/components/Fields/CheckboxField';
-import {
-  getRowRange,
-  useLastSelectedTableRowsStore,
-  useSelectedTableRowsStore,
-} from '#/components/Table';
+import { useLastSelectedTableRowsStore } from '#/components/Table';
 import { ZoomableThumbnail } from '#/components/ZoomableThumbnail';
 
 import type { CreateOrUpdateCollectionItemFormDataDef } from '../../CollectionDetailsPage.types';
@@ -25,6 +16,7 @@ import type { CreateOrUpdateCollectionItemFormDataDef } from '../../CollectionDe
 import { useEditingCollectionItemsRowIds } from '../../../CollectionsListPage/hooks/use-editing-collections-row-ids';
 import { useTableCustomFieldsStore } from '../../hooks/use-table-custom-fields-store';
 import { CollectionDetailsActionsCell } from './CollectionDetailsActionsCell';
+import { CollectionDetailsNameCell } from './CollectionDetailsNameCell';
 import { CollectionDetailsNameField } from './CollectionDetailsNameCell/components/CollectionDetailsNameField';
 import { CollectionDetailsCustomFieldCell } from './components/CollectionDetailsCustomFieldCell';
 import { CollectionDetailsEditionCell } from './components/CollectionDetailsEditionCell';
@@ -290,70 +282,4 @@ export const getCollectionItemsTableColumns = (
       size: 40,
     }),
   ].filter(Boolean) as AccessorKeyColumnDefBase<CollectionItemRecordDef>[];
-};
-
-export const CollectionDetailsNameCell = (
-  props: PropsWithChildren<CellContext<CollectionItemRecordDef, string>>,
-) => {
-  const { children, row, table } = props;
-  const isShiftHeld = useKeyHold('Shift');
-
-  const { lastSelectedRowId, setLastSelectedRowId } =
-    useLastSelectedTableRowsStore();
-
-  const { setSelectedTableRows } = useSelectedTableRowsStore();
-
-  const { isEditing } = useEditingCollectionItemsRowIds();
-
-  return (
-    <div className="flex items-center gap-2">
-      <CheckboxField
-        checked={row.getIsSelected()}
-        disabled={isEditing || !row.getCanSelect()}
-        onCheckedChange={(checked) => {
-          const { rows } = table.getRowModel();
-          const rowId = row.id;
-
-          if (isShiftHeld && lastSelectedRowId) {
-            const currentIndex = row.index;
-            const prevIndex = rows.findIndex(({ id }) => {
-              return id === lastSelectedRowId;
-            });
-
-            const rowsToToggle = getRowRange({
-              currentIndex,
-              prevIndex,
-              rows,
-            });
-
-            rowsToToggle.forEach((row) => {
-              row.toggleSelected(checked);
-            });
-          } else {
-            row.toggleSelected();
-          }
-
-          table.setRowSelection((prevSelectedRows) => {
-            const selectedRows = {
-              ...prevSelectedRows,
-            };
-            if (checked) {
-              selectedRows[rowId] = true;
-            } else {
-              delete selectedRows[rowId];
-            }
-
-            setSelectedTableRows(selectedRows);
-
-            return selectedRows;
-          });
-          setLastSelectedRowId(rowId);
-
-          // ? clears any text highlighting
-          document.getSelection()?.removeAllRanges();
-        }}
-      />
-      {children}
-    </div>
-  );
 };
