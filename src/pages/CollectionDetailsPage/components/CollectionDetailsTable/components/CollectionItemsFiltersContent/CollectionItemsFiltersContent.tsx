@@ -14,15 +14,6 @@ import { CheckboxField } from '#/components/Fields/CheckboxField';
 import { useCollectionItemsFiltersStore } from '#/pages/CollectionDetailsPage/hooks/use-collection-items-filters-store';
 import { Route } from '#/routes/_protected/collections/$id';
 
-type CollectionItemsFiltersContentPropsDef = {
-  collection: CollectionRecordDef;
-  customFields: {
-    customField1Values: string[];
-    customField2Values: string[];
-    customField3Values: string[];
-  };
-};
-
 const FiltersBlock = (
   props: PropsWithChildren<{
     label: string | null;
@@ -50,8 +41,17 @@ const FiltersBlock = (
   );
 };
 
-export const CollectionItemsFiltersContent = (
-  props: CollectionItemsFiltersContentPropsDef,
+type CollectionDetailsFiltersContentPropsDef = {
+  collection: CollectionRecordDef;
+  customFields: {
+    customField1Values: string[];
+    customField2Values: string[];
+    customField3Values: string[];
+  };
+};
+
+export const CollectionDetailsFiltersContent = (
+  props: CollectionDetailsFiltersContentPropsDef,
 ) => {
   const { collection, customFields } = props;
 
