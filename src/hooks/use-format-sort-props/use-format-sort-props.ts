@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 
 import type { PaginationQueriesSchemaDef } from '#/api/pagination/pagination.types';
 import type { SortItemDef } from '#/components/Table';
-import type { UnformattedSortItemDef } from '#/pages/CollectionItemsPage/components/CollectionItemsFiltersContent';
+import type { UnformattedSortItemDef } from '#/pages/CollectionItemsPage/components/CollectionDetailsTable/components/CollectionItemsFiltersContent';
 
 import { sortDirectionOptions } from '#/api/pagination/pagination.constants';
 

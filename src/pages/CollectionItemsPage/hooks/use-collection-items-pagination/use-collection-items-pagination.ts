@@ -2,7 +2,7 @@ import type { PaginationMetadata } from '#/api/pagination/pagination.types';
 
 import { Route as CollectionRoute } from '#/routes/_protected/collections/$id';
 
-import { useOnUpdateCollectionItemsQueries } from '../../components/CollectionItemsFiltersContent';
+import { useOnUpdateCollectionItemsQueries } from '../../components/CollectionDetailsTable/components/CollectionItemsFiltersContent';
 
 export const useCollectionItemsPagination = (props: {
   pagination: PaginationMetadata;

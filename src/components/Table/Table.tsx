@@ -19,6 +19,7 @@ import { useEffect, useMemo, useRef } from 'react';
 import { getCreateDefaultZustandStore } from '#/helpers/get-create-default-zustand-state';
 
 import type { FiltersButtonPropsDef } from './components/FilterButton/FilterButton.types';
+import type { SearchProps } from './components/Search/Search.types';
 
 import { SelectField } from '../Fields/SelectField';
 import { FilterButton } from './components/FilterButton';
@@ -72,12 +73,7 @@ export type TablePropsDef<T> = Omit<
         value: number;
       };
     };
-    search?: {
-      onChange: (search: string) => void | Promise<void>;
-      onClickSearchNotes: (checked: boolean) => void;
-      searchNotes: boolean;
-      value: string;
-    };
+    search?: SearchProps;
     sort?: {
       items: SortItemDef<keyof T>[];
       onChange: (sort: SortItemDef<keyof T> | null) => void | Promise<void>;
@@ -233,14 +229,7 @@ export const Table = <TData,>({
       {showActionsRow && (
         <div className={`grid ${actionsColumns} items-stretch gap-4`}>
           {filters && <FilterButton {...filters} />}
-          {search && (
-            <Search
-              onClickSearchNotes={search.onClickSearchNotes}
-              onValueChange={search.onChange}
-              searchNotes={search.searchNotes}
-              value={search.value}
-            />
-          )}
+          {search && <Search {...search} />}
           {sort ? (
             <SelectField
               items={sort.items}

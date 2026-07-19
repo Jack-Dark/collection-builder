@@ -1,6 +1,13 @@
 export type SearchProps = {
-  onClickSearchNotes: (checked: boolean) => void;
-  onValueChange: (search: string) => void | Promise<void>;
-  searchNotes: boolean;
+  onChange: (search: string) => void | Promise<void>;
   value: string;
-};
+} & (
+  | {
+      onClickSearchNotes?: never;
+      searchNotes?: never;
+    }
+  | {
+      onClickSearchNotes: (checked: boolean) => void;
+      searchNotes: boolean;
+    }
+);

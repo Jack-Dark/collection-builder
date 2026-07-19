@@ -21,10 +21,10 @@ import { PageWrapper } from '#/page-wrapper';
 import { createOrUpdateCollectionFormSchema } from '#/pages/CollectionsListPage/collection-form.schema';
 import { Route } from '#/routes/_protected/collections';
 
-import type { UnformattedSortItemDef } from '../CollectionItemsPage/components/CollectionItemsFiltersContent';
+import type { UnformattedSortItemDef } from '../CollectionItemsPage/components/CollectionDetailsTable/components/CollectionItemsFiltersContent';
 import type { CreateOrUpdateCollectionFormDataSchemaDef } from './components/AddCollectionFormTableRow/types';
 
-import { formatSortItems } from '../CollectionItemsPage/components/CollectionItemsFiltersContent';
+import { formatSortItems } from '../CollectionItemsPage/components/CollectionDetailsTable/components/CollectionItemsFiltersContent';
 import { getCollectionsListTableColumns } from './columns';
 import {
   addCollectionFormDefaultValues,

@@ -22,8 +22,9 @@ import {
 import { ZoomableThumbnail } from '#/components/ZoomableThumbnail';
 import { Route as CollectionRoute } from '#/routes/_protected/collections/$id';
 
-import { TableCellActionsMenu } from '../../components/TableCellActionsMenu';
-import { useEditingCollectionItemsRowIds } from '../CollectionsListPage/hooks/use-editing-collections-row-ids';
+import { TableCellActionsMenu } from '../../../../components/TableCellActionsMenu';
+import { useEditingCollectionItemsRowIds } from '../../../CollectionsListPage/hooks/use-editing-collections-row-ids';
+import { useTableCustomFieldsStore } from '../../hooks/use-table-custom-fields-store';
 import {
   CreateOrUpdateCollectionItemFormCustomField,
   CreateOrUpdateCollectionItemFormEditionFields,
@@ -31,8 +32,7 @@ import {
   CreateOrUpdateCollectionItemFormNameField,
   CreateOrUpdateCollectionItemFormNotesField,
   CreateOrUpdateCollectionItemFormActions,
-} from './components/CreateOrUpdateCollectionItemForm';
-import { useTableCustomFieldsStore } from './hooks/use-table-custom-fields-store';
+} from '../CreateOrUpdateCollectionItemForm';
 
 const columnHelper = createColumnHelper<CollectionItemRecordDef>();
 

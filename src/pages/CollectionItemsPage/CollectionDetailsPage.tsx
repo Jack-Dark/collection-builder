@@ -23,8 +23,8 @@ import { PageWrapper } from '#/page-wrapper';
 import { Route as CollectionRoute } from '#/routes/_protected/collections/$id';
 
 import { useEditingCollectionItemsRowIds } from '../CollectionsListPage/hooks/use-editing-collections-row-ids';
-import { getCollectionItemsTableColumns } from './CollectionItemsPage.columns';
-import { CollectionItemsFiltersContent } from './components/CollectionItemsFiltersContent';
+import { getCollectionItemsTableColumns } from './components/CollectionDetailsTable/CollectionDetailsTable.columns';
+import { CollectionItemsFiltersContent } from './components/CollectionDetailsTable/components/CollectionItemsFiltersContent';
 import {
   AddNewCollectionItemButton,
   CreateOrUpdateCollectionItemSubmitButton,

@@ -11,9 +11,8 @@ import type { SetZustandStoreFnDef } from '#/helpers/get-create-default-zustand-
 import { sortDirectionOptions } from '#/api/pagination/pagination.constants';
 import { Button } from '#/components/Button';
 import { CheckboxField } from '#/components/Fields/CheckboxField';
+import { useCollectionItemsFiltersStore } from '#/pages/CollectionItemsPage/hooks/use-collection-items-filters-store';
 import { Route } from '#/routes/_protected/collections/$id';
-
-import { useCollectionItemsFiltersStore } from '../../hooks/use-collection-items-filters-store';
 
 type CollectionItemsFiltersContentPropsDef = {
   collection: CollectionRecordDef;

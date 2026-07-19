@@ -1,1 +1,1 @@
-export * from './CollectionItemsPage';
+export * from './CollectionDetailsPage';

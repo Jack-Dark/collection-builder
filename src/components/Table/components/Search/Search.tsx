@@ -11,13 +11,13 @@ import { SwitchField } from '#/components/Fields/SwitchField';
 import type { SearchProps } from './Search.types';
 
 export const Search = (props: SearchProps) => {
-  const { onClickSearchNotes, onValueChange, searchNotes, value } = props;
+  const { onChange, onClickSearchNotes, searchNotes, value } = props;
 
   const [text, setText] = useState(value);
 
   const debouncedSearch = useMemo(() => {
     return _.debounce((value) => {
-      onValueChange(value);
+      onChange(value);
     }, 300);
   }, []);
 
@@ -38,7 +38,7 @@ export const Search = (props: SearchProps) => {
             Icon={ClearIcon}
             onClick={() => {
               setText('');
-              onValueChange('');
+              onChange('');
             }}
             size="xs"
             variant="ghost"
@@ -50,12 +50,14 @@ export const Search = (props: SearchProps) => {
         )}
       </div>
 
-      <SwitchField
-        checked={searchNotes}
-        className="absolute right-0 h-full py-1 pl-1 pr-2 flex items-stretch"
-        label="Search Notes"
-        onCheckedChange={onClickSearchNotes}
-      />
+      {searchNotes && (
+        <SwitchField
+          checked={searchNotes}
+          className="absolute right-0 h-full py-1 pl-1 pr-2 flex items-stretch"
+          label="Search Notes"
+          onCheckedChange={onClickSearchNotes}
+        />
+      )}
 
       <input
         className="input size-full pl-10 pr-38"

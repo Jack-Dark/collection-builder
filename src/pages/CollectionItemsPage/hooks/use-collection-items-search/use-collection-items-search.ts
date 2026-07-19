@@ -1,4 +1,4 @@
-import { useOnUpdateCollectionItemsQueries } from '../../components/CollectionItemsFiltersContent';
+import { useOnUpdateCollectionItemsQueries } from '../../components/CollectionDetailsTable/components/CollectionItemsFiltersContent';
 
 export const useCollectionItemsSearch = () => {
   const { onUpdateCollectionItemsQueries, searchQueries } =
