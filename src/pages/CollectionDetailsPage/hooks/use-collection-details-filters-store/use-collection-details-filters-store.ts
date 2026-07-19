@@ -1,9 +1,9 @@
-import type { CollectionItemsFiltersSchemaDef } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.types';
+import type { CollectionDetailsFiltersSchemaDef } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.types';
 
 import { getCreateDefaultZustandStore } from '#/helpers/get-create-default-zustand-state';
 
-const createCollectionItemsFiltersStore = (
-  defaultValues: CollectionItemsFiltersSchemaDef,
+const createCollectionDetailsFiltersStore = (
+  defaultValues: CollectionDetailsFiltersSchemaDef,
 ) => {
   const createCustomField1Store = getCreateDefaultZustandStore<string[]>(
     defaultValues.customField1,
@@ -20,7 +20,7 @@ const createCollectionItemsFiltersStore = (
     const customField2Store = createCustomField2Store();
     const customField3Store = createCustomField3Store();
 
-    const getAllFilters = (): CollectionItemsFiltersSchemaDef => {
+    const getAllFilters = (): CollectionDetailsFiltersSchemaDef => {
       return {
         customField1: customField1Store.getValue(),
         customField2: customField2Store.getValue(),
@@ -58,8 +58,8 @@ const createCollectionItemsFiltersStore = (
       },
       setAllFilters: (
         valueOrSetStore:
-          | CollectionItemsFiltersSchemaDef
-          | ((prevValue: CollectionItemsFiltersSchemaDef) => void),
+          | CollectionDetailsFiltersSchemaDef
+          | ((prevValue: CollectionDetailsFiltersSchemaDef) => void),
       ) => {
         if (typeof valueOrSetStore === 'function') {
           const currentValue = getAllFilters();
@@ -76,10 +76,9 @@ const createCollectionItemsFiltersStore = (
   };
 };
 
-export const useCollectionItemsFiltersStore = createCollectionItemsFiltersStore(
-  {
+export const useCollectionDetailsFiltersStore =
+  createCollectionDetailsFiltersStore({
     customField1: [],
     customField2: [],
     customField3: [],
-  },
-);
+  });

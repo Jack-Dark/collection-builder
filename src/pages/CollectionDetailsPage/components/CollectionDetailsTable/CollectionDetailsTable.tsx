@@ -9,7 +9,7 @@ import {
   addCollectionItemFormDefaultValues,
   withCollectionDetailsForm,
 } from '../../CollectionDetailsPage.form';
-import { useCollectionItemsFiltersProps } from '../../hooks/use-collection-items-filters-props';
+import { useCollectionDetailsFiltersProps } from '../../hooks/use-collection-details-filters-props';
 import { useCollectionItemsPagination } from '../../hooks/use-collection-items-pagination';
 import { useCollectionItemsSearch } from '../../hooks/use-collection-items-search';
 import { useCollectionItemsSort } from '../../hooks/use-collection-items-sort';
@@ -94,7 +94,7 @@ export const CollectionDetailsTable = withCollectionDetailsForm({
       selectedRowIds,
     ]);
 
-    const filtersProps = useCollectionItemsFiltersProps();
+    const filtersProps = useCollectionDetailsFiltersProps();
     const searchProps = useCollectionItemsSearch();
     const paginationProps = useCollectionItemsPagination({ pagination });
     const sortProps = useCollectionItemsSort({ collection });

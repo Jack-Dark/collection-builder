@@ -4,7 +4,7 @@ import type { CollectionItemsTableColumn } from '../collection-item.types';
 
 import { getRequiredPaginationQueriesSchema } from '../../../pagination/pagination.schema';
 
-export const collectionItemsFiltersSchema = z
+export const collectionDetailsFiltersSchema = z
   .object({
     customField1: z.array(z.string()).optional().default([]),
     customField2: z.array(z.string()).optional().default([]),
@@ -17,12 +17,12 @@ export const collectionItemsFiltersSchema = z
     customField3: [],
   });
 
-export const collectionItemsSearchQueriesSchema =
+export const collectionDetailsSearchQueriesSchema =
   getRequiredPaginationQueriesSchema<CollectionItemsTableColumn>(
     'customField1Value',
   ).and(
     z.object({
-      filters: collectionItemsFiltersSchema,
+      filters: collectionDetailsFiltersSchema,
       searchNotes: z
         .boolean()
         .describe('Include "Notes" in search')
@@ -32,5 +32,5 @@ export const collectionItemsSearchQueriesSchema =
 
 export const getCollectionDetailsByIdSchema = z.object({
   collectionId: z.number(),
-  params: collectionItemsSearchQueriesSchema,
+  params: collectionDetailsSearchQueriesSchema,
 });

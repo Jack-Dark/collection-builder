@@ -5,11 +5,10 @@ import { useRef } from 'react';
 import { createCloudinaryUrl } from '#/api/routes/cloudinary/cloudinary-url';
 import { Image } from '#/components/Image';
 import { SimpleErrorBoundary } from '#/components/SimpleErrorBoundary';
-
 import {
   addCollectionItemFormDefaultValues,
   withCollectionDetailsForm,
-} from '../../../../../CollectionDetailsPage.form';
+} from '#/pages/CollectionDetailsPage/CollectionDetailsPage.form';
 
 export const CollectionDetailsImagesField = withCollectionDetailsForm({
   /** These values are only used for type-checking, and are not used at runtime */

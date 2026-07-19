@@ -11,7 +11,7 @@ import type { SetZustandStoreFnDef } from '#/helpers/get-create-default-zustand-
 import { sortDirectionOptions } from '#/api/pagination/pagination.constants';
 import { Button } from '#/components/Button';
 import { CheckboxField } from '#/components/Fields/CheckboxField';
-import { useCollectionItemsFiltersStore } from '#/pages/CollectionDetailsPage/hooks/use-collection-items-filters-store';
+import { useCollectionDetailsFiltersStore } from '#/pages/CollectionDetailsPage/hooks/use-collection-details-filters-store';
 import { Route } from '#/routes/_protected/collections/$id';
 
 const FiltersBlock = (
@@ -60,7 +60,7 @@ export const CollectionDetailsFiltersContent = (
     customField2Store,
     customField3Store,
     saveAllFiltersSnapshot,
-  } = useCollectionItemsFiltersStore();
+  } = useCollectionDetailsFiltersStore();
 
   const getOnCheckedChange = (props: {
     setValue: SetZustandStoreFnDef<string[]>;

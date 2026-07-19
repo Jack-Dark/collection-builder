@@ -3,9 +3,9 @@ import type { FiltersButtonPropsDef } from '#/components/Table/components/Filter
 import { Route as CollectionRoute } from '#/routes/_protected/collections/$id';
 
 import { useOnUpdateCollectionItemsQueries } from '../../components/CollectionDetailsTable/components/CollectionItemsFiltersContent';
-import { useCollectionItemsFiltersStore } from '../use-collection-items-filters-store';
+import { useCollectionDetailsFiltersStore } from '../use-collection-details-filters-store';
 
-export const useCollectionItemsFiltersProps = (): Omit<
+export const useCollectionDetailsFiltersProps = (): Omit<
   FiltersButtonPropsDef,
   'FiltersContent'
 > => {
@@ -21,7 +21,7 @@ export const useCollectionItemsFiltersProps = (): Omit<
     defaultValues,
     getAllFilters: getFilters,
     restoreAllFiltersFromSnapshot,
-  } = useCollectionItemsFiltersStore();
+  } = useCollectionDetailsFiltersStore();
 
   const { onUpdateCollectionItemsQueries } =
     useOnUpdateCollectionItemsQueries();
