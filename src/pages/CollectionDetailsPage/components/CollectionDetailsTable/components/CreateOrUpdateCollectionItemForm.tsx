@@ -7,7 +7,6 @@ import { useRef } from 'react';
 import { createCloudinaryUrl } from '#/api/routes/cloudinary/cloudinary-url';
 import { Button } from '#/components/Button';
 import { Image } from '#/components/Image';
-import { Popover } from '#/components/Popover';
 import { SimpleErrorBoundary } from '#/components/SimpleErrorBoundary';
 import { getFieldError } from '#/helpers/get-field-error';
 import { useEditingCollectionItemsRowIds } from '#/pages/CollectionsListPage/hooks/use-editing-collections-row-ids';
@@ -142,77 +141,6 @@ export const CreateOrUpdateCollectionItemFormImagesField =
                         />
                       </SimpleErrorBoundary>
                     </>
-                  );
-                }}
-              </form.AppField>
-            );
-          }}
-        </form.AppField>
-      );
-    },
-  });
-
-export const CreateOrUpdateCollectionItemFormCustomField =
-  withCollectionDetailsForm({
-    /** These values are only used for type-checking, and are not used at runtime */
-    defaultValues: addCollectionItemFormDefaultValues,
-    props: {
-      addToCustomFieldValues: (_value: string) => {},
-      fieldName: '',
-      fieldValues: [''],
-      index: 0,
-      label: '',
-    },
-    render: ({
-      addToCustomFieldValues,
-      fieldName,
-      fieldValues,
-      form,
-      index,
-      label,
-    }) => {
-      const customFieldName = fieldName as `customField${1 | 2 | 3}Value`;
-
-      return (
-        <form.AppField mode="array" name="collectionItems">
-          {() => {
-            return (
-              <form.AppField
-                name={`collectionItems[${index}].${customFieldName}`}
-              >
-                {(field) => {
-                  return (
-                    <div className="flex gap-1 items-center">
-                      <field.ComboboxField
-                        createCreatable={(query) => {
-                          return query;
-                        }}
-                        error={getFieldError(field)}
-                        hideLabel
-                        inputValue={field.state.value}
-                        isItemEqualToValue={(item, value) => {
-                          return item === value;
-                        }}
-                        items={fieldValues}
-                        label={label}
-                        onValueChange={(value) => {
-                          const stringValue = value || '';
-                          field.setValue(stringValue);
-
-                          if (
-                            stringValue &&
-                            !fieldValues.includes(stringValue)
-                          ) {
-                            addToCustomFieldValues(stringValue);
-                          }
-                        }}
-                        placeholder={`${label || ''}...`}
-                        required
-                      />
-                      <Popover
-                        Description={`Want to add a new item to the list? Just type it out and click on the "Add" option.`}
-                      />
-                    </div>
                   );
                 }}
               </form.AppField>

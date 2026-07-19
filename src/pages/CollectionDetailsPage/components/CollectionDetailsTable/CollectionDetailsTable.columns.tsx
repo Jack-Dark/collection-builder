@@ -25,8 +25,8 @@ import { Route as CollectionRoute } from '#/routes/_protected/collections/$id';
 import { TableCellActionsMenu } from '../../../../components/TableCellActionsMenu';
 import { useEditingCollectionItemsRowIds } from '../../../CollectionsListPage/hooks/use-editing-collections-row-ids';
 import { useTableCustomFieldsStore } from '../../hooks/use-table-custom-fields-store';
+import { CollectionDetailsCustomFieldCell } from './components/CollectionDetailsCustomFieldCell';
 import {
-  CreateOrUpdateCollectionItemFormCustomField,
   CreateOrUpdateCollectionItemFormEditionFields,
   CreateOrUpdateCollectionItemFormImagesField,
   CreateOrUpdateCollectionItemFormNameField,
@@ -213,23 +213,20 @@ export const getCollectionItemsTableColumns = (
     customField1Enabled &&
       columnHelper.accessor('customField1Value', {
         cell: ({ getValue, row }) => {
-          const { getIsEditingRowId } = useEditingCollectionItemsRowIds();
-          const isEditingRow = getIsEditingRowId(row.id);
-
           const { addToCustomField1Values, customFields } =
             useTableCustomFieldsStore();
 
-          return isEditingRow ? (
-            <CreateOrUpdateCollectionItemFormCustomField
+          return (
+            <CollectionDetailsCustomFieldCell
               addToCustomFieldValues={addToCustomField1Values}
               fieldName="customField1Value"
               fieldValues={customFields.customField1Values}
               form={form}
               index={row.index}
               label={customField1Label || ''}
+              rowId={row.id}
+              value={getValue()}
             />
-          ) : (
-            <p>{getValue() || '-'}</p>
           );
         },
         header: customField1Label || '',
@@ -238,23 +235,20 @@ export const getCollectionItemsTableColumns = (
     customField2Enabled &&
       columnHelper.accessor('customField2Value', {
         cell: ({ getValue, row }) => {
-          const { getIsEditingRowId } = useEditingCollectionItemsRowIds();
-          const isEditingRow = getIsEditingRowId(row.id);
-
           const { addToCustomField2Values, customFields } =
             useTableCustomFieldsStore();
 
-          return isEditingRow ? (
-            <CreateOrUpdateCollectionItemFormCustomField
+          return (
+            <CollectionDetailsCustomFieldCell
               addToCustomFieldValues={addToCustomField2Values}
               fieldName="customField2Value"
               fieldValues={customFields.customField2Values}
               form={form}
               index={row.index}
               label={customField2Label || ''}
+              rowId={row.id}
+              value={getValue()}
             />
-          ) : (
-            <p>{getValue() || '-'}</p>
           );
         },
         header: customField2Label || '',
@@ -263,23 +257,20 @@ export const getCollectionItemsTableColumns = (
     customField3Enabled &&
       columnHelper.accessor('customField3Value', {
         cell: ({ getValue, row }) => {
-          const { getIsEditingRowId } = useEditingCollectionItemsRowIds();
-          const isEditingRow = getIsEditingRowId(row.id);
-
           const { addToCustomField3Values, customFields } =
             useTableCustomFieldsStore();
 
-          return isEditingRow ? (
-            <CreateOrUpdateCollectionItemFormCustomField
+          return (
+            <CollectionDetailsCustomFieldCell
               addToCustomFieldValues={addToCustomField3Values}
               fieldName="customField3Value"
               fieldValues={customFields.customField3Values}
               form={form}
               index={row.index}
               label={customField3Label || ''}
+              rowId={row.id}
+              value={getValue()}
             />
-          ) : (
-            <p>{getValue() || '-'}</p>
           );
         },
         header: customField3Label || '',
