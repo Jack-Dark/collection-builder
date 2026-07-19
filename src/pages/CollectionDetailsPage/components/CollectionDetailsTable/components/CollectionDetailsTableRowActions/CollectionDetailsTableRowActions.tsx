@@ -14,10 +14,8 @@ import {
   addCollectionItemFormDefaultValues,
   withCollectionDetailsForm,
 } from '../../../../CollectionDetailsPage.form';
-import {
-  AddNewCollectionItemButton,
-  CollectionDetailsSubmitButton,
-} from '../CreateOrUpdateCollectionItemForm';
+import { AddNewCollectionItemButton } from '../CreateOrUpdateCollectionItemForm';
+import { CollectionDetailsSubmitButton } from './components/CollectionDetailsSubmitButton';
 
 export const CollectionDetailsTableRowActions = withCollectionDetailsForm({
   /** These values are only used for type-checking, and are not used at runtime */
