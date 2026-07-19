@@ -76,7 +76,7 @@ export const Layout: RouteComponent = () => {
           </SimpleErrorBoundary>
         </header>
 
-        <main className="w-full p-4 bg-white text-black rounded-xs">
+        <main className="w-full px-4 pt-6 pb-4 bg-white text-black rounded-xs">
           <SimpleErrorBoundary>
             <Outlet />
           </SimpleErrorBoundary>

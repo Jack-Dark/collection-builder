@@ -378,7 +378,7 @@ export const CreateOrUpdateCollectionItemFormActions =
                                     disabled={isPristine || !isFormValid}
                                     form={form}
                                     insertAtIndex={index + 1}
-                                    text="Add Another"
+                                    text="Another"
                                   />
                                 </form.AppForm>
                               );
