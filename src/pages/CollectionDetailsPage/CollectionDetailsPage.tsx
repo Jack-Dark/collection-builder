@@ -22,17 +22,18 @@ import {
 } from './CollectionDetailsPage.form';
 import { createOrUpdateCollectionItemFormSchema } from './CollectionDetailsPage.schema';
 import { CollectionDetailsTable } from './components/CollectionDetailsTable';
-import { useSetCollectionItemsFiltersFromQueries } from './hooks/use-set-collection-items-filters-from-queries';
+import { useCollectionDetailsFiltersStore } from './components/CollectionDetailsTable/hooks/use-collection-details-filters-store';
 
 export const CollectionDetailsPage: RouteComponent = () => {
   const { id } = CollectionRoute.useParams();
-  const searchParams = CollectionRoute.useSearch();
+  const searchQueries = CollectionRoute.useSearch();
+
+  const { setAllFilters: setFilters } = useCollectionDetailsFiltersStore();
+
   const collectionId = Number(id);
 
   const { isLoading } = useRouterState();
   const { toggleSpinner } = useSpinner();
-
-  useSetCollectionItemsFiltersFromQueries();
 
   const invalidateGetCollectionDetailsById =
     useInvalidateGetCollectionDetailsById();
@@ -51,7 +52,7 @@ export const CollectionDetailsPage: RouteComponent = () => {
     });
 
   const { data } = useGetCollectionDetailsById({
-    requestArgs: { collectionId, params: searchParams },
+    requestArgs: { collectionId, params: searchQueries },
   });
 
   const form = useCollectionDetailsForm({
@@ -102,6 +103,12 @@ export const CollectionDetailsPage: RouteComponent = () => {
   useEffect(() => {
     toggleSpinner(isLoading);
   }, [isLoading]);
+
+  useEffect(() => {
+    if (searchQueries.filters) {
+      setFilters(searchQueries.filters);
+    }
+  }, [searchQueries.filters]);
 
   return (
     <PageWrapper

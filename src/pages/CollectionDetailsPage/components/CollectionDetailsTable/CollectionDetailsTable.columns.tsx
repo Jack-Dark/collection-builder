@@ -10,7 +10,6 @@ import { useLastSelectedTableRowsStore } from '#/components/Table';
 import type { GetCollectionItemsTableColumns } from './CollectionDetailsTable.types';
 
 import { useEditingCollectionItemsRowIds } from '../../../CollectionsListPage/hooks/use-editing-collections-row-ids';
-import { useCollectionDetailsCustomFieldsStore } from './hooks/use-collection-details-custom-fields-store';
 import { CollectionDetailsActionsCell } from './components/column-cells/CollectionDetailsActionsCell';
 import { CollectionDetailsCreatedAtCell } from './components/column-cells/CollectionDetailsCreatedAtCell';
 import { CollectionDetailsCustomFieldCell } from './components/column-cells/CollectionDetailsCustomFieldCell';
@@ -20,6 +19,7 @@ import { CollectionDetailsImagesField } from './components/column-cells/Collecti
 import { CollectionDetailsNameCell } from './components/column-cells/CollectionDetailsNameCell';
 import { CollectionDetailsNameField } from './components/column-cells/CollectionDetailsNameCell/components/CollectionDetailsNameField';
 import { CollectionDetailsNotesCell } from './components/column-cells/CollectionDetailsNotesCell';
+import { useCollectionDetailsCustomFieldsStore } from './hooks/use-collection-details-custom-fields-store';
 
 const columnHelper = createColumnHelper<CollectionItemRecordDef>();
 
