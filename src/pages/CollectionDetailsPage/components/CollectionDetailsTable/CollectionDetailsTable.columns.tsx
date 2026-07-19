@@ -32,7 +32,7 @@ import {
   CreateOrUpdateCollectionItemFormNameField,
   CreateOrUpdateCollectionItemFormNotesField,
   CreateOrUpdateCollectionItemFormActions,
-} from '../CreateOrUpdateCollectionItemForm';
+} from './components/CreateOrUpdateCollectionItemForm';
 
 const columnHelper = createColumnHelper<CollectionItemRecordDef>();
 

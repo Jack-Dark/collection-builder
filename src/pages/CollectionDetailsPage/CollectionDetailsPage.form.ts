@@ -10,7 +10,7 @@ import { InputField } from '#/components/Fields/InputField';
 import { SwitchField } from '#/components/Fields/SwitchField';
 import { TextAreaField } from '#/components/Fields/TextAreaField';
 
-import type { CreateOrUpdateCollectionItemFormDataDef } from './CreateOrUpdateCollectionItemForm.types';
+import type { CreateOrUpdateCollectionItemFormDataDef } from './CollectionDetailsPage.types';
 
 export const createNewCollectionItem = ({
   collectionId,

@@ -11,13 +11,13 @@ import { Route as CollectionRoute } from '#/routes/_protected/collections/$id';
 
 import { useEditingCollectionItemsRowIds } from '../../../../../CollectionsListPage/hooks/use-editing-collections-row-ids';
 import {
-  AddNewCollectionItemButton,
-  CreateOrUpdateCollectionItemSubmitButton,
-} from '../../../CreateOrUpdateCollectionItemForm';
-import {
   addCollectionItemFormDefaultValues,
   withCollectionDetailsForm,
-} from '../../../CreateOrUpdateCollectionItemForm/CreateOrUpdateCollectionItemForm.form';
+} from '../../../../CollectionDetailsPage.form';
+import {
+  AddNewCollectionItemButton,
+  CreateOrUpdateCollectionItemSubmitButton,
+} from '../CreateOrUpdateCollectionItemForm';
 
 export const CollectionDetailsTableActions = withCollectionDetailsForm({
   /** These values are only used for type-checking, and are not used at runtime */

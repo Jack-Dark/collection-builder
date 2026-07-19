@@ -13,7 +13,7 @@ import { useTableCustomFieldsStore } from '../../hooks/use-table-custom-fields-s
 import {
   addCollectionItemFormDefaultValues,
   withCollectionDetailsForm,
-} from '../CreateOrUpdateCollectionItemForm/CreateOrUpdateCollectionItemForm.form';
+} from '../../CollectionDetailsPage.form';
 import { getCollectionItemsTableColumns } from './CollectionDetailsTable.columns';
 import { CollectionDetailsTableActions } from './components/CollectionDetailsTableActions';
 import { CollectionDetailsFiltersContent } from './components/CollectionItemsFiltersContent';

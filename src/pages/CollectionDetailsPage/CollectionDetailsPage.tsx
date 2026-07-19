@@ -16,12 +16,12 @@ import { useSpinner } from '#/components/FullPageLoadingSpinner/useSpinner';
 import { PageWrapper } from '#/page-wrapper';
 import { Route as CollectionRoute } from '#/routes/_protected/collections/$id';
 
-import { CollectionDetailsTable } from './components/CollectionDetailsTable';
 import {
   addCollectionItemFormDefaultValues,
   useCollectionDetailsForm,
-} from './components/CreateOrUpdateCollectionItemForm/CreateOrUpdateCollectionItemForm.form';
-import { createOrUpdateCollectionItemFormSchema } from './components/CreateOrUpdateCollectionItemForm/CreateOrUpdateCollectionItemForm.schema';
+} from './CollectionDetailsPage.form';
+import { createOrUpdateCollectionItemFormSchema } from './CollectionDetailsPage.schema';
+import { CollectionDetailsTable } from './components/CollectionDetailsTable';
 import { useSetCollectionItemsFiltersFromQueries } from './hooks/use-set-collection-items-filters-from-queries';
 
 export const CollectionDetailsPage: RouteComponent = () => {

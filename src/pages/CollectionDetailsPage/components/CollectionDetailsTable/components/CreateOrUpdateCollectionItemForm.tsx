@@ -9,15 +9,15 @@ import { Button } from '#/components/Button';
 import { Image } from '#/components/Image';
 import { Popover } from '#/components/Popover';
 import { SimpleErrorBoundary } from '#/components/SimpleErrorBoundary';
+import { getFieldError } from '#/helpers/get-field-error';
 import { useEditingCollectionItemsRowIds } from '#/pages/CollectionsListPage/hooks/use-editing-collections-row-ids';
 import { Route } from '#/routes/_protected/collections/$id';
 
-import { getFieldError } from '../../../../helpers/get-field-error';
 import {
   addCollectionItemFormDefaultValues,
   createNewCollectionItem,
   withCollectionDetailsForm,
-} from './CreateOrUpdateCollectionItemForm.form';
+} from '../../../CollectionDetailsPage.form';
 
 export const CreateOrUpdateCollectionItemFormNameField =
   withCollectionDetailsForm({
