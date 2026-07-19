@@ -7,8 +7,8 @@ import { useEditingCollectionItemsRowIds } from '#/pages/CollectionsListPage/hoo
 import {
   addCollectionItemFormDefaultValues,
   withCollectionDetailsForm,
-} from '../../../../CollectionDetailsPage.form';
-import { AddNewCollectionItemButton } from '../AddNewCollectionItemButton';
+} from '../../../../../CollectionDetailsPage.form';
+import { AddNewCollectionItemButton } from '../../CollectionDetailsTableRowActions/components/AddNewCollectionItemButton';
 
 export const CollectionDetailsCreatedAtCell = withCollectionDetailsForm({
   defaultValues: addCollectionItemFormDefaultValues,

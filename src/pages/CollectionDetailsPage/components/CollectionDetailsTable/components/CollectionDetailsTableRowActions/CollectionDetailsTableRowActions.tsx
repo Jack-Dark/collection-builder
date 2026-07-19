@@ -14,7 +14,7 @@ import {
   addCollectionItemFormDefaultValues,
   withCollectionDetailsForm,
 } from '../../../../CollectionDetailsPage.form';
-import { AddNewCollectionItemButton } from '../AddNewCollectionItemButton';
+import { AddNewCollectionItemButton } from './components/AddNewCollectionItemButton';
 import { CollectionDetailsSubmitButton } from './components/CollectionDetailsSubmitButton';
 
 export const CollectionDetailsTableRowActions = withCollectionDetailsForm({

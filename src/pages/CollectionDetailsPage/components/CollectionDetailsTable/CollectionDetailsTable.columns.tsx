@@ -15,14 +15,14 @@ import type { CreateOrUpdateCollectionItemFormDataDef } from '../../CollectionDe
 
 import { useEditingCollectionItemsRowIds } from '../../../CollectionsListPage/hooks/use-editing-collections-row-ids';
 import { useTableCustomFieldsStore } from '../../hooks/use-table-custom-fields-store';
-import { CollectionDetailsActionsCell } from './components/CollectionDetailsActionsCell';
-import { CollectionDetailsCreatedAtCell } from './components/CollectionDetailsCreatedAtCell';
-import { CollectionDetailsCustomFieldCell } from './components/CollectionDetailsCustomFieldCell';
-import { CollectionDetailsEditionCell } from './components/CollectionDetailsEditionCell';
-import { CollectionDetailsImagesField } from './components/CollectionDetailsImagesField';
-import { CollectionDetailsNameCell } from './components/CollectionDetailsNameCell';
-import { CollectionDetailsNameField } from './components/CollectionDetailsNameCell/components/CollectionDetailsNameField';
-import { CollectionDetailsNotesCell } from './components/CollectionDetailsNotesCell';
+import { CollectionDetailsActionsCell } from './components/column-cells/CollectionDetailsActionsCell';
+import { CollectionDetailsCreatedAtCell } from './components/column-cells/CollectionDetailsCreatedAtCell';
+import { CollectionDetailsCustomFieldCell } from './components/column-cells/CollectionDetailsCustomFieldCell';
+import { CollectionDetailsEditionCell } from './components/column-cells/CollectionDetailsEditionCell';
+import { CollectionDetailsImagesField } from './components/column-cells/CollectionDetailsImagesField';
+import { CollectionDetailsNameCell } from './components/column-cells/CollectionDetailsNameCell';
+import { CollectionDetailsNameField } from './components/column-cells/CollectionDetailsNameCell/components/CollectionDetailsNameField';
+import { CollectionDetailsNotesCell } from './components/column-cells/CollectionDetailsNotesCell';
 
 const columnHelper = createColumnHelper<CollectionItemRecordDef>();
 

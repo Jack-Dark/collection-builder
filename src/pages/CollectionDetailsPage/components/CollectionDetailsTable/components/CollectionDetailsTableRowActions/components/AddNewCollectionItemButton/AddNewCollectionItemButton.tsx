@@ -8,7 +8,7 @@ import {
   addCollectionItemFormDefaultValues,
   createNewCollectionItem,
   withCollectionDetailsForm,
-} from '../../../../CollectionDetailsPage.form';
+} from '../../../../../../CollectionDetailsPage.form';
 
 export const AddNewCollectionItemButton = withCollectionDetailsForm({
   /** These values are only used for type-checking, and are not used at runtime */
