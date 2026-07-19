@@ -15,14 +15,14 @@ import type { CreateOrUpdateCollectionItemFormDataDef } from '../../CollectionDe
 
 import { useEditingCollectionItemsRowIds } from '../../../CollectionsListPage/hooks/use-editing-collections-row-ids';
 import { useTableCustomFieldsStore } from '../../hooks/use-table-custom-fields-store';
-import { CollectionDetailsActionsCell } from './CollectionDetailsActionsCell';
-import { CollectionDetailsNameCell } from './CollectionDetailsNameCell';
-import { CollectionDetailsNameField } from './CollectionDetailsNameCell/components/CollectionDetailsNameField';
+import { CollectionDetailsActionsCell } from './components/CollectionDetailsActionsCell';
+import { CollectionDetailsCreatedAtCell } from './components/CollectionDetailsCreatedAtCell';
 import { CollectionDetailsCustomFieldCell } from './components/CollectionDetailsCustomFieldCell';
 import { CollectionDetailsEditionCell } from './components/CollectionDetailsEditionCell';
 import { CollectionDetailsImagesField } from './components/CollectionDetailsImagesField';
+import { CollectionDetailsNameCell } from './components/CollectionDetailsNameCell';
+import { CollectionDetailsNameField } from './components/CollectionDetailsNameCell/components/CollectionDetailsNameField';
 import { CollectionDetailsNotesCell } from './components/CollectionDetailsNotesCell';
-import { CollectionDetailsCreatedAtCell } from './components/CreateOrUpdateCollectionItemForm';
 
 const columnHelper = createColumnHelper<CollectionItemRecordDef>();
 

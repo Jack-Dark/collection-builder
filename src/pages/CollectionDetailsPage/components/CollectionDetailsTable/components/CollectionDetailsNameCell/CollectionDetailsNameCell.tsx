@@ -12,7 +12,7 @@ import {
   useSelectedTableRowsStore,
 } from '#/components/Table';
 
-import { useEditingCollectionItemsRowIds } from '../../../../CollectionsListPage/hooks/use-editing-collections-row-ids';
+import { useEditingCollectionItemsRowIds } from '../../../../../CollectionsListPage/hooks/use-editing-collections-row-ids';
 
 type CollectionDetailsNameCellPropsDef = PropsWithChildren<
   CellContext<CollectionItemRecordDef, string>
