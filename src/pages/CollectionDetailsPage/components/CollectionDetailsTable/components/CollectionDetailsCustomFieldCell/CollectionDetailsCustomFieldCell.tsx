@@ -7,8 +7,8 @@ import {
 import { useEditingCollectionItemsRowIds } from '#/pages/CollectionsListPage/hooks/use-editing-collections-row-ids';
 
 export const CollectionDetailsCustomFieldCell = withCollectionDetailsForm({
-  /** These values are only used for type-checking, and are not used at runtime */
   defaultValues: addCollectionItemFormDefaultValues,
+  /** These values are only used for type-checking, and are not used at runtime */
   props: {
     addToCustomFieldValues: (_value: string) => {},
     fieldName: '',
@@ -18,16 +18,18 @@ export const CollectionDetailsCustomFieldCell = withCollectionDetailsForm({
     rowId: '',
     value: '',
   },
-  render: ({
-    addToCustomFieldValues,
-    fieldName,
-    fieldValues,
-    form,
-    index,
-    label,
-    rowId,
-    value,
-  }) => {
+  render: (props) => {
+    const {
+      addToCustomFieldValues,
+      fieldName,
+      fieldValues,
+      form,
+      index,
+      label,
+      rowId,
+      value,
+    } = props;
+
     const customFieldName = fieldName as `customField${1 | 2 | 3}Value`;
 
     const { getIsEditingRowId } = useEditingCollectionItemsRowIds();

@@ -224,36 +224,6 @@ export const CreateOrUpdateCollectionItemFormEditionFields =
     },
   });
 
-export const CreateOrUpdateCollectionItemFormNotesField =
-  withCollectionDetailsForm({
-    /** These values are only used for type-checking, and are not used at runtime */
-    defaultValues: addCollectionItemFormDefaultValues,
-    props: { index: 0 },
-    render: ({ form, index }) => {
-      return (
-        <form.AppField mode="array" name="collectionItems">
-          {() => {
-            return (
-              <form.AppField name={`collectionItems[${index}].notes`}>
-                {(field) => {
-                  return (
-                    <field.TextAreaField
-                      error={getFieldError(field)}
-                      name={field.name}
-                      onValueChange={field.handleChange}
-                      placeholder="Input notes..."
-                      value={field.state.value}
-                    />
-                  );
-                }}
-              </form.AppField>
-            );
-          }}
-        </form.AppField>
-      );
-    },
-  });
-
 export const CreateOrUpdateCollectionItemFormActions =
   withCollectionDetailsForm({
     /** These values are only used for type-checking, and are not used at runtime */
