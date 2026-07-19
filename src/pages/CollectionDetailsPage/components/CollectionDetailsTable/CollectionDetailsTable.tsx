@@ -9,7 +9,7 @@ import {
   collectionDetailsFormDefaultValues,
   withCollectionDetailsForm,
 } from '../../CollectionDetailsPage.form';
-import { useTableCustomFieldsStore } from '../../hooks/use-table-custom-fields-store';
+import { useCollectionDetailsCustomFieldsStore } from './hooks/use-collection-details-custom-fields-store';
 import { getCollectionItemsTableColumns } from './CollectionDetailsTable.columns';
 import { CollectionDetailsTableRowActions } from './components/CollectionDetailsTableRowActions';
 import { CollectionDetailsFiltersContent } from './components/CollectionItemsFiltersContent';
@@ -26,7 +26,8 @@ export const CollectionDetailsTable = withCollectionDetailsForm({
     const collectionId = Number(id);
     const search = CollectionRoute.useSearch();
 
-    const { customFields, setCustomFields } = useTableCustomFieldsStore();
+    const { customFields, setCustomFields } =
+      useCollectionDetailsCustomFieldsStore();
 
     const { data } = useGetCollectionDetailsById({
       onSuccess: ({ customFields, items }) => {

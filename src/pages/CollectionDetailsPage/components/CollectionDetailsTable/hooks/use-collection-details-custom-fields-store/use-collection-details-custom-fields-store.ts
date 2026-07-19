@@ -1,6 +1,6 @@
 import { getCreateDefaultZustandStore } from '#/helpers/get-create-default-zustand-state';
 
-const createTableCustomFieldsStore = () => {
+const createCollectionDetailsCustomFieldsStore = () => {
   const createNotificationsStore = getCreateDefaultZustandStore<{
     customField1Values: string[];
     customField2Values: string[];
@@ -76,4 +76,5 @@ const createTableCustomFieldsStore = () => {
   };
 };
 
-export const useTableCustomFieldsStore = createTableCustomFieldsStore();
+export const useCollectionDetailsCustomFieldsStore =
+  createCollectionDetailsCustomFieldsStore();

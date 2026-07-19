@@ -10,7 +10,7 @@ import { useLastSelectedTableRowsStore } from '#/components/Table';
 import type { GetCollectionItemsTableColumns } from './CollectionDetailsTable.types';
 
 import { useEditingCollectionItemsRowIds } from '../../../CollectionsListPage/hooks/use-editing-collections-row-ids';
-import { useTableCustomFieldsStore } from '../../hooks/use-table-custom-fields-store';
+import { useCollectionDetailsCustomFieldsStore } from './hooks/use-collection-details-custom-fields-store';
 import { CollectionDetailsActionsCell } from './components/column-cells/CollectionDetailsActionsCell';
 import { CollectionDetailsCreatedAtCell } from './components/column-cells/CollectionDetailsCreatedAtCell';
 import { CollectionDetailsCustomFieldCell } from './components/column-cells/CollectionDetailsCustomFieldCell';
@@ -101,7 +101,7 @@ export const getCollectionItemsTableColumns = (
       columnHelper.accessor('customField1Value', {
         cell: ({ getValue, row }) => {
           const { addToCustomField1Values, customFields } =
-            useTableCustomFieldsStore();
+            useCollectionDetailsCustomFieldsStore();
 
           return (
             <CollectionDetailsCustomFieldCell
@@ -123,7 +123,7 @@ export const getCollectionItemsTableColumns = (
       columnHelper.accessor('customField2Value', {
         cell: ({ getValue, row }) => {
           const { addToCustomField2Values, customFields } =
-            useTableCustomFieldsStore();
+            useCollectionDetailsCustomFieldsStore();
 
           return (
             <CollectionDetailsCustomFieldCell
@@ -145,7 +145,7 @@ export const getCollectionItemsTableColumns = (
       columnHelper.accessor('customField3Value', {
         cell: ({ getValue, row }) => {
           const { addToCustomField3Values, customFields } =
-            useTableCustomFieldsStore();
+            useCollectionDetailsCustomFieldsStore();
 
           return (
             <CollectionDetailsCustomFieldCell
