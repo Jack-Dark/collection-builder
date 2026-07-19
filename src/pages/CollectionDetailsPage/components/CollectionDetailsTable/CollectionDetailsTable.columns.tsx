@@ -1,18 +1,12 @@
-import type {
-  AccessorKeyColumnDefBase,
-  CellContext,
-} from '@tanstack/react-table';
+import type { AccessorKeyColumnDefBase } from '@tanstack/react-table';
 
 import { useKeyHold } from '@tanstack/react-hotkeys';
 import { createColumnHelper } from '@tanstack/react-table';
-import formatDate, { masks } from 'dateformat';
 
 import type { CollectionItemRecordDef } from '#/api/routes/collection-items/collection-item.types';
 import type { CollectionRecordDef } from '#/api/routes/collections/collection.types';
 
 import { thumbnailSize } from '#/api/routes/cloudinary/cloudinary-url';
-import { useDeleteCollectionItemsByIds } from '#/api/routes/collection-items/delete-collection-items-by-ids/delete-collection-items-by-ids.react-query';
-import { useInvalidateGetCollectionDetailsById } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.react-query';
 import { CheckboxField } from '#/components/Fields/CheckboxField';
 import {
   getRowRange,
@@ -20,18 +14,17 @@ import {
   useSelectedTableRowsStore,
 } from '#/components/Table';
 import { ZoomableThumbnail } from '#/components/ZoomableThumbnail';
-import { Route as CollectionRoute } from '#/routes/_protected/collections/$id';
 
-import { TableCellActionsMenu } from '../../../../components/TableCellActionsMenu';
 import { useEditingCollectionItemsRowIds } from '../../../CollectionsListPage/hooks/use-editing-collections-row-ids';
 import { useTableCustomFieldsStore } from '../../hooks/use-table-custom-fields-store';
+import { CollectionDetailsActionsCell } from './CollectionDetailsActionsCell';
 import { CollectionDetailsCustomFieldCell } from './components/CollectionDetailsCustomFieldCell';
 import { CollectionDetailsEditionCell } from './components/CollectionDetailsEditionCell';
 import { CollectionDetailsNotesCell } from './components/CollectionDetailsNotesCell';
 import {
   CreateOrUpdateCollectionItemFormImagesField,
   CreateOrUpdateCollectionItemFormNameField,
-  CreateOrUpdateCollectionItemFormActions,
+  CollectionDetailsCreatedAtCell,
 } from './components/CreateOrUpdateCollectionItemForm';
 
 const columnHelper = createColumnHelper<CollectionItemRecordDef>();
@@ -306,20 +299,14 @@ export const getCollectionItemsTableColumns = (
     }),
     columnHelper.accessor('createdAt', {
       cell: ({ getValue, row }) => {
-        const { getHasNewRecord, getIsEditingRowId } =
-          useEditingCollectionItemsRowIds();
-        const isEditingRow = getIsEditingRowId(row.id);
-
-        const date = getValue();
-
-        return isEditingRow && getHasNewRecord() ? (
-          <CreateOrUpdateCollectionItemFormActions
+        return (
+          <CollectionDetailsCreatedAtCell
             form={form}
             index={row.index}
+            rowId={row.id}
+            value={getValue()}
           />
-        ) : date ? (
-          <p>{formatDate(date, masks.paddedShortDate)}</p>
-        ) : null;
+        );
       },
       header: 'Added',
       size: 200,
@@ -339,56 +326,4 @@ export const getCollectionItemsTableColumns = (
       size: 40,
     }),
   ].filter(Boolean) as AccessorKeyColumnDefBase<CollectionItemRecordDef>[];
-};
-
-const CollectionDetailsActionsCell = ({
-  getValue,
-  onCancel,
-  onEditClick,
-  row,
-}: CellContext<CollectionItemRecordDef, number> & {
-  onCancel: () => void;
-  onEditClick: (rowId?: string) => void;
-}) => {
-  const invalidateGetCollectionDetailsById =
-    useInvalidateGetCollectionDetailsById();
-
-  const { id } = CollectionRoute.useParams();
-  const collectionId = Number(id);
-
-  const { isPending: isDeletePending, onDeleteCollectionItemsByIds } =
-    useDeleteCollectionItemsByIds({
-      onSuccess: async () => {
-        await invalidateGetCollectionDetailsById({
-          id: collectionId,
-        });
-      },
-    });
-
-  const collectionItemId = getValue();
-
-  const { getHasNewRecord, getIsEditingRowId, isEditing } =
-    useEditingCollectionItemsRowIds();
-
-  const isEditingRow = getIsEditingRowId(row.id);
-
-  const isCreatingRecord = getHasNewRecord();
-
-  return (
-    <TableCellActionsMenu
-      deleteIsDisabled={isEditing || isDeletePending}
-      deleteOnClick={async () => {
-        await onDeleteCollectionItemsByIds({
-          collectionItemIds: [collectionItemId],
-        });
-      }}
-      editIsDisabled={isCreatingRecord || isDeletePending}
-      editOnClick={({ id }) => {
-        onEditClick(String(id));
-      }}
-      isEditing={isEditingRow}
-      onCancelEdit={onCancel}
-      row={row}
-    />
-  );
 };

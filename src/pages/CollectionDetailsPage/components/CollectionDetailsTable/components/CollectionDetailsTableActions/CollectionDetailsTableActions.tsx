@@ -16,7 +16,7 @@ import {
 } from '../../../../CollectionDetailsPage.form';
 import {
   AddNewCollectionItemButton,
-  CreateOrUpdateCollectionItemSubmitButton,
+  CollectionDetailsSubmitButton,
 } from '../CreateOrUpdateCollectionItemForm';
 
 export const CollectionDetailsTableActions = withCollectionDetailsForm({
@@ -106,7 +106,7 @@ export const CollectionDetailsTableActions = withCollectionDetailsForm({
                       text="Cancel"
                       variant="mono"
                     />
-                    <CreateOrUpdateCollectionItemSubmitButton form={form} />
+                    <CollectionDetailsSubmitButton form={form} />
                   </>
                 ) : (
                   <AddNewCollectionItemButton
