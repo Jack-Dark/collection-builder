@@ -351,6 +351,18 @@ export const CreateOrUpdateCollectionItemFormActions =
                   {(field) => {
                     return (
                       <>
+                        <Button
+                          Icon={ClearIcon}
+                          onClick={() => {
+                            collectionItemsField.removeValue(index);
+                            removeFromIsEditingRowIds(
+                              String(field.state.value.id),
+                            );
+                          }}
+                          text="Remove"
+                          variant="mono"
+                        />
+
                         {isLastNewRecordIndex && (
                           <form.Subscribe
                             selector={(state) => {
@@ -376,18 +388,6 @@ export const CreateOrUpdateCollectionItemFormActions =
                             }}
                           </form.Subscribe>
                         )}
-
-                        <Button
-                          Icon={ClearIcon}
-                          onClick={() => {
-                            collectionItemsField.removeValue(index);
-                            removeFromIsEditingRowIds(
-                              String(field.state.value.id),
-                            );
-                          }}
-                          text="Remove"
-                          variant="mono"
-                        />
                       </>
                     );
                   }}
