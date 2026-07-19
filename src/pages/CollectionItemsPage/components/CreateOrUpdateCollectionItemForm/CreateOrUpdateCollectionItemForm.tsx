@@ -194,12 +194,6 @@ export const CreateOrUpdateCollectionItemFormCustomField =
                           return item === value;
                         }}
                         items={fieldValues}
-                        itemToStringLabel={(item) => {
-                          return item;
-                        }}
-                        itemToStringValue={(item) => {
-                          return item;
-                        }}
                         label={label}
                         onValueChange={(value) => {
                           if (value) {
