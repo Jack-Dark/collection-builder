@@ -9,12 +9,12 @@ import {
   addCollectionItemFormDefaultValues,
   withCollectionDetailsForm,
 } from '../../CollectionDetailsPage.form';
-import { useCollectionItemsPagination } from '../../hooks/use-collection-items-pagination';
 import { useTableCustomFieldsStore } from '../../hooks/use-table-custom-fields-store';
 import { getCollectionItemsTableColumns } from './CollectionDetailsTable.columns';
 import { CollectionDetailsTableRowActions } from './components/CollectionDetailsTableRowActions';
 import { CollectionDetailsFiltersContent } from './components/CollectionItemsFiltersContent';
 import { useCollectionDetailsFiltersProps } from './hooks/use-collection-details-filters-props';
+import { useCollectionDetailsPaginationProps } from './hooks/use-collection-details-pagination-props';
 import { useCollectionDetailsSearchProps } from './hooks/use-collection-details-search-props';
 import { useCollectionDetailsSortProps } from './hooks/use-collection-details-sort-props';
 
@@ -96,7 +96,7 @@ export const CollectionDetailsTable = withCollectionDetailsForm({
 
     const filtersProps = useCollectionDetailsFiltersProps();
     const searchProps = useCollectionDetailsSearchProps();
-    const paginationProps = useCollectionItemsPagination({ pagination });
+    const paginationProps = useCollectionDetailsPaginationProps({ pagination });
     const sortProps = useCollectionDetailsSortProps({ collection });
 
     return (
