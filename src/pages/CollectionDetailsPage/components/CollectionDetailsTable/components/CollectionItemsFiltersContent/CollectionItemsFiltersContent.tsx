@@ -11,8 +11,9 @@ import type { SetZustandStoreFnDef } from '#/helpers/get-create-default-zustand-
 import { sortDirectionOptions } from '#/api/pagination/pagination.constants';
 import { Button } from '#/components/Button';
 import { CheckboxField } from '#/components/Fields/CheckboxField';
-import { useCollectionDetailsFiltersStore } from '#/pages/CollectionDetailsPage/hooks/use-collection-details-filters-store';
 import { Route } from '#/routes/_protected/collections/$id';
+
+import { useCollectionDetailsFiltersStore } from '../../hooks/use-collection-details-filters-store';
 
 const FiltersBlock = (
   props: PropsWithChildren<{

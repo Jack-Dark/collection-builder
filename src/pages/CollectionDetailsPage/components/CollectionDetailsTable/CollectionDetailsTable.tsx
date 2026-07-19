@@ -9,7 +9,6 @@ import {
   addCollectionItemFormDefaultValues,
   withCollectionDetailsForm,
 } from '../../CollectionDetailsPage.form';
-import { useCollectionDetailsFiltersProps } from '../../hooks/use-collection-details-filters-props';
 import { useCollectionItemsPagination } from '../../hooks/use-collection-items-pagination';
 import { useCollectionItemsSearch } from '../../hooks/use-collection-items-search';
 import { useCollectionItemsSort } from '../../hooks/use-collection-items-sort';
@@ -17,6 +16,7 @@ import { useTableCustomFieldsStore } from '../../hooks/use-table-custom-fields-s
 import { getCollectionItemsTableColumns } from './CollectionDetailsTable.columns';
 import { CollectionDetailsTableRowActions } from './components/CollectionDetailsTableRowActions';
 import { CollectionDetailsFiltersContent } from './components/CollectionItemsFiltersContent';
+import { useCollectionDetailsFiltersProps } from './hooks/use-collection-details-filters-props';
 
 export const CollectionDetailsTable = withCollectionDetailsForm({
   /** These values are only used for type-checking, and are not used at runtime */

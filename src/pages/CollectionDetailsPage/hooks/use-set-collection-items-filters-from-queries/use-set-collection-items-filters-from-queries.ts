@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 
 import { Route } from '#/routes/_protected/collections/$id';
 
-import { useCollectionDetailsFiltersStore } from '../use-collection-details-filters-store';
+import { useCollectionDetailsFiltersStore } from '../../components/CollectionDetailsTable/hooks/use-collection-details-filters-store';
 
 export const useSetCollectionItemsFiltersFromQueries = () => {
   const searchQueries = Route.useSearch();

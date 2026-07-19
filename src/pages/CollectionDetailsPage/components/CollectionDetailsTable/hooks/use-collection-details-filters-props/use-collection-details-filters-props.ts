@@ -2,7 +2,7 @@ import type { FiltersButtonPropsDef } from '#/components/Table/components/Filter
 
 import { Route as CollectionRoute } from '#/routes/_protected/collections/$id';
 
-import { useOnUpdateCollectionItemsQueries } from '../../components/CollectionDetailsTable/components/CollectionItemsFiltersContent';
+import { useOnUpdateCollectionItemsQueries } from '../../components/CollectionItemsFiltersContent';
 import { useCollectionDetailsFiltersStore } from '../use-collection-details-filters-store';
 
 export const useCollectionDetailsFiltersProps = (): Omit<
