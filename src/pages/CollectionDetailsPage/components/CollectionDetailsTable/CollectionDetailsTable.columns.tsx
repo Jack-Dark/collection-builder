@@ -1,4 +1,9 @@
-import type { AccessorKeyColumnDefBase } from '@tanstack/react-table';
+import type { AppFieldExtendedReactFormApi } from '@tanstack/react-form';
+import type {
+  AccessorKeyColumnDefBase,
+  CellContext,
+} from '@tanstack/react-table';
+import type { PropsWithChildren } from 'react';
 
 import { useKeyHold } from '@tanstack/react-hotkeys';
 import { createColumnHelper } from '@tanstack/react-table';
@@ -15,34 +20,51 @@ import {
 } from '#/components/Table';
 import { ZoomableThumbnail } from '#/components/ZoomableThumbnail';
 
+import type { CreateOrUpdateCollectionItemFormDataDef } from '../../CollectionDetailsPage.types';
+
 import { useEditingCollectionItemsRowIds } from '../../../CollectionsListPage/hooks/use-editing-collections-row-ids';
 import { useTableCustomFieldsStore } from '../../hooks/use-table-custom-fields-store';
 import { CollectionDetailsActionsCell } from './CollectionDetailsActionsCell';
+import { CollectionDetailsNameField } from './CollectionDetailsNameCell/components/CollectionDetailsNameField';
 import { CollectionDetailsCustomFieldCell } from './components/CollectionDetailsCustomFieldCell';
 import { CollectionDetailsEditionCell } from './components/CollectionDetailsEditionCell';
+import { CollectionDetailsImagesField } from './components/CollectionDetailsImagesField';
 import { CollectionDetailsNotesCell } from './components/CollectionDetailsNotesCell';
-import {
-  CreateOrUpdateCollectionItemFormImagesField,
-  CreateOrUpdateCollectionItemFormNameField,
-  CollectionDetailsCreatedAtCell,
-} from './components/CreateOrUpdateCollectionItemForm';
+import { CollectionDetailsCreatedAtCell } from './components/CreateOrUpdateCollectionItemForm';
 
 const columnHelper = createColumnHelper<CollectionItemRecordDef>();
 
+type GetCollectionItemsTableColumns = Pick<
+  CollectionRecordDef,
+  | 'customField1Enabled'
+  | 'customField1Label'
+  | 'customField2Enabled'
+  | 'customField2Label'
+  | 'customField3Enabled'
+  | 'customField3Label'
+> & {
+  form: AppFieldExtendedReactFormApi<
+    CreateOrUpdateCollectionItemFormDataDef,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any,
+    any
+  >;
+  onCancel: () => void;
+  onEditClick: (rowId?: string) => void;
+};
+
 export const getCollectionItemsTableColumns = (
-  props: Pick<
-    CollectionRecordDef,
-    | 'customField1Enabled'
-    | 'customField1Label'
-    | 'customField2Enabled'
-    | 'customField2Label'
-    | 'customField3Enabled'
-    | 'customField3Label'
-  > & {
-    form: any;
-    onCancel: () => void;
-    onEditClick: (rowId?: string) => void;
-  },
+  props: GetCollectionItemsTableColumns,
 ) => {
   const {
     customField1Enabled,
@@ -58,75 +80,20 @@ export const getCollectionItemsTableColumns = (
 
   return [
     columnHelper.accessor('name', {
-      cell: ({ getValue, row, table }) => {
-        const isShiftHeld = useKeyHold('Shift');
+      cell: (props) => {
+        const { getValue, row } = props;
 
-        const { lastSelectedRowId, setLastSelectedRowId } =
-          useLastSelectedTableRowsStore();
-
-        const { setSelectedTableRows } = useSelectedTableRowsStore();
-
-        const { getIsEditingRowId, isEditing } =
-          useEditingCollectionItemsRowIds();
+        const { getIsEditingRowId } = useEditingCollectionItemsRowIds();
         const isEditingRow = getIsEditingRowId(row.id);
 
         return (
-          <div className="flex items-center gap-2">
-            <CheckboxField
-              checked={row.getIsSelected()}
-              disabled={isEditing || !row.getCanSelect()}
-              onCheckedChange={(checked) => {
-                const { rows } = table.getRowModel();
-                const rowId = row.id;
-
-                if (isShiftHeld && lastSelectedRowId) {
-                  const currentIndex = row.index;
-                  const prevIndex = rows.findIndex(({ id }) => {
-                    return id === lastSelectedRowId;
-                  });
-
-                  const rowsToToggle = getRowRange({
-                    currentIndex,
-                    prevIndex,
-                    rows,
-                  });
-
-                  rowsToToggle.forEach((row) => {
-                    row.toggleSelected(checked);
-                  });
-                } else {
-                  row.toggleSelected();
-                }
-
-                table.setRowSelection((prevSelectedRows) => {
-                  const selectedRows = {
-                    ...prevSelectedRows,
-                  };
-                  if (checked) {
-                    selectedRows[rowId] = true;
-                  } else {
-                    delete selectedRows[rowId];
-                  }
-
-                  setSelectedTableRows(selectedRows);
-
-                  return selectedRows;
-                });
-                setLastSelectedRowId(rowId);
-
-                // ? clears any text highlighting
-                document.getSelection()?.removeAllRanges();
-              }}
-            />
+          <CollectionDetailsNameCell {...props}>
             {isEditingRow ? (
-              <CreateOrUpdateCollectionItemFormNameField
-                form={form}
-                index={row.index}
-              />
+              <CollectionDetailsNameField form={form} index={row.index} />
             ) : (
               <p>{getValue()}</p>
             )}
-          </div>
+          </CollectionDetailsNameCell>
         );
       },
       header: ({ table }) => {
@@ -167,10 +134,7 @@ export const getCollectionItemsTableColumns = (
         return (
           <div className="flex flex-wrap gap-1 items-center">
             {isEditingRow ? (
-              <CreateOrUpdateCollectionItemFormImagesField
-                form={form}
-                index={row.index}
-              />
+              <CollectionDetailsImagesField form={form} index={row.index} />
             ) : images.length ? (
               <>
                 {images.map((publicId, index) => {
@@ -326,4 +290,70 @@ export const getCollectionItemsTableColumns = (
       size: 40,
     }),
   ].filter(Boolean) as AccessorKeyColumnDefBase<CollectionItemRecordDef>[];
+};
+
+export const CollectionDetailsNameCell = (
+  props: PropsWithChildren<CellContext<CollectionItemRecordDef, string>>,
+) => {
+  const { children, row, table } = props;
+  const isShiftHeld = useKeyHold('Shift');
+
+  const { lastSelectedRowId, setLastSelectedRowId } =
+    useLastSelectedTableRowsStore();
+
+  const { setSelectedTableRows } = useSelectedTableRowsStore();
+
+  const { isEditing } = useEditingCollectionItemsRowIds();
+
+  return (
+    <div className="flex items-center gap-2">
+      <CheckboxField
+        checked={row.getIsSelected()}
+        disabled={isEditing || !row.getCanSelect()}
+        onCheckedChange={(checked) => {
+          const { rows } = table.getRowModel();
+          const rowId = row.id;
+
+          if (isShiftHeld && lastSelectedRowId) {
+            const currentIndex = row.index;
+            const prevIndex = rows.findIndex(({ id }) => {
+              return id === lastSelectedRowId;
+            });
+
+            const rowsToToggle = getRowRange({
+              currentIndex,
+              prevIndex,
+              rows,
+            });
+
+            rowsToToggle.forEach((row) => {
+              row.toggleSelected(checked);
+            });
+          } else {
+            row.toggleSelected();
+          }
+
+          table.setRowSelection((prevSelectedRows) => {
+            const selectedRows = {
+              ...prevSelectedRows,
+            };
+            if (checked) {
+              selectedRows[rowId] = true;
+            } else {
+              delete selectedRows[rowId];
+            }
+
+            setSelectedTableRows(selectedRows);
+
+            return selectedRows;
+          });
+          setLastSelectedRowId(rowId);
+
+          // ? clears any text highlighting
+          document.getSelection()?.removeAllRanges();
+        }}
+      />
+      {children}
+    </div>
+  );
 };
