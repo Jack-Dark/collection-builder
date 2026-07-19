@@ -23,6 +23,10 @@ export const collectionItemsSearchQueriesSchema =
   ).and(
     z.object({
       filters: collectionItemsFiltersSchema,
+      searchNotes: z
+        .boolean()
+        .describe('Include "Notes" in search')
+        .default(false),
     }),
   );
 

@@ -74,6 +74,8 @@ export type TablePropsDef<T> = Omit<
     };
     search?: {
       onChange: (search: string) => void | Promise<void>;
+      onClickSearchNotes: (checked: boolean) => void;
+      searchNotes: boolean;
       value: string;
     };
     sort?: {
@@ -232,7 +234,12 @@ export const Table = <TData,>({
         <div className={`grid ${actionsColumns} items-stretch gap-4`}>
           {filters && <FilterButton {...filters} />}
           {search && (
-            <Search onValueChange={search.onChange} value={search.value} />
+            <Search
+              onClickSearchNotes={search.onClickSearchNotes}
+              onValueChange={search.onChange}
+              searchNotes={search.searchNotes}
+              value={search.value}
+            />
           )}
           {sort ? (
             <SelectField

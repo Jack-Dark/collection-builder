@@ -8,8 +8,14 @@ export const useCollectionItemsSearch = () => {
     onUpdateCollectionItemsQueries({ search });
   };
 
+  const onClickSearchNotes = (checked: boolean) => {
+    onUpdateCollectionItemsQueries({ searchNotes: checked });
+  };
+
   return {
     onChange,
+    onClickSearchNotes,
+    searchNotes: searchQueries.searchNotes,
     value: searchQueries.search,
   };
 };

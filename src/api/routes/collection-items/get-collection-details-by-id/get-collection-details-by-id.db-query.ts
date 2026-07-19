@@ -26,7 +26,7 @@ export const getCollectionDetailsByIdDbQuery = async (
   },
 ) => {
   const { collectionId, params, userId } = props;
-  const { filters, limit, page, search, sort } = params;
+  const { filters, limit, page, search, searchNotes, sort } = params;
 
   const sortingField: CollectionItemsTableColumn =
     sort.field && collectionItemsTable.hasOwnProperty(sort.field)
@@ -118,9 +118,10 @@ export const getCollectionDetailsByIdDbQuery = async (
       .where(
         and(
           matchesCollectionIdAndUserIdAndNotDeleted,
-          formatFilters({
+          formatFiltersSql({
             filters,
             search,
+            searchNotes,
             table: collectionItemsTable,
           }),
         ),
@@ -147,7 +148,7 @@ export const getCollectionDetailsByIdDbQuery = async (
   });
 };
 
-const formatFilters = <
+const formatFiltersSql = <
   TTable extends InferModelFromColumns<
     {
       customField1Value: any;
@@ -163,9 +164,10 @@ const formatFilters = <
     customField3: string[];
   };
   search: string | undefined;
+  searchNotes: boolean;
   table: TTable;
 }): SQL | undefined => {
-  const { filters = {}, search = '', table } = props;
+  const { filters = {}, search = '', searchNotes, table } = props;
 
   const getCustomFieldColumnName = (key: string) => {
     const num = Number(key.replace(/\D/g, ''));
@@ -199,6 +201,10 @@ const formatFilters = <
 
   return and(
     ...filterItems,
-    cleanSearchTerm ? ilike(table.name, `%${cleanSearchTerm}%`) : undefined,
+    cleanSearchTerm
+      ? searchNotes
+        ? ilike(table.notes, `%${cleanSearchTerm}%`)
+        : ilike(table.name, `%${cleanSearchTerm}%`)
+      : undefined,
   );
 };

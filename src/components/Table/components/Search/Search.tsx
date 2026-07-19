@@ -6,11 +6,12 @@ import _ from 'lodash';
 import { useMemo, useState } from 'react';
 
 import { Button } from '#/components/Button';
+import { SwitchField } from '#/components/Fields/SwitchField';
 
 import type { SearchProps } from './Search.types';
 
 export const Search = (props: SearchProps) => {
-  const { onValueChange, value } = props;
+  const { onClickSearchNotes, onValueChange, searchNotes, value } = props;
 
   const [text, setText] = useState(value);
 
@@ -30,7 +31,7 @@ export const Search = (props: SearchProps) => {
 
   return (
     <div className="relative">
-      <div className="absolute h-full p-1 flex items-center">
+      <div className="absolute left-0 h-full p-1 flex items-center">
         {text ? (
           <Button
             className="pointer text-inherit hover:text-primary-800"
@@ -48,10 +49,19 @@ export const Search = (props: SearchProps) => {
           </div>
         )}
       </div>
+
+      <SwitchField
+        checked={searchNotes}
+        className="absolute right-0 h-full py-1 pl-1 pr-2 flex items-stretch"
+        label="Search Notes"
+        onCheckedChange={onClickSearchNotes}
+      />
+
       <input
-        className="input size-full pl-10"
+        className="input size-full pl-10 pr-38"
+        name="_search"
         onChange={handleChange}
-        placeholder="Search name..."
+        placeholder="Search..."
         type="text"
         value={text}
       />
