@@ -48,6 +48,7 @@ export const getCollectionItemsTableColumns = (
   > & {
     form: any;
     onCancel: () => void;
+    onEditClick: () => void;
   },
 ) => {
   const {
@@ -59,6 +60,7 @@ export const getCollectionItemsTableColumns = (
     customField3Label,
     form,
     onCancel,
+    onEditClick,
   } = props;
 
   return [
@@ -340,7 +342,11 @@ export const getCollectionItemsTableColumns = (
     columnHelper.accessor('id', {
       cell: (context) => {
         return (
-          <CollectionDetailsActionsCell onCancel={onCancel} {...context} />
+          <CollectionDetailsActionsCell
+            onCancel={onCancel}
+            onEditClick={onEditClick}
+            {...context}
+          />
         );
       },
       header: '',
@@ -353,9 +359,11 @@ export const getCollectionItemsTableColumns = (
 const CollectionDetailsActionsCell = ({
   getValue,
   onCancel,
+  onEditClick,
   row,
 }: CellContext<CollectionItemRecordDef, number> & {
   onCancel: () => void;
+  onEditClick: () => void;
 }) => {
   const invalidateGetCollectionDetailsById =
     useInvalidateGetCollectionDetailsById();
@@ -374,7 +382,7 @@ const CollectionDetailsActionsCell = ({
 
   const collectionItemId = getValue();
 
-  const { getHasNewRecord, getIsEditingRowId, isEditing, setEditingRowIds } =
+  const { getHasNewRecord, getIsEditingRowId, isEditing } =
     useEditingCollectionItemsRowIds();
 
   const isEditingRow = getIsEditingRowId(row.id);
@@ -390,11 +398,7 @@ const CollectionDetailsActionsCell = ({
         });
       }}
       editIsDisabled={isCreatingRecord || isDeletePending}
-      editOnClick={async () => {
-        setEditingRowIds((prevRowIds) => {
-          return [...prevRowIds, row.id];
-        });
-      }}
+      editOnClick={onEditClick}
       isEditing={isEditingRow}
       onCancelEdit={onCancel}
       row={row}

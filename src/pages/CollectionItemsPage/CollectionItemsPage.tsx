@@ -180,6 +180,19 @@ export const CreateOrUpdateCollectionItemFormTable = withAddCollectionItemForm({
         customField3Label: collection.customField3Label,
         form,
         onCancel,
+        onEditClick: () => {
+          addToEditingRowIds(...selectedRowIds);
+
+          const selectedRowsInEditMode = form.state.values.collectionItems.map(
+            (rowRecord) => {
+              const isEditing = selectedRowIds.includes(String(rowRecord.id));
+
+              return { ...rowRecord, isEditing };
+            },
+          );
+
+          form.setFieldValue('collectionItems', selectedRowsInEditMode);
+        },
       });
     }, [
       collection.customField1Enabled,
