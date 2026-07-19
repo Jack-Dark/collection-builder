@@ -14,12 +14,9 @@ import {
 
 import { useEditingCollectionItemsRowIds } from '../../../../../../CollectionsListPage/hooks/use-editing-collections-row-ids';
 
-type CollectionDetailsNameCellPropsDef = PropsWithChildren<
-  CellContext<CollectionItemRecordDef, string>
->;
-
+/** `children` should be the editing field view. */
 export const CollectionDetailsNameCell = (
-  props: CollectionDetailsNameCellPropsDef,
+  props: PropsWithChildren<CellContext<CollectionItemRecordDef, string>>,
 ) => {
   const { children, row, table } = props;
   const isShiftHeld = useKeyHold('Shift');

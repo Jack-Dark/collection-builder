@@ -1,17 +1,13 @@
-import type { AppFieldExtendedReactFormApi } from '@tanstack/react-form';
 import type { AccessorKeyColumnDefBase } from '@tanstack/react-table';
 
 import { createColumnHelper } from '@tanstack/react-table';
 
 import type { CollectionItemRecordDef } from '#/api/routes/collection-items/collection-item.types';
-import type { CollectionRecordDef } from '#/api/routes/collections/collection.types';
 
-import { thumbnailSize } from '#/api/routes/cloudinary/cloudinary-url';
 import { CheckboxField } from '#/components/Fields/CheckboxField';
 import { useLastSelectedTableRowsStore } from '#/components/Table';
-import { ZoomableThumbnail } from '#/components/ZoomableThumbnail';
 
-import type { CreateOrUpdateCollectionItemFormDataDef } from '../../CollectionDetailsPage.types';
+import type { GetCollectionItemsTableColumns } from './CollectionDetailsTable.types';
 
 import { useEditingCollectionItemsRowIds } from '../../../CollectionsListPage/hooks/use-editing-collections-row-ids';
 import { useTableCustomFieldsStore } from '../../hooks/use-table-custom-fields-store';
@@ -19,41 +15,13 @@ import { CollectionDetailsActionsCell } from './components/column-cells/Collecti
 import { CollectionDetailsCreatedAtCell } from './components/column-cells/CollectionDetailsCreatedAtCell';
 import { CollectionDetailsCustomFieldCell } from './components/column-cells/CollectionDetailsCustomFieldCell';
 import { CollectionDetailsEditionCell } from './components/column-cells/CollectionDetailsEditionCell';
-import { CollectionDetailsImagesField } from './components/column-cells/CollectionDetailsImagesField';
+import { CollectionDetailsImagesCell } from './components/column-cells/CollectionDetailsImagesCell';
+import { CollectionDetailsImagesField } from './components/column-cells/CollectionDetailsImagesCell/components/CollectionDetailsImagesField';
 import { CollectionDetailsNameCell } from './components/column-cells/CollectionDetailsNameCell';
 import { CollectionDetailsNameField } from './components/column-cells/CollectionDetailsNameCell/components/CollectionDetailsNameField';
 import { CollectionDetailsNotesCell } from './components/column-cells/CollectionDetailsNotesCell';
 
 const columnHelper = createColumnHelper<CollectionItemRecordDef>();
-
-type GetCollectionItemsTableColumns = Pick<
-  CollectionRecordDef,
-  | 'customField1Enabled'
-  | 'customField1Label'
-  | 'customField2Enabled'
-  | 'customField2Label'
-  | 'customField3Enabled'
-  | 'customField3Label'
-> & {
-  form: AppFieldExtendedReactFormApi<
-    CreateOrUpdateCollectionItemFormDataDef,
-    any,
-    any,
-    any,
-    any,
-    any,
-    any,
-    any,
-    any,
-    any,
-    any,
-    any,
-    any,
-    any
-  >;
-  onCancel: () => void;
-  onEditClick: (rowId?: string) => void;
-};
 
 export const getCollectionItemsTableColumns = (
   props: GetCollectionItemsTableColumns,
@@ -117,43 +85,13 @@ export const getCollectionItemsTableColumns = (
       size: 250,
     }),
     columnHelper.accessor('images', {
-      cell: ({ getValue, row }) => {
-        const images = getValue();
-
-        const { getIsEditingRowId } = useEditingCollectionItemsRowIds();
-        const isEditingRow = getIsEditingRowId(row.id);
+      cell: (props) => {
+        const { row } = props;
 
         return (
-          <div className="flex flex-wrap gap-1 items-center">
-            {isEditingRow ? (
-              <CollectionDetailsImagesField form={form} index={row.index} />
-            ) : images.length ? (
-              <>
-                {images.map((publicId, index) => {
-                  return (
-                    <div
-                      className="p-1 size-14 bg-white border border-gray-400 text-gray-500"
-                      key={publicId}
-                    >
-                      <ZoomableThumbnail
-                        alt={`${row.original.name} image ${index + 1}`}
-                        image={{
-                          publicId,
-                        }}
-                        thumbnail={{
-                          height: thumbnailSize,
-                          publicId,
-                          width: thumbnailSize,
-                        }}
-                      />
-                    </div>
-                  );
-                })}
-              </>
-            ) : (
-              <p>-</p>
-            )}
-          </div>
+          <CollectionDetailsImagesCell {...props}>
+            <CollectionDetailsImagesField form={form} index={row.index} />
+          </CollectionDetailsImagesCell>
         );
       },
       header: 'Images',
