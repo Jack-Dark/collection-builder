@@ -10,13 +10,13 @@ import {
   withCollectionDetailsForm,
 } from '../../CollectionDetailsPage.form';
 import { useCollectionItemsPagination } from '../../hooks/use-collection-items-pagination';
-import { useCollectionItemsSort } from '../../hooks/use-collection-items-sort';
 import { useTableCustomFieldsStore } from '../../hooks/use-table-custom-fields-store';
 import { getCollectionItemsTableColumns } from './CollectionDetailsTable.columns';
 import { CollectionDetailsTableRowActions } from './components/CollectionDetailsTableRowActions';
 import { CollectionDetailsFiltersContent } from './components/CollectionItemsFiltersContent';
 import { useCollectionDetailsFiltersProps } from './hooks/use-collection-details-filters-props';
 import { useCollectionDetailsSearchProps } from './hooks/use-collection-details-search-props';
+import { useCollectionDetailsSortProps } from './hooks/use-collection-details-sort-props';
 
 export const CollectionDetailsTable = withCollectionDetailsForm({
   /** These values are only used for type-checking, and are not used at runtime */
@@ -97,7 +97,7 @@ export const CollectionDetailsTable = withCollectionDetailsForm({
     const filtersProps = useCollectionDetailsFiltersProps();
     const searchProps = useCollectionDetailsSearchProps();
     const paginationProps = useCollectionItemsPagination({ pagination });
-    const sortProps = useCollectionItemsSort({ collection });
+    const sortProps = useCollectionDetailsSortProps({ collection });
 
     return (
       <form.AppField mode="array" name="collectionItems">

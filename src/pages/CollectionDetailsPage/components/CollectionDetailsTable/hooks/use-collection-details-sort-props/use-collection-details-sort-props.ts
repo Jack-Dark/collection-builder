@@ -4,9 +4,9 @@ import type { CollectionRecordDef } from '#/api/routes/collections/collection.ty
 import { sortDirectionOptions } from '#/api/pagination/pagination.constants';
 import { useFormatSortProps } from '#/hooks/use-format-sort-props';
 
-import { useOnUpdateCollectionItemsQueries } from '../../components/CollectionDetailsTable/components/CollectionItemsFiltersContent';
+import { useOnUpdateCollectionItemsQueries } from '../../components/CollectionItemsFiltersContent';
 
-export const useCollectionItemsSort = (props: {
+export const useCollectionDetailsSortProps = (props: {
   collection: CollectionRecordDef;
 }) => {
   const { collection } = props;
