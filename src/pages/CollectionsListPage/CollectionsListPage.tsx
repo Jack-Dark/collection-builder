@@ -37,6 +37,7 @@ export const useCollectionsListFormStore = createFormStore(
   addCollectionFormDefaultValues,
 );
 
+// TODO - ADD IN-ROW ADD/EDIT LOGIC LIKE ON COLLECTION ITEMS
 export const CollectionsListPage: RouteComponent = () => {
   const [tableData, setTableData] = useState<
     CreateOrUpdateCollectionFormDataSchemaDef[]

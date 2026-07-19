@@ -11,6 +11,7 @@ const getLowerTrimmedValue = (value: string) => {
   return value.trim().toLocaleLowerCase();
 };
 
+// TODO - SOLVE POSITIONING ISSUES
 export const ComboboxField = <TValue,>(props: ComboboxFieldProps<TValue>) => {
   const {
     className,
