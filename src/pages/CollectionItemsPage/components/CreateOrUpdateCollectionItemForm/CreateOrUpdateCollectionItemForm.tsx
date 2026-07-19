@@ -16,11 +16,11 @@ import { getFieldError } from '../../../../helpers/get-field-error';
 import {
   addCollectionItemFormDefaultValues,
   createNewCollectionItem,
-  withAddCollectionItemForm,
+  withCollectionDetailsForm,
 } from './CreateOrUpdateCollectionItemForm.form';
 
 export const CreateOrUpdateCollectionItemFormNameField =
-  withAddCollectionItemForm({
+  withCollectionDetailsForm({
     /** These values are only used for type-checking, and are not used at runtime */
     defaultValues: addCollectionItemFormDefaultValues,
     props: { index: 0 },
@@ -53,7 +53,7 @@ export const CreateOrUpdateCollectionItemFormNameField =
   });
 
 export const CreateOrUpdateCollectionItemFormImagesField =
-  withAddCollectionItemForm({
+  withCollectionDetailsForm({
     /** These values are only used for type-checking, and are not used at runtime */
     defaultValues: addCollectionItemFormDefaultValues,
     props: { index: 0 },
@@ -153,7 +153,7 @@ export const CreateOrUpdateCollectionItemFormImagesField =
   });
 
 export const CreateOrUpdateCollectionItemFormCustomField =
-  withAddCollectionItemForm({
+  withCollectionDetailsForm({
     /** These values are only used for type-checking, and are not used at runtime */
     defaultValues: addCollectionItemFormDefaultValues,
     props: {
@@ -224,7 +224,7 @@ export const CreateOrUpdateCollectionItemFormCustomField =
   });
 
 export const CreateOrUpdateCollectionItemFormEditionFields =
-  withAddCollectionItemForm({
+  withCollectionDetailsForm({
     /** These values are only used for type-checking, and are not used at runtime */
     defaultValues: addCollectionItemFormDefaultValues,
     props: { index: 0 },
@@ -297,7 +297,7 @@ export const CreateOrUpdateCollectionItemFormEditionFields =
   });
 
 export const CreateOrUpdateCollectionItemFormNotesField =
-  withAddCollectionItemForm({
+  withCollectionDetailsForm({
     /** These values are only used for type-checking, and are not used at runtime */
     defaultValues: addCollectionItemFormDefaultValues,
     props: { index: 0 },
@@ -327,7 +327,7 @@ export const CreateOrUpdateCollectionItemFormNotesField =
   });
 
 export const CreateOrUpdateCollectionItemFormActions =
-  withAddCollectionItemForm({
+  withCollectionDetailsForm({
     /** These values are only used for type-checking, and are not used at runtime */
     defaultValues: addCollectionItemFormDefaultValues,
     props: {
@@ -397,7 +397,7 @@ export const CreateOrUpdateCollectionItemFormActions =
     },
   });
 
-export const AddNewCollectionItemButton = withAddCollectionItemForm({
+export const AddNewCollectionItemButton = withCollectionDetailsForm({
   /** These values are only used for type-checking, and are not used at runtime */
   defaultValues: addCollectionItemFormDefaultValues,
   props: {
@@ -440,7 +440,7 @@ export const AddNewCollectionItemButton = withAddCollectionItemForm({
 });
 
 export const CreateOrUpdateCollectionItemSubmitButton =
-  withAddCollectionItemForm({
+  withCollectionDetailsForm({
     /** These values are only used for type-checking, and are not used at runtime */
     defaultValues: addCollectionItemFormDefaultValues,
     render: ({ form }) => {

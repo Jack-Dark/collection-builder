@@ -31,8 +31,8 @@ import {
 } from './components/CreateOrUpdateCollectionItemForm';
 import {
   addCollectionItemFormDefaultValues,
-  useAddCollectionItemForm,
-  withAddCollectionItemForm,
+  useCollectionDetailsForm,
+  withCollectionDetailsForm,
 } from './components/CreateOrUpdateCollectionItemForm/CreateOrUpdateCollectionItemForm.form';
 import { createOrUpdateCollectionItemFormSchema } from './components/CreateOrUpdateCollectionItemForm/CreateOrUpdateCollectionItemForm.schema';
 import { useCollectionItemsFiltersProps } from './hooks/use-collection-items-filters-props';
@@ -42,7 +42,7 @@ import { useCollectionItemsSort } from './hooks/use-collection-items-sort';
 import { useSetCollectionItemsFiltersFromQueries } from './hooks/use-set-collection-items-filters-from-queries';
 import { useTableCustomFieldsStore } from './hooks/use-table-custom-fields-store';
 
-export const CollectionItemsPage: RouteComponent = () => {
+export const CollectionDetailsPage: RouteComponent = () => {
   const { id } = CollectionRoute.useParams();
   const searchParams = CollectionRoute.useSearch();
   const collectionId = Number(id);
@@ -72,7 +72,7 @@ export const CollectionItemsPage: RouteComponent = () => {
     requestArgs: { collectionId, params: searchParams },
   });
 
-  const form = useAddCollectionItemForm({
+  const form = useCollectionDetailsForm({
     defaultValues: data?.items
       ? {
           collectionItems: data.items.map((item) => {
@@ -131,13 +131,13 @@ export const CollectionItemsPage: RouteComponent = () => {
           form.handleSubmit();
         }}
       >
-        <CreateOrUpdateCollectionItemFormTable form={form} />
+        <CollectionDetailsTable form={form} />
       </form>
     </PageWrapper>
   );
 };
 
-export const CreateOrUpdateCollectionItemFormTable = withAddCollectionItemForm({
+export const CollectionDetailsTable = withCollectionDetailsForm({
   /** These values are only used for type-checking, and are not used at runtime */
   defaultValues: addCollectionItemFormDefaultValues,
   render: ({ form }) => {
@@ -164,7 +164,7 @@ export const CreateOrUpdateCollectionItemFormTable = withAddCollectionItemForm({
 
       form.setFieldValue('collectionItems', data.items);
     };
-    const { addToEditingRowIds, editingRowIds, isEditing, resetEditingRowIds } =
+    const { addToEditingRowIds, editingRowIds, resetEditingRowIds } =
       useEditingCollectionItemsRowIds();
 
     const { getSelectedRowIds, resetSelectedTableRows, selectedTableRows } =
@@ -218,6 +218,63 @@ export const CreateOrUpdateCollectionItemFormTable = withAddCollectionItemForm({
     const paginationProps = useCollectionItemsPagination({ pagination });
     const sortProps = useCollectionItemsSort({ collection });
 
+    return (
+      <form.AppField mode="array" name="collectionItems">
+        {(collectionItemsField) => {
+          return (
+            <Table
+              AboveTableComponent={() => {
+                return (
+                  <CollectionDetailsTableActions
+                    form={form}
+                    onCancel={onCancel}
+                  />
+                );
+              }}
+              columns={columns}
+              // @ts-expect-error // TS type mismatch between new and old records
+              data={collectionItemsField.state.value}
+              filters={{
+                ...filtersProps,
+                FiltersContent: () => {
+                  return (
+                    <CollectionItemsFiltersContent
+                      collection={collection}
+                      customFields={data.customFields}
+                    />
+                  );
+                },
+              }}
+              pagination={paginationProps}
+              search={searchProps}
+              sort={sortProps}
+            />
+          );
+        }}
+      </form.AppField>
+    );
+  },
+});
+
+export const CollectionDetailsTableActions = withCollectionDetailsForm({
+  /** These values are only used for type-checking, and are not used at runtime */
+  defaultValues: addCollectionItemFormDefaultValues,
+  props: {
+    onCancel: () => {},
+  },
+  render: ({ form, onCancel }) => {
+    const { id } = CollectionRoute.useParams();
+    const collectionId = Number(id);
+
+    const { addToEditingRowIds, isEditing } = useEditingCollectionItemsRowIds();
+
+    const { getSelectedRowIds, selectedTableRows } =
+      useSelectedTableRowsStore();
+
+    const selectedRowIds = useMemo(() => {
+      return getSelectedRowIds();
+    }, [selectedTableRows]);
+
     const invalidateGetCollectionDetailsById =
       useInvalidateGetCollectionDetailsById();
 
@@ -234,102 +291,69 @@ export const CreateOrUpdateCollectionItemFormTable = withAddCollectionItemForm({
       <form.AppField mode="array" name="collectionItems">
         {(collectionItemsField) => {
           return (
-            <div className="grid gap-4">
-              <Table
-                AboveTableComponent={() => {
-                  return (
-                    <div className="flex justify-between">
-                      <div className="flex gap-2">
-                        {!!selectedRowIds.length && (
-                          <>
-                            <Button
-                              disabled={isEditing}
-                              Icon={EditIcon}
-                              onClick={() => {
-                                addToEditingRowIds(...selectedRowIds);
+            <div className="flex justify-between">
+              <div className="flex gap-2">
+                {!!selectedRowIds.length && (
+                  <>
+                    <Button
+                      disabled={isEditing}
+                      Icon={EditIcon}
+                      onClick={() => {
+                        addToEditingRowIds(...selectedRowIds);
 
-                                const selectedRowsInEditMode =
-                                  collectionItemsField.state.value.map(
-                                    (rowRecord) => {
-                                      const isEditing = selectedRowIds.includes(
-                                        String(rowRecord.id),
-                                      );
+                        const selectedRowsInEditMode =
+                          collectionItemsField.state.value.map((rowRecord) => {
+                            const isEditing = selectedRowIds.includes(
+                              String(rowRecord.id),
+                            );
 
-                                      return { ...rowRecord, isEditing };
-                                    },
-                                  );
+                            return { ...rowRecord, isEditing };
+                          });
 
-                                collectionItemsField.setValue(
-                                  selectedRowsInEditMode,
-                                );
-                              }}
-                              text="Edit"
-                              variant="secondary"
-                            />
+                        collectionItemsField.setValue(selectedRowsInEditMode);
+                      }}
+                      text="Edit"
+                      variant="secondary"
+                    />
 
-                            <Button
-                              disabled={isEditing}
-                              Icon={DeleteIcon}
-                              onClick={async () => {
-                                await onDeleteCollectionItemsByIds({
-                                  collectionItemIds: selectedRowIds.map(
-                                    (id) => {
-                                      return Number(id);
-                                    },
-                                  ),
-                                });
-                              }}
-                              processing={isDeletePending}
-                              text="Delete"
-                              variant="alert"
-                            />
-                          </>
-                        )}
-                      </div>
+                    <Button
+                      disabled={isEditing}
+                      Icon={DeleteIcon}
+                      onClick={async () => {
+                        await onDeleteCollectionItemsByIds({
+                          collectionItemIds: selectedRowIds.map((id) => {
+                            return Number(id);
+                          }),
+                        });
+                      }}
+                      processing={isDeletePending}
+                      text="Delete"
+                      variant="alert"
+                    />
+                  </>
+                )}
+              </div>
 
-                      <div className="flex gap-2">
-                        {isEditing ? (
-                          <>
-                            <Button
-                              Icon={ClearIcon}
-                              onClick={onCancel}
-                              text="Cancel"
-                              variant="mono"
-                            />
-                            <CreateOrUpdateCollectionItemSubmitButton
-                              form={form}
-                            />
-                          </>
-                        ) : (
-                          <AddNewCollectionItemButton
-                            disabled={false}
-                            form={form}
-                            insertAtIndex={0}
-                            text="Add New"
-                          />
-                        )}
-                      </div>
-                    </div>
-                  );
-                }}
-                columns={columns}
-                // @ts-expect-error // TODO - INVESTIGATE TS SOLUTION
-                data={collectionItemsField.state.value}
-                filters={{
-                  ...filtersProps,
-                  FiltersContent: () => {
-                    return (
-                      <CollectionItemsFiltersContent
-                        collection={collection}
-                        customFields={data.customFields}
-                      />
-                    );
-                  },
-                }}
-                pagination={paginationProps}
-                search={searchProps}
-                sort={sortProps}
-              />
+              <div className="flex gap-2">
+                {isEditing ? (
+                  <>
+                    <Button
+                      Icon={ClearIcon}
+                      onClick={onCancel}
+                      text="Cancel"
+                      variant="mono"
+                    />
+                    <CreateOrUpdateCollectionItemSubmitButton form={form} />
+                  </>
+                ) : (
+                  <AddNewCollectionItemButton
+                    disabled={false}
+                    form={form}
+                    insertAtIndex={0}
+                    text="Add New"
+                  />
+                )}
+              </div>
             </div>
           );
         }}

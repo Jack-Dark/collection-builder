@@ -6,10 +6,10 @@ import { getGenericFetchQueryOptions } from '#/api/react-query-hooks/use-generic
 import { reactQueryKeys } from '#/api/react-query-hooks/use-generic-fetch-query/react-query-keys';
 import { collectionItemsSearchQueriesSchema } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.schema';
 import { getCollectionDetailsByIdServerFn } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.serverFn';
-import { CollectionItemsPage } from '#/pages/CollectionItemsPage';
+import { CollectionDetailsPage } from '#/pages/CollectionItemsPage';
 
 export const Route = createFileRoute('/_protected/collections/$id')({
-  component: CollectionItemsPage,
+  component: CollectionDetailsPage,
   head: ({ loaderData }) => {
     const data = loaderData as unknown as GetCollectionDetailsByIdResponseDef;
 

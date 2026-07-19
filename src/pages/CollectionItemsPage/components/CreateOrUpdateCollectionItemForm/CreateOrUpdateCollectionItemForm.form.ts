@@ -40,15 +40,15 @@ export const addCollectionItemFormDefaultValues: CreateOrUpdateCollectionItemFor
   };
 
 export const {
-  fieldContext: addCollectionFormFieldContext,
-  formContext: addCollectionFormContext,
-  useFieldContext: useAddCollectionItemFormFieldContext,
-  useFormContext: useAddCollectionItemFormContext,
+  fieldContext: addCollectionDetailsFormFieldContext,
+  formContext: addCollectionDetailsFormContext,
+  useFieldContext: useCollectionDetailsFormFieldContext,
+  useFormContext: useCollectionDetailsFormContext,
 } = createFormHookContexts();
 
 export const {
-  useAppForm: useAddCollectionItemForm,
-  withForm: withAddCollectionItemForm,
+  useAppForm: useCollectionDetailsForm,
+  withForm: withCollectionDetailsForm,
 } = createFormHook({
   fieldComponents: {
     CheckboxField,
@@ -57,9 +57,9 @@ export const {
     SwitchField,
     TextAreaField,
   },
-  fieldContext: addCollectionFormFieldContext,
+  fieldContext: addCollectionDetailsFormFieldContext,
   formComponents: {
     Button,
   },
-  formContext: addCollectionFormContext,
+  formContext: addCollectionDetailsFormContext,
 });
