@@ -20,12 +20,6 @@ const createCollectionItemsFiltersStore = (
     const customField2Store = createCustomField2Store();
     const customField3Store = createCustomField3Store();
 
-    const numApplied = [
-      customField1Store.value.length,
-      customField2Store.value.length,
-      customField3Store.value.length,
-    ].filter(Boolean).length;
-
     const getAllFilters = (): CollectionItemsFiltersSchemaDef => {
       return {
         customField1: customField1Store.getValue(),
@@ -45,7 +39,6 @@ const createCollectionItemsFiltersStore = (
         customField3: customField3Store.value,
       },
       getAllFilters,
-      numApplied,
       resetAllFilters: () => {
         customField1Store.resetValue();
         customField2Store.resetValue();

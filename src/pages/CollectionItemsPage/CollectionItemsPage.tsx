@@ -39,8 +39,8 @@ import { useCollectionItemsFiltersProps } from './hooks/use-collection-items-fil
 import { useCollectionItemsPagination } from './hooks/use-collection-items-pagination';
 import { useCollectionItemsSearch } from './hooks/use-collection-items-search';
 import { useCollectionItemsSort } from './hooks/use-collection-items-sort';
-import { useCustomFieldsStore } from './hooks/use-custom-fields-store';
 import { useSetCollectionItemsFiltersFromQueries } from './hooks/use-set-collection-items-filters-from-queries';
+import { useTableCustomFieldsStore } from './hooks/use-table-custom-fields-store';
 
 export const CollectionItemsPage: RouteComponent = () => {
   const { id } = CollectionRoute.useParams();
@@ -145,7 +145,7 @@ export const CreateOrUpdateCollectionItemFormTable = withAddCollectionItemForm({
     const collectionId = Number(id);
     const search = CollectionRoute.useSearch();
 
-    const { customFields, setCustomFields } = useCustomFieldsStore();
+    const { customFields, setCustomFields } = useTableCustomFieldsStore();
 
     const { data } = useGetCollectionDetailsById({
       onSuccess: ({ customFields, items }) => {
@@ -299,6 +299,7 @@ export const CreateOrUpdateCollectionItemFormTable = withAddCollectionItemForm({
                 // @ts-expect-error // TODO - INVESTIGATE TS SOLUTION
                 data={collectionItemsField.state.value}
                 filters={{
+                  ...filtersProps,
                   FiltersContent: () => {
                     return (
                       <CollectionItemsFiltersContent
@@ -307,7 +308,6 @@ export const CreateOrUpdateCollectionItemFormTable = withAddCollectionItemForm({
                       />
                     );
                   },
-                  ...filtersProps,
                 }}
                 pagination={paginationProps}
                 search={searchProps}

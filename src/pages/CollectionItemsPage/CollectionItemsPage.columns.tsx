@@ -32,7 +32,7 @@ import {
   CreateOrUpdateCollectionItemFormNotesField,
   CreateOrUpdateCollectionItemFormActions,
 } from './components/CreateOrUpdateCollectionItemForm';
-import { useCustomFieldsStore } from './hooks/use-custom-fields-store';
+import { useTableCustomFieldsStore } from './hooks/use-table-custom-fields-store';
 
 const columnHelper = createColumnHelper<CollectionItemRecordDef>();
 
@@ -215,7 +215,7 @@ export const getCollectionItemsTableColumns = (
           const isEditingRow = getIsEditingRowId(row.id);
 
           const { addToCustomField1Values, customFields } =
-            useCustomFieldsStore();
+            useTableCustomFieldsStore();
 
           return isEditingRow ? (
             <CreateOrUpdateCollectionItemFormCustomField
@@ -240,7 +240,7 @@ export const getCollectionItemsTableColumns = (
           const isEditingRow = getIsEditingRowId(row.id);
 
           const { addToCustomField2Values, customFields } =
-            useCustomFieldsStore();
+            useTableCustomFieldsStore();
 
           return isEditingRow ? (
             <CreateOrUpdateCollectionItemFormCustomField
@@ -265,7 +265,7 @@ export const getCollectionItemsTableColumns = (
           const isEditingRow = getIsEditingRowId(row.id);
 
           const { addToCustomField3Values, customFields } =
-            useCustomFieldsStore();
+            useTableCustomFieldsStore();
 
           return isEditingRow ? (
             <CreateOrUpdateCollectionItemFormCustomField
