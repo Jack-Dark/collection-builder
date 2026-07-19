@@ -48,7 +48,7 @@ export const getCollectionItemsTableColumns = (
   > & {
     form: any;
     onCancel: () => void;
-    onEditClick: () => void;
+    onEditClick: (rowId?: string) => void;
   },
 ) => {
   const {
@@ -229,7 +229,7 @@ export const getCollectionItemsTableColumns = (
               label={customField1Label || ''}
             />
           ) : (
-            <p>{getValue()}</p>
+            <p>{getValue() || '-'}</p>
           );
         },
         header: customField1Label || '',
@@ -254,7 +254,7 @@ export const getCollectionItemsTableColumns = (
               label={customField2Label || ''}
             />
           ) : (
-            <p>{getValue()}</p>
+            <p>{getValue() || '-'}</p>
           );
         },
         header: customField2Label || '',
@@ -279,7 +279,7 @@ export const getCollectionItemsTableColumns = (
               label={customField3Label || ''}
             />
           ) : (
-            <p>{getValue()}</p>
+            <p>{getValue() || '-'}</p>
           );
         },
         header: customField3Label || '',
@@ -363,7 +363,7 @@ const CollectionDetailsActionsCell = ({
   row,
 }: CellContext<CollectionItemRecordDef, number> & {
   onCancel: () => void;
-  onEditClick: () => void;
+  onEditClick: (rowId?: string) => void;
 }) => {
   const invalidateGetCollectionDetailsById =
     useInvalidateGetCollectionDetailsById();
@@ -398,7 +398,9 @@ const CollectionDetailsActionsCell = ({
         });
       }}
       editIsDisabled={isCreatingRecord || isDeletePending}
-      editOnClick={onEditClick}
+      editOnClick={({ id }) => {
+        onEditClick(String(id));
+      }}
       isEditing={isEditingRow}
       onCancelEdit={onCancel}
       row={row}

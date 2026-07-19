@@ -170,6 +170,25 @@ export const CreateOrUpdateCollectionItemFormTable = withAddCollectionItemForm({
     const { getSelectedRowIds, resetSelectedTableRows, selectedTableRows } =
       useSelectedTableRowsStore();
 
+    const selectedRowIds = useMemo(() => {
+      return getSelectedRowIds();
+    }, [selectedTableRows]);
+
+    const onEditClick = (rowId?: string) => {
+      const rowsToAdd = rowId ? [rowId] : selectedRowIds;
+      addToEditingRowIds(...rowsToAdd);
+
+      const selectedRowsInEditMode = form.state.values.collectionItems.map(
+        (rowRecord) => {
+          const isEditing = rowsToAdd.includes(String(rowRecord.id));
+
+          return { ...rowRecord, isEditing };
+        },
+      );
+
+      form.setFieldValue('collectionItems', selectedRowsInEditMode);
+    };
+
     const columns = useMemo(() => {
       return getCollectionItemsTableColumns({
         customField1Enabled: collection.customField1Enabled,
@@ -180,19 +199,7 @@ export const CreateOrUpdateCollectionItemFormTable = withAddCollectionItemForm({
         customField3Label: collection.customField3Label,
         form,
         onCancel,
-        onEditClick: () => {
-          addToEditingRowIds(...selectedRowIds);
-
-          const selectedRowsInEditMode = form.state.values.collectionItems.map(
-            (rowRecord) => {
-              const isEditing = selectedRowIds.includes(String(rowRecord.id));
-
-              return { ...rowRecord, isEditing };
-            },
-          );
-
-          form.setFieldValue('collectionItems', selectedRowsInEditMode);
-        },
+        onEditClick,
       });
     }, [
       collection.customField1Enabled,
@@ -203,16 +210,13 @@ export const CreateOrUpdateCollectionItemFormTable = withAddCollectionItemForm({
       collection.customField3Label,
       editingRowIds,
       customFields,
+      selectedRowIds,
     ]);
 
     const filtersProps = useCollectionItemsFiltersProps();
     const searchProps = useCollectionItemsSearch();
     const paginationProps = useCollectionItemsPagination({ pagination });
     const sortProps = useCollectionItemsSort({ collection });
-
-    const selectedRowIds = useMemo(() => {
-      return getSelectedRowIds();
-    }, [selectedTableRows]);
 
     const invalidateGetCollectionDetailsById =
       useInvalidateGetCollectionDetailsById();

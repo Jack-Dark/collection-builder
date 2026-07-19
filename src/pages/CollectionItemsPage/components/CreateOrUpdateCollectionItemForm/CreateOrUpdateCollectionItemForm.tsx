@@ -196,11 +196,14 @@ export const CreateOrUpdateCollectionItemFormCustomField =
                         items={fieldValues}
                         label={label}
                         onValueChange={(value) => {
-                          if (value) {
-                            field.setValue(value);
-                            if (!fieldValues.includes(value)) {
-                              addToCustomFieldValues(value);
-                            }
+                          const stringValue = value || '';
+                          field.setValue(stringValue);
+
+                          if (
+                            stringValue &&
+                            !fieldValues.includes(stringValue)
+                          ) {
+                            addToCustomFieldValues(stringValue);
                           }
                         }}
                         placeholder={`${label || ''}...`}
