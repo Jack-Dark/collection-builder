@@ -5,14 +5,14 @@ import { useEditingCollectionItemsRowIds } from '#/pages/CollectionsListPage/hoo
 import { Route } from '#/routes/_protected/collections/$id';
 
 import {
-  addCollectionItemFormDefaultValues,
+  collectionDetailsFormDefaultValues,
   createNewCollectionItem,
   withCollectionDetailsForm,
 } from '../../../../../../CollectionDetailsPage.form';
 
 export const AddNewCollectionItemButton = withCollectionDetailsForm({
   /** These values are only used for type-checking, and are not used at runtime */
-  defaultValues: addCollectionItemFormDefaultValues,
+  defaultValues: collectionDetailsFormDefaultValues,
   props: {
     disabled: false,
     insertAtIndex: 0,

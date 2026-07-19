@@ -1,12 +1,12 @@
 import { getFieldError } from '#/helpers/get-field-error';
 import {
   withCollectionDetailsForm,
-  addCollectionItemFormDefaultValues,
+  collectionDetailsFormDefaultValues,
 } from '#/pages/CollectionDetailsPage/CollectionDetailsPage.form';
 import { useEditingCollectionItemsRowIds } from '#/pages/CollectionsListPage/hooks/use-editing-collections-row-ids';
 
 export const CollectionDetailsNotesCell = withCollectionDetailsForm({
-  defaultValues: addCollectionItemFormDefaultValues,
+  defaultValues: collectionDetailsFormDefaultValues,
   /** These values are only used for type-checking, and are not used at runtime */
   props: {
     index: 0,

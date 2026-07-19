@@ -34,7 +34,7 @@ export const createNewCollectionItem = ({
   };
 };
 
-export const addCollectionItemFormDefaultValues: CreateOrUpdateCollectionItemFormDataDef =
+export const collectionDetailsFormDefaultValues: CreateOrUpdateCollectionItemFormDataDef =
   {
     collectionItems: [],
   };

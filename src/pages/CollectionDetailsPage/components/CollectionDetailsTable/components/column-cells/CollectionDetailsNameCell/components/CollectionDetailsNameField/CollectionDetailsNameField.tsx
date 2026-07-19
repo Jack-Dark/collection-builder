@@ -1,11 +1,11 @@
 import {
   withCollectionDetailsForm,
-  addCollectionItemFormDefaultValues,
+  collectionDetailsFormDefaultValues,
 } from '#/pages/CollectionDetailsPage/CollectionDetailsPage.form';
 
 export const CollectionDetailsNameField = withCollectionDetailsForm({
   /** These values are only used for type-checking, and are not used at runtime */
-  defaultValues: addCollectionItemFormDefaultValues,
+  defaultValues: collectionDetailsFormDefaultValues,
   props: { index: 0 },
   render: ({ form, index }) => {
     return (

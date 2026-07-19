@@ -11,7 +11,7 @@ import { Route as CollectionRoute } from '#/routes/_protected/collections/$id';
 
 import { useEditingCollectionItemsRowIds } from '../../../../../CollectionsListPage/hooks/use-editing-collections-row-ids';
 import {
-  addCollectionItemFormDefaultValues,
+  collectionDetailsFormDefaultValues,
   withCollectionDetailsForm,
 } from '../../../../CollectionDetailsPage.form';
 import { AddNewCollectionItemButton } from './components/AddNewCollectionItemButton';
@@ -19,7 +19,7 @@ import { CollectionDetailsSubmitButton } from './components/CollectionDetailsSub
 
 export const CollectionDetailsTableRowActions = withCollectionDetailsForm({
   /** These values are only used for type-checking, and are not used at runtime */
-  defaultValues: addCollectionItemFormDefaultValues,
+  defaultValues: collectionDetailsFormDefaultValues,
   props: {
     onCancel: () => {},
   },

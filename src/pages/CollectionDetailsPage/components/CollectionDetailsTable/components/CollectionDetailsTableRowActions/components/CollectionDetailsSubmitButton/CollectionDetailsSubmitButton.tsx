@@ -1,13 +1,13 @@
 import SaveIcon from '@mui/icons-material/Save';
 
 import {
-  addCollectionItemFormDefaultValues,
+  collectionDetailsFormDefaultValues,
   withCollectionDetailsForm,
 } from '../../../../../../CollectionDetailsPage.form';
 
 export const CollectionDetailsSubmitButton = withCollectionDetailsForm({
   /** These values are only used for type-checking, and are not used at runtime */
-  defaultValues: addCollectionItemFormDefaultValues,
+  defaultValues: collectionDetailsFormDefaultValues,
   render: ({ form }) => {
     return (
       <form.Subscribe

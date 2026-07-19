@@ -17,7 +17,7 @@ import { PageWrapper } from '#/page-wrapper';
 import { Route as CollectionRoute } from '#/routes/_protected/collections/$id';
 
 import {
-  addCollectionItemFormDefaultValues,
+  collectionDetailsFormDefaultValues,
   useCollectionDetailsForm,
 } from './CollectionDetailsPage.form';
 import { createOrUpdateCollectionItemFormSchema } from './CollectionDetailsPage.schema';
@@ -61,7 +61,7 @@ export const CollectionDetailsPage: RouteComponent = () => {
             return { ...item, isEditing: false };
           }),
         }
-      : addCollectionItemFormDefaultValues,
+      : collectionDetailsFormDefaultValues,
     onSubmit: async ({ value: { collectionItems } }) => {
       const editedRecords = collectionItems.filter(({ isEditing }) => {
         return isEditing;

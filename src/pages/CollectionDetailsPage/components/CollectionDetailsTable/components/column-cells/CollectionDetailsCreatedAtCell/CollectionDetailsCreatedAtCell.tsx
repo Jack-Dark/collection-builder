@@ -5,13 +5,13 @@ import { Button } from '#/components/Button';
 import { useEditingCollectionItemsRowIds } from '#/pages/CollectionsListPage/hooks/use-editing-collections-row-ids';
 
 import {
-  addCollectionItemFormDefaultValues,
+  collectionDetailsFormDefaultValues,
   withCollectionDetailsForm,
 } from '../../../../../CollectionDetailsPage.form';
 import { AddNewCollectionItemButton } from '../../CollectionDetailsTableRowActions/components/AddNewCollectionItemButton';
 
 export const CollectionDetailsCreatedAtCell = withCollectionDetailsForm({
-  defaultValues: addCollectionItemFormDefaultValues,
+  defaultValues: collectionDetailsFormDefaultValues,
   /** These values are only used for type-checking, and are not used at runtime */
   props: {
     index: 0,

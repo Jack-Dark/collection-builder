@@ -6,7 +6,7 @@ import { Route as CollectionRoute } from '#/routes/_protected/collections/$id';
 
 import { useEditingCollectionItemsRowIds } from '../../../CollectionsListPage/hooks/use-editing-collections-row-ids';
 import {
-  addCollectionItemFormDefaultValues,
+  collectionDetailsFormDefaultValues,
   withCollectionDetailsForm,
 } from '../../CollectionDetailsPage.form';
 import { useTableCustomFieldsStore } from '../../hooks/use-table-custom-fields-store';
@@ -20,7 +20,7 @@ import { useCollectionDetailsSortProps } from './hooks/use-collection-details-so
 
 export const CollectionDetailsTable = withCollectionDetailsForm({
   /** These values are only used for type-checking, and are not used at runtime */
-  defaultValues: addCollectionItemFormDefaultValues,
+  defaultValues: collectionDetailsFormDefaultValues,
   render: ({ form }) => {
     const { id } = CollectionRoute.useParams();
     const collectionId = Number(id);
