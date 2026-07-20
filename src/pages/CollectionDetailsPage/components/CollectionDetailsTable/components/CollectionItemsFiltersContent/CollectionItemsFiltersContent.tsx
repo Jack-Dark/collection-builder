@@ -1,4 +1,3 @@
-import type { NavigateOptions } from '@tanstack/react-router';
 import type { SortDirection } from '@tanstack/react-table';
 import type { PropsWithChildren } from 'react';
 
@@ -11,7 +10,6 @@ import type { SetZustandStoreFnDef } from '#/helpers/get-create-default-zustand-
 import { sortDirectionOptions } from '#/api/pagination/pagination.constants';
 import { Button } from '#/components/Button';
 import { CheckboxField } from '#/components/Fields/CheckboxField';
-import { Route } from '#/routes/_protected/collections/$id';
 
 import { useCollectionDetailsFiltersStore } from '../../hooks/use-collection-details-filters-store';
 
@@ -237,28 +235,4 @@ export const formatSortItems = <TField extends string>(
       return [...acc, formattedItem];
     }
   }, initialItems);
-};
-
-export const useOnUpdateCollectionItemsQueries = () => {
-  const navigate = Route.useNavigate();
-  const searchQueries = Route.useSearch();
-
-  const onUpdateCollectionItemsQueries = async (
-    updatedQueries: Partial<typeof searchQueries>,
-    options?: NavigateOptions,
-  ) => {
-    const { filters, limit, search } = updatedQueries;
-    const newSearch = {
-      ...searchQueries,
-      ...updatedQueries,
-      page: filters || limit || search ? 1 : searchQueries.page || 1,
-    };
-
-    await navigate({
-      search: newSearch,
-      ...options,
-    });
-  };
-
-  return { onUpdateCollectionItemsQueries, searchQueries };
 };

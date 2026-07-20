@@ -1,4 +1,4 @@
-import { useOnUpdateCollectionItemsQueries } from '../../components/CollectionItemsFiltersContent';
+import { useOnUpdateCollectionItemsQueries } from '../../../../hooks/use-on-update-collection-items-queries';
 
 export const useCollectionDetailsSearchProps = () => {
   const { onUpdateCollectionItemsQueries, searchQueries } =
