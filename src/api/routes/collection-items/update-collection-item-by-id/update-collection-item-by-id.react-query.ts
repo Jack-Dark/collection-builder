@@ -2,6 +2,7 @@ import type { GenericMutateQueryProps } from '#/api/react-query-hooks/use-generi
 
 import { useGenericMutateQuery } from '#/api/react-query-hooks/use-generic-mutate-query';
 
+import type { CollectionItemRecordDef } from '../collection-item.types';
 import type { OnUpdateCollectionItemsArgsDef } from './update-collection-item-by-id.types';
 
 import { deleteCloudinaryAssetsByPublicIdsServerFn } from '../../cloudinary/delete-cloudinary-assets-by-pubic-ids';
@@ -10,11 +11,11 @@ import { uploadFileToCloudinary } from '../../cloudinary/helpers/upload-file-to-
 import { updateCollectionItemsServerFn } from './update-collection-item-by-id.serverFn';
 
 export const useUpdateCollectionItems = <
-  TTransformedData = OnUpdateCollectionItemsArgsDef[],
+  TTransformedData = CollectionItemRecordDef[],
 >(
   props?: GenericMutateQueryProps<
     OnUpdateCollectionItemsArgsDef[],
-    OnUpdateCollectionItemsArgsDef[],
+    CollectionItemRecordDef[],
     TTransformedData
   >,
 ) => {

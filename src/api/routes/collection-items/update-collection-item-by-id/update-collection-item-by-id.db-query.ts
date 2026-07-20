@@ -18,7 +18,7 @@ export const updateCollectionItemsDbQuery = async (
   const updatedCollectionItemIds = recordsToUpdate.map(({ id }) => {
     return id;
   });
-  const { userId } = recordsToUpdate[0];
+  const [{ userId }] = recordsToUpdate;
 
   return await db.transaction(async (tx) => {
     // ? Save list of user deleted public IDs for removal
@@ -51,7 +51,7 @@ export const updateCollectionItemsDbQuery = async (
       [],
     );
 
-    // ? Update records
+    // ? Updated records
     const updatedRecords: CollectionItemRecordDef[] = [];
 
     for (const record of recordsToUpdate) {
