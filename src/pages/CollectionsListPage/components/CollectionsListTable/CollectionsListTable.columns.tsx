@@ -1,5 +1,4 @@
 import type { AppFieldExtendedReactFormApi } from '@tanstack/react-form';
-import type { Getter, Row } from '@tanstack/react-table';
 
 import { createColumnHelper } from '@tanstack/react-table';
 
@@ -21,22 +20,6 @@ const columnHelper =
   createColumnHelper<
     GetPaginatedCollectionsResponseDef['collections'][number]
   >();
-
-const CustomFieldCell = <TNum extends 1 | 2 | 3>(props: {
-  customFieldNum: TNum;
-  getValue: Getter<string | null>;
-  row: Row<GetPaginatedCollectionsResponseDef['collections'][number]>;
-}) => {
-  const { customFieldNum, getValue, row } = props;
-
-  const isEnabled = row.original[`customField${customFieldNum}Enabled`];
-
-  return isEnabled ? (
-    <p className="flex align-items-center">{getValue()}</p>
-  ) : (
-    <p>-</p>
-  );
-};
 
 export type GetCollectionsListTableColumnsPropsDef = {
   form: AppFieldExtendedReactFormApi<
