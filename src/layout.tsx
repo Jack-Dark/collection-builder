@@ -68,7 +68,7 @@ export const Layout: RouteComponent = () => {
         <header className="grid gap-4">
           <div className="flex items-center gap-2 text-white">
             <ListAltIcon className="text-inherit text-4xl" fontSize="large" />
-            <h1 className="text-inherit">Start tracking your collection!</h1>
+            <h1 className="text-inherit">Start tracking your collections!</h1>
           </div>
 
           <SimpleErrorBoundary>
