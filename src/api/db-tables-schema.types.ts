@@ -1,12 +1,10 @@
 import type { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 
-import type { timestamps, usersTable } from './db-tables-schema';
+import type { usersTable } from './db-tables-schema';
 
 export type UserRecordDef = InferSelectModel<typeof usersTable>;
 
 export type CreateNewUserRecordDef = InferInsertModel<typeof usersTable>;
-
-export type TimestampsDef = typeof timestamps;
 
 /**
  * @example export type YOUR_RESPONSE_TYPE = QueryResponseDef<typeof YOUR_DB_QUERY_FUNCTION>;
