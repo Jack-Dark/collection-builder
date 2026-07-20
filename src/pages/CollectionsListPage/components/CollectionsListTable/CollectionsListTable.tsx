@@ -40,8 +40,6 @@ export const CollectionsListTable = withCollectionsListForm({
     const { addToEditingRowIds, editingRowIds, resetEditingRowIds } =
       useEditingCollectionsRowIds();
 
-    console.log({ editingRowIds });
-
     const { getSelectedRowIds, resetSelectedTableRows, selectedTableRows } =
       useSelectedTableRowsStore();
 
