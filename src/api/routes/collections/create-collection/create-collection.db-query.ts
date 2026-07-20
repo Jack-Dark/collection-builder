@@ -6,14 +6,16 @@ import type {
   InsertCollectionRecordDef,
 } from '../collection.types';
 
-export const createCollectionDbQuery = async (
-  data: InsertCollectionRecordDef,
-): Promise<CollectionRecordDef> => {
-  const [newCollection] = await db
+export const createCollectionDbQuery = async (props: {
+  records: InsertCollectionRecordDef[];
+}): Promise<CollectionRecordDef[]> => {
+  const { records } = props;
+
+  const newRecords = await db
     .insert(collectionsTable)
-    .values(data)
+    .values(records)
     .onConflictDoNothing()
     .returning();
 
-  return newCollection;
+  return newRecords;
 };

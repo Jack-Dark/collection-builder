@@ -4,7 +4,7 @@ import type { CollectionRecordDef } from '#/api/routes/collections/collection.ty
 
 import type { CreateOrUpdateCollectionItemFormDataDef } from '../../CollectionDetailsPage.types';
 
-export type GetCollectionItemsTableColumns = Pick<
+export type GetCollectionItemsTableColumnsPropsDef = Pick<
   CollectionRecordDef,
   | 'customField1Enabled'
   | 'customField1Label'

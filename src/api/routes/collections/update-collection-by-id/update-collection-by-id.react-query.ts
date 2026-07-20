@@ -2,21 +2,19 @@ import type { GenericMutateQueryProps } from '#/api/react-query-hooks/use-generi
 
 import { useGenericMutateQuery } from '#/api/react-query-hooks/use-generic-mutate-query';
 
-import type {
-  UpdateCollectionFormSchemaDef,
-  UpdateCollectionResponseDef,
-} from './update-collection-by-id.types';
+import type { CollectionRecordDef } from '../collection.types';
+import type { UpdateCollectionsFormRecordSchemaDef } from './update-collection-by-id.types';
 
 import { useInvalidateGetNavMenuCollections } from '../get-nav-menu-collections/get-nav-menu-collections.react-query';
 import { useInvalidateGetPaginatedCollections } from '../get-paginated-collections/get-paginated-collections.react-query';
 import { updateCollectionByIdServerFn } from './update-collection-by-id.serverFn';
 
 export const useUpdateCollectionById = <
-  TTransformedData = UpdateCollectionResponseDef,
+  TTransformedData = CollectionRecordDef[],
 >(
   props?: GenericMutateQueryProps<
-    UpdateCollectionFormSchemaDef,
-    UpdateCollectionResponseDef,
+    UpdateCollectionsFormRecordSchemaDef[],
+    CollectionRecordDef[],
     TTransformedData
   >,
 ) => {
@@ -27,8 +25,8 @@ export const useUpdateCollectionById = <
 
   const { onMutate: onUpdateCollectionById, ...rest } = useGenericMutateQuery({
     fallbackErrorMessage: 'Unable to update collection.',
-    mutationFn: (data) => {
-      return updateCollectionByIdServerFn({ data });
+    mutationFn: (records) => {
+      return updateCollectionByIdServerFn({ data: { records } });
     },
     showLoading: true,
     ...props,

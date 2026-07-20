@@ -1,5 +1,5 @@
 import z from 'zod';
 
-export const deleteCollectionByIdSchema = z.object({
-  collectionId: z.number(),
+export const deleteCollectionsByIdsSchema = z.object({
+  ids: z.array(z.number()),
 });

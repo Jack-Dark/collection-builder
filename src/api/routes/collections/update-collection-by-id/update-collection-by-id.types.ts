@@ -1,14 +1,14 @@
 import type z from 'zod';
 
 import type {
-  updateCollectionByIdFormSchema,
-  updateCollectionByIdServerFnSchema,
+  onUpdateCollectionsArgsSchema,
+  updateCollectionsFormRecordSchema,
 } from './update-collection-by-id.schema';
 
-export type UpdateCollectionFormSchemaDef = z.output<
-  typeof updateCollectionByIdFormSchema
+export type UpdateCollectionsFormRecordSchemaDef = z.output<
+  typeof updateCollectionsFormRecordSchema
 >;
 
-export type UpdateCollectionResponseDef = z.output<
-  typeof updateCollectionByIdServerFnSchema
+export type OnUpdateCollectionsArgsDef = z.output<
+  typeof onUpdateCollectionsArgsSchema
 >;

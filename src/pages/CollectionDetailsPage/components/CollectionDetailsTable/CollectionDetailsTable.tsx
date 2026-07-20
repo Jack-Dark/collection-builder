@@ -9,10 +9,10 @@ import {
   collectionDetailsFormDefaultValues,
   withCollectionDetailsForm,
 } from '../../CollectionDetailsPage.form';
-import { useCollectionDetailsCustomFieldsStore } from './hooks/use-collection-details-custom-fields-store';
 import { getCollectionItemsTableColumns } from './CollectionDetailsTable.columns';
 import { CollectionDetailsTableRowActions } from './components/CollectionDetailsTableRowActions';
 import { CollectionDetailsFiltersContent } from './components/CollectionItemsFiltersContent';
+import { useCollectionDetailsCustomFieldsStore } from './hooks/use-collection-details-custom-fields-store';
 import { useCollectionDetailsFiltersProps } from './hooks/use-collection-details-filters-props';
 import { useCollectionDetailsPaginationProps } from './hooks/use-collection-details-pagination-props';
 import { useCollectionDetailsSearchProps } from './hooks/use-collection-details-search-props';

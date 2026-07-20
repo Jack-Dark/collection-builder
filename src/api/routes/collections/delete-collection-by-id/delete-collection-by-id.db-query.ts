@@ -1,19 +1,19 @@
-import { and, eq, isNull } from 'drizzle-orm';
+import { and, eq, inArray, isNull } from 'drizzle-orm';
 
 import { db } from '#/api/db';
 import { collectionsTable } from '#/api/db-tables-schema';
 
 export const deleteCollectionDbQuery = async (props: {
-  id: number;
+  ids: number[];
   userId: string;
 }) => {
-  const { id, userId } = props;
+  const { ids, userId } = props;
 
   await db
     .delete(collectionsTable)
     .where(
       and(
-        eq(collectionsTable.id, id),
+        inArray(collectionsTable.id, ids),
         eq(collectionsTable.userId, userId),
         isNull(collectionsTable.deletedAt),
       ),

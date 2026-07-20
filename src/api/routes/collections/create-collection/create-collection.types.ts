@@ -12,7 +12,7 @@ export type CreateCollectionFormDataSchemaDef = z.output<
   typeof createCollectionFormSchema
 >;
 
-export type CreateCollectionRequestArgsDef = z.output<
+export type OnCreateCollectionRequestArgsDef = z.output<
   typeof createCollectionServerFnSchema
 >;
 
