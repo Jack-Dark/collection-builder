@@ -1,12 +1,10 @@
 import ClearIcon from '@mui/icons-material/Clear';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import { useMemo } from 'react';
 
 import { useInvalidateGetCollectionDetailsById } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.react-query';
 import { useDeleteCollectionById } from '#/api/routes/collections/delete-collection-by-id/delete-collection-by-id.react-query';
 import { Button } from '#/components/Button';
-import { useSelectedTableRowsStore } from '#/components/Table';
 import {
   collectionsListFormDefaultValues,
   withCollectionsListForm,
@@ -21,16 +19,11 @@ export const CollectionsListTableRowActions = withCollectionsListForm({
   defaultValues: collectionsListFormDefaultValues,
   props: {
     onCancel: () => {},
+    resetRowSelection: () => {},
+    selectedRowIds: [''],
   },
-  render: ({ form, onCancel }) => {
+  render: ({ form, onCancel, resetRowSelection, selectedRowIds }) => {
     const { addToEditingRowIds, isEditing } = useEditingCollectionsRowIds();
-
-    const { getSelectedRowIds, selectedTableRows } =
-      useSelectedTableRowsStore();
-
-    const selectedRowIds = useMemo(() => {
-      return getSelectedRowIds();
-    }, [selectedTableRows]);
 
     const invalidateGetCollectionDetailsById =
       useInvalidateGetCollectionDetailsById();
@@ -45,6 +38,7 @@ export const CollectionsListTableRowActions = withCollectionsListForm({
               });
             }),
           );
+          resetRowSelection();
         },
       });
 
@@ -104,7 +98,10 @@ export const CollectionsListTableRowActions = withCollectionsListForm({
                       text="Cancel"
                       variant="mono"
                     />
-                    <CollectionsListSubmitButton form={form} />
+                    <CollectionsListSubmitButton
+                      form={form}
+                      resetRowSelection={resetRowSelection}
+                    />
                   </>
                 ) : (
                   <AddNewCollectionButton

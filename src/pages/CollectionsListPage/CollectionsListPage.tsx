@@ -11,7 +11,6 @@ import {
 } from '#/api/routes/collections/get-paginated-collections/get-paginated-collections.react-query';
 import { useUpdateCollectionById } from '#/api/routes/collections/update-collection-by-id/update-collection-by-id.react-query';
 import { useSpinner } from '#/components/FullPageLoadingSpinner/useSpinner';
-import { useSelectedTableRowsStore } from '#/components/Table';
 import { PageWrapper } from '#/page-wrapper';
 import { createOrUpdateCollectionFormSchema } from '#/pages/CollectionsListPage/collection-form.schema';
 import { Route as CollectionsListRoute } from '#/routes/_protected/collections';
@@ -44,8 +43,6 @@ export const CollectionsListPage: RouteComponent = () => {
   });
 
   const { resetEditingRowIds } = useEditingCollectionsRowIds();
-
-  const { resetSelectedTableRows } = useSelectedTableRowsStore();
 
   const form = useCollectionsListForm({
     defaultValues: data?.collections
@@ -83,7 +80,6 @@ export const CollectionsListPage: RouteComponent = () => {
         }
 
         resetEditingRowIds();
-        resetSelectedTableRows();
         await invalidateGetPaginatedCollections();
       });
     },
@@ -99,12 +95,7 @@ export const CollectionsListPage: RouteComponent = () => {
 
   return (
     <PageWrapper title="Collections">
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          form.handleSubmit();
-        }}
-      >
+      <form>
         <CollectionsListTable form={form} />
       </form>
     </PageWrapper>

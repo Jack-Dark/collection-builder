@@ -1,12 +1,10 @@
 import ClearIcon from '@mui/icons-material/Clear';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import { useMemo } from 'react';
 
 import { useDeleteCollectionItemsByIds } from '#/api/routes/collection-items/delete-collection-items-by-ids/delete-collection-items-by-ids.react-query';
 import { useInvalidateGetCollectionDetailsById } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.react-query';
 import { Button } from '#/components/Button';
-import { useSelectedTableRowsStore } from '#/components/Table';
 import { Route as CollectionRoute } from '#/routes/_protected/collections/$id';
 
 import { useEditingCollectionItemsRowIds } from '../../../../../CollectionsListPage/hooks/use-editing-collections-row-ids';
@@ -22,19 +20,14 @@ export const CollectionDetailsTableRowActions = withCollectionDetailsForm({
   defaultValues: collectionDetailsFormDefaultValues,
   props: {
     onCancel: () => {},
+    resetRowSelection: () => {},
+    selectedRowIds: [''],
   },
-  render: ({ form, onCancel }) => {
+  render: ({ form, onCancel, resetRowSelection, selectedRowIds }) => {
     const { id } = CollectionRoute.useParams();
     const collectionId = Number(id);
 
     const { addToEditingRowIds, isEditing } = useEditingCollectionItemsRowIds();
-
-    const { getSelectedRowIds, selectedTableRows } =
-      useSelectedTableRowsStore();
-
-    const selectedRowIds = useMemo(() => {
-      return getSelectedRowIds();
-    }, [selectedTableRows]);
 
     const invalidateGetCollectionDetailsById =
       useInvalidateGetCollectionDetailsById();
@@ -45,6 +38,7 @@ export const CollectionDetailsTableRowActions = withCollectionDetailsForm({
           await invalidateGetCollectionDetailsById({
             id: collectionId,
           });
+          resetRowSelection();
         },
       });
 
@@ -104,7 +98,10 @@ export const CollectionDetailsTableRowActions = withCollectionDetailsForm({
                       text="Cancel"
                       variant="mono"
                     />
-                    <CollectionDetailsSubmitButton form={form} />
+                    <CollectionDetailsSubmitButton
+                      form={form}
+                      resetRowSelection={resetRowSelection}
+                    />
                   </>
                 ) : (
                   <AddNewCollectionItemButton

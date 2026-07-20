@@ -7,5 +7,5 @@ export type CollectionDetailsActionsCellPropsDef = CellContext<
   number
 > & {
   onCancel: () => void;
-  onEditClick: (rowId?: string) => void;
+  onEditClick: (...rowIdsToAdd: string[]) => void;
 };

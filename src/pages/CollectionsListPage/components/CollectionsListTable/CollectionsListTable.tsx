@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 
 import { useGetPaginatedCollections } from '#/api/routes/collections/get-paginated-collections/get-paginated-collections.react-query';
-import { Table, useSelectedTableRowsStore } from '#/components/Table';
+import { Table } from '#/components/Table';
 import { Route as CollectionsRoute } from '#/routes/_protected/collections';
 
 import {
@@ -32,23 +32,15 @@ export const CollectionsListTable = withCollectionsListForm({
 
       form.setFieldValue('records', collections);
     };
-    const { addToEditingRowIds, editingRowIds, resetEditingRowIds } =
+    const { addToEditingRowIds, editingRowIds, isEditing, resetEditingRowIds } =
       useEditingCollectionsRowIds();
 
-    const { getSelectedRowIds, selectedTableRows } =
-      useSelectedTableRowsStore();
-
-    const selectedRowIds = useMemo(() => {
-      return getSelectedRowIds();
-    }, [selectedTableRows]);
-
-    const onEditClick = (rowId?: string) => {
-      const rowsToAdd = rowId ? [rowId] : selectedRowIds;
-      addToEditingRowIds(...rowsToAdd);
+    const onEditClick = (...rowIdsToAdd: string[]) => {
+      addToEditingRowIds(...rowIdsToAdd);
 
       const selectedRowsInEditMode = form.state.values.records.map(
         (rowRecord) => {
-          const isEditing = rowsToAdd.includes(String(rowRecord.id));
+          const isEditing = rowIdsToAdd.includes(String(rowRecord.id));
 
           return { ...rowRecord, isEditing };
         },
@@ -63,7 +55,7 @@ export const CollectionsListTable = withCollectionsListForm({
         onCancel,
         onEditClick,
       });
-    }, [editingRowIds, selectedRowIds]);
+    }, [editingRowIds]);
 
     const searchProps = useCollectionsListSearchProps();
     const paginationProps = useCollectionsListPaginationProps({ pagination });
@@ -74,17 +66,27 @@ export const CollectionsListTable = withCollectionsListForm({
         {(recordsField) => {
           return (
             <Table
-              AboveTableComponent={() => {
+              AboveTableComponent={({ table }) => {
+                const selectedRowIds = table
+                  .getSelectedRowModel()
+                  .rows.map(({ id }) => {
+                    return id;
+                  });
+
                 return (
                   <CollectionsListTableRowActions
                     form={form}
                     onCancel={onCancel}
+                    resetRowSelection={table.resetRowSelection}
+                    selectedRowIds={selectedRowIds}
                   />
                 );
               }}
               columns={columns}
               // @ts-expect-error // TS type mismatch between new and old records
               data={recordsField.state.value}
+              disableRowSelection={isEditing}
+              enableRowSelection
               pagination={paginationProps}
               search={searchProps}
               sort={sortProps}

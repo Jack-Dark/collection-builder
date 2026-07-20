@@ -1,82 +1,46 @@
-import type { CellContext } from '@tanstack/react-table';
-import type { PropsWithChildren } from 'react';
-
-import { useKeyHold } from '@tanstack/react-hotkeys';
-
-import type { CollectionItemRecordDef } from '#/api/routes/collection-items/collection-item.types';
-
-import { CheckboxField } from '#/components/Fields/CheckboxField';
 import {
-  getRowRange,
-  useLastSelectedTableRowsStore,
-  useSelectedTableRowsStore,
-} from '#/components/Table';
+  withCollectionDetailsForm,
+  collectionDetailsFormDefaultValues,
+} from '#/pages/CollectionDetailsPage/CollectionDetailsPage.form';
+import { useEditingCollectionItemsRowIds } from '#/pages/CollectionsListPage/hooks/use-editing-collections-row-ids';
 
-import { useEditingCollectionItemsRowIds } from '../../../../../../CollectionsListPage/hooks/use-editing-collections-row-ids';
+export const CollectionDetailsNameCell = withCollectionDetailsForm({
+  /** These values are only used for type-checking, and are not used at runtime */
+  defaultValues: collectionDetailsFormDefaultValues,
+  props: {
+    index: 0,
+    rowId: '',
+    value: '',
+  },
+  render: ({ form, index, rowId, value }) => {
+    const { getIsEditingRowId } = useEditingCollectionItemsRowIds();
+    const isEditingRow = getIsEditingRowId(rowId);
 
-/** `children` should be the editing field view. */
-export const CollectionDetailsNameCell = (
-  props: PropsWithChildren<CellContext<CollectionItemRecordDef, string>>,
-) => {
-  const { children, row, table } = props;
-  const isShiftHeld = useKeyHold('Shift');
-
-  const { lastSelectedRowId, setLastSelectedRowId } =
-    useLastSelectedTableRowsStore();
-
-  const { setSelectedTableRows } = useSelectedTableRowsStore();
-
-  const { isEditing } = useEditingCollectionItemsRowIds();
-
-  return (
-    <div className="flex items-center gap-2">
-      <CheckboxField
-        checked={row.getIsSelected()}
-        disabled={isEditing || !row.getCanSelect()}
-        onCheckedChange={(checked) => {
-          const { rows } = table.getRowModel();
-          const rowId = row.id;
-
-          if (isShiftHeld && lastSelectedRowId) {
-            const currentIndex = row.index;
-            const prevIndex = rows.findIndex(({ id }) => {
-              return id === lastSelectedRowId;
-            });
-
-            const rowsToToggle = getRowRange({
-              currentIndex,
-              prevIndex,
-              rows,
-            });
-
-            rowsToToggle.forEach((row) => {
-              row.toggleSelected(checked);
-            });
-          } else {
-            row.toggleSelected();
-          }
-
-          table.setRowSelection((prevSelectedRows) => {
-            const selectedRows = {
-              ...prevSelectedRows,
-            };
-            if (checked) {
-              selectedRows[rowId] = true;
-            } else {
-              delete selectedRows[rowId];
-            }
-
-            setSelectedTableRows(selectedRows);
-
-            return selectedRows;
-          });
-          setLastSelectedRowId(rowId);
-
-          // ? clears any text highlighting
-          document.getSelection()?.removeAllRanges();
+    return isEditingRow ? (
+      <form.AppField mode="array" name="collectionItems">
+        {() => {
+          return (
+            <form.AppField name={`collectionItems[${index}].name`}>
+              {(field) => {
+                return (
+                  <field.InputField
+                    autoFocus
+                    // error={getFieldError(field)}
+                    hideLabel
+                    name={field.name}
+                    onValueChange={field.handleChange}
+                    placeholder="Input name..."
+                    required
+                    value={field.state.value}
+                  />
+                );
+              }}
+            </form.AppField>
+          );
         }}
-      />
-      {children}
-    </div>
-  );
-};
+      </form.AppField>
+    ) : (
+      <p>{value}</p>
+    );
+  },
+});

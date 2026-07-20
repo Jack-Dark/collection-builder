@@ -1,83 +1,54 @@
-import type { CellContext } from '@tanstack/react-table';
-import type { PropsWithChildren } from 'react';
+import { Link } from '@tanstack/react-router';
 
-import { useKeyHold } from '@tanstack/react-hotkeys';
-
-import type { CollectionRecordDef } from '#/api/routes/collections/collection.types';
-
-import { CheckboxField } from '#/components/Fields/CheckboxField';
 import {
-  getRowRange,
-  useLastSelectedTableRowsStore,
-  useSelectedTableRowsStore,
-} from '#/components/Table';
+  withCollectionsListForm,
+  collectionsListFormDefaultValues,
+} from '#/pages/CollectionsListPage/CollectionsListPage.form';
 import { useEditingCollectionsRowIds } from '#/pages/CollectionsListPage/hooks/use-editing-collections-row-ids';
 
-/** `children` should be the editing field view. */
-export const CollectionsListNameCell = (
-  props: PropsWithChildren<
-    CellContext<CollectionRecordDef, CollectionRecordDef['name']>
-  >,
-) => {
-  const { children, row, table } = props;
-  const isShiftHeld = useKeyHold('Shift');
+export const CollectionsListNameCell = withCollectionsListForm({
+  /** These values are only used for type-checking, and are not used at runtime */
+  defaultValues: collectionsListFormDefaultValues,
+  props: {
+    index: 0,
+    rowId: '',
+    value: '',
+  },
+  render: ({ form, index, rowId, value }) => {
+    const { getIsEditingRowId } = useEditingCollectionsRowIds();
+    const isEditingRow = getIsEditingRowId(rowId);
 
-  const { lastSelectedRowId, setLastSelectedRowId } =
-    useLastSelectedTableRowsStore();
-
-  const { setSelectedTableRows } = useSelectedTableRowsStore();
-
-  const { isEditing } = useEditingCollectionsRowIds();
-
-  return (
-    <div className="flex items-center gap-2">
-      <CheckboxField
-        checked={row.getIsSelected()}
-        disabled={isEditing || !row.getCanSelect()}
-        onCheckedChange={(checked) => {
-          const { rows } = table.getRowModel();
-          const rowId = row.id;
-
-          if (isShiftHeld && lastSelectedRowId) {
-            const currentIndex = row.index;
-            const prevIndex = rows.findIndex(({ id }) => {
-              return id === lastSelectedRowId;
-            });
-
-            const rowsToToggle = getRowRange({
-              currentIndex,
-              prevIndex,
-              rows,
-            });
-
-            rowsToToggle.forEach((row) => {
-              row.toggleSelected(checked);
-            });
-          } else {
-            row.toggleSelected();
-          }
-
-          table.setRowSelection((prevSelectedRows) => {
-            const selectedRows = {
-              ...prevSelectedRows,
-            };
-            if (checked) {
-              selectedRows[rowId] = true;
-            } else {
-              delete selectedRows[rowId];
-            }
-
-            setSelectedTableRows(selectedRows);
-
-            return selectedRows;
-          });
-          setLastSelectedRowId(rowId);
-
-          // ? clears any text highlighting
-          document.getSelection()?.removeAllRanges();
+    return isEditingRow ? (
+      <form.AppField mode="array" name="records">
+        {() => {
+          return (
+            <form.AppField name={`records[${index}].name`}>
+              {(field) => {
+                return (
+                  <field.InputField
+                    autoFocus
+                    // error={getFieldError(field)}
+                    hideLabel
+                    name={field.name}
+                    onValueChange={field.handleChange}
+                    placeholder="Input name..."
+                    required
+                    value={field.state.value}
+                  />
+                );
+              }}
+            </form.AppField>
+          );
         }}
-      />
-      {children}
-    </div>
-  );
-};
+      </form.AppField>
+    ) : (
+      <Link
+        className="hover:text-primary-700"
+        params={{ id: rowId }}
+        to="/collections/$id"
+      >
+        <p>{value}</p>
+      </Link>
+    );
+  },
+});

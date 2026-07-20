@@ -4,16 +4,11 @@ import { createColumnHelper } from '@tanstack/react-table';
 
 import type { GetPaginatedCollectionsResponseDef } from '#/api/routes/collections/get-paginated-collections/get-paginated-collections.types';
 
-import { CheckboxField } from '#/components/Fields/CheckboxField';
-import { useLastSelectedTableRowsStore } from '#/components/Table';
-
 import type { CreateOrUpdateCollectionFormDataSchemaDef } from '../../CollectionsListPage.types';
 
-import { useEditingCollectionsRowIds } from '../../hooks/use-editing-collections-row-ids';
 import { CollectionsListActionsCell } from './components/column-cells/CollectionsListActionsCell';
 import { CollectionsListCustomFieldCell } from './components/column-cells/CollectionsListCustomFieldCell/CollectionsListCustomFieldCell';
 import { CollectionsListNameCell } from './components/column-cells/CollectionsListNameCell/CollectionsListNameCell';
-import { CollectionsListNameField } from './components/column-cells/CollectionsListNameCell/components/CollectionsListNameField/CollectionsListNameField';
 import { CollectionsListNotesCell } from './components/column-cells/CollectionsListNotesCell/CollectionsListNotesCell';
 
 const columnHelper =
@@ -39,7 +34,7 @@ export type GetCollectionsListTableColumnsPropsDef = {
     any
   >;
   onCancel: () => void;
-  onEditClick: (rowId?: string) => void;
+  onEditClick: (...rowIdsToAdd: string[]) => void;
 };
 
 export const getCollectionsListTableColumns = (
@@ -52,45 +47,16 @@ export const getCollectionsListTableColumns = (
       cell: (props) => {
         const { getValue, row } = props;
 
-        const { getIsEditingRowId } = useEditingCollectionsRowIds();
-        const isEditingRow = getIsEditingRowId(row.id);
-
         return (
-          <CollectionsListNameCell {...props}>
-            {isEditingRow ? (
-              <CollectionsListNameField form={form} index={row.index} />
-            ) : (
-              <p>{getValue()}</p>
-            )}
-          </CollectionsListNameCell>
+          <CollectionsListNameCell
+            form={form}
+            index={row.index}
+            rowId={row.id}
+            value={getValue()}
+          />
         );
       },
-      header: ({ table }) => {
-        const { resetLastSelectedRowId } = useLastSelectedTableRowsStore();
-
-        const title = 'Name';
-        const { isEditing } = useEditingCollectionsRowIds();
-
-        return table.getRowCount() ? (
-          <div className="flex items-center gap-2">
-            <CheckboxField
-              checked={table.getIsAllRowsSelected()}
-              disabled={isEditing}
-              indeterminate={table.getIsSomeRowsSelected()}
-              onCheckedChange={(_checked, { event }) => {
-                const toggleAllRowsSelectedHandler =
-                  table.getToggleAllRowsSelectedHandler();
-
-                resetLastSelectedRowId();
-                toggleAllRowsSelectedHandler(event);
-              }}
-            />
-            <span>{title}</span>
-          </div>
-        ) : (
-          title
-        );
-      },
+      header: 'Name',
       size: 250,
     }),
     columnHelper.accessor('customField1Label', {

@@ -7,5 +7,5 @@ export type CollectionsListActionsCellPropsDef = CellContext<
   CollectionRecordDef['id']
 > & {
   onCancel: () => void;
-  onEditClick: (rowId?: string) => void;
+  onEditClick: (...rowIdsToAdd: string[]) => void;
 };

@@ -9,18 +9,20 @@ import type { JSXElementConstructor, PropsWithChildren } from 'react';
 
 import { ScrollArea } from '@base-ui/react';
 import SwapVertIcon from '@mui/icons-material/SwapVert';
+import { useKeyHold } from '@tanstack/react-hotkeys';
 import {
   flexRender,
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { useEffect, useMemo, useRef } from 'react';
+import { useMemo, useRef } from 'react';
 
 import { getCreateDefaultZustandStore } from '#/helpers/get-create-default-zustand-state';
 
 import type { FiltersButtonPropsDef } from './components/FilterButton/FilterButton.types';
 import type { SearchProps } from './components/Search/Search.types';
 
+import { CheckboxField } from '../Fields/CheckboxField';
 import { SelectField } from '../Fields/SelectField';
 import { FilterButton } from './components/FilterButton';
 import { Search } from './components/Search';
@@ -61,6 +63,8 @@ export type TablePropsDef<T> = Omit<
 > &
   Partial<Pick<TableOptions<T>, 'filterFns' | 'getCoreRowModel'>> & {
     AboveTableComponent?: AboveTableComponentDef<T>;
+    disableRowSelection?: boolean;
+    enableRowSelection?: boolean;
     filters?: FiltersButtonPropsDef;
     pagination?: {
       limit?: {
@@ -80,40 +84,6 @@ export type TablePropsDef<T> = Omit<
       value: SortItemDef<keyof T> | undefined;
     };
   };
-
-const createSelectedTableRowsStore = () => {
-  // TODO - NEED TO SYNC THIS STORE WITH THE TABLE STATE.
-  const createStore = getCreateDefaultZustandStore<
-    Record<string, boolean | undefined>
-  >({});
-
-  return () => {
-    const { logValueToConsole, resetValue, setValue, value } = createStore();
-
-    const getSelectedRowIds = () => {
-      const rows = Object.entries(value);
-
-      return rows.reduce<string[]>((acc, row) => {
-        const [rowId, isSelected] = row;
-        if (isSelected) {
-          return [...acc, rowId];
-        }
-
-        return acc;
-      }, []);
-    };
-
-    return {
-      getSelectedRowIds,
-      logValueToConsole,
-      resetSelectedTableRows: resetValue,
-      selectedTableRows: value,
-      setSelectedTableRows: setValue,
-    };
-  };
-};
-
-export const useSelectedTableRowsStore = createSelectedTableRowsStore();
 
 const createLastSelectedRowIdStore = () => {
   const createStore = getCreateDefaultZustandStore<string | undefined>(
@@ -152,7 +122,10 @@ export const getRowRange = <TData extends RowData>(
 
 export const Table = <TData,>({
   AboveTableComponent,
+  columns,
   data = [],
+  disableRowSelection,
+  enableRowSelection,
   filters,
   getRowId = (row, index) => {
     // @ts-expect-error
@@ -161,22 +134,20 @@ export const Table = <TData,>({
   pagination,
   search,
   sort,
-  ...rest
 }: TablePropsDef<TData>) => {
   const tableRef = useRef<HTMLTableElement>(null);
 
   const table = useReactTable<TData>({
+    columns,
     data,
+    enableRowSelection,
     getCoreRowModel: getCoreRowModel(),
     getRowId,
-    ...rest,
   });
 
-  const { resetSelectedTableRows, setSelectedTableRows } =
-    useSelectedTableRowsStore();
-
-  const isAllRowsSelected = table.getIsAllRowsSelected();
-  const isSomeRowsSelected = table.getIsSomeRowsSelected();
+  const isShiftHeld = useKeyHold('Shift');
+  const { lastSelectedRowId, resetLastSelectedRowId, setLastSelectedRowId } =
+    useLastSelectedTableRowsStore();
 
   const showActionsRow = !!filters || !!search || !!sort;
 
@@ -207,20 +178,6 @@ export const Table = <TData,>({
 
     return '';
   }, [!!filters, !!search, !!sort]);
-
-  useEffect(() => {
-    if (isAllRowsSelected) {
-      const allRowIds = data.map((record, index) => {
-        return getRowId(record, index);
-      });
-      const selectedTableRows = allRowIds.reduce((acc, id) => {
-        return { ...acc, [id]: true };
-      }, {});
-      setSelectedTableRows(selectedTableRows);
-    } else if (!isSomeRowsSelected) {
-      resetSelectedTableRows();
-    }
-  }, [isAllRowsSelected]);
 
   return (
     <div
@@ -264,7 +221,7 @@ export const Table = <TData,>({
                   {table.getHeaderGroups().map((hg) => {
                     return (
                       <tr key={hg.id}>
-                        {hg.headers.map((header) => {
+                        {hg.headers.map((header, index) => {
                           return (
                             <th
                               className={`text-left px-2 py-1 ${tableCellClasses}`}
@@ -272,10 +229,26 @@ export const Table = <TData,>({
                               key={header.id}
                               style={{ width: `${header.getSize()}px` }}
                             >
-                              {flexRender(
-                                header.column.columnDef.header,
-                                header.getContext(),
-                              )}
+                              <div className="flex items-center gap-2">
+                                {index === 0 && enableRowSelection && (
+                                  <CheckboxField
+                                    checked={table.getIsAllRowsSelected()}
+                                    disabled={disableRowSelection}
+                                    indeterminate={table.getIsSomeRowsSelected()}
+                                    onCheckedChange={(_checked, { event }) => {
+                                      const toggleAllRowsSelected =
+                                        table.getToggleAllRowsSelectedHandler();
+
+                                      resetLastSelectedRowId();
+                                      toggleAllRowsSelected(event);
+                                    }}
+                                  />
+                                )}
+                                {flexRender(
+                                  header.column.columnDef.header,
+                                  header.getContext(),
+                                )}
+                              </div>
                             </th>
                           );
                         })}
@@ -293,7 +266,7 @@ export const Table = <TData,>({
                         data-row-id={row.id}
                         key={row.id}
                       >
-                        {row.getVisibleCells().map((cell) => {
+                        {row.getVisibleCells().map((cell, index) => {
                           const { column } = cell;
 
                           return (
@@ -303,10 +276,66 @@ export const Table = <TData,>({
                               key={cell.id}
                               style={{ width: `${column.getSize()}px` }}
                             >
-                              {flexRender(
-                                cell.column.columnDef.cell,
-                                cell.getContext(),
-                              )}
+                              <div className="flex items-center gap-2">
+                                {index === 0 && enableRowSelection && (
+                                  <CheckboxField
+                                    checked={row.getIsSelected()}
+                                    disabled={
+                                      disableRowSelection || !row.getCanSelect()
+                                    }
+                                    onCheckedChange={(checked) => {
+                                      const { rows } = table.getRowModel();
+                                      const rowId = row.id;
+
+                                      if (isShiftHeld && lastSelectedRowId) {
+                                        const currentIndex = row.index;
+                                        const prevIndex = rows.findIndex(
+                                          ({ id }) => {
+                                            return id === lastSelectedRowId;
+                                          },
+                                        );
+
+                                        const rowsToToggle = getRowRange({
+                                          currentIndex,
+                                          prevIndex,
+                                          rows,
+                                        });
+
+                                        rowsToToggle.forEach((row) => {
+                                          row.toggleSelected(checked);
+                                        });
+                                      } else {
+                                        row.toggleSelected();
+                                      }
+
+                                      table.setRowSelection(
+                                        (prevSelectedRows) => {
+                                          const selectedRows = {
+                                            ...prevSelectedRows,
+                                          };
+                                          if (checked) {
+                                            selectedRows[rowId] = true;
+                                          } else {
+                                            delete selectedRows[rowId];
+                                          }
+
+                                          return selectedRows;
+                                        },
+                                      );
+                                      setLastSelectedRowId(rowId);
+
+                                      // ? clears any text highlighting
+                                      document
+                                        .getSelection()
+                                        ?.removeAllRanges();
+                                    }}
+                                  />
+                                )}
+                                {flexRender(
+                                  cell.column.columnDef.cell,
+                                  cell.getContext(),
+                                )}
+                              </div>
                             </td>
                           );
                         })}

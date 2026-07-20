@@ -8,7 +8,10 @@ import {
 export const CollectionsListSubmitButton = withCollectionsListForm({
   /** These values are only used for type-checking, and are not used at runtime */
   defaultValues: collectionsListFormDefaultValues,
-  render: ({ form }) => {
+  props: {
+    resetRowSelection: () => {},
+  },
+  render: ({ form, resetRowSelection }) => {
     return (
       <form.Subscribe
         selector={(state) => {
@@ -28,6 +31,12 @@ export const CollectionsListSubmitButton = withCollectionsListForm({
                 className="flex flex-nowrap gap-2"
                 disabled={isPristine || !isFormValid}
                 Icon={SaveIcon}
+                onClick={(e) => {
+                  e.preventDefault();
+
+                  form.handleSubmit();
+                  resetRowSelection();
+                }}
                 processing={isSubmitting}
                 text="Save"
                 type="submit"

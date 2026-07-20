@@ -12,7 +12,6 @@ import {
 } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.react-query';
 import { useUpdateCollectionItems } from '#/api/routes/collection-items/update-collection-item-by-id/update-collection-item-by-id.react-query';
 import { useSpinner } from '#/components/FullPageLoadingSpinner/useSpinner';
-import { useSelectedTableRowsStore } from '#/components/Table';
 import { PageWrapper } from '#/page-wrapper';
 import { Route as CollectionRoute } from '#/routes/_protected/collections/$id';
 
@@ -55,8 +54,6 @@ export const CollectionDetailsPage: RouteComponent = () => {
 
   const { resetEditingRowIds } = useEditingCollectionItemsRowIds();
 
-  const { resetSelectedTableRows } = useSelectedTableRowsStore();
-
   const form = useCollectionDetailsForm({
     defaultValues: data?.items
       ? {
@@ -98,7 +95,6 @@ export const CollectionDetailsPage: RouteComponent = () => {
         }
 
         resetEditingRowIds();
-        resetSelectedTableRows();
         await invalidateGetCollectionDetailsById({ id: collectionId });
       });
     },
@@ -122,12 +118,7 @@ export const CollectionDetailsPage: RouteComponent = () => {
     <PageWrapper
       title={`${data?.collection.name} (${data?.pagination.totalRecords})`}
     >
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          form.handleSubmit();
-        }}
-      >
+      <form>
         <CollectionDetailsTable form={form} />
       </form>
     </PageWrapper>

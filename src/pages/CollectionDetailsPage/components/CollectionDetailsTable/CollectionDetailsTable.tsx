@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 
 import { useGetCollectionDetailsById } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.react-query';
-import { Table, useSelectedTableRowsStore } from '#/components/Table';
+import { Table } from '#/components/Table';
 import { Route as CollectionRoute } from '#/routes/_protected/collections/$id';
 
 import { useEditingCollectionItemsRowIds } from '../../../CollectionsListPage/hooks/use-editing-collections-row-ids';
@@ -39,23 +39,15 @@ export const CollectionDetailsTable = withCollectionDetailsForm({
 
       form.setFieldValue('collectionItems', items);
     };
-    const { addToEditingRowIds, editingRowIds, resetEditingRowIds } =
+    const { addToEditingRowIds, editingRowIds, isEditing, resetEditingRowIds } =
       useEditingCollectionItemsRowIds();
 
-    const { getSelectedRowIds, selectedTableRows } =
-      useSelectedTableRowsStore();
-
-    const selectedRowIds = useMemo(() => {
-      return getSelectedRowIds();
-    }, [selectedTableRows]);
-
-    const onEditClick = (rowId?: string) => {
-      const rowsToAdd = rowId ? [rowId] : selectedRowIds;
-      addToEditingRowIds(...rowsToAdd);
+    const onEditClick = (...rowIdsToAdd: string[]) => {
+      addToEditingRowIds(...rowIdsToAdd);
 
       const selectedRowsInEditMode = form.state.values.collectionItems.map(
         (rowRecord) => {
-          const isEditing = rowsToAdd.includes(String(rowRecord.id));
+          const isEditing = rowIdsToAdd.includes(String(rowRecord.id));
 
           return { ...rowRecord, isEditing };
         },
@@ -85,7 +77,6 @@ export const CollectionDetailsTable = withCollectionDetailsForm({
       collection.customField3Label,
       editingRowIds,
       customFields,
-      selectedRowIds,
     ]);
 
     const filtersProps = useCollectionDetailsFiltersProps();
@@ -98,17 +89,27 @@ export const CollectionDetailsTable = withCollectionDetailsForm({
         {(collectionItemsField) => {
           return (
             <Table
-              AboveTableComponent={() => {
+              AboveTableComponent={({ table }) => {
+                const selectedRowIds = table
+                  .getSelectedRowModel()
+                  .rows.map(({ id }) => {
+                    return id;
+                  });
+
                 return (
                   <CollectionDetailsTableRowActions
                     form={form}
                     onCancel={onCancel}
+                    resetRowSelection={table.resetRowSelection}
+                    selectedRowIds={selectedRowIds}
                   />
                 );
               }}
               columns={columns}
               // @ts-expect-error // TS type mismatch between new and old records
               data={collectionItemsField.state.value}
+              disableRowSelection={isEditing}
+              enableRowSelection
               filters={{
                 ...filtersProps,
                 FiltersContent: () => {

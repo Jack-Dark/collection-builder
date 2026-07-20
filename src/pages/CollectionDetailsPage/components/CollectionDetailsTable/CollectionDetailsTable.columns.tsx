@@ -4,12 +4,8 @@ import { createColumnHelper } from '@tanstack/react-table';
 
 import type { CollectionItemRecordDef } from '#/api/routes/collection-items/collection-item.types';
 
-import { CheckboxField } from '#/components/Fields/CheckboxField';
-import { useLastSelectedTableRowsStore } from '#/components/Table';
-
 import type { GetCollectionItemsTableColumnsPropsDef } from './CollectionDetailsTable.types';
 
-import { useEditingCollectionItemsRowIds } from '../../../CollectionsListPage/hooks/use-editing-collections-row-ids';
 import { CollectionDetailsActionsCell } from './components/column-cells/CollectionDetailsActionsCell';
 import { CollectionDetailsCreatedAtCell } from './components/column-cells/CollectionDetailsCreatedAtCell';
 import { CollectionDetailsCustomFieldCell } from './components/column-cells/CollectionDetailsCustomFieldCell';
@@ -17,7 +13,6 @@ import { CollectionDetailsEditionCell } from './components/column-cells/Collecti
 import { CollectionDetailsImagesCell } from './components/column-cells/CollectionDetailsImagesCell';
 import { CollectionDetailsImagesField } from './components/column-cells/CollectionDetailsImagesCell/components/CollectionDetailsImagesField';
 import { CollectionDetailsNameCell } from './components/column-cells/CollectionDetailsNameCell';
-import { CollectionDetailsNameField } from './components/column-cells/CollectionDetailsNameCell/components/CollectionDetailsNameField';
 import { CollectionDetailsNotesCell } from './components/column-cells/CollectionDetailsNotesCell';
 import { useCollectionDetailsCustomFieldsStore } from './hooks/use-collection-details-custom-fields-store';
 
@@ -43,45 +38,16 @@ export const getCollectionItemsTableColumns = (
       cell: (props) => {
         const { getValue, row } = props;
 
-        const { getIsEditingRowId } = useEditingCollectionItemsRowIds();
-        const isEditingRow = getIsEditingRowId(row.id);
-
         return (
-          <CollectionDetailsNameCell {...props}>
-            {isEditingRow ? (
-              <CollectionDetailsNameField form={form} index={row.index} />
-            ) : (
-              <p>{getValue()}</p>
-            )}
-          </CollectionDetailsNameCell>
+          <CollectionDetailsNameCell
+            form={form}
+            index={row.index}
+            rowId={row.id}
+            value={getValue()}
+          />
         );
       },
-      header: ({ table }) => {
-        const { resetLastSelectedRowId } = useLastSelectedTableRowsStore();
-
-        const title = 'Name';
-        const { isEditing } = useEditingCollectionItemsRowIds();
-
-        return table.getRowCount() ? (
-          <div className="flex items-center gap-2">
-            <CheckboxField
-              checked={table.getIsAllRowsSelected()}
-              disabled={isEditing}
-              indeterminate={table.getIsSomeRowsSelected()}
-              onCheckedChange={(_checked, { event }) => {
-                const toggleAllRowsSelectedHandler =
-                  table.getToggleAllRowsSelectedHandler();
-
-                resetLastSelectedRowId();
-                toggleAllRowsSelectedHandler(event);
-              }}
-            />
-            <span>{title}</span>
-          </div>
-        ) : (
-          title
-        );
-      },
+      header: 'Name',
       size: 250,
     }),
     columnHelper.accessor('images', {
