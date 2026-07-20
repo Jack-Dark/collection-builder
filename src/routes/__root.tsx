@@ -16,8 +16,8 @@ import {
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
 import { StrictMode } from 'react';
 
-import { getGenericFetchQueryOptions } from '#/api/react-query-hooks/use-generic-fetch-query/get-generic-fetch-query-options';
 import { reactQueryKeys } from '#/api/react-query-hooks/react-query-keys';
+import { getGenericFetchQueryOptions } from '#/api/react-query-hooks/use-generic-fetch-query/get-generic-fetch-query-options';
 import { getNavMenuCollectionsServerFn } from '#/api/routes/collections/get-nav-menu-collections/get-nav-menu-collections.serverFn';
 import { DialogProvider } from '#/components/Dialog/Dialog.Provider';
 
