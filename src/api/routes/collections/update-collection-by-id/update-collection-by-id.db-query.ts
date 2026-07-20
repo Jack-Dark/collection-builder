@@ -1,4 +1,4 @@
-import { and, eq, inArray, isNull } from 'drizzle-orm';
+import { and, eq, isNull } from 'drizzle-orm';
 
 import { db } from '#/api/db';
 import { collectionsTable } from '#/api/db-tables-schema';
@@ -13,11 +13,6 @@ export const updateCollectionByIdDbQuery = async ({
     return [];
   }
 
-  const updatedCollectionsIds = recordsToUpdate.map(({ id }) => {
-    return id;
-  });
-  const [{ userId }] = recordsToUpdate;
-
   const updatedRecords: CollectionRecordDef[] = [];
 
   for (const record of recordsToUpdate) {
@@ -26,8 +21,8 @@ export const updateCollectionByIdDbQuery = async ({
       .set(record)
       .where(
         and(
-          inArray(collectionsTable.id, updatedCollectionsIds),
-          eq(collectionsTable.userId, userId),
+          eq(collectionsTable.id, record.id),
+          eq(collectionsTable.userId, record.userId),
           isNull(collectionsTable.deletedAt),
         ),
       )

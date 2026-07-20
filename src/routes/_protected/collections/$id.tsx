@@ -3,7 +3,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import type { GetCollectionDetailsByIdResponseDef } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.types';
 
 import { getGenericFetchQueryOptions } from '#/api/react-query-hooks/use-generic-fetch-query/get-generic-fetch-query-options';
-import { reactQueryKeys } from '#/api/react-query-hooks/use-generic-fetch-query/react-query-keys';
+import { reactQueryKeys } from '#/api/react-query-hooks/react-query-keys';
 import { collectionDetailsSearchQueriesSchema } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.schema';
 import { getCollectionDetailsByIdServerFn } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.serverFn';
 import { CollectionDetailsPage } from '#/pages/CollectionDetailsPage';

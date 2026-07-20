@@ -1,6 +1,5 @@
 import type { RouteComponent } from '@tanstack/react-router';
 
-import { useRouterState } from '@tanstack/react-router';
 import { useEffect } from 'react';
 
 import type { CollectionRecordDef } from '#/api/routes/collections/collection.types';
@@ -12,40 +11,41 @@ import {
 } from '#/api/routes/collections/get-paginated-collections/get-paginated-collections.react-query';
 import { useUpdateCollectionById } from '#/api/routes/collections/update-collection-by-id/update-collection-by-id.react-query';
 import { useSpinner } from '#/components/FullPageLoadingSpinner/useSpinner';
+import { useSelectedTableRowsStore } from '#/components/Table';
 import { PageWrapper } from '#/page-wrapper';
 import { createOrUpdateCollectionFormSchema } from '#/pages/CollectionsListPage/collection-form.schema';
-import { Route } from '#/routes/_protected/collections';
+import { Route as CollectionsListRoute } from '#/routes/_protected/collections';
 
 import {
   collectionsListFormDefaultValues,
   useCollectionsListForm,
 } from './CollectionsListPage.form';
 import { CollectionsListTable } from './components/CollectionsListTable/CollectionsListTable';
+import { useEditingCollectionsRowIds } from './hooks/use-editing-collections-row-ids';
 
 export const CollectionsListPage: RouteComponent = () => {
-  const searchQueries = Route.useSearch();
+  const searchQueries = CollectionsListRoute.useSearch();
 
-  const { isLoading } = useRouterState();
-  const { toggleSpinner } = useSpinner();
+  const { onInterceptProcessingRequest, processing, toggleSpinner } =
+    useSpinner();
 
   const invalidateGetPaginatedCollections =
     useInvalidateGetPaginatedCollections();
 
-  const { onCreateCollection } = useCreateCollection({
-    onSuccess: async () => {
-      await invalidateGetPaginatedCollections();
-    },
-  });
+  const { onCreateCollection } = useCreateCollection({});
 
-  const { onUpdateCollectionById } = useUpdateCollectionById({
-    onSuccess: async () => {
-      await invalidateGetPaginatedCollections();
-    },
-  });
+  const { onUpdateCollectionById } = useUpdateCollectionById({});
 
   const { data } = useGetPaginatedCollections({
+    onSuccess: ({ collections }) => {
+      form.setFieldValue('records', collections);
+    },
     requestArgs: { params: searchQueries },
   });
+
+  const { resetEditingRowIds } = useEditingCollectionsRowIds();
+
+  const { resetSelectedTableRows } = useSelectedTableRowsStore();
 
   const form = useCollectionsListForm({
     defaultValues: data?.collections
@@ -56,30 +56,36 @@ export const CollectionsListPage: RouteComponent = () => {
         }
       : collectionsListFormDefaultValues,
     onSubmit: async ({ value: { records } }) => {
-      const editedRecords = records.filter(({ isEditing }) => {
-        return isEditing;
-      });
-
-      const isUpdatedRecords = editedRecords.some(({ createdAt }) => {
-        return createdAt;
-      });
-
-      if (isUpdatedRecords) {
-        await onUpdateCollectionById(editedRecords as CollectionRecordDef[]);
-      } else {
-        const newRecords = editedRecords.map((record) => {
-          const {
-            createdAt: _createdAt,
-            id,
-            updatedAt: _updatedAt,
-            userId: _userId,
-            ...newCollectionData
-          } = record;
-
-          return { ...newCollectionData, id: String(id) };
+      await onInterceptProcessingRequest(async () => {
+        const editedRecords = records.filter(({ isEditing }) => {
+          return isEditing;
         });
-        await onCreateCollection({ records: newRecords });
-      }
+
+        const isUpdatedRecords = editedRecords.some(({ createdAt }) => {
+          return createdAt;
+        });
+
+        if (isUpdatedRecords) {
+          await onUpdateCollectionById(editedRecords as CollectionRecordDef[]);
+        } else {
+          const newRecords = editedRecords.map((record) => {
+            const {
+              createdAt: _createdAt,
+              id,
+              updatedAt: _updatedAt,
+              userId: _userId,
+              ...newCollectionData
+            } = record;
+
+            return { ...newCollectionData, id: String(id) };
+          });
+          await onCreateCollection({ records: newRecords });
+        }
+
+        resetEditingRowIds();
+        resetSelectedTableRows();
+        await invalidateGetPaginatedCollections();
+      });
     },
     validators: {
       onChange: createOrUpdateCollectionFormSchema,
@@ -88,8 +94,8 @@ export const CollectionsListPage: RouteComponent = () => {
   });
 
   useEffect(() => {
-    toggleSpinner(isLoading);
-  }, [isLoading]);
+    toggleSpinner(processing);
+  }, [processing]);
 
   return (
     <PageWrapper title="Collections">

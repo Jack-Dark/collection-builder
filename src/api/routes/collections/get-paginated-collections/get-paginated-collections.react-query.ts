@@ -1,8 +1,8 @@
 import type { GenericFetchProps } from '#/api/react-query-hooks/use-generic-fetch-query/use-generic-fetch-query.types';
 
+import { reactQueryKeys } from '#/api/react-query-hooks/react-query-keys';
 import { useGenericFetchQuery } from '#/api/react-query-hooks/use-generic-fetch-query';
 import { getUseInvalidateQuery } from '#/api/react-query-hooks/use-generic-fetch-query/hooks/get-use-invalidate-query-cache';
-import { reactQueryKeys } from '#/api/react-query-hooks/use-generic-fetch-query/react-query-keys';
 
 import type {
   GetPaginatedCollectionsRequestArgsDef,
@@ -27,8 +27,11 @@ export const useGetPaginatedCollections = <
       reactQueryKeys.getPaginatedCollections,
       JSON.stringify(props.requestArgs),
     ],
-    ...props,
     showLoading: true,
+    ...props,
+    onSuccess: async (data, requestArgs) => {
+      await props?.onSuccess?.(data, requestArgs);
+    },
   });
 };
 

@@ -87,7 +87,7 @@ export const useGenericFetchQuery = <
 
   useEffect(() => {
     if (isSuccess) {
-      onSuccess?.(data);
+      onSuccess?.(data, requestArgs);
     }
   }, [
     isSuccess,

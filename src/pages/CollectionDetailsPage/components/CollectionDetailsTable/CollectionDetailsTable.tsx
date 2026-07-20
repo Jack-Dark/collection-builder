@@ -26,30 +26,23 @@ export const CollectionDetailsTable = withCollectionDetailsForm({
     const collectionId = Number(id);
     const search = CollectionRoute.useSearch();
 
-    const { customFields, setCustomFields } =
-      useCollectionDetailsCustomFieldsStore();
+    const { customFields } = useCollectionDetailsCustomFieldsStore();
 
     const { data } = useGetCollectionDetailsById({
-      onSuccess: ({ customFields, items }) => {
-        form.setFieldValue('collectionItems', items);
-        resetEditingRowIds();
-        resetSelectedTableRows();
-        setCustomFields(customFields);
-      },
       requestArgs: { collectionId, params: search },
     });
 
-    const { collection, pagination } = data;
+    const { collection, items, pagination } = data;
 
     const onCancel = () => {
       resetEditingRowIds();
 
-      form.setFieldValue('collectionItems', data.items);
+      form.setFieldValue('collectionItems', items);
     };
     const { addToEditingRowIds, editingRowIds, resetEditingRowIds } =
       useEditingCollectionItemsRowIds();
 
-    const { getSelectedRowIds, resetSelectedTableRows, selectedTableRows } =
+    const { getSelectedRowIds, selectedTableRows } =
       useSelectedTableRowsStore();
 
     const selectedRowIds = useMemo(() => {

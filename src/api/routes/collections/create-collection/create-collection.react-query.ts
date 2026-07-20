@@ -1,5 +1,6 @@
 import type { GenericMutateQueryProps } from '#/api/react-query-hooks/use-generic-mutate-query/use-generic-mutate-query.types';
 
+import { reactMutationKeys } from '#/api/react-query-hooks/react-query-keys';
 import { useGenericMutateQuery } from '#/api/react-query-hooks/use-generic-mutate-query';
 
 import type {
@@ -32,7 +33,7 @@ export const useCreateCollection = <
         data: { records },
       });
     },
-    mutationKey: ['create-collections'],
+    mutationKey: [reactMutationKeys.createCollections],
     showLoading: true,
     ...props,
     onSuccess: async (data, requestArgs) => {

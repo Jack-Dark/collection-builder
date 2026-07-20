@@ -82,6 +82,7 @@ export type TablePropsDef<T> = Omit<
   };
 
 const createSelectedTableRowsStore = () => {
+  // TODO - NEED TO SYNC THIS STORE WITH THE TABLE STATE.
   const createStore = getCreateDefaultZustandStore<
     Record<string, boolean | undefined>
   >({});

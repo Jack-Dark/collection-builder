@@ -1,7 +1,7 @@
 import type { UseQueryOptions } from '@tanstack/react-query';
 import type { DependencyList } from 'react';
 
-import type { reactQueryKeys } from './react-query-keys';
+import type { reactQueryKeys } from '../react-query-keys';
 
 // ? This type def applies the props passed to the hook when calling it
 export type GenericFetchProps<
@@ -19,7 +19,10 @@ export type GenericFetchProps<
   /** NOT called when returning a cached response. */
   onStart?: () => void | Promise<void>;
   /** This is called on the response every time, even if it's returned from cache. */
-  onSuccess?: (data: TTransformedData) => void;
+  onSuccess?: (
+    response: TTransformedData,
+    requestArgs: TRequestArgs,
+  ) => Promise<void> | void;
   requestArgs: TRequestArgs;
   showLoading?: boolean;
   transform?: (response: TResponseDef) => TTransformedData;

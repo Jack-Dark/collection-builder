@@ -1,5 +1,6 @@
 import type { GenericMutateQueryProps } from '#/api/react-query-hooks/use-generic-mutate-query/use-generic-mutate-query.types';
 
+import { reactMutationKeys } from '#/api/react-query-hooks/react-query-keys';
 import { useGenericMutateQuery } from '#/api/react-query-hooks/use-generic-mutate-query';
 
 import type { CollectionItemRecordDef } from '../collection-item.types';
@@ -64,9 +65,12 @@ export const useCreateCollectionItems = <
         return [];
       }
     },
-    mutationKey: ['create-collection-item'],
+    mutationKey: [reactMutationKeys.createCollectionItems],
     showLoading: true,
     ...props,
+    onSuccess: async (data, requestArgs) => {
+      await props?.onSuccess?.(data, requestArgs);
+    },
   });
 
   return { ...rest, onCreateCollectionItem };

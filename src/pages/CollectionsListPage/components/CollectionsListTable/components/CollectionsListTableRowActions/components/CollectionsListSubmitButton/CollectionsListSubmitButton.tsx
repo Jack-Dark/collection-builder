@@ -12,21 +12,23 @@ export const CollectionsListSubmitButton = withCollectionsListForm({
     return (
       <form.Subscribe
         selector={(state) => {
-          const { isFormValid, isPristine } = state;
+          const { isFormValid, isPristine, isSubmitting } = state;
 
           return {
             isFormValid,
             isPristine,
+            isSubmitting,
           };
         }}
       >
-        {({ isFormValid, isPristine }) => {
+        {({ isFormValid, isPristine, isSubmitting }) => {
           return (
             <form.AppForm>
               <form.Button
                 className="flex flex-nowrap gap-2"
                 disabled={isPristine || !isFormValid}
                 Icon={SaveIcon}
+                processing={isSubmitting}
                 text="Save"
                 type="submit"
               />

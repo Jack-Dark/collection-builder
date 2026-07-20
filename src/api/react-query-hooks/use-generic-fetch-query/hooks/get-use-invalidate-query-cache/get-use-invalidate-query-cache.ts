@@ -15,6 +15,7 @@ export const getUseInvalidateQuery = <TRequestArgs extends Record<string, any>>(
       const queryKey = [groupName, props?.id, props?.requestArgs].filter(
         Boolean,
       );
+      console.log('🚀 ~ invalidate ~ queryKey:', queryKey);
 
       await queryClient.invalidateQueries({
         queryKey,

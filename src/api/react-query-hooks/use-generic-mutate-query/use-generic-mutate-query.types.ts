@@ -13,7 +13,7 @@ export interface GenericMutateQueryProps<
 > {
   onError?: (error: string, requestArgs?: TRequestArgs) => void;
   onSuccess?: (
-    data: TTransformedData,
+    response: TTransformedData,
     requestArgs: TRequestArgs,
   ) => Promise<void> | void;
   showLoading?: boolean;

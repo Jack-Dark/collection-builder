@@ -1,5 +1,6 @@
 import type { GenericMutateQueryProps } from '#/api/react-query-hooks/use-generic-mutate-query/use-generic-mutate-query.types';
 
+import { reactMutationKeys } from '#/api/react-query-hooks/react-query-keys';
 import { useGenericMutateQuery } from '#/api/react-query-hooks/use-generic-mutate-query';
 
 import type { CollectionRecordDef } from '../collection.types';
@@ -28,6 +29,7 @@ export const useUpdateCollectionById = <
     mutationFn: (records) => {
       return updateCollectionByIdServerFn({ data: { records } });
     },
+    mutationKey: [reactMutationKeys.updateCollections],
     showLoading: true,
     ...props,
     onSuccess: async (data, requestArgs) => {

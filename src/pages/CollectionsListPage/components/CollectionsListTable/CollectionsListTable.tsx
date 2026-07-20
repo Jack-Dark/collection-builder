@@ -19,15 +19,10 @@ export const CollectionsListTable = withCollectionsListForm({
   /** These values are only used for type-checking, and are not used at runtime */
   defaultValues: collectionsListFormDefaultValues,
   render: ({ form }) => {
-    const search = CollectionsRoute.useSearch();
+    const searchQueries = CollectionsRoute.useSearch();
 
     const { data } = useGetPaginatedCollections({
-      onSuccess: ({ collections }) => {
-        form.setFieldValue('records', collections);
-        resetEditingRowIds();
-        resetSelectedTableRows();
-      },
-      requestArgs: { params: search },
+      requestArgs: { params: searchQueries },
     });
 
     const { collections, pagination } = data;
@@ -40,7 +35,7 @@ export const CollectionsListTable = withCollectionsListForm({
     const { addToEditingRowIds, editingRowIds, resetEditingRowIds } =
       useEditingCollectionsRowIds();
 
-    const { getSelectedRowIds, resetSelectedTableRows, selectedTableRows } =
+    const { getSelectedRowIds, selectedTableRows } =
       useSelectedTableRowsStore();
 
     const selectedRowIds = useMemo(() => {

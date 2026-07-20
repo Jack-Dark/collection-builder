@@ -107,7 +107,6 @@ export const useSpinner = () => {
     onInterceptProcessingRequest,
     onInterceptRequest,
     processing,
-    setProcessing,
     ...spinnerStore,
   };
 };
