@@ -45,8 +45,8 @@ export const SelectField = <
         </Select.Icon>
       </Select.Trigger>
       <Select.Portal>
-        <Select.Positioner>
-          <Select.Popup className="bg-white text-black py-2 rounded-sm shadow-lg max-h-100 overflow-auto">
+        <Select.Positioner alignItemWithTrigger={false}>
+          <Select.Popup className="min-w-25 bg-white text-black py-2 rounded-sm shadow-lg max-h-100 overflow-auto">
             <Select.List>
               {items.map((item, index) => {
                 return (
