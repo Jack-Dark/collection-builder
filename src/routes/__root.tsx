@@ -28,7 +28,11 @@ export const Route = createRootRouteWithContext<{
 }>()({
   component: RootComponent,
   errorComponent: () => {
-    return <p>An Error Occurred</p>;
+    return (
+      <RootDocument>
+        <p>An Error Occurred</p>
+      </RootDocument>
+    );
   },
   head: () => {
     return {
@@ -62,7 +66,11 @@ export const Route = createRootRouteWithContext<{
     return await context.queryClient.ensureQueryData(queryOptions);
   },
   notFoundComponent: () => {
-    return <p>Not Found</p>;
+    return (
+      <RootDocument>
+        <p>Not Found</p>
+      </RootDocument>
+    );
   },
 });
 
@@ -96,7 +104,9 @@ function RootComponent() {
   );
 }
 
-function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
+export const RootDocument = ({
+  children,
+}: Readonly<{ children: ReactNode }>) => {
   return (
     <html>
       <head>
@@ -111,4 +121,4 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
       </DialogProvider>
     </html>
   );
-}
+};

@@ -12,6 +12,7 @@ const authSchema = z.object({
 });
 
 const unauthorizedMsg = getReasonPhrase(StatusCodes.UNAUTHORIZED);
+const unprocessableMsg = getReasonPhrase(StatusCodes.UNPROCESSABLE_ENTITY);
 
 /** Use this middleware to authenticate protected API routes. */
 export const authApiRouteMiddleware = createMiddleware().server(
@@ -19,10 +20,7 @@ export const authApiRouteMiddleware = createMiddleware().server(
     const userContext = await getUserContext();
 
     if (!userContext) {
-      return new Response(
-        JSON.stringify({ error: { message: unauthorizedMsg } }),
-        { status: StatusCodes.UNAUTHORIZED },
-      );
+      throw new Error(unauthorizedMsg);
     }
 
     const { data, error, success } = z.safeParse(authSchema, userContext);
@@ -34,9 +32,8 @@ export const authApiRouteMiddleware = createMiddleware().server(
         },
       });
     } else {
-      return new Response(JSON.stringify({ error }), {
-        status: StatusCodes.UNPROCESSABLE_ENTITY,
-      });
+      console.error({ error });
+      throw new Error(unprocessableMsg, { cause: error });
     }
   },
 );

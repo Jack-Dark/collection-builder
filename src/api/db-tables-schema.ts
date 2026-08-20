@@ -74,6 +74,7 @@ export const accountsTable = pgTable(
     createdAt: timestamp({ mode: 'string' }).defaultNow().notNull(),
     id: text(),
     idToken: text(),
+    issuer: text().notNull().default(''),
     password: text(),
     providerId: text().notNull(),
     refreshToken: text(),

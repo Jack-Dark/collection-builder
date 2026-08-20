@@ -3,6 +3,7 @@ import { createRouter } from '@tanstack/react-router';
 import { setupRouterSsrQueryIntegration } from '@tanstack/react-router-ssr-query';
 
 import { SimpleErrorBoundary } from './components/SimpleErrorBoundary';
+import { RootDocument } from './routes/__root';
 import { routeTree } from './routeTree.gen';
 
 export const queryClient = new QueryClient({
@@ -18,11 +19,16 @@ export function getRouter() {
     context: { queryClient },
     defaultErrorComponent: SimpleErrorBoundary,
     defaultNotFoundComponent: () => {
-      return <p>404 NOT FOUND</p>;
+      return (
+        <RootDocument>
+          <p>Not Found</p>
+        </RootDocument>
+      );
     },
     defaultPreload: 'intent',
     routeTree,
   });
+
   setupRouterSsrQueryIntegration({
     queryClient,
     router,

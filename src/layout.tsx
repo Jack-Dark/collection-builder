@@ -18,6 +18,7 @@ import { Route as CollectionRoute } from './routes/_protected/collections/$id';
 
 export const Layout: RouteComponent = () => {
   const { data } = useGetNavMenuCollections({
+    initialData: { collections: [] },
     requestArgs: {},
   });
 

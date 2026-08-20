@@ -43,6 +43,13 @@
       "when": 1784133200721,
       "tag": "0005_bizarre_jack_flag",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1787242021194,
+      "tag": "0006_lonely_eternals",
+      "breakpoints": true
     }
   ]
 }
