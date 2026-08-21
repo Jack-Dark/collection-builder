@@ -1,6 +1,6 @@
 import { Combobox } from '@base-ui/react';
 import AddIcon from '@mui/icons-material/Add';
-import { useEffect, useMemo, useState } from 'react';
+import { useLayoutEffect, useMemo, useState } from 'react';
 
 import type { ComboboxFieldProps } from './ComboboxField.types';
 
@@ -99,7 +99,7 @@ export const ComboboxField = <TValue,>(props: ComboboxFieldProps<TValue>) => {
     return false;
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setQuery(inputValue || '');
   }, [inputValue]);
 

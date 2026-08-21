@@ -2,7 +2,13 @@ import type { Dialog as MuiDialogType } from '@base-ui/react';
 import type { DependencyList } from 'react';
 
 import { Dialog as MuiDialog } from '@base-ui/react/dialog';
-import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import {
+  useCallback,
+  useContext,
+  useLayoutEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 import type { DialogComponentDef } from '../Dialog.Context';
@@ -82,7 +88,7 @@ export const useDialog = (
     };
   }, [...dependencies, triggerId, isDialogOpen]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (triggerId) {
       if (isDialogOpen) {
         context.showDialog(triggerId, Dialog);

@@ -1,6 +1,6 @@
 import type { RouteComponent } from '@tanstack/react-router';
 
-import { useEffect } from 'react';
+import { useLayoutEffect } from 'react';
 
 import type { CollectionRecordDef } from '#/api/routes/collections/collection.types';
 
@@ -89,7 +89,7 @@ export const CollectionsListPage: RouteComponent = () => {
     },
   });
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     toggleSpinner(processing);
   }, [processing]);
 

@@ -1,6 +1,6 @@
 import type { RouteComponent } from '@tanstack/react-router';
 
-import { useEffect } from 'react';
+import { useLayoutEffect } from 'react';
 
 import type { OnCreateCollectionItemsArgsDef } from '#/api/routes/collection-items/create-collection-item/create-collection-item.types';
 import type { OnUpdateCollectionItemsArgsDef } from '#/api/routes/collection-items/update-collection-item-by-id/update-collection-item-by-id.types';
@@ -104,11 +104,11 @@ export const CollectionDetailsPage: RouteComponent = () => {
     },
   });
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     toggleSpinner(processing);
   }, [processing]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (searchQueries.filters) {
       setFilters(searchQueries.filters);
     }

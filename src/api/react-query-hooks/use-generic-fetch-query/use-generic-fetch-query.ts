@@ -1,5 +1,5 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useLayoutEffect, useMemo } from 'react';
 
 import { useSpinner } from '#/components/FullPageLoadingSpinner/useSpinner';
 import { useNotifications } from '#/components/Notifications';
@@ -75,7 +75,7 @@ export const useGenericFetchQuery = <
 
   const { data, error, isError, isFetching, isPending, isSuccess } = context;
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (enableSpinner) {
       if (isFetching || isPending) {
         showSpinner();
@@ -85,7 +85,7 @@ export const useGenericFetchQuery = <
     }
   }, [isFetching, isPending]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (isSuccess) {
       onSuccess?.(data, requestArgs);
     }
@@ -95,7 +95,7 @@ export const useGenericFetchQuery = <
     data,
   ]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (isError) {
       const errorMsg = error?.message || fallbackErrorMessage;
 

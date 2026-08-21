@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import { useEffect } from 'react';
+import { useLayoutEffect } from 'react';
 
 import { useSpinner } from '#/components/FullPageLoadingSpinner/useSpinner';
 import { useNotifications } from '#/components/Notifications';
@@ -81,7 +81,7 @@ export const useGenericMutateQuery = <
 
   const { isPending } = context;
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (showLoading) {
       if (isPending) {
         showSpinner();

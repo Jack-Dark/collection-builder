@@ -1,5 +1,5 @@
 import CloseIcon from '@mui/icons-material/Close';
-import { useEffect } from 'react';
+import { useLayoutEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 import type {
@@ -31,7 +31,7 @@ const notificationClasses = {
 export const Notifications = () => {
   const { clearNotification, notifications } = useNotificationsStore();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     notifications.forEach((notification) => {
       const { id, keepOpen, message, time } = notification;
 

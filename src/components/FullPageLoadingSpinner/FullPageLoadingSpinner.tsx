@@ -1,6 +1,6 @@
 import CloseIcon from '@mui/icons-material/Close';
 import _ from 'lodash';
-import { useEffect, useRef, useState } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 
 import { LoadingSpinner } from './components/LoadingSpinner';
 import { useSpinner } from './useSpinner';
@@ -17,7 +17,7 @@ export const FullPageLoadingSpinner = () => {
     }, 5000),
   ).current;
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (isSpinnerShowing && !showForceClose) {
       debouncedShowForceClose();
     } else if (!isSpinnerShowing) {
