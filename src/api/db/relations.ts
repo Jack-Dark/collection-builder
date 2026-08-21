@@ -2,6 +2,12 @@ import { defineRelations } from 'drizzle-orm';
 
 import * as schema from '../db-tables-schema';
 
+/** Maps to new keys for clarity. */
+const x = {
+  original: 'from',
+  references: 'to',
+} as const;
+
 export const relations = defineRelations(
   {
     accounts: schema.accountsTable,
@@ -14,39 +20,29 @@ export const relations = defineRelations(
   },
   (r) => {
     return {
-      accounts: {
-        user: r.one.users({
-          from: r.accounts.userId,
-          to: r.users.id,
-        }),
-      },
       collections: {
-        user: r.one.users({
-          alias: 'collections_userId_users_id',
-          from: r.collections.userId,
-          to: r.users.id,
-        }),
-        users: r.many.users({
-          alias: 'collections_id_users_id_via_collectionItems',
-          from: r.collections.id.through(r.collectionItems.collectionId),
-          to: r.users.id.through(r.collectionItems.userId),
-        }),
-      },
-      sessions: {
-        user: r.one.users({
-          from: r.sessions.userId,
-          to: r.users.id,
+        a_collection_item: r.many.collectionItems({
+          [x.original]: r.collections.id,
+          [x.references]: r.collectionItems.collectionId,
         }),
       },
       users: {
-        accounts: r.many.accounts(),
-        collectionsUserId: r.many.collections({
-          alias: 'collections_userId_users_id',
+        a_accounts: r.one.accounts({
+          [x.original]: r.users.id,
+          [x.references]: r.accounts.userId,
         }),
-        collectionsViaCollectionItems: r.many.collections({
-          alias: 'collections_id_users_id_via_collectionItems',
+        a_collection_items: r.many.collectionItems({
+          [x.original]: r.users.id,
+          [x.references]: r.collectionItems.userId,
         }),
-        sessions: r.many.sessions(),
+        a_collections: r.many.collections({
+          [x.original]: r.users.id,
+          [x.references]: r.collections.userId,
+        }),
+        a_sessions: r.many.sessions({
+          [x.original]: r.users.id,
+          [x.references]: r.sessions.userId,
+        }),
       },
     };
   },
