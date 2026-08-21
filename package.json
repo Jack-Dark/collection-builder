@@ -9,7 +9,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "db-generate": "drizzle-kit generate",
-    "db-migrate": "tsx ./src/migrate.ts",
+    "db-migrate": "drizzle-kit migrate",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },
