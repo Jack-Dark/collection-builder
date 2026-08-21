@@ -18,9 +18,7 @@ export const collectionDetailsFiltersSchema = z
   });
 
 export const collectionDetailsSearchQueriesSchema =
-  getRequiredPaginationQueriesSchema<CollectionItemsTableColumn>(
-    'customField1Value',
-  ).and(
+  getRequiredPaginationQueriesSchema<CollectionItemsTableColumn>('name').and(
     z.object({
       filters: collectionDetailsFiltersSchema,
       searchNotes: z
