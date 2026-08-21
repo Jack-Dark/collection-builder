@@ -16,7 +16,7 @@ export const CollectionDetailsCreatedAtCell = withCollectionDetailsForm({
   props: {
     index: 0,
     rowId: '',
-    value: '',
+    value: new Date(),
   },
   render: ({ form, index, rowId, value }) => {
     const { getHasNewRecord, getIsEditingRowId } =
