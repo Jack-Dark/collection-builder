@@ -61,7 +61,7 @@ export const SignUpForm: RouteComponent = () => {
         form.handleSubmit();
       }}
     >
-      <div>
+      <div className="grid gap-4 max-w-100">
         <form.Subscribe
           selector={(state) => {
             return {
@@ -205,7 +205,9 @@ export const SignUpForm: RouteComponent = () => {
             const { isFormValid } = state;
 
             return (
-              <Button disabled={!isFormValid} text="Submit" type="submit" />
+              <div className="justify-start">
+                <Button disabled={!isFormValid} text="Submit" type="submit" />
+              </div>
             );
           }}
         </form.Subscribe>
