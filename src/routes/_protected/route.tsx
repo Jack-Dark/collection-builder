@@ -14,6 +14,7 @@ export const Route = createFileRoute('/_protected')({
 
     try {
       const user = await getUserContext();
+
       if (!user) {
         throw redirectToSignIn();
       }
