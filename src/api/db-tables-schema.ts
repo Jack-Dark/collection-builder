@@ -1,4 +1,3 @@
-import { relations } from 'drizzle-orm';
 import {
   pgTable,
   text,
@@ -7,6 +6,7 @@ import {
   index,
   serial,
   json,
+  uniqueIndex,
 } from 'drizzle-orm/pg-core';
 
 export const timestamps = {
@@ -23,16 +23,16 @@ export const timestamps = {
 };
 
 export const usersTable = pgTable('users', {
-  createdAt: timestamp({ mode: 'string' }).defaultNow().notNull(),
-  email: text().notNull().unique(),
-  emailVerified: boolean().default(false).notNull(),
-  id: text().primaryKey(),
-  image: text(),
-  name: text().notNull(),
-  updatedAt: timestamp({ mode: 'string' })
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  email: text('email').notNull().unique(),
+  emailVerified: boolean('email_verified').default(false).notNull(),
+  id: text('id').primaryKey(),
+  image: text('image'),
+  name: text('name').notNull(),
+  updatedAt: timestamp('updated_at')
     .defaultNow()
     .$onUpdate(() => /* @__PURE__ */ {
-      return new Date().toDateString();
+      return new Date();
     })
     .notNull(),
 });
@@ -40,18 +40,18 @@ export const usersTable = pgTable('users', {
 export const sessionsTable = pgTable(
   'sessions',
   {
-    createdAt: timestamp({ mode: 'string' }).defaultNow().notNull(),
-    expiresAt: timestamp({ mode: 'string' }).notNull(),
-    id: text().primaryKey(),
-    ipAddress: text(),
-    token: text().notNull().unique(),
-    updatedAt: timestamp({ mode: 'string' })
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    expiresAt: timestamp('expires_at').notNull(),
+    id: text('id').primaryKey(),
+    ipAddress: text('ip_address'),
+    token: text('token').notNull().unique(),
+    updatedAt: timestamp('updated_at')
       .$onUpdate(() => /* @__PURE__ */ {
-        return new Date().toDateString();
+        return new Date();
       })
       .notNull(),
-    userAgent: text(),
-    userId: text()
+    userAgent: text('user_agent'),
+    userId: text('user_id')
       .notNull()
       .references(
         () => {
@@ -61,31 +61,31 @@ export const sessionsTable = pgTable(
       ),
   },
   (table) => {
-    return [index('sessions_userId_idx').on(table.userId)];
+    return [index('session_userId_idx').on(table.userId)];
   },
 );
 
 export const accountsTable = pgTable(
   'accounts',
   {
-    accessToken: text(),
-    accessTokenExpiresAt: timestamp({ mode: 'string' }),
-    accountId: text().notNull(),
-    createdAt: timestamp({ mode: 'string' }).defaultNow().notNull(),
-    id: text(),
-    idToken: text(),
-    issuer: text().notNull().default(''),
-    password: text(),
-    providerId: text().notNull(),
-    refreshToken: text(),
-    refreshTokenExpiresAt: timestamp({ mode: 'string' }),
-    scope: text(),
-    updatedAt: timestamp({ mode: 'string' })
+    accessToken: text('access_token'),
+    accessTokenExpiresAt: timestamp('access_token_expires_at'),
+    accountId: text('account_id').notNull(),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    id: text('id').primaryKey(),
+    idToken: text('id_token'),
+    issuer: text('issuer').notNull(),
+    password: text('password'),
+    providerId: text('provider_id').notNull(),
+    refreshToken: text('refresh_token'),
+    refreshTokenExpiresAt: timestamp('refresh_token_expires_at'),
+    scope: text('scope'),
+    updatedAt: timestamp('updated_at')
       .$onUpdate(() => /* @__PURE__ */ {
-        return new Date().toDateString();
+        return new Date();
       })
       .notNull(),
-    userId: text()
+    userId: text('user_id')
       .notNull()
       .references(
         () => {
@@ -95,122 +95,129 @@ export const accountsTable = pgTable(
       ),
   },
   (table) => {
-    return [index('accounts_userId_idx').on(table.userId)];
+    return [
+      uniqueIndex('account_issuer_accountId_uidx').on(
+        table.issuer,
+        table.accountId,
+      ),
+      index('accounts_userId_idx').on(table.userId),
+    ];
   },
 );
 
 export const verificationsTable = pgTable(
   'verifications',
   {
-    createdAt: timestamp({ mode: 'string' }).defaultNow().notNull(),
-    expiresAt: timestamp({ mode: 'string' }).notNull(),
-    id: text().primaryKey(),
-    identifier: text().notNull(),
-    updatedAt: timestamp({ mode: 'string' })
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    expiresAt: timestamp('expires_at').notNull(),
+    id: text('id').primaryKey(),
+    identifier: text('identifier').notNull(),
+    updatedAt: timestamp('updated_at')
       .defaultNow()
       .$onUpdate(() => /* @__PURE__ */ {
-        return new Date().toDateString();
+        return new Date();
       })
       .notNull(),
     value: text('value').notNull(),
   },
   (table) => {
-    return [index('verifications_identifier_idx').on(table.identifier)];
+    return [index('verification_identifier_idx').on(table.identifier)];
   },
 );
 
 export const collectionsTable = pgTable(
   'collections',
   {
-    customField1Enabled: boolean().notNull().default(false),
-    customField1Label: text(),
-    customField2Enabled: boolean().notNull().default(false),
-    customField2Label: text(),
-    customField3Enabled: boolean().notNull().default(false),
-    customField3Label: text(),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    customField1Enabled: boolean('custom_field1_enabled')
+      .default(false)
+      .notNull(),
+    customField1Label: text('custom_field1_label'),
+    customField2Enabled: boolean('custom_field2_enabled')
+      .default(false)
+      .notNull(),
+    customField2Label: text('custom_field2_label'),
+    customField3Enabled: boolean('custom_field3_enabled')
+      .default(false)
+      .notNull(),
+    customField3Label: text('custom_field3_label'),
+    deletedAt: timestamp('deleted_at'),
     id: serial().primaryKey(),
     name: text().notNull(),
     notes: text().notNull(),
-    userId: text()
+    updatedAt: timestamp('updated_at')
+      .defaultNow()
+      .$onUpdate(() => {
+        return new Date();
+      })
+      .notNull(),
+    userId: text('user_id')
+      .notNull()
       .references(
         () => {
           return usersTable.id;
         },
         { onDelete: 'cascade' },
-      )
-      .notNull(),
-    ...timestamps,
+      ),
   },
   (table) => {
-    return [index('collections_userId_idx').on(table.userId)];
+    return [
+      index('collections_userId_idx').using(
+        'btree',
+        table.userId.asc().nullsLast(),
+      ),
+    ];
   },
 );
 
 export const collectionItemsTable = pgTable(
   'collection_items',
   {
-    /* eslint-disable perfectionist/sort-objects */
-    id: serial().primaryKey(),
-    images: json().notNull().$type<string[]>().default([]),
-    name: text().notNull(),
-    isSpecialEdition: boolean().notNull(),
-    editionDetails: text().notNull().default(''),
-    notes: text().notNull().default(''),
-    customField1Value: text().notNull().default(''),
-    customField2Value: text().notNull().default(''),
-    customField3Value: text().notNull().default(''),
-    userId: text()
+    collectionId: serial('collection_id')
       .notNull()
-      .default('')
-      .references(
-        () => {
-          return usersTable.id;
-        },
-        { onDelete: 'cascade' },
-      )
-      .notNull(),
-    collectionId: serial()
       .references(
         () => {
           return collectionsTable.id;
         },
         { onDelete: 'cascade' },
-      )
+      ),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    customField1Value: text('custom_field1_value').default('').notNull(),
+    customField2Value: text('custom_field2_value').default('').notNull(),
+    customField3Value: text('custom_field3_value').default('').notNull(),
+    deletedAt: timestamp('deleted_at'),
+    editionDetails: text('edition_details').default('').notNull(),
+    id: serial().primaryKey(),
+    images: json().$type<string[]>().default([]).notNull(),
+    isSpecialEdition: boolean('is_special_edition').notNull(),
+    name: text().notNull(),
+    notes: text().default('').notNull(),
+    updatedAt: timestamp('updated_at')
+      .defaultNow()
+      .$onUpdate(() => {
+        return new Date();
+      })
       .notNull(),
-    ...timestamps,
-    /* eslint-enable perfectionist/sort-objects */
+    userId: text('user_id')
+      .default('')
+      .notNull()
+      .references(
+        () => {
+          return usersTable.id;
+        },
+        { onDelete: 'cascade' },
+      ),
   },
   (table) => {
     return [
-      index('collectionsItems_userId_idx').on(table.userId),
-      index('collectionsItems_collectionId_idx').on(table.collectionId),
+      index('collectionsItems_collectionId_idx').using(
+        'btree',
+        table.collectionId.asc().nullsLast(),
+      ),
+      index('collectionsItems_userId_idx').using(
+        'btree',
+        table.userId.asc().nullsLast(),
+      ),
     ];
   },
 );
-
-export const usersRelations = relations(usersTable, ({ many }) => {
-  return {
-    accounts: many(accountsTable),
-    collections: many(collectionsTable),
-    collectionsItems: many(collectionItemsTable),
-    sessions: many(sessionsTable),
-  };
-});
-
-export const sessionsRelations = relations(sessionsTable, ({ one }) => {
-  return {
-    user: one(usersTable, {
-      fields: [sessionsTable.userId],
-      references: [usersTable.id],
-    }),
-  };
-});
-
-export const accountsRelations = relations(accountsTable, ({ one }) => {
-  return {
-    user: one(usersTable, {
-      fields: [accountsTable.userId],
-      references: [usersTable.id],
-    }),
-  };
-});

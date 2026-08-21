@@ -6,12 +6,20 @@ import { Resend } from 'resend';
 import { db } from '#/api/db';
 import { configs } from '#/configs';
 
+import * as schema from '../api/db-tables-schema';
+
 // @ts-expect-error
 const _resend = new Resend(configs.resendApiKey);
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: 'pg',
+    schema: {
+      account: schema.accountsTable,
+      session: schema.sessionsTable,
+      user: schema.usersTable,
+      verification: schema.verificationsTable,
+    },
   }),
   emailAndPassword: {
     enabled: true,

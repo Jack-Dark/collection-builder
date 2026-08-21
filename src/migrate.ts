@@ -1,13 +1,6 @@
-// src/migrate.ts
+import { migrate } from 'drizzle-orm/neon-serverless/migrator';
 
-import { neon } from '@neondatabase/serverless';
-import { drizzle } from 'drizzle-orm/neon-http';
-import { migrate } from 'drizzle-orm/neon-http/migrator';
-
-import { configs } from './configs';
-
-const sql = neon(configs.dbUrl);
-const db = drizzle(sql);
+import { db } from './api/db';
 
 const main = async () => {
   try {

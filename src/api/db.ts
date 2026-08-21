@@ -1,34 +1,17 @@
-import type { NeonQueryFunction } from '@neondatabase/serverless';
-
-import { neon } from '@neondatabase/serverless';
-import { drizzle } from 'drizzle-orm/node-postgres';
+import { Pool, neonConfig } from '@neondatabase/serverless';
+import { drizzle } from 'drizzle-orm/neon-serverless';
+import ws from 'ws';
 
 import { configs } from '#/configs.ts';
 
-import * as dbTablesSchema from './db-tables-schema.ts';
+import { relations } from './db/relations.ts';
 
-let client: NeonQueryFunction<boolean, boolean> | undefined;
+neonConfig.webSocketConstructor = ws;
 
-export async function getClient() {
-  if (!configs.dbUrl) {
-    return undefined;
-  }
-
-  if (!client) {
-    client = await neon(configs.dbUrl);
-  }
-
-  return client;
-}
+const pool = new Pool({ connectionString: configs.dbUrl });
 
 export const db = drizzle({
-  casing: 'snake_case',
+  client: pool,
   connection: configs.dbUrl,
-  schema: {
-    account: dbTablesSchema.accountsTable,
-    session: dbTablesSchema.sessionsTable,
-    user: dbTablesSchema.usersTable,
-    verification: dbTablesSchema.verificationsTable,
-  },
-  sql: getClient(),
+  relations,
 });

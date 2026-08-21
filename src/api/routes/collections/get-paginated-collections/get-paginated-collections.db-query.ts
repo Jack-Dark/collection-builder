@@ -18,9 +18,17 @@ export const getPaginatedCollectionsDbQuery = async (props: {
   const { limit, page, search, sort } = params;
 
   return db.transaction(async (tx) => {
+    const matchesUserAndSearch = and(
+      eq(collectionsTable.userId, userId),
+      isNull(collectionsTable.deletedAt),
+      search
+        ? ilike(collectionsTable.name, `%${search.toLowerCase()}%`)
+        : undefined,
+    );
     const [{ totalRecords }] = await tx
       .select({ totalRecords: count() })
-      .from(collectionsTable);
+      .from(collectionsTable)
+      .where(matchesUserAndSearch);
 
     const pagination = getPaginationMetadataQuery({
       currentPage: page,
@@ -37,15 +45,7 @@ export const getPaginatedCollectionsDbQuery = async (props: {
     const collections = await tx
       .select()
       .from(collectionsTable)
-      .where(
-        and(
-          eq(collectionsTable.userId, userId),
-          isNull(collectionsTable.deletedAt),
-          search
-            ? ilike(collectionsTable.name, `%${search.toLowerCase()}%`)
-            : undefined,
-        ),
-      )
+      .where(matchesUserAndSearch)
       .limit(limit)
       .offset((page - 1) * limit)
       .orderBy(

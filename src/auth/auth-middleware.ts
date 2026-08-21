@@ -4,36 +4,64 @@ import z from 'zod';
 
 import { getUserContext } from './auth.functions';
 
-const authSchema = z.object({
-  id: z.string(),
-  image: z.string().nullable().optional(),
-  name: z.string(),
-  token: z.string(),
-});
-
-const unauthorizedMsg = getReasonPhrase(StatusCodes.UNAUTHORIZED);
-const unprocessableMsg = getReasonPhrase(StatusCodes.UNPROCESSABLE_ENTITY);
+const authSchema = z
+  .object({
+    id: z.string().describe('User ID'),
+    image: z.string().describe('User image').nullable().optional(),
+    name: z.string().describe('User name'),
+    token: z.string().describe('User token'),
+  })
+  .describe('User context');
 
 /** Use this middleware to authenticate protected API routes. */
 export const authApiRouteMiddleware = createMiddleware().server(
   async ({ next }) => {
-    const userContext = await getUserContext();
+    try {
+      const userContext = await getUserContext();
 
-    if (!userContext) {
-      throw new Error(unauthorizedMsg);
-    }
+      if (!userContext) {
+        const unauthorizedMsg = getReasonPhrase(StatusCodes.UNAUTHORIZED);
 
-    const { data, error, success } = z.safeParse(authSchema, userContext);
+        console.error({
+          message: unauthorizedMsg,
+          status: StatusCodes.UNAUTHORIZED,
+        });
 
-    if (success) {
+        throw new Error(unauthorizedMsg);
+      }
+
+      const { data, error, success } = z.safeParse(authSchema, userContext);
+
+      if (success) {
+        return await next({
+          context: {
+            user: data,
+          },
+        });
+      }
+
+      const unprocessableMsg = getReasonPhrase(
+        StatusCodes.UNPROCESSABLE_ENTITY,
+      );
+
+      console.error({
+        error,
+        message: unprocessableMsg,
+        status: StatusCodes.UNPROCESSABLE_ENTITY,
+      });
+
+      throw new Error(unprocessableMsg);
+    } catch (error: unknown) {
       return await next({
         context: {
-          user: data,
+          user: {
+            id: '',
+            image: null,
+            name: '',
+            token: '',
+          },
         },
       });
-    } else {
-      console.error({ error });
-      throw new Error(unprocessableMsg, { cause: error });
     }
   },
 );
