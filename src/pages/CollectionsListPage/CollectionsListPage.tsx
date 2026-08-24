@@ -2,7 +2,7 @@ import type { RouteComponent } from '@tanstack/react-router';
 
 import { useLayoutEffect } from 'react';
 
-import type { CollectionRecordDef } from '#/api/routes/collections/collection.types';
+import type { UpdateCollectionsFormRecordSchemaDef } from '#/api/routes/collections/update-collection-by-id/update-collection-by-id.types';
 
 import { useCreateCollection } from '#/api/routes/collections/create-collection/create-collection.react-query';
 import {
@@ -63,7 +63,9 @@ export const CollectionsListPage: RouteComponent = () => {
         });
 
         if (isUpdatedRecords) {
-          await onUpdateCollectionById(editedRecords as CollectionRecordDef[]);
+          await onUpdateCollectionById(
+            editedRecords as UpdateCollectionsFormRecordSchemaDef[],
+          );
         } else {
           const newRecords = editedRecords.map((record) => {
             const {

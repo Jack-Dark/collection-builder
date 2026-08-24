@@ -8,7 +8,7 @@ import type { CollectionsListActionsCellPropsDef } from './CollectionsListAction
 export const CollectionsListActionsCell = (
   props: CollectionsListActionsCellPropsDef,
 ) => {
-  const { getValue, onCancel, onEditClick, row } = props;
+  const { onCancel, onEditClick, rowData, rowId } = props;
 
   const invalidateGetPaginatedCollections =
     useInvalidateGetPaginatedCollections();
@@ -22,30 +22,33 @@ export const CollectionsListActionsCell = (
       },
     });
 
-  const collectionId = getValue();
+  const collectionId = rowData.id;
 
   const { getHasNewRecord, getIsEditingRowId, isEditing } =
     useEditingCollectionsRowIds();
 
-  const isEditingRow = getIsEditingRowId(row.id);
+  const isEditingRow = getIsEditingRowId(rowId);
 
-  const isCreatingRecord = getHasNewRecord();
+  const hasNewRecord = getHasNewRecord();
 
   return (
     <TableCellActionsMenu
-      deleteIsDisabled={isEditing || isDeletePending}
+      deleteIsDisabled={hasNewRecord || isEditing || isDeletePending}
       deleteOnClick={async () => {
-        await onDeleteCollectionById({
-          ids: [collectionId],
-        });
+        if (typeof collectionId === 'number') {
+          await onDeleteCollectionById({
+            ids: [collectionId],
+          });
+        }
       }}
-      editIsDisabled={isCreatingRecord || isDeletePending}
+      disabled={hasNewRecord}
+      editIsDisabled={hasNewRecord || isDeletePending}
       editOnClick={({ id }) => {
         onEditClick(String(id));
       }}
       isEditing={isEditingRow}
       onCancelEdit={onCancel}
-      row={row}
+      rowData={rowData}
     />
   );
 };

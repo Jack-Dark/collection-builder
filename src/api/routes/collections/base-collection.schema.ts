@@ -19,3 +19,14 @@ export const baseCollectionSchema = z.object({
   name: z.string().describe('Name').min(1),
   notes: z.string().describe('Notes'),
 });
+
+export const baseCustomFieldSchema = z.object({
+  name: z.string().describe('Name').min(1),
+  type: z
+    .union([z.literal('boolean'), z.literal('number'), z.literal('string')])
+    .describe('Type'),
+});
+
+export const customFieldWithIdSchema = baseCustomFieldSchema.extend({
+  id: z.number().min(1).describe('ID'),
+});

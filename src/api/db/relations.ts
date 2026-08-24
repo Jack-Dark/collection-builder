@@ -8,11 +8,17 @@ const x = {
   references: 'to',
 } as const;
 
+// ? keys prefixed with `a_` are aliases
 export const relations = defineRelations(
   {
     accounts: schema.accountsTable,
     collectionItems: schema.collectionItemsTable,
+    collectionItemsToCustomFieldValues:
+      schema.collectionItemsToCustomFieldValuesTable,
     collections: schema.collectionsTable,
+    collectionsToCustomFields: schema.collectionsToCustomFieldsTable,
+    customFields: schema.customFieldsTable,
+    customFieldValues: schema.customFieldValuesTable,
     sessions: schema.sessionsTable,
     times: schema.timestamps,
     users: schema.usersTable,
@@ -20,10 +26,34 @@ export const relations = defineRelations(
   },
   (r) => {
     return {
+      collectionItems: {
+        a_collection_items_to_custom_field_values: r.many.customFieldValues({
+          [x.original]: r.collectionItems.id.through(
+            r.collectionItemsToCustomFieldValues.collectionItemId,
+          ),
+          [x.references]: r.customFieldValues.id.through(
+            r.collectionItemsToCustomFieldValues.customFieldValueId,
+          ),
+        }),
+      },
       collections: {
         a_collection_item: r.many.collectionItems({
           [x.original]: r.collections.id,
           [x.references]: r.collectionItems.collectionId,
+        }),
+        a_collections_to_custom_fields: r.many.customFields({
+          [x.original]: r.collections.id.through(
+            r.collectionsToCustomFields.collectionId,
+          ),
+          [x.references]: r.customFields.id.through(
+            r.collectionsToCustomFields.customFieldId,
+          ),
+        }),
+      },
+      customFields: {
+        a_custom_field_values: r.many.customFieldValues({
+          [x.original]: r.customFields.id,
+          [x.references]: r.customFieldValues.customFieldId,
         }),
       },
       users: {
@@ -38,6 +68,14 @@ export const relations = defineRelations(
         a_collections: r.many.collections({
           [x.original]: r.users.id,
           [x.references]: r.collections.userId,
+        }),
+        a_custom_field_values: r.many.customFieldValues({
+          [x.original]: r.users.id,
+          [x.references]: r.customFieldValues.userId,
+        }),
+        a_custom_fields: r.many.customFields({
+          [x.original]: r.users.id,
+          [x.references]: r.customFields.userId,
         }),
         a_sessions: r.many.sessions({
           [x.original]: r.users.id,

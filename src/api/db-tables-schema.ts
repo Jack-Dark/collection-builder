@@ -5,11 +5,15 @@ import {
   serial,
   json,
   snakeCase,
+  integer,
+  primaryKey,
 } from 'drizzle-orm/pg-core';
+
+import type { CustomFieldTypeDef } from './db-tables-schema.types';
 
 export const timestamps = {
   createdAt: timestamp('created_at').notNull().defaultNow(),
-  deletedAt: timestamp({ mode: 'string' }),
+  deletedAt: timestamp('deleted_at'),
   updatedAt: timestamp('updated_at')
     .defaultNow()
     .$onUpdate(() => {
@@ -76,17 +80,23 @@ export const verificationsTable = snakeCase.table('verifications', {
 });
 
 export const collectionsTable = snakeCase.table('collections', {
+  /** @deprecated */
   customField1Enabled: boolean('custom_field1_enabled')
     .default(false)
     .notNull(),
+  /** @deprecated */
   customField1Label: text('custom_field1_label'),
+  /** @deprecated */
   customField2Enabled: boolean('custom_field2_enabled')
     .default(false)
     .notNull(),
+  /** @deprecated */
   customField2Label: text('custom_field2_label'),
+  /** @deprecated */
   customField3Enabled: boolean('custom_field3_enabled')
     .default(false)
     .notNull(),
+  /** @deprecated */
   customField3Label: text('custom_field3_label'),
   id: serial().primaryKey(),
   name: text().notNull(),
@@ -111,8 +121,11 @@ export const collectionItemsTable = snakeCase.table('collection_items', {
       },
       { onDelete: 'cascade' },
     ),
+  /** @deprecated */
   customField1Value: text('custom_field1_value').default('').notNull(),
+  /** @deprecated */
   customField2Value: text('custom_field2_value').default('').notNull(),
+  /** @deprecated */
   customField3Value: text('custom_field3_value').default('').notNull(),
   editionDetails: text('edition_details').default('').notNull(),
   id: serial().primaryKey(),
@@ -131,3 +144,74 @@ export const collectionItemsTable = snakeCase.table('collection_items', {
     ),
   ...timestamps,
 });
+
+export const customFieldsTable = snakeCase.table('custom_fields', {
+  id: serial().primaryKey(),
+  name: text().notNull(),
+  type: text().$type<CustomFieldTypeDef>().notNull(),
+  userId: text()
+    .references(
+      () => {
+        return usersTable.id;
+      },
+      { onDelete: 'cascade' },
+    )
+    .notNull(),
+  ...timestamps,
+});
+
+export const customFieldValuesTable = snakeCase.table('custom_field_values', {
+  customFieldId: integer()
+    .references(
+      () => {
+        return customFieldsTable.id;
+      },
+      { onDelete: 'cascade' },
+    )
+    .notNull(),
+  id: serial().primaryKey(),
+  userId: text()
+    .notNull()
+    .default('')
+    .references(
+      () => {
+        return usersTable.id;
+      },
+      { onDelete: 'cascade' },
+    )
+    .notNull(),
+  value: json().$type<number | string | boolean>().notNull(),
+  ...timestamps,
+});
+
+export const collectionsToCustomFieldsTable = snakeCase.table(
+  'collections_to_custom_fields',
+  {
+    collectionId: integer().references(() => {
+      return collectionsTable.id;
+    }),
+    customFieldId: integer().references(() => {
+      return customFieldsTable.id;
+    }),
+  },
+  (t) => {
+    return [primaryKey({ columns: [t.collectionId, t.customFieldId] })];
+  },
+);
+
+export const collectionItemsToCustomFieldValuesTable = snakeCase.table(
+  'collection_items_to_custom_field_values',
+  {
+    collectionItemId: integer().references(() => {
+      return collectionItemsTable.id;
+    }),
+    customFieldValueId: integer().references(() => {
+      return customFieldValuesTable.id;
+    }),
+  },
+  (t) => {
+    return [
+      primaryKey({ columns: [t.collectionItemId, t.customFieldValueId] }),
+    ];
+  },
+);

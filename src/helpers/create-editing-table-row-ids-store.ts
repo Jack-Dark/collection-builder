@@ -32,10 +32,12 @@ export const createEditingTableRowIdsStore = (defaultValue: string[] = []) => {
       },
       editingRowIds: value,
       getHasNewRecord,
-      getIsEditingRowId: (id: string) => {
+      getIsEditingRowId: (id: string | number) => {
         const currentValue = getValue();
 
-        return currentValue.includes(id);
+        return currentValue.some((value) => {
+          return value === id;
+        });
       },
       getLastNewRecordIndex,
       isEditing: !!value.length,

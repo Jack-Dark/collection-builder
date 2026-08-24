@@ -1,5 +1,7 @@
-import type { SelectRootProps } from '@base-ui/react';
+import type { SelectRootProps, SelectValueProps } from '@base-ui/react';
 import type { JSXElementConstructor } from 'react';
+
+import type { FieldWrapperProps } from '../FieldWrapper/FieldWrapper.types';
 
 export type SelectFieldPropsDef<
   TItem extends { [k: string]: any; separator?: true },
@@ -11,4 +13,5 @@ export type SelectFieldPropsDef<
   onValueChange: (item: TItem | null) => void | Promise<void>;
   RenderItem?: JSXElementConstructor<TItem>;
   RenderValue?: JSXElementConstructor<TItem>;
-};
+} & FieldWrapperProps &
+  Pick<SelectValueProps, 'placeholder'>;

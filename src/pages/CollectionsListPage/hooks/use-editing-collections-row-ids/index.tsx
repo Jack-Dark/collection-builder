@@ -2,5 +2,5 @@ import { createEditingTableRowIdsStore } from '../../../../helpers/create-editin
 
 export const useEditingCollectionsRowIds = createEditingTableRowIdsStore();
 
-// TODO - MOVE TO NEW FILE IN NO LOCATION
+// TODO - MOVE TO NEW FILE IN NEW LOCATION
 export const useEditingCollectionItemsRowIds = createEditingTableRowIdsStore();

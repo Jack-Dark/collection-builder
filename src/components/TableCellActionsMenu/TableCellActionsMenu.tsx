@@ -16,16 +16,17 @@ export const TableCellActionsMenu = <
     deleteIsDisabled,
     deleteLabel = 'Delete',
     deleteOnClick,
+    disabled,
     editIsDisabled,
     editLabel = 'Edit',
     editOnClick,
     isEditing,
     onCancelEdit,
-    row,
+    rowData,
   } = props;
 
   const [showConfirmDeleteDialog, hideConfirmDeleteDialog] = useDialog(() => {
-    const recordName = row.original.name;
+    const recordName = rowData.name;
 
     const { onInterceptProcessingRequest, processing } = useSpinner();
 
@@ -42,7 +43,7 @@ export const TableCellActionsMenu = <
               <Button
                 onClick={async () => {
                   onInterceptProcessingRequest(async () => {
-                    await deleteOnClick(row.original);
+                    await deleteOnClick(rowData);
                     hideConfirmDeleteDialog();
                   });
                 }}
@@ -67,20 +68,21 @@ export const TableCellActionsMenu = <
   return (
     <div className="flex flex-nowrap gap-2 justify-end items-center">
       <MoreMenu
+        disabled={disabled}
         items={[
           isEditing
             ? {
                 disabled: editIsDisabled,
                 label: `Cancel ${editLabel}`,
                 onClick: async () => {
-                  onCancelEdit?.(row.original);
+                  onCancelEdit?.(rowData);
                 },
               }
             : {
                 disabled: editIsDisabled,
                 label: editLabel,
                 onClick: async () => {
-                  await editOnClick(row.original);
+                  await editOnClick(rowData);
                 },
               },
           {

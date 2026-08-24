@@ -5,3 +5,6 @@ import type { createOrUpdateCollectionFormSchema } from '#/pages/CollectionsList
 export type CreateOrUpdateCollectionFormDataSchemaDef = z.output<
   typeof createOrUpdateCollectionFormSchema
 >;
+
+export type CreateOrUpdateCollectionFormRecordDef =
+  CreateOrUpdateCollectionFormDataSchemaDef['records'][number];

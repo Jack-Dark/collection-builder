@@ -8,6 +8,7 @@ import type { CreateOrUpdateCollectionFormDataSchemaDef } from '../../Collection
 
 import { CollectionsListActionsCell } from './components/column-cells/CollectionsListActionsCell';
 import { CollectionsListCustomFieldCell } from './components/column-cells/CollectionsListCustomFieldCell/CollectionsListCustomFieldCell';
+import { CollectionsListCustomFieldsCell } from './components/column-cells/CollectionsListCustomFieldsCell';
 import { CollectionsListNameCell } from './components/column-cells/CollectionsListNameCell/CollectionsListNameCell';
 import { CollectionsListNotesCell } from './components/column-cells/CollectionsListNotesCell/CollectionsListNotesCell';
 
@@ -58,6 +59,20 @@ export const getCollectionsListTableColumns = (
       },
       header: 'Name',
       size: 250,
+    }),
+    columnHelper.accessor('customFields', {
+      cell: ({ getValue, row }) => {
+        return (
+          <CollectionsListCustomFieldsCell
+            customFields={getValue() || []}
+            onSubmit={(customFieldIds) => {
+              // set customFields IDs in form data
+            }}
+            rowId={row.id}
+          />
+        );
+      },
+      header: 'Custom Fields',
     }),
     columnHelper.accessor('customField1Label', {
       cell: (props) => {
@@ -131,12 +146,13 @@ export const getCollectionsListTableColumns = (
       minSize: 210,
     }),
     columnHelper.accessor('id', {
-      cell: (context) => {
+      cell: ({ row }) => {
         return (
           <CollectionsListActionsCell
             onCancel={onCancel}
             onEditClick={onEditClick}
-            {...context}
+            rowData={row.original}
+            rowId={row.id}
           />
         );
       },

@@ -22,6 +22,7 @@ export const createNewCollection = (): CreateCollectionFormDataSchemaDef => {
     customField2Label: '',
     customField3Enabled: false,
     customField3Label: '',
+    customFields: [],
     id,
     isEditing: true,
     name: '',

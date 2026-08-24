@@ -49,7 +49,7 @@ export const CollectionDetailsActionsCell = (
       }}
       isEditing={isEditingRow}
       onCancelEdit={onCancel}
-      row={row}
+      rowData={row.original}
     />
   );
 };
