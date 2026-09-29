@@ -1,11 +1,17 @@
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 import { useForm } from '@tanstack/react-form';
 import { Fragment } from 'react/jsx-runtime';
 import { v4 as uuidv4 } from 'uuid';
 import z from 'zod';
 
-import type { CustomFieldTypeDef } from '#/api/db-tables-schema.types';
+import type {
+  CustomFieldRecordDef,
+  CustomFieldTypeDef,
+} from '#/api/db-tables-schema.types';
 
-import { baseCustomFieldSchema } from '#/api/routes/collections/base-collection.schema';
+import { useCreateCustomFields } from '#/api/routes/custom-fields/create-custom-fields/create-custom-fields.react-query';
+import { baseCustomFieldSchema } from '#/api/routes/custom-fields/custom-fields.schema';
 import { Button } from '#/components/Button';
 import { Dialog } from '#/components/Dialog';
 import { useDialog } from '#/components/Dialog/hooks/useDialog';
@@ -14,17 +20,17 @@ import { SelectField } from '#/components/Fields/SelectField';
 import { getFieldError } from '#/helpers/get-field-error';
 import { useEditingCollectionsRowIds } from '#/pages/CollectionsListPage/hooks/use-editing-collections-row-ids';
 
-type CustomFieldFormItemsDef =
+type CustomFieldFormItemDef =
   | {
       id: number;
       name: string;
       type: CustomFieldTypeDef;
-    }[]
+    }
   | {
       id: string;
       name: string;
       type: CustomFieldTypeDef;
-    }[];
+    };
 
 const fieldTypeItems = [
   {
@@ -44,6 +50,14 @@ const fieldTypeItems = [
   label: string;
 }[];
 
+const getFieldItemLabel = (type: CustomFieldTypeDef) => {
+  return (
+    fieldTypeItems.find((fieldItem) => {
+      return fieldItem.id === type;
+    })?.label || '-'
+  );
+};
+
 const createOrUpdateCustomFieldsFormSchema = z.object({
   records: z.union([
     z.array(
@@ -60,11 +74,12 @@ const createOrUpdateCustomFieldsFormSchema = z.object({
 });
 
 export const CollectionsListCustomFieldsCell = (props: {
-  customFields: CustomFieldFormItemsDef;
+  collectionId: number;
+  customFields: CustomFieldFormItemDef[];
   onSubmit: (customFieldIds: number[]) => void;
   rowId: string;
 }) => {
-  const { customFields, onSubmit, rowId } = props;
+  const { collectionId, customFields, onSubmit, rowId } = props;
 
   const { getIsEditingRowId } = useEditingCollectionsRowIds();
 
@@ -75,21 +90,81 @@ export const CollectionsListCustomFieldsCell = (props: {
     form.reset();
   };
 
+  const { onCreateCustomFields, processing: processingCreate } =
+    useCreateCustomFields();
+
   const form = useForm({
     defaultValues: {
       records: customFields.length
         ? customFields
-        : [
+        : ([
             {
               id: uuidv4(),
               name: '',
               type: 'string',
             },
-          ],
+          ] satisfies CustomFieldFormItemDef[]),
     },
     onSubmit: async ({ value }) => {
-      // TODO - ADD CREATE CUSTOM FIELDS LOGIC
-      // onSubmit(customFieldIds)
+      const { recordsToCreate, recordsToUpdate } = value.records.reduce<{
+        recordsToCreate: (CustomFieldFormItemDef & { collectionId: number })[];
+        recordsToUpdate: (CustomFieldFormItemDef & { collectionId: number })[];
+      }>(
+        (acc, record) => {
+          if (typeof record.id === 'string') {
+            return {
+              ...acc,
+              recordsToCreate: [
+                ...acc.recordsToCreate,
+                { ...record, collectionId },
+              ],
+            };
+          } else {
+            return {
+              ...acc,
+              recordsToUpdate: [
+                ...acc.recordsToUpdate,
+                { ...record, collectionId },
+              ],
+            };
+          }
+        },
+        { recordsToCreate: [], recordsToUpdate: [] },
+      );
+
+      let finalRecords: CustomFieldRecordDef[] = [];
+
+      // ? Create new records
+      if (recordsToCreate.length) {
+        const records = recordsToCreate.map(({ id: _id, ...rest }) => {
+          return rest;
+        });
+        const newRecords = await onCreateCustomFields({
+          records,
+        });
+
+        finalRecords = [...finalRecords, ...newRecords];
+      }
+
+      // ? Update existing records
+      if (recordsToUpdate.length) {
+        // TODO UPDATE LOGIC HERE
+        // const recordsToUpdate = value.records.map(({ name, type }) => {
+        //   return { name, type };
+        // });
+        // const newRecords = await onUpdateCustomFields({
+        //   records: recordsToUpdate,
+        // });
+        // finalRecords = [...finalRecords, ...newRecords]
+      }
+
+      onSubmit(
+        finalRecords.map(({ id }) => {
+          return id;
+        }),
+      );
+
+      hideAddOrEditCustomFieldsDialog();
     },
     validators: {
       onChange: createOrUpdateCustomFieldsFormSchema,
@@ -105,7 +180,11 @@ export const CollectionsListCustomFieldsCell = (props: {
             return (
               <>
                 <Button onClick={onCancel} text="Cancel" variant="mono" />
-                <Button onClick={form.handleSubmit} text="Save" />
+                <Button
+                  onClick={form.handleSubmit}
+                  processing={processingCreate}
+                  text="Save"
+                />
               </>
             );
           }}
@@ -166,17 +245,40 @@ export const CollectionsListCustomFieldsCell = (props: {
       );
     }, []);
 
-  return isEditingRow ? (
-    <Button onClick={showAddOrEditCustomFieldsDialog} text="[TOGGLE DIALOG]" />
-  ) : (
-    <p>
+  return (
+    <div>
       {customFields.length
-        ? customFields
-            .map(({ name, type }) => {
-              return `${name}: ${type}`;
-            })
-            .join()
+        ? customFields.map(({ id, name, type }) => {
+            return (
+              <span
+                className="group/controls flex items-center gap-2 flex-wrap"
+                key={id}
+              >
+                <span className="whitespace-nowrap" key={id}>
+                  <span>{name}</span>{' '}
+                  <span className="text-xs">({getFieldItemLabel(type)})</span>
+                </span>
+
+                {isEditingRow && (
+                  <span className="group-hover/controls:flex hidden items-center gap-1">
+                    <span
+                      className="text-gray-500 hover:text-primary-800 cursor-pointer"
+                      onClick={showAddOrEditCustomFieldsDialog}
+                    >
+                      <EditIcon fontSize="inherit" />
+                    </span>
+                    <span
+                      className="text-gray-500 hover:text-red-600 cursor-pointer"
+                      // todo - add delete onClick logic
+                    >
+                      <DeleteIcon fontSize="inherit" />
+                    </span>
+                  </span>
+                )}
+              </span>
+            );
+          })
         : '-'}
-    </p>
+    </div>
   );
 };

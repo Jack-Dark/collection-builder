@@ -1,19 +1,13 @@
-import { and, asc, count, desc, eq, ilike, inArray, isNull } from 'drizzle-orm';
+import { and, count, eq, ilike, isNull } from 'drizzle-orm';
 
-import type { CustomFieldTypeDef } from '#/api/db-tables-schema.types';
 import type { PaginationQueriesSchemaDef } from '#/api/pagination/pagination.types';
 
 import { db } from '#/api/db';
-import { sortDirectionOptions } from '#/api/pagination/pagination.constants';
 import { getPaginationMetadataQuery } from '#/api/pagination/pagination.query';
 
 import type { CollectionRecordDef } from '../collection.types';
 
-import {
-  collectionsTable,
-  collectionsToCustomFieldsTable,
-  customFieldsTable,
-} from '../../../db-tables-schema';
+import { collectionsTable } from '../../../db-tables-schema';
 
 export const getPaginatedCollectionsDbQuery = async (props: {
   params: PaginationQueriesSchemaDef;
@@ -47,72 +41,35 @@ export const getPaginatedCollectionsDbQuery = async (props: {
         ? (sortFieldParam as keyof CollectionRecordDef)
         : 'name';
 
-    const collections = await tx
-      .select()
-      .from(collectionsTable)
-      .where(matchesUserAndSearch)
-      .limit(limit)
-      .offset((page - 1) * limit)
-      .orderBy(
-        sort?.direction === sortDirectionOptions.desc
-          ? desc(collectionsTable[sortingField])
-          : asc(collectionsTable[sortingField]),
-      );
-
-    // TODO - INVESTIGATE OPTIONS TO CONSOLIDATE LOGIC
-    const collectionIds = collections.map(({ id }) => {
-      return id;
-    });
-
-    const customFields = await tx
-      .select({
-        collectionId: collectionsToCustomFieldsTable.collectionId,
-        customField: {
-          id: customFieldsTable.id,
-          name: customFieldsTable.name,
-          type: customFieldsTable.type,
+    const collections = await db.query.collections.findMany({
+      limit,
+      offset: (page - 1) * limit,
+      orderBy: {
+        [sortingField]: sort?.direction || 'asc',
+      },
+      where: {
+        deletedAt: undefined,
+        name: {
+          like: `%${search.toLowerCase()}%`,
         },
-      })
-      .from(collectionsToCustomFieldsTable)
-      .leftJoin(
-        customFieldsTable,
-        eq(customFieldsTable.id, collectionsToCustomFieldsTable.customFieldId),
-      )
-      .where(
-        inArray(collectionsToCustomFieldsTable.collectionId, collectionIds),
-      );
-
-    const customFieldsByCollectionId = customFields.reduce<
-      Record<
-        number,
-        {
-          id: number;
-          name: string;
-          type: CustomFieldTypeDef;
-        }[]
-      >
-    >((acc, { collectionId, customField }) => {
-      if (collectionId && customField) {
-        const customFieldsForCollection = acc[collectionId] || [];
-
-        return {
-          ...acc,
-          [collectionId]: [...customFieldsForCollection, customField],
-        };
-      }
-
-      return acc;
-    }, {});
-
-    const collectionsWithCustomFields = collections.map((collection) => {
-      return {
-        ...collection,
-        customFields: customFieldsByCollectionId[collection.id] || [],
-      };
+        userId,
+      },
+      with: {
+        customFields: {
+          columns: {
+            id: true,
+            name: true,
+            type: true,
+          },
+          orderBy: {
+            name: 'asc',
+          },
+        },
+      },
     });
 
     return {
-      collections: collectionsWithCustomFields,
+      collections,
       pagination,
     };
   });

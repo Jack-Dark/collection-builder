@@ -27,7 +27,7 @@ export const relations = defineRelations(
   (r) => {
     return {
       collectionItems: {
-        a_collection_items_to_custom_field_values: r.many.customFieldValues({
+        customFieldValues: r.many.customFieldValues({
           [x.original]: r.collectionItems.id.through(
             r.collectionItemsToCustomFieldValues.collectionItemId,
           ),
@@ -37,11 +37,11 @@ export const relations = defineRelations(
         }),
       },
       collections: {
-        a_collection_item: r.many.collectionItems({
+        collectionItem: r.many.collectionItems({
           [x.original]: r.collections.id,
           [x.references]: r.collectionItems.collectionId,
         }),
-        a_collections_to_custom_fields: r.many.customFields({
+        customFields: r.many.customFields({
           [x.original]: r.collections.id.through(
             r.collectionsToCustomFields.collectionId,
           ),
@@ -51,33 +51,33 @@ export const relations = defineRelations(
         }),
       },
       customFields: {
-        a_custom_field_values: r.many.customFieldValues({
+        customFieldValues: r.many.customFieldValues({
           [x.original]: r.customFields.id,
           [x.references]: r.customFieldValues.customFieldId,
         }),
       },
       users: {
-        a_accounts: r.one.accounts({
+        accounts: r.one.accounts({
           [x.original]: r.users.id,
           [x.references]: r.accounts.userId,
         }),
-        a_collection_items: r.many.collectionItems({
+        collectionItems: r.many.collectionItems({
           [x.original]: r.users.id,
           [x.references]: r.collectionItems.userId,
         }),
-        a_collections: r.many.collections({
+        collections: r.many.collections({
           [x.original]: r.users.id,
           [x.references]: r.collections.userId,
         }),
-        a_custom_field_values: r.many.customFieldValues({
-          [x.original]: r.users.id,
-          [x.references]: r.customFieldValues.userId,
-        }),
-        a_custom_fields: r.many.customFields({
+        customFields: r.many.customFields({
           [x.original]: r.users.id,
           [x.references]: r.customFields.userId,
         }),
-        a_sessions: r.many.sessions({
+        customFieldValues: r.many.customFieldValues({
+          [x.original]: r.users.id,
+          [x.references]: r.customFieldValues.userId,
+        }),
+        sessions: r.many.sessions({
           [x.original]: r.users.id,
           [x.references]: r.sessions.userId,
         }),

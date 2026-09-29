@@ -64,9 +64,11 @@ export const getCollectionsListTableColumns = (
       cell: ({ getValue, row }) => {
         return (
           <CollectionsListCustomFieldsCell
+            collectionId={row.original.id}
             customFields={getValue() || []}
             onSubmit={(customFieldIds) => {
               // set customFields IDs in form data
+              // wait, why do that? Why not just invalidate to refetch?
             }}
             rowId={row.id}
           />

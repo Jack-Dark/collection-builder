@@ -1,9 +1,7 @@
 import z from 'zod';
 
-import {
-  baseCollectionSchema,
-  customFieldWithIdSchema,
-} from '../base-collection.schema';
+import { customFieldWithIdSchema } from '../../custom-fields/custom-fields.schema';
+import { baseCollectionSchema } from '../base-collection.schema';
 
 export const createCollectionFormSchema = baseCollectionSchema.extend({
   createdAt: z.undefined().optional().describe('Created At'),
