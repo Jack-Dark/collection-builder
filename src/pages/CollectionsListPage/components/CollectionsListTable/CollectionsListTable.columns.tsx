@@ -64,17 +64,16 @@ export const getCollectionsListTableColumns = (
       cell: ({ getValue, row }) => {
         return (
           <CollectionsListCustomFieldsCell
-            collectionId={row.original.id}
-            customFields={getValue() || []}
-            onSubmit={(customFieldIds) => {
-              // set customFields IDs in form data
-              // wait, why do that? Why not just invalidate to refetch?
-            }}
+            form={form}
+            index={row.index}
             rowId={row.id}
+            value={getValue()}
           />
         );
       },
-      header: 'Custom Fields',
+      header: () => {
+        return <span>Custom Fields</span>;
+      },
     }),
     columnHelper.accessor('customField1Label', {
       cell: (props) => {

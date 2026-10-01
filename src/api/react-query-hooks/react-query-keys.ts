@@ -11,6 +11,8 @@ export const reactMutationKeys = {
   createCustomFields: 'create-custom-fields',
   deleteCollectionItems: 'delete-collection-items',
   deleteCollections: 'delete-collections',
+  deleteCustomFields: 'delete-custom-field',
   updateCollectionItems: 'update-collection-items',
   updateCollections: 'update-collections',
+  updateCustomFields: 'update-custom-fields',
 } as const;

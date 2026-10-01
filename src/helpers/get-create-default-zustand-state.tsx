@@ -43,10 +43,8 @@ export const getCreateDefaultZustandStore = <T extends Exclude<any, Function>>(
     logValueToConsole: (...firstLogs: any[]) => void;
     resetValue: () => void;
     restoreFromSnapshot: () => void;
-    /** Create a cached value saved as `snapshot`. If no new value is provided, the current value is used. */
     saveSnapshot: (updatedValue?: T) => void;
     setValue: SetZustandStoreFnDef<T>;
-    /** Used in conjunction with `setSnapshot` to create a cached value. */
     snapshot: T;
     value: T;
   }>((set, get) => {
@@ -79,6 +77,7 @@ export const getCreateDefaultZustandStore = <T extends Exclude<any, Function>>(
 
         set({ value: getSnapshot() });
       },
+      /** Create a cached value saved as `snapshot`. If no new value is provided, the current value is used. */
       saveSnapshot: (updatedValue) => {
         if (updatedValue) {
           set({ snapshot: updatedValue });
@@ -103,6 +102,7 @@ export const getCreateDefaultZustandStore = <T extends Exclude<any, Function>>(
           set({ value: valueOrCallback });
         }
       },
+      /** Used in conjunction with `setSnapshot` to create a cached value. */
       snapshot: defaultValue,
       value: defaultValue,
     };

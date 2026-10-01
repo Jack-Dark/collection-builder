@@ -65,7 +65,7 @@ export const Layout: RouteComponent = () => {
     <SimpleErrorBoundary>
       <FullPageLoadingSpinner />
       <Notifications />
-      <div className="grid h-dvh grid-rows-[auto_1fr] w-full max-w-500 gap-4 p-4">
+      <div className="grid h-dvh grid-rows-[auto_1fr] w-full gap-4 p-4">
         <header className="grid gap-4">
           <div className="flex items-center gap-2 text-white">
             <ListAltIcon className="text-inherit text-4xl" fontSize="large" />

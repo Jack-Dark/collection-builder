@@ -47,7 +47,7 @@ export const CollectionDetailsCustomFieldCell = withCollectionDetailsForm({
                 return (
                   <div className="flex gap-1 items-center">
                     <field.ComboboxField
-                      createCreatable={(query) => {
+                      createItem={(query) => {
                         return query;
                       }}
                       error={getFieldError(field)}

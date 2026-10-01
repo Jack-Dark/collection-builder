@@ -6,7 +6,6 @@ import {
   json,
   snakeCase,
   integer,
-  primaryKey,
 } from 'drizzle-orm/pg-core';
 
 import type { CustomFieldTypeDef } from './db-tables-schema.types';
@@ -193,9 +192,7 @@ export const collectionsToCustomFieldsTable = snakeCase.table(
     customFieldId: integer().references(() => {
       return customFieldsTable.id;
     }),
-  },
-  (t) => {
-    return [primaryKey({ columns: [t.collectionId, t.customFieldId] })];
+    id: serial().primaryKey(),
   },
 );
 
@@ -208,10 +205,6 @@ export const collectionItemsToCustomFieldValuesTable = snakeCase.table(
     customFieldValueId: integer().references(() => {
       return customFieldValuesTable.id;
     }),
-  },
-  (t) => {
-    return [
-      primaryKey({ columns: [t.collectionItemId, t.customFieldValueId] }),
-    ];
+    id: serial().primaryKey(),
   },
 );
