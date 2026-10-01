@@ -1,17 +1,28 @@
 import type { SelectRootProps, SelectValueProps } from '@base-ui/react';
-import type { JSXElementConstructor } from 'react';
+import type { HTMLAttributes, JSXElementConstructor } from 'react';
 
 import type { FieldWrapperProps } from '../FieldWrapper/FieldWrapper.types';
 
-export type SelectFieldPropsDef<
-  TItem extends { [k: string]: any; separator?: true },
-> = Omit<SelectRootProps<TItem>, 'items' | 'onValueChange' | 'defaultValue'> & {
+export type DefaultSelectItemDef = {
+  [k: string]: any;
+  disabled?: boolean;
+  separator?: true;
+};
+
+export type SelectFieldPropsDef<TItem extends DefaultSelectItemDef> = Omit<
+  SelectRootProps<TItem>,
+  'items' | 'onValueChange' | 'defaultValue'
+> & {
   idProperty?: keyof TItem;
   items: TItem[];
   keyPrefix?: string;
   labelProperty?: keyof TItem;
   onValueChange: (item: TItem | null) => void | Promise<void>;
-  RenderItem?: JSXElementConstructor<TItem>;
-  RenderValue?: JSXElementConstructor<TItem>;
+  RenderItem?: JSXElementConstructor<
+    HTMLAttributes<HTMLElement> & { item: TItem }
+  >;
+  RenderValue?: JSXElementConstructor<
+    HTMLAttributes<HTMLElement> & { item: TItem }
+  >;
 } & FieldWrapperProps &
   Pick<SelectValueProps, 'placeholder'>;

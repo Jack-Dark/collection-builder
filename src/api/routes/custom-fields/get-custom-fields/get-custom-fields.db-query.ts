@@ -1,15 +1,30 @@
-import { eq } from 'drizzle-orm';
-
 import { db } from '#/api/db';
-import { customFieldsTable } from '#/api/db-tables-schema';
 
-export const getCustomFieldsDbQuery = async (props: { userId: string }) => {
-  const { userId } = props;
+import type { GetCustomFieldsRequestArgsDef } from './get-custom-fields.types';
 
-  const customFields = await db
-    .select()
-    .from(customFieldsTable)
-    .where(eq(customFieldsTable.userId, userId));
+export const getCustomFieldsDbQuery = async (
+  props: GetCustomFieldsRequestArgsDef['params'] & { userId: string },
+) => {
+  const { limit, page, search, sort, userId } = props;
+
+  const customFields = await db.query.customFields.findMany({
+    columns: {
+      id: true,
+      name: true,
+      type: true,
+    },
+    limit,
+    offset: (page - 1) * limit,
+    orderBy: {
+      [sort.field]: sort.direction,
+    },
+    where: {
+      name: {
+        ilike: `%${search}%`,
+      },
+      userId,
+    },
+  });
 
   return customFields;
 };

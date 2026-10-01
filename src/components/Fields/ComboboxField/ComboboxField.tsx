@@ -14,7 +14,7 @@ import type {
 
 import { FieldWrapper } from '../FieldWrapper';
 
-const getNormalizedValue = (value: string) => {
+export const getNormalizedValue = (value: string) => {
   return value.trim().toLocaleLowerCase();
 };
 
@@ -32,17 +32,14 @@ export const ComboboxField = <
     disabled,
     error,
     filter = (item, query) => {
-      const label = itemToStringLabel(item);
-
       const normalizedQuery = getNormalizedValue(query);
-      if (normalizedQuery) {
-        if (hasExactMatch) {
-          return getNormalizedValue(label) === normalizedQuery;
-        } else {
-          const searchPattern = new RegExp(query, 'i');
 
-          return searchPattern.test(label);
-        }
+      if (normalizedQuery) {
+        const searchPattern = new RegExp(normalizedQuery, 'i');
+
+        const label = itemToStringLabel(item);
+
+        return searchPattern.test(label);
       }
 
       return true;
@@ -51,6 +48,9 @@ export const ComboboxField = <
     idProperty = 'id',
     inputValue,
     invalid,
+    isItemEqualToValue = (item, value) => {
+      return item[idProperty] === value[idProperty];
+    },
     items = [],
     itemToStringLabel = (item) => {
       if (item) {
@@ -89,13 +89,19 @@ export const ComboboxField = <
       return <>{itemToStringLabel(item)}</>;
     },
     required,
+    sortItems = (items) => {
+      return _.sortBy(items, (item) => {
+        return itemToStringLabel(item);
+      });
+    },
     validationDebounceTime,
     validationMode,
     value,
+    verifyShowNewItem,
   } = props;
 
-  const [displayItems, setDisplayItems] = useState<TItem[]>([...items]);
-  const [selectedItems, setSelectedItems] = useState<TItem[]>([]);
+  const [displayItems, setDisplayItems] = useState<TItem[]>([]);
+  // const [selectedItems, setSelectedItems] = useState<TItem[]>([]);
   const [query, setQuery] = useState('');
 
   const trimmedQuery = useMemo(() => {
@@ -103,47 +109,80 @@ export const ComboboxField = <
   }, [query]);
 
   const normalizedQuery = useMemo(() => {
-    return trimmedQuery.toLocaleLowerCase();
+    return getNormalizedValue(trimmedQuery);
   }, [trimmedQuery]);
 
-  /** Case insensitive. */
-  const hasExactMatch = useMemo(() => {
-    return displayItems.some((item) => {
+  /** Item with label that matches query exactly (case insensitive) */
+  const exactMatchItem = useMemo(() => {
+    if (!normalizedQuery) {
+      return;
+    }
+
+    return displayItems.find((item) => {
       const label = itemToStringLabel(item);
 
-      return getNormalizedValue(label) === normalizedQuery;
+      const queryMatchesLabel = getNormalizedValue(label) === normalizedQuery;
+
+      return queryMatchesLabel;
     });
   }, [normalizedQuery]);
 
-  const showCreateOption =
-    !!allowCreatable && !!normalizedQuery && !hasExactMatch;
-
-  const generateCreatableItem = () => {
-    // @ts-expect-error
-    const newItem: TItem = createItem?.(query) || {
-      [idProperty]: uuidv4(),
-      [labelProperty]: trimmedQuery,
-    };
-
-    newItem.creatable = true;
-
-    return newItem;
+  const getSelectedItemsArray = () => {
+    if (Array.isArray(value)) {
+      return value;
+    } else if (value) {
+      return [value];
+    } else {
+      return [];
+    }
   };
 
   useLayoutEffect(() => {
-    // ? selected items contains creatable items which don't exist outside this component
-    const newDisplayItems = _.sortBy([...items, ...selectedItems], (item) => {
-      return itemToStringLabel(item);
+    // ? Merge items in list with selected items. This ensures new items are always available even if they don't exist outside of the component yet
+    // debugger;
+    const includedItemsById = new Map<number, true>();
+    const uniqueDisplayItems: TItem[] = [
+      ...items,
+      ...getSelectedItemsArray(),
+    ].filter((item) => {
+      if (!item[idProperty] || includedItemsById.has(item[idProperty])) {
+        return false;
+      } else {
+        includedItemsById.set(item[idProperty], true);
+
+        return true;
+      }
     });
 
-    if (showCreateOption) {
-      const newItem = generateCreatableItem();
+    const sortedDisplayItems = sortItems(uniqueDisplayItems);
 
-      newDisplayItems.splice(0, 0, newItem);
+    if (allowCreatable && normalizedQuery) {
+      // @ts-expect-error
+      const newItem: TItem = createItem?.(trimmedQuery) || {
+        [idProperty]: uuidv4(),
+        [labelProperty]: trimmedQuery,
+      };
+
+      newItem.creatable = true;
+
+      if (exactMatchItem) {
+        if (
+          verifyShowNewItem?.({
+            itemMatchingQuery: exactMatchItem,
+            newItem,
+            normalizedQuery,
+            query,
+          })
+        ) {
+          sortedDisplayItems.splice(0, 0, newItem);
+        }
+      } else {
+        sortedDisplayItems.splice(0, 0, newItem);
+      }
     }
 
-    setDisplayItems(newDisplayItems);
-  }, [showCreateOption, selectedItems, items, query]);
+    setDisplayItems(sortedDisplayItems);
+  }, [!exactMatchItem, value, items, query]);
 
   useLayoutEffect(() => {
     if (multiple) {
@@ -152,16 +191,6 @@ export const ComboboxField = <
       setQuery(inputValue || '');
     }
   }, [inputValue]);
-
-  useLayoutEffect(() => {
-    if (value) {
-      if (Array.isArray(value)) {
-        setSelectedItems(value);
-      } else {
-        setSelectedItems([value as TItem]);
-      }
-    }
-  }, [value]);
 
   return (
     <FieldWrapper
@@ -180,6 +209,7 @@ export const ComboboxField = <
       <Combobox.Root
         filter={filter}
         inputValue={query}
+        isItemEqualToValue={isItemEqualToValue}
         items={displayItems}
         itemToStringLabel={itemToStringLabel}
         itemToStringValue={itemToStringValue}
@@ -194,77 +224,69 @@ export const ComboboxField = <
           setQuery('');
 
           if (Array.isArray(value)) {
-            const cleanValues = value.map((item) => {
+            value.forEach((item) => {
               delete item.creatable;
 
-              return item;
+              // return item;
             });
-            setSelectedItems(cleanValues);
+            // setSelectedItems(cleanValues);
           } else {
             delete value?.creatable;
-            setSelectedItems([value as TItem]);
+            // setSelectedItems([value as TItem]);
           }
           onValueChange?.(value, eventDetails);
         }}
-        value={multiple ? selectedItems : selectedItems[0]}
+        value={value}
       >
-        <div className="styles.Container">
-          <Combobox.InputGroup className="relative flex items-center">
-            <Combobox.Value>
-              {(selected: ComboboxValueDef<TItem, TMultiple>) => {
-                return Array.isArray(selected) ? (
-                  <Combobox.Chips
-                    aria-label={
-                      selected.length > 0 ? 'Selected labels' : undefined
-                    }
-                    className="flex gap-2 flex-wrap"
-                  >
-                    {selected.map((item) => {
-                      const label = itemToStringLabel(item);
-                      const id = itemToStringValue(item);
+        <div className="grid gap-2">
+          {Array.isArray(value) && (
+            <Combobox.Chips
+              aria-label={value.length > 0 ? 'Selected labels' : undefined}
+              className="flex items-center gap-2 flex-wrap"
+            >
+              {value.map((item) => {
+                const label = itemToStringLabel(item);
 
-                      return (
-                        <Combobox.Chip
-                          aria-description="Press Backspace or Delete to remove"
-                          aria-label={label}
-                          className="flex items-center gap-1 border rounded-xl px-2 py-.5"
-                          key={id}
-                        >
-                          <RenderChip item={item} />
-                          <Combobox.ChipRemove
-                            aria-label={`Remove ${label}`}
-                            className="hover:text-red-700 cursor-pointer leading-0"
-                            onClick={() => {
-                              onRemoveChip?.(item);
-                            }}
-                          >
-                            <ClearIcon fontSize="inherit" />
-                          </Combobox.ChipRemove>
-                        </Combobox.Chip>
-                      );
-                    })}
-                    <Combobox.Input
-                      aria-description={
-                        selected.length > 0
-                          ? `${selected.length} selected. From the start of the input, press Left Arrow to focus the selected items`
-                          : undefined
-                      }
-                      className="input w-full"
-                      // onKeyDown={handleInputKeyDown}
-                      placeholder={placeholder}
-                    />
-                  </Combobox.Chips>
-                ) : (
-                  <Combobox.Input
-                    className="input w-full"
-                    key={itemToStringValue(selected)}
-                    placeholder={placeholder}
-                    value={query}
-                  />
+                return (
+                  <Combobox.Chip
+                    aria-description="Press Backspace or Delete to remove"
+                    aria-label={label}
+                    className="flex items-center gap-1 border rounded-xl px-2 py-.5"
+                    key={item[idProperty]}
+                  >
+                    <RenderChip item={item} />
+                    <Combobox.ChipRemove
+                      aria-label={`Remove ${label}`}
+                      className="hover:text-red-700 cursor-pointer leading-0"
+                      onClick={() => {
+                        onRemoveChip?.(item);
+                      }}
+                    >
+                      <ClearIcon fontSize="inherit" />
+                    </Combobox.ChipRemove>
+                  </Combobox.Chip>
                 );
-              }}
-            </Combobox.Value>
-          </Combobox.InputGroup>
+              })}
+            </Combobox.Chips>
+          )}
+
+          <Combobox.Value>
+            {(value) => {
+              return multiple ? (
+                <Combobox.Input
+                  className="input w-full"
+                  placeholder={placeholder}
+                  // value={query}
+                />
+              ) : (
+                <Combobox.Input
+                  className="input w-full"
+                  placeholder={placeholder}
+                  value={value}
+                />
+              );
+            }}
+          </Combobox.Value>
         </div>
 
         <Combobox.Portal>
@@ -280,25 +302,25 @@ export const ComboboxField = <
                 </Combobox.Empty>
               )}
               <Combobox.List>
-                {(item: TItem) => {
-                  const id = itemToStringValue(item);
-
+                {(listItem: TItem) => {
                   return (
                     <Combobox.Item
                       className="flex gap-2 items-center p-2 data-selected:bg-menu-primary-selected data-highlighted:bg-menu-primary-hover cursor-pointer"
-                      key={id}
-                      value={item}
+                      disabled={listItem.disabled}
+                      key={listItem[idProperty]}
+                      value={listItem}
                     >
                       <Combobox.ItemIndicator>
                         <CheckIcon fontSize="inherit" />
                       </Combobox.ItemIndicator>
-                      {item.creatable ? (
+
+                      {listItem.creatable ? (
                         <span className="flex gap-1">
-                          <span>Add "{query}"</span>
+                          <span>Add "{itemToStringLabel(listItem)}"</span>
                           <AddIcon className="ml-4" />
                         </span>
                       ) : (
-                        <RenderItem item={item} />
+                        <RenderItem item={listItem} />
                       )}
                     </Combobox.Item>
                   );

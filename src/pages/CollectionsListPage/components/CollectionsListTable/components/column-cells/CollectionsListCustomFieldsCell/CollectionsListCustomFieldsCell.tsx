@@ -30,6 +30,10 @@ type CustomFieldFormItemDef =
 
 const fieldTypeItems = [
   {
+    id: null as unknown as CustomFieldTypeDef,
+    label: 'Select data type...',
+  },
+  {
     id: 'number',
     label: 'Number',
   },
@@ -81,9 +85,9 @@ export const CollectionsListCustomFieldsCell = withCollectionsListForm({
             mode="array"
             name={`records[${rowIndex}].customFields`}
           >
-            {(field) => {
+            {(customFieldsForRowFormField) => {
               const onCancel = () => {
-                field.replaceValue(
+                customFieldsForRowFormField.replaceValue(
                   lastAddedCustomField.index.value,
                   lastAddedCustomField.data.value,
                 );
@@ -112,7 +116,7 @@ export const CollectionsListCustomFieldsCell = withCollectionsListForm({
                 >
                   <div className="grid gap-4">
                     <form.AppField name={customFieldAtIndexName}>
-                      {() => {
+                      {(customFieldAtIndexFormField) => {
                         return (
                           <>
                             <form.AppField
@@ -137,10 +141,38 @@ export const CollectionsListCustomFieldsCell = withCollectionsListForm({
                               name={`${customFieldAtIndexName}.type`}
                             >
                               {(typeField) => {
+                                const value = fieldTypeItems.find(({ id }) => {
+                                  return id === typeField.state.value;
+                                });
+
                                 return (
                                   <typeField.SelectField
                                     // error={getFieldError(typeField)}
-                                    items={fieldTypeItems}
+                                    items={fieldTypeItems.map(
+                                      (fieldTypeItem) => {
+                                        const customFieldsForRow =
+                                          customFieldsForRowFormField.state
+                                            .value;
+                                        const customFieldBeingEdited =
+                                          customFieldAtIndexFormField.state
+                                            .value;
+
+                                        const disabled =
+                                          customFieldsForRow.some(
+                                            (selectedCustomField) => {
+                                              return (
+                                                !fieldTypeItem.id ||
+                                                (selectedCustomField.name ===
+                                                  customFieldBeingEdited.name &&
+                                                  selectedCustomField.type ===
+                                                    fieldTypeItem.id)
+                                              );
+                                            },
+                                          );
+
+                                        return { ...fieldTypeItem, disabled };
+                                      },
+                                    )}
                                     label="Data Type"
                                     name={typeField.name}
                                     onValueChange={(value) => {
@@ -148,10 +180,8 @@ export const CollectionsListCustomFieldsCell = withCollectionsListForm({
                                         typeField.handleChange(value.id);
                                       }
                                     }}
-                                    placeholder="Select data type..."
-                                    value={fieldTypeItems.find(({ id }) => {
-                                      return id === typeField.state.value;
-                                    })}
+                                    // placeholder="Select data type..."
+                                    value={value}
                                   />
                                 );
                               }}
@@ -168,8 +198,9 @@ export const CollectionsListCustomFieldsCell = withCollectionsListForm({
         );
       }, []);
 
-    const { data: allCustomFields } = useGetCustomFields({
-      initialData: [],
+    // TODO - wrap inside conditional with Suspense so data is only fetched when editing a row
+    const { data: customFieldsInDb = [] } = useGetCustomFields({
+      placeholderData: [],
       requestArgs: {
         params: {
           limit: 1000,
@@ -191,28 +222,54 @@ export const CollectionsListCustomFieldsCell = withCollectionsListForm({
               return (
                 <form.Subscribe
                   selector={(state) => {
+                    state.values.records;
+                    const unsavedCustomFields = state.values.records
+                      .map(({ customFields }) => {
+                        return customFields.filter(({ creatable, id }) => {
+                          return typeof id === 'string' && !creatable;
+                        });
+                      })
+                      .flat();
+
+                    const includedItemsById = new Map<string, true>();
+                    const uniqueDisplayItems: CustomFieldFormItemDef[] = [
+                      ...customFieldsInDb,
+                      ...unsavedCustomFields,
+                    ].filter((item) => {
+                      if (!item.id || includedItemsById.has(String(item.id))) {
+                        return false;
+                      } else {
+                        includedItemsById.set(String(item.id), true);
+
+                        return true;
+                      }
+                    });
+
+                    const customFieldsForRow =
+                      state.values.records[rowIndex].customFields;
+
                     return {
-                      customFieldValues:
-                        state.values.records[rowIndex].customFields,
+                      customFieldsForRow,
+                      uniqueDisplayItems,
                     };
                   }}
                 >
-                  {({ customFieldValues }) => {
+                  {({ customFieldsForRow, uniqueDisplayItems }) => {
                     return (
                       <form.AppField
                         mode="array"
                         name={`records[${rowIndex}].customFields`}
                       >
-                        {(field) => {
+                        {(customFieldsForRowFormField) => {
                           return (
                             <div>
-                              <field.ComboboxField
+                              <customFieldsForRowFormField.ComboboxField
                                 allowCreatable
-                                createItem={(name) => {
+                                createItem={(trimmedQuery) => {
                                   const newRecord: CustomFieldFormItemDef = {
                                     id: uuidv4(),
-                                    name,
-                                    type: 'string',
+                                    name: trimmedQuery,
+                                    type: null as unknown as CustomFieldTypeDef,
                                   };
 
                                   editCustomFieldAtom.data.setValue(newRecord);
@@ -223,16 +280,21 @@ export const CollectionsListCustomFieldsCell = withCollectionsListForm({
                                 isItemEqualToValue={(item, value) => {
                                   return item?.id === value?.id;
                                 }}
-                                items={allCustomFields}
+                                // items={uniqueDisplayItems}
+                                items={customFieldsInDb}
                                 labelProperty="name"
                                 multiple
-                                name={field.name}
+                                name={customFieldsForRowFormField.name}
                                 onRemoveChip={({ id }) => {
                                   const matchingIndex =
-                                    field.state.value.findIndex((field) => {
-                                      return field.id === id;
-                                    });
-                                  field.removeValue(matchingIndex);
+                                    customFieldsForRowFormField.state.value.findIndex(
+                                      (field) => {
+                                        return field.id === id;
+                                      },
+                                    );
+                                  customFieldsForRowFormField.removeValue(
+                                    matchingIndex,
+                                  );
                                 }}
                                 onValueChange={(customFields) => {
                                   const lastAddedIndex = customFields.findIndex(
@@ -252,18 +314,20 @@ export const CollectionsListCustomFieldsCell = withCollectionsListForm({
                                     editCustomFieldAtom.index.resetValue();
                                   }
 
-                                  field.setValue(customFields);
+                                  customFieldsForRowFormField.setValue(
+                                    customFields,
+                                  );
                                 }}
                                 placeholder="Input custom fields..."
                                 RenderChip={({ item }) => {
                                   return (
-                                    <RenderItem {...item}>
+                                    <RenderItem item={item}>
                                       <span className="hover:text-primary-700 cursor-pointer leading-0">
                                         <EditIcon
                                           fontSize="inherit"
                                           onClick={() => {
                                             const indexToEdit =
-                                              field.state.value.findIndex(
+                                              customFieldsForRowFormField.state.value.findIndex(
                                                 ({ id }) => {
                                                   return id === item.id;
                                                 },
@@ -285,9 +349,17 @@ export const CollectionsListCustomFieldsCell = withCollectionsListForm({
                                   );
                                 }}
                                 RenderItem={({ item }) => {
-                                  return <RenderItem {...item} />;
+                                  return <RenderItem item={item} />;
                                 }}
-                                value={customFieldValues}
+                                value={customFieldsForRow}
+                                verifyShowNewItem={({
+                                  itemMatchingQuery,
+                                  newItem,
+                                }) => {
+                                  return (
+                                    newItem.type !== itemMatchingQuery?.type
+                                  );
+                                }}
                               />
                             </div>
                           );
@@ -308,7 +380,7 @@ export const CollectionsListCustomFieldsCell = withCollectionsListForm({
                 className="group/controls flex items-center gap-2 flex-wrap"
                 key={id}
               >
-                <RenderItem {...item} />
+                <RenderItem item={item} />
               </span>
             );
           })
@@ -320,8 +392,12 @@ export const CollectionsListCustomFieldsCell = withCollectionsListForm({
   },
 });
 
-const RenderItem = (props: PropsWithChildren<CustomFieldFormItemDef>) => {
-  const { children, id, name, type } = props;
+const RenderItem = (
+  props: PropsWithChildren<{ item: CustomFieldFormItemDef }>,
+) => {
+  const { children, item } = props;
+
+  const { id, name, type } = item;
 
   return (
     <>

@@ -1,3 +1,5 @@
+import type { InsertLinkCollectionsToCustomFieldsRecordDef } from '#/api/db-tables-schema.types';
+
 import { db } from '#/api/db';
 import {
   collectionsToCustomFieldsTable,
@@ -18,14 +20,23 @@ export const createCustomFieldsDbQuery = async (props: {
       .onConflictDoNothing()
       .returning();
 
-    const mappingRecords = newRecords.map(({ id }, index) => {
-      return { collectionId: records[index].collectionId, customFieldId: id };
-    });
+    await Promise.all(
+      newRecords.map(async ({ id }, index) => {
+        const collectionId = records[index].collectionId;
+        if (collectionId) {
+          const collectionsToCustomFieldsRecord: InsertLinkCollectionsToCustomFieldsRecordDef =
+            {
+              collectionId,
+              customFieldId: id,
+            };
 
-    await tx
-      .insert(collectionsToCustomFieldsTable)
-      .values(mappingRecords)
-      .onConflictDoNothing();
+          await tx
+            .insert(collectionsToCustomFieldsTable)
+            .values(collectionsToCustomFieldsRecord)
+            .onConflictDoNothing();
+        }
+      }),
+    );
 
     return newRecords;
   });

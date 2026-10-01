@@ -2,13 +2,14 @@ import { Select } from '@base-ui/react';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Fragment } from 'react/jsx-runtime';
 
-import type { SelectFieldPropsDef } from './SelectField.types';
+import type {
+  DefaultSelectItemDef,
+  SelectFieldPropsDef,
+} from './SelectField.types';
 
 import { FieldWrapper } from '../FieldWrapper';
 
-export const SelectField = <
-  TItem extends { [k: string]: any; separator?: true },
->(
+export const SelectField = <TItem extends DefaultSelectItemDef>(
   props: SelectFieldPropsDef<TItem>,
 ) => {
   const {
@@ -20,17 +21,40 @@ export const SelectField = <
     idProperty = 'id',
     invalid,
     items,
+    itemToStringLabel = (item) => {
+      if (item) {
+        const label = item[labelProperty];
+
+        const stringLabel = String(label);
+        if (label == stringLabel) {
+          return stringLabel;
+        }
+      }
+
+      return '';
+    },
+    itemToStringValue = (item) => {
+      if (item) {
+        const value = item[idProperty];
+        const stringValue = String(value);
+        if (value == stringValue) {
+          return stringValue;
+        }
+      }
+
+      return '';
+    },
     keyPrefix = 'key',
     label,
     labelProperty = 'label',
     name,
     onValueChange,
     placeholder,
-    RenderItem = (item) => {
-      return <span>{String(item[labelProperty])}</span>;
+    RenderItem = ({ item, ...rest }) => {
+      return <span {...rest}>{itemToStringLabel(item)}</span>;
     },
-    RenderValue = (item) => {
-      return <span>{String(item[labelProperty])}</span>;
+    RenderValue = ({ item, ...rest }) => {
+      return <span {...rest}>{itemToStringLabel(item)}</span>;
     },
     required,
     validationDebounceTime,
@@ -54,20 +78,26 @@ export const SelectField = <
     >
       <Select.Root
         {...rest}
-        itemToStringValue={(item) => {
-          return String(item[idProperty]);
-        }}
+        itemToStringLabel={itemToStringLabel}
+        itemToStringValue={itemToStringValue}
         onValueChange={(item) => {
           onValueChange(item);
         }}
       >
         <Select.Trigger className="grid grid-cols-[1fr_auto] gap-1 md:gap-2 p-1.5 bg-white border border-black cursor-pointer">
           <Select.Value
-            className="grid justify-start"
+            className="grid justify-start data-placeholder:text-gray-500"
             placeholder={placeholder}
           >
             {(item) => {
-              return <RenderValue {...item} />;
+              return (
+                <RenderValue
+                  className={
+                    item.disabled ? 'text-gray-500 cursor-not-allowed' : ''
+                  }
+                  item={item}
+                />
+              );
             }}
           </Select.Value>
           <Select.Icon>
@@ -85,11 +115,16 @@ export const SelectField = <
                         <Select.Separator className="mx-2 my-0.5 h-px bg-gray-300" />
                       ) : (
                         <Select.Item
-                          className="p-2 hover:bg-menu-primary-hover data-selected:bg-menu-primary-selected data-highlighted:bg-menu-primary-hover cursor-pointer flex align-items-center"
+                          className={`p-2 flex align-items-center ${
+                            item.disabled
+                              ? 'text-gray-500 cursor-not-allowed'
+                              : 'hover:bg-menu-primary-hover data-selected:bg-menu-primary-selected data-highlighted:bg-menu-primary-hover cursor-pointer'
+                          }`}
+                          disabled={item.disabled}
                           value={item}
                         >
                           <Select.ItemText>
-                            <RenderItem {...item} />
+                            <RenderItem item={item} />
                           </Select.ItemText>
                         </Select.Item>
                       )}

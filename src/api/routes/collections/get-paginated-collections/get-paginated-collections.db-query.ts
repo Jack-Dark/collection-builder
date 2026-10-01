@@ -41,7 +41,7 @@ export const getPaginatedCollectionsDbQuery = async (props: {
         ? (sortFieldParam as keyof CollectionRecordDef)
         : 'name';
 
-    const collections = await db.query.collections.findMany({
+    const collections = await tx.query.collections.findMany({
       limit,
       offset: (page - 1) * limit,
       orderBy: {

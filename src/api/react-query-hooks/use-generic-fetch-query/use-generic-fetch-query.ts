@@ -57,7 +57,7 @@ export const useGenericFetchQuery = <
     return transformDependencies;
   }, transformDependencies);
 
-  const memoizedSelect = useCallback((response: TResponseDef) => {
+  const memoizedTransform = useCallback((response: TResponseDef) => {
     if (transform) {
       return transform?.(response);
     }
@@ -68,7 +68,7 @@ export const useGenericFetchQuery = <
   const configuredQueryOptions = getGenericFetchQueryOptions({
     ...configs,
     requestArgs,
-    transform: memoizedSelect,
+    transform: memoizedTransform,
   });
 
   const context = useSuspenseQuery(configuredQueryOptions);

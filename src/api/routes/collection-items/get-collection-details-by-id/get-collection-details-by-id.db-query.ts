@@ -135,6 +135,28 @@ export const getCollectionDetailsByIdDbQuery = async (
         asc(sql`lower(${collectionItemsTable.name})`),
       );
 
+    const ITEMS_NEW = await tx.query.collectionItems.findMany({
+      limit,
+      offset: (page - 1) * limit,
+      orderBy: {
+        [sortingField]: sort?.direction || 'asc',
+      },
+      where: {
+        deletedAt: undefined,
+        userId,
+        // todo - add filters/search logic
+      },
+      with: {
+        customFieldValues: {
+          columns: {
+            customFieldId: true,
+            id: true,
+            value: true,
+          },
+        },
+      },
+    });
+
     return {
       collection,
       customFields: {
