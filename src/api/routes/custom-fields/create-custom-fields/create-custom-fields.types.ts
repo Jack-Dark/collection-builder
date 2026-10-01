@@ -12,3 +12,8 @@ export type CreateCustomFieldsRequestArgsDef = z.output<
 export type CreateCustomFieldsResponseDef = QueryResponseDef<
   typeof createCustomFieldsDbQuery
 >;
+
+export type CreateCustomFieldsDbQueryRecordDef =
+  CreateCustomFieldsRequestArgsDef['records'][number] & {
+    userId: string;
+  };

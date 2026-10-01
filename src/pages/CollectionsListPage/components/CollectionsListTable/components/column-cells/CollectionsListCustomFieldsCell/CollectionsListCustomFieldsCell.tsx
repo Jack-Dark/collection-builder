@@ -242,10 +242,6 @@ export const CollectionsListCustomFieldsCell = withCollectionsListForm({
                                       );
                                     },
                                   );
-                                  console.log(
-                                    '🚀 ~ lastAddedIndex:',
-                                    lastAddedIndex,
-                                  );
 
                                   if (lastAddedIndex >= 0) {
                                     editCustomFieldAtom.index.setValue(

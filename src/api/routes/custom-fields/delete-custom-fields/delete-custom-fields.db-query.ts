@@ -27,20 +27,11 @@ export const deleteCustomFieldsDbQuery = async (props: {
           .select({ collectionsLinkedToCustomField: count() })
           .from(collectionsToCustomFieldsTable)
           .where(eq(collectionsToCustomFieldsTable.customFieldId, id));
-        console.log(
-          '🚀 ~ collectionsLinkedToCustomField:',
-          collectionsLinkedToCustomField,
-        );
 
         if (collectionsLinkedToCustomField <= 0) {
           throw new Error(ReasonPhrases.NOT_FOUND);
         } else if (collectionsLinkedToCustomField === 1) {
           // ? if only one match, delete the custom field
-          const record = await tx
-            .select()
-            .from(customFieldsTable)
-            .where(matchesUserAndIds);
-          console.log('🚀 ~ deleteCustomFieldsDbQuery:', record);
           const { rowCount } = await tx
             .delete(customFieldsTable)
             .where(matchesUserAndIds);

@@ -4,12 +4,10 @@ import {
   customFieldsTable,
 } from '#/api/db-tables-schema';
 
-import type { CreateCustomFieldsRequestArgsDef } from './create-custom-fields.types';
+import type { CreateCustomFieldsDbQueryRecordDef } from './create-custom-fields.types';
 
 export const createCustomFieldsDbQuery = async (props: {
-  records: (CreateCustomFieldsRequestArgsDef['records'][number] & {
-    userId: string;
-  })[];
+  records: CreateCustomFieldsDbQueryRecordDef[];
 }) => {
   const { records } = props;
 
