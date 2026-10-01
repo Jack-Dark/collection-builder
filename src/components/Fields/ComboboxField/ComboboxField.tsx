@@ -239,6 +239,24 @@ export const ComboboxField = <
         value={value}
       >
         <div className="grid gap-2">
+          <Combobox.Value>
+            {(value) => {
+              return multiple ? (
+                <Combobox.Input
+                  className="input w-full"
+                  placeholder={placeholder}
+                  // value={query}
+                />
+              ) : (
+                <Combobox.Input
+                  className="input w-full"
+                  placeholder={placeholder}
+                  value={value}
+                />
+              );
+            }}
+          </Combobox.Value>
+
           {Array.isArray(value) && (
             <Combobox.Chips
               aria-label={value.length > 0 ? 'Selected labels' : undefined}
@@ -269,24 +287,6 @@ export const ComboboxField = <
               })}
             </Combobox.Chips>
           )}
-
-          <Combobox.Value>
-            {(value) => {
-              return multiple ? (
-                <Combobox.Input
-                  className="input w-full"
-                  placeholder={placeholder}
-                  // value={query}
-                />
-              ) : (
-                <Combobox.Input
-                  className="input w-full"
-                  placeholder={placeholder}
-                  value={value}
-                />
-              );
-            }}
-          </Combobox.Value>
         </div>
 
         <Combobox.Portal>

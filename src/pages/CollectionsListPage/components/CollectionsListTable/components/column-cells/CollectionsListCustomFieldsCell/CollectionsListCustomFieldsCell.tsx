@@ -5,7 +5,11 @@ import { v4 as uuidv4 } from 'uuid';
 
 import type { CustomFieldTypeDef } from '#/api/db-tables-schema.types';
 
-import { useGetCustomFields } from '#/api/routes/custom-fields/get-custom-fields/get-custom-fields.react-query';
+import { useCreateCustomFields } from '#/api/routes/custom-fields/create-custom-fields/create-custom-fields.react-query';
+import {
+  useGetCustomFields,
+  useInvalidateGetCustomFields,
+} from '#/api/routes/custom-fields/get-custom-fields/get-custom-fields.react-query';
 import { Button } from '#/components/Button';
 import { Dialog } from '#/components/Dialog';
 import { useDialog } from '#/components/Dialog/hooks/useDialog';
@@ -80,6 +84,10 @@ export const CollectionsListCustomFieldsCell = withCollectionsListForm({
         const customFieldAtIndexName =
           `records[${rowIndex}].customFields[${editCustomFieldAtom.index.value}]` as const;
 
+        const { onCreateCustomFields, processing } = useCreateCustomFields();
+
+        const invalidateGetCustomFields = useInvalidateGetCustomFields();
+
         return (
           <form.AppField
             mode="array"
@@ -94,18 +102,50 @@ export const CollectionsListCustomFieldsCell = withCollectionsListForm({
                 hideAddOrEditCustomFieldsDialog();
               };
 
+              const onSave = async () => {
+                const customField =
+                  customFieldsForRowFormField.state.value[
+                    lastAddedCustomField.index.value
+                  ];
+
+                if (typeof customField.id === 'string') {
+                  const [newRecord] = await onCreateCustomFields({
+                    records: [
+                      {
+                        name: customField.name,
+                        type: customField.type,
+                      },
+                    ],
+                  });
+                  customFieldsForRowFormField.replaceValue(
+                    lastAddedCustomField.index.value,
+                    {
+                      id: newRecord.id,
+                      name: newRecord.name,
+                      type: newRecord.type,
+                    },
+                  );
+                } else {
+                  // TODO - ADD LOGIC TO UPDATE EXISTING FIELD
+                }
+                invalidateGetCustomFields();
+                hideAddOrEditCustomFieldsDialog();
+              };
+
               return (
                 <Dialog
                   Footer={() => {
                     return (
                       <>
                         <Button
+                          disabled={processing}
                           onClick={onCancel}
                           text="Cancel"
                           variant="mono"
                         />
                         <Button
-                          onClick={hideAddOrEditCustomFieldsDialog}
+                          onClick={onSave}
+                          processing={processing}
                           text="Save"
                         />
                       </>

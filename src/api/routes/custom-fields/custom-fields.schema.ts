@@ -10,5 +10,5 @@ export const baseCustomFieldSchema = z.object({
 });
 
 export const customFieldWithIdSchema = baseCustomFieldSchema.extend({
-  id: z.union([z.number().min(1), z.string().min(1)]).describe('ID'),
+  id: z.number().min(1).describe('ID'),
 });
