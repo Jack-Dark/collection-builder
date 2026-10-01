@@ -1,22 +1,32 @@
-import type { ComboboxRootProps, ComboboxInputProps } from '@base-ui/react';
+import type { ComboboxInputProps, ComboboxRootProps } from '@base-ui/react';
+import type { JSXElementConstructor } from 'react';
 
 import type { FieldWrapperProps } from '../FieldWrapper/FieldWrapper.types';
 
-export type ComboboxFieldProps<TValue> = Pick<
-  ComboboxRootProps<TValue>,
-  | 'itemToStringLabel'
-  | 'itemToStringValue'
-  | 'filter'
-  | 'name'
-  | 'onValueChange'
-  | 'required'
-  | 'isItemEqualToValue'
-> &
+export type TItemRecordDef = {
+  [key: string]: any;
+  /** DO NOT USE. Added by the system if input can create new items. */
+  creatable?: true;
+};
+
+export type ComboboxValueDef<
+  TItem extends TItemRecordDef,
+  TMultiple extends boolean | undefined,
+> = TMultiple extends true ? TItem[] : TItem;
+
+export type ComboboxFieldPropsDef<
+  TItem extends TItemRecordDef,
+  TMultiple extends boolean | undefined = false,
+> = ComboboxRootProps<TItem, TMultiple> &
   Pick<ComboboxInputProps, 'placeholder'> &
   FieldWrapperProps & {
-    createCreatable?: (query: string) => TValue;
+    allowCreatable?: boolean;
+    createItem?: (query: string) => TItem;
     hideLabel?: boolean;
-    identifyCreatable?: (item: TValue) => boolean;
-    inputValue: string;
-    items: TValue[];
+    idProperty?: keyof TItem;
+    inputValue?: string;
+    labelProperty?: keyof TItem;
+    onRemoveChip?: (item: TItem) => void;
+    RenderChip?: JSXElementConstructor<{ item: TItem }>;
+    RenderItem?: JSXElementConstructor<{ item: TItem }>;
   };

@@ -206,7 +206,7 @@ export const CollectionsListCustomFieldsCell = withCollectionsListForm({
                         {(field) => {
                           return (
                             <div>
-                              <field.ComboboxFieldV2
+                              <field.ComboboxField
                                 allowCreatable
                                 createItem={(name) => {
                                   const newRecord: CustomFieldFormItemDef = {

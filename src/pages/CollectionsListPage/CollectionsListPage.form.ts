@@ -6,7 +6,6 @@ import type { CreateCollectionFormDataSchemaDef } from '#/api/routes/collections
 import { Button } from '#/components/Button';
 import { CheckboxField } from '#/components/Fields/CheckboxField';
 import { ComboboxField } from '#/components/Fields/ComboboxField';
-import { ComboboxFieldV2 } from '#/components/Fields/ComboboxFieldV2';
 import { InputField } from '#/components/Fields/InputField';
 import { SelectField } from '#/components/Fields/SelectField';
 import { SwitchField } from '#/components/Fields/SwitchField';
@@ -51,7 +50,6 @@ export const {
   fieldComponents: {
     CheckboxField,
     ComboboxField,
-    ComboboxFieldV2,
     InputField,
     SelectField,
     SwitchField,

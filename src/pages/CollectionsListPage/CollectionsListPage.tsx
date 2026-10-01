@@ -31,9 +31,9 @@ export const CollectionsListPage: RouteComponent = () => {
   const invalidateGetPaginatedCollections =
     useInvalidateGetPaginatedCollections();
 
-  const { onCreateCollection } = useCreateCollection({});
+  const { onCreateCollection } = useCreateCollection();
 
-  const { onUpdateCollectionById } = useUpdateCollectionById({});
+  const { onUpdateCollectionById } = useUpdateCollectionById();
 
   const { data } = useGetPaginatedCollections({
     onSuccess: ({ collections }) => {
