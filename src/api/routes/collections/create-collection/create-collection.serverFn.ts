@@ -14,31 +14,14 @@ export const createCollectionServerFn = createServerFn({
   .middleware([errorHandlingMiddleware, authApiRouteMiddleware])
   .validator(createCollectionServerFnSchema)
   .handler(async ({ context, data }) => {
-    try {
-      const { records } = data;
+    const { records } = data;
 
-      const recordsWithUserId = records.map((item) => {
-        return {
-          ...item,
-          userId: context.user.id,
-        };
-      });
+    const recordsWithUserId = records.map((item) => {
+      return {
+        ...item,
+        userId: context.user.id,
+      };
+    });
 
-      return createCollectionDbQuery(recordsWithUserId);
-    } catch (error) {
-      throw error as Error;
-    }
-
-    // return formatServerResponse(() => {
-    //   const { records } = data;
-
-    //   const recordsWithUserId = records.map((item) => {
-    //     return {
-    //       ...item,
-    //       userId: context.user.id,
-    //     };
-    //   });
-
-    //   return createCollectionDbQuery(recordsWithUserId);
-    // });
+    return createCollectionDbQuery(recordsWithUserId);
   });

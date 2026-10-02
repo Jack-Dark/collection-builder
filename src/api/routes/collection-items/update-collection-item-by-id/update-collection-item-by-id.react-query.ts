@@ -76,13 +76,13 @@ export const useUpdateCollectionItems = <
             records: recordsWithImages,
           },
         });
-      } catch (error: unknown) {
+      } catch (error) {
         // ? Delete uploaded files on error
         await deleteCloudinaryAssetsByPublicIdsServerFn({
           data: { publicIds: uploadedPublicIds.flat() },
         });
 
-        return [];
+        throw error;
       }
     },
     mutationKey: [reactMutationKeys.updateCollectionItems],

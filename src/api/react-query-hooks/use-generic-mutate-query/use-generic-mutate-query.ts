@@ -56,11 +56,7 @@ export const useGenericMutateQuery = <
   const handleMutationFn = async (
     ...requestArgs: Parameters<typeof mutationFn>
   ) => {
-    const { data, error, success } = await mutationFn(...requestArgs);
-
-    if (!success) {
-      throw new Error(error);
-    }
+    const data = await mutationFn(...requestArgs);
 
     return transform ? transform(data) : (data as unknown as TTransformedData);
   };

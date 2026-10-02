@@ -11,15 +11,8 @@ export const getPaginatedCollectionsServerFn = createServerFn({
   .middleware([authApiRouteMiddleware])
   .validator(getPaginatedCollectionsSchema)
   .handler(async ({ context, data }) => {
-    try {
-      // return formatServerResponse(() => {
-
-      return getPaginatedCollectionsDbQuery({
-        params: data.params,
-        userId: context.user.id,
-      });
-      // });
-    } catch (error) {
-      throw error as Error;
-    }
+    return getPaginatedCollectionsDbQuery({
+      params: data.params,
+      userId: context.user.id,
+    });
   });

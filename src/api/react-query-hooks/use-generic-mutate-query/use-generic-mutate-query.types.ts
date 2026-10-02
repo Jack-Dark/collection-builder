@@ -1,7 +1,5 @@
 import type { UseMutationOptions } from '@tanstack/react-query';
 
-import type { FormattedServerResponseDef } from '../react-query.types';
-
 // ? This type def applies the props passed to the hook when calling it
 export interface GenericMutateQueryProps<
   TRequestArgs extends Record<string, any>,
@@ -32,5 +30,5 @@ export interface UseGenericMutateQueryProps<
   'requestArgs'
 > {
   fallbackErrorMessage: string;
-  mutationFn: (args: TRequestArgs) => FormattedServerResponseDef<TResponseDef>;
+  mutationFn: (args: TRequestArgs) => Promise<TResponseDef>;
 }

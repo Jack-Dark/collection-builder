@@ -14,49 +14,45 @@ export const deleteCustomFieldsDbQuery = async (props: {
 }) => {
   const { collectionId, ids, userId } = props;
 
-  try {
-    await db.transaction(async (tx) => {
-      for (const id of ids) {
-        const matchesUserAndIds = and(
-          eq(customFieldsTable.userId, userId),
-          isNull(customFieldsTable.deletedAt),
-          eq(customFieldsTable.id, id),
-        );
+  await db.transaction(async (tx) => {
+    for (const id of ids) {
+      const matchesUserAndIds = and(
+        eq(customFieldsTable.userId, userId),
+        isNull(customFieldsTable.deletedAt),
+        eq(customFieldsTable.id, id),
+      );
 
-        const [{ collectionsLinkedToCustomField }] = await tx
-          .select({ collectionsLinkedToCustomField: count() })
-          .from(collectionsToCustomFieldsTable)
-          .where(eq(collectionsToCustomFieldsTable.customFieldId, id));
+      const [{ collectionsLinkedToCustomField }] = await tx
+        .select({ collectionsLinkedToCustomField: count() })
+        .from(collectionsToCustomFieldsTable)
+        .where(eq(collectionsToCustomFieldsTable.customFieldId, id));
 
-        if (collectionsLinkedToCustomField <= 0) {
+      if (collectionsLinkedToCustomField <= 0) {
+        throw new Error(ReasonPhrases.NOT_FOUND);
+      } else if (collectionsLinkedToCustomField === 1) {
+        // ? if only one match, delete the custom field
+        const { rowCount } = await tx
+          .delete(customFieldsTable)
+          .where(matchesUserAndIds);
+
+        if (rowCount === 0) {
           throw new Error(ReasonPhrases.NOT_FOUND);
-        } else if (collectionsLinkedToCustomField === 1) {
-          // ? if only one match, delete the custom field
-          const { rowCount } = await tx
-            .delete(customFieldsTable)
-            .where(matchesUserAndIds);
+        }
+      } else {
+        // ? otherwise just delete the references to the
+        const { rowCount } = await tx
+          .delete(collectionsToCustomFieldsTable)
+          .where(
+            and(
+              eq(collectionsToCustomFieldsTable.customFieldId, id),
+              eq(collectionsToCustomFieldsTable.collectionId, collectionId),
+            ),
+          );
 
-          if (rowCount === 0) {
-            throw new Error(ReasonPhrases.NOT_FOUND);
-          }
-        } else {
-          // ? otherwise just delete the references to the
-          const { rowCount } = await tx
-            .delete(collectionsToCustomFieldsTable)
-            .where(
-              and(
-                eq(collectionsToCustomFieldsTable.customFieldId, id),
-                eq(collectionsToCustomFieldsTable.collectionId, collectionId),
-              ),
-            );
-
-          if (rowCount === 0) {
-            throw new Error(ReasonPhrases.NOT_FOUND);
-          }
+        if (rowCount === 0) {
+          throw new Error(ReasonPhrases.NOT_FOUND);
         }
       }
-    });
-  } catch (error) {
-    console.error('Delete operation failed:', error);
-  }
+    }
+  });
 };

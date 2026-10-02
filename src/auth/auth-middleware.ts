@@ -16,55 +16,53 @@ const authSchema = z
 /** Use this middleware to authenticate protected API routes. */
 export const authApiRouteMiddleware = createMiddleware().server(
   async ({ next }) => {
-    try {
-      const userContext = await getUserContext();
+    // try {
+    const userContext = await getUserContext();
 
-      if (!userContext) {
-        const unauthorizedMsg = getReasonPhrase(StatusCodes.UNAUTHORIZED);
-
-        console.error({
-          message: unauthorizedMsg,
-          status: StatusCodes.UNAUTHORIZED,
-        });
-
-        throw new Error(unauthorizedMsg);
-      }
-
-      const { data, error, success } = z.safeParse(authSchema, userContext);
-
-      if (success) {
-        return await next({
-          context: {
-            user: data,
-          },
-        });
-      }
-
-      const unprocessableMsg = getReasonPhrase(
-        StatusCodes.UNPROCESSABLE_ENTITY,
-      );
+    if (!userContext) {
+      const unauthorizedMsg = getReasonPhrase(StatusCodes.UNAUTHORIZED);
 
       console.error({
-        error,
-        message: unprocessableMsg,
-        status: StatusCodes.UNPROCESSABLE_ENTITY,
+        message: unauthorizedMsg,
+        status: StatusCodes.UNAUTHORIZED,
       });
 
-      throw new Error(unprocessableMsg);
-    } catch (error: unknown) {
-      console.error('Server function error caught:', error);
+      throw new Error(unauthorizedMsg);
+    }
 
+    const { data, error, success } = z.safeParse(authSchema, userContext);
+
+    if (success) {
       return await next({
         context: {
-          user: {
-            id: '',
-            image: null,
-            name: '',
-            token: '',
-          },
+          user: data,
         },
       });
     }
+
+    const unprocessableMsg = getReasonPhrase(StatusCodes.UNPROCESSABLE_ENTITY);
+
+    console.error({
+      error,
+      message: unprocessableMsg,
+      status: StatusCodes.UNPROCESSABLE_ENTITY,
+    });
+
+    throw new Error(unprocessableMsg);
+    // } catch (error: unknown) {
+    //   console.error('Auth server function error caught:', error);
+
+    //   return await next({
+    //     context: {
+    //       user: {
+    //         id: '',
+    //         image: null,
+    //         name: '',
+    //         token: '',
+    //       },
+    //     },
+    //   });
+    // }
   },
 );
 

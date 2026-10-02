@@ -37,12 +37,11 @@ export const createCollectionDbQuery = async (
       });
     });
 
-    // TODO - COMMENT OUT IF STATEMENT TO TEST ERROR HANDLING
-    // if (newCollectionToCustomFieldRecords.length) {
-    await tx
-      .insert(collectionsToCustomFieldsTable)
-      .values(newCollectionToCustomFieldRecords);
-    // }
+    if (newCollectionToCustomFieldRecords.length) {
+      await tx
+        .insert(collectionsToCustomFieldsTable)
+        .values(newCollectionToCustomFieldRecords);
+    }
 
     return newRecords;
   });
