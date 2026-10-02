@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 
+import { getPaginationMetadataDefaults } from '#/api/pagination/pagination.constants';
 import { useGetPaginatedCollections } from '#/api/routes/collections/get-paginated-collections/get-paginated-collections.react-query';
 import { Table } from '#/components/Table';
 import { Route as CollectionsRoute } from '#/routes/_protected/collections';
@@ -22,6 +23,10 @@ export const CollectionsListTable = withCollectionsListForm({
     const searchQueries = CollectionsRoute.useSearch();
 
     const { data } = useGetPaginatedCollections({
+      placeholderData: {
+        collections: [],
+        pagingation: getPaginationMetadataDefaults(1000),
+      },
       requestArgs: { params: searchQueries },
     });
 

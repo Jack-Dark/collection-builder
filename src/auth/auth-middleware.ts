@@ -1,5 +1,5 @@
 import { createMiddleware } from '@tanstack/react-start';
-import { StatusCodes, getReasonPhrase } from 'http-status-codes';
+import { ReasonPhrases, StatusCodes } from 'http-status-codes';
 import z from 'zod';
 
 import { getUserContext } from './auth.functions';
@@ -16,11 +16,10 @@ const authSchema = z
 /** Use this middleware to authenticate protected API routes. */
 export const authApiRouteMiddleware = createMiddleware().server(
   async ({ next }) => {
-    // try {
     const userContext = await getUserContext();
 
     if (!userContext) {
-      const unauthorizedMsg = getReasonPhrase(StatusCodes.UNAUTHORIZED);
+      const unauthorizedMsg = ReasonPhrases.UNAUTHORIZED;
 
       console.error({
         message: unauthorizedMsg,
@@ -40,7 +39,7 @@ export const authApiRouteMiddleware = createMiddleware().server(
       });
     }
 
-    const unprocessableMsg = getReasonPhrase(StatusCodes.UNPROCESSABLE_ENTITY);
+    const unprocessableMsg = ReasonPhrases.UNPROCESSABLE_ENTITY;
 
     console.error({
       error,
@@ -49,20 +48,6 @@ export const authApiRouteMiddleware = createMiddleware().server(
     });
 
     throw new Error(unprocessableMsg);
-    // } catch (error: unknown) {
-    //   console.error('Auth server function error caught:', error);
-
-    //   return await next({
-    //     context: {
-    //       user: {
-    //         id: '',
-    //         image: null,
-    //         name: '',
-    //         token: '',
-    //       },
-    //     },
-    //   });
-    // }
   },
 );
 
@@ -73,18 +58,8 @@ export const errorHandlingMiddleware = createMiddleware({
     // Executes downstream middleware and the server function itself
     return await next();
   } catch (error) {
-    // 1. Log the error to your monitoring infrastructure (e.g., Sentry)
-    console.error('Server function error caught:', error);
+    console.error('Error captured by middleware:', error);
 
-    // 2. Intercept and safely reshape the error before it hits the client
-    if (error instanceof z.ZodError) {
-      throw Response.json(
-        { message: 'Data validation failure occurred' },
-        { status: 500 },
-      );
-    }
-
-    // Otherwise, bubble up the original error
     throw error;
   }
 });

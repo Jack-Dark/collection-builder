@@ -16,10 +16,8 @@ import {
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
 import { StrictMode } from 'react';
 
-import { reactQueryKeys } from '#/api/react-query-hooks/react-query.constants';
-import { getGenericFetchQueryOptions } from '#/api/react-query-hooks/use-generic-fetch-query/get-generic-fetch-query-options';
-import { getNavMenuCollectionsServerFn } from '#/api/routes/collections/get-nav-menu-collections/get-nav-menu-collections.serverFn';
 import { DialogProvider } from '#/components/Dialog/Dialog.Provider';
+import { SimpleErrorBoundaryContent } from '#/components/SimpleErrorBoundary';
 
 import appCss from '../styles.css?url';
 
@@ -27,13 +25,7 @@ export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
 }>()({
   component: RootComponent,
-  errorComponent: () => {
-    return (
-      <RootDocument>
-        <p>An Error Occurred</p>
-      </RootDocument>
-    );
-  },
+  errorComponent: SimpleErrorBoundaryContent,
   head: () => {
     return {
       links: [
@@ -55,15 +47,6 @@ export const Route = createRootRouteWithContext<{
         },
       ],
     };
-  },
-  loader: async ({ context }) => {
-    const queryOptions = getGenericFetchQueryOptions({
-      queryFn: getNavMenuCollectionsServerFn,
-      queryKey: [reactQueryKeys.getNavMenuCollections],
-      requestArgs: {},
-    });
-
-    return await context.queryClient.ensureQueryData(queryOptions);
   },
   notFoundComponent: () => {
     return (

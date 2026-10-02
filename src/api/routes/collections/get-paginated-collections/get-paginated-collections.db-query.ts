@@ -13,7 +13,6 @@ export const getPaginatedCollectionsDbQuery = async (props: {
   params: PaginationQueriesSchemaDef;
   userId: string;
 }) => {
-  throw new Error('FETCH ERROR TEST');
   const { params, userId } = props;
   const { limit, page, search, sort } = params;
 

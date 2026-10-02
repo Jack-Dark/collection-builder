@@ -105,7 +105,7 @@ export const useGenericFetchQuery = <
 
       onError?.(errorMsg, requestArgs);
     }
-  }, [isError, error?.message, fallbackErrorMessage]);
+  }, [isError, error, fallbackErrorMessage]);
 
   return context;
 };

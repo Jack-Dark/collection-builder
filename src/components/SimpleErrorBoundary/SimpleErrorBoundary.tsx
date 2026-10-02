@@ -8,23 +8,26 @@ export const SimpleErrorBoundary = ({
   ...rest
 }: PropsWithChildren<Partial<ErrorBoundaryPropsWithFallback>>) => {
   return (
-    <ErrorBoundary
-      fallback={
-        <div className="p-4">
-          <p>There was an error rendering this content.</p>
-          <p>
-            <a
-              href="https://github.com/Jack-Dark/collection-builder/issues"
-              target="_blank"
-            >
-              Please report this bug.
-            </a>
-          </p>
-        </div>
-      }
-      {...rest}
-    >
+    <ErrorBoundary fallback={<SimpleErrorBoundaryContent />} {...rest}>
       {children}
     </ErrorBoundary>
+  );
+};
+
+export const SimpleErrorBoundaryContent = () => {
+  return (
+    <div className="h-full w-full flex justify-center items-center">
+      <div className="p-4 bg-white text-black rounded-xs">
+        <p>Something went wrong.</p>
+        <p>
+          <a
+            href="https://github.com/Jack-Dark/collection-builder/issues"
+            target="_blank"
+          >
+            Please report this bug.
+          </a>
+        </p>
+      </div>
+    </div>
   );
 };
