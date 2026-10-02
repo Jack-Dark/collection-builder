@@ -11,8 +11,14 @@ export const getCustomFieldsServerFn = createServerFn({
   .middleware([authApiRouteMiddleware])
   .validator(getCustomFieldsSchema)
   .handler(async ({ context, data }) => {
-    return getCustomFieldsDbQuery({
-      userId: context.user.id,
-      ...data.params,
-    });
+    try {
+      // return formatServerResponse(() => {
+      return getCustomFieldsDbQuery({
+        userId: context.user.id,
+        ...data.params,
+      });
+      // });
+    } catch (error) {
+      throw error as Error;
+    }
   });

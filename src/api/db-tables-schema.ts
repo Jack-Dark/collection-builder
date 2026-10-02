@@ -99,7 +99,7 @@ export const collectionsTable = snakeCase.table('collections', {
   customField3Label: text('custom_field3_label'),
   id: serial().primaryKey(),
   name: text().notNull(),
-  notes: text().notNull(),
+  notes: text().default(''),
   userId: text('user_id')
     .notNull()
     .references(
@@ -186,25 +186,50 @@ export const customFieldValuesTable = snakeCase.table('custom_field_values', {
 export const collectionsToCustomFieldsTable = snakeCase.table(
   'collections_to_custom_fields',
   {
-    collectionId: integer().references(() => {
-      return collectionsTable.id;
-    }),
-    customFieldId: integer().references(() => {
-      return customFieldsTable.id;
-    }),
+    collectionId: integer().references(
+      () => {
+        return collectionsTable.id;
+      },
+      { onDelete: 'cascade' },
+    ),
+    customFieldId: integer().references(
+      () => {
+        return customFieldsTable.id;
+      },
+      { onDelete: 'cascade' },
+    ),
     id: serial().primaryKey(),
+    order: integer().default(0),
+    userId: text().references(
+      () => {
+        return usersTable.id;
+      },
+      { onDelete: 'cascade' },
+    ),
   },
 );
 
 export const collectionItemsToCustomFieldValuesTable = snakeCase.table(
   'collection_items_to_custom_field_values',
   {
-    collectionItemId: integer().references(() => {
-      return collectionItemsTable.id;
-    }),
-    customFieldValueId: integer().references(() => {
-      return customFieldValuesTable.id;
-    }),
+    collectionItemId: integer().references(
+      () => {
+        return collectionItemsTable.id;
+      },
+      { onDelete: 'cascade' },
+    ),
+    customFieldValueId: integer().references(
+      () => {
+        return customFieldValuesTable.id;
+      },
+      { onDelete: 'cascade' },
+    ),
     id: serial().primaryKey(),
+    userId: text().references(
+      () => {
+        return usersTable.id;
+      },
+      { onDelete: 'cascade' },
+    ),
   },
 );

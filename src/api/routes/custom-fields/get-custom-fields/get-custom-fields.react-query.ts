@@ -1,6 +1,6 @@
 import type { GenericFetchProps } from '#/api/react-query-hooks/use-generic-fetch-query/use-generic-fetch-query.types';
 
-import { reactQueryKeys } from '#/api/react-query-hooks/react-query-keys';
+import { reactQueryKeys } from '#/api/react-query-hooks/react-query.constants';
 import { useGenericFetchQuery } from '#/api/react-query-hooks/use-generic-fetch-query';
 import { getUseInvalidateQuery } from '#/api/react-query-hooks/use-generic-fetch-query/hooks/get-use-invalidate-query-cache';
 

@@ -11,7 +11,13 @@ export const getNavMenuCollectionsServerFn = createServerFn({
   .middleware([authApiRouteMiddleware])
   .validator(getNavMenuCollectionsSchema)
   .handler(async ({ context }) => {
-    return getNavMenuCollectionsDbQuery({
-      userId: context.user.id,
-    });
+    try {
+      // return formatServerResponse(() => {
+      return getNavMenuCollectionsDbQuery({
+        userId: context.user.id,
+      });
+      // });
+    } catch (error) {
+      throw error as Error;
+    }
   });

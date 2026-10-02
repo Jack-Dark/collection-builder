@@ -43,6 +43,7 @@ export const useGenericFetchQuery = <
     fallbackErrorMessage,
     onError,
     onSuccess,
+    queryFn,
     requestArgs,
     showLoading: enableSpinner,
     transform,
@@ -67,23 +68,24 @@ export const useGenericFetchQuery = <
 
   const configuredQueryOptions = getGenericFetchQueryOptions({
     ...configs,
+    queryFn,
     requestArgs,
     transform: memoizedTransform,
   });
 
   const context = useSuspenseQuery(configuredQueryOptions);
 
-  const { data, error, isError, isFetching, isPending, isSuccess } = context;
+  const { data, error, isError, isFetching, isSuccess } = context;
 
   useLayoutEffect(() => {
     if (enableSpinner) {
-      if (isFetching || isPending) {
+      if (isFetching) {
         showSpinner();
       } else {
         hideSpinner();
       }
     }
-  }, [isFetching, isPending]);
+  }, [isFetching]);
 
   useLayoutEffect(() => {
     if (isSuccess) {
@@ -103,7 +105,7 @@ export const useGenericFetchQuery = <
 
       onError?.(errorMsg, requestArgs);
     }
-  }, [isError]);
+  }, [isError, error?.message, fallbackErrorMessage]);
 
   return context;
 };

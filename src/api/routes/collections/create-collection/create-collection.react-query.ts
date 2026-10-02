@@ -1,6 +1,6 @@
 import type { GenericMutateQueryProps } from '#/api/react-query-hooks/use-generic-mutate-query/use-generic-mutate-query.types';
 
-import { reactMutationKeys } from '#/api/react-query-hooks/react-query-keys';
+import { reactMutationKeys } from '#/api/react-query-hooks/react-query.constants';
 import { useGenericMutateQuery } from '#/api/react-query-hooks/use-generic-mutate-query';
 
 import type {
@@ -28,10 +28,12 @@ export const useCreateCollection = <
 
   const { onMutate: onCreateCollection, ...rest } = useGenericMutateQuery({
     fallbackErrorMessage: 'Unable to add collection.',
-    mutationFn: ({ records }) => {
-      return createCollectionServerFn({
+    mutationFn: async ({ records }) => {
+      const response = createCollectionServerFn({
         data: { records },
       });
+
+      return response;
     },
     mutationKey: [reactMutationKeys.createCollections],
     showLoading: true,

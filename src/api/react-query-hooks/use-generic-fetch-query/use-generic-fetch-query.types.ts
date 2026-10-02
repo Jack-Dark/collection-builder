@@ -1,7 +1,7 @@
 import type { UseQueryOptions } from '@tanstack/react-query';
 import type { DependencyList } from 'react';
 
-import type { reactQueryKeys } from '../react-query-keys';
+import type { reactQueryKeys } from '../react-query.constants';
 
 // ? This type def applies the props passed to the hook when calling it
 export type GenericFetchProps<

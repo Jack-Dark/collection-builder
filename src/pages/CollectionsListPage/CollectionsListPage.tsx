@@ -70,13 +70,14 @@ export const CollectionsListPage: RouteComponent = () => {
           const newRecords = editedRecords.map((record) => {
             const {
               createdAt: _createdAt,
-              id,
+              id: _id,
+              isEditing: _isEditing,
               updatedAt: _updatedAt,
               userId: _userId,
               ...newCollectionData
             } = record;
 
-            return { ...newCollectionData, id: String(id) };
+            return newCollectionData;
           });
           await onCreateCollection({ records: newRecords });
         }

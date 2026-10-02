@@ -9,13 +9,16 @@ export const deleteCollectionDbQuery = async (props: {
 }) => {
   const { ids, userId } = props;
 
-  await db
-    .delete(collectionsTable)
-    .where(
-      and(
-        inArray(collectionsTable.id, ids),
-        eq(collectionsTable.userId, userId),
-        isNull(collectionsTable.deletedAt),
-      ),
-    );
+  await db.transaction(async (tx) => {
+    // ? Delete collections
+    await tx
+      .delete(collectionsTable)
+      .where(
+        and(
+          inArray(collectionsTable.id, ids),
+          eq(collectionsTable.userId, userId),
+          isNull(collectionsTable.deletedAt),
+        ),
+      );
+  });
 };

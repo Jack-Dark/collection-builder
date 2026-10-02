@@ -52,6 +52,8 @@ export const authApiRouteMiddleware = createMiddleware().server(
 
       throw new Error(unprocessableMsg);
     } catch (error: unknown) {
+      console.error('Server function error caught:', error);
+
       return await next({
         context: {
           user: {
@@ -65,3 +67,26 @@ export const authApiRouteMiddleware = createMiddleware().server(
     }
   },
 );
+
+export const errorHandlingMiddleware = createMiddleware({
+  type: 'function',
+}).server(async ({ next }) => {
+  try {
+    // Executes downstream middleware and the server function itself
+    return await next();
+  } catch (error) {
+    // 1. Log the error to your monitoring infrastructure (e.g., Sentry)
+    console.error('Server function error caught:', error);
+
+    // 2. Intercept and safely reshape the error before it hits the client
+    if (error instanceof z.ZodError) {
+      throw Response.json(
+        { message: 'Data validation failure occurred' },
+        { status: 500 },
+      );
+    }
+
+    // Otherwise, bubble up the original error
+    throw error;
+  }
+});

@@ -1,5 +1,7 @@
 import { and, eq, isNull } from 'drizzle-orm';
 
+import type { InsertLinkCollectionsToCustomFieldsRecordDef } from '#/api/db-tables-schema.types';
+
 import { db } from '#/api/db';
 import {
   collectionsTable,
@@ -15,76 +17,35 @@ export const updateCollectionByIdDbQuery = async ({
     return [];
   }
 
-  const { userId } = recordsToUpdate[0];
-
   for (const { customFields, ...record } of recordsToUpdate) {
-    // const separatedCustomFields = customFields.reduce<{
-    //   existing: InsertCustomFieldRecordDef[];
-    //   new: CreateCustomFieldsDbQueryRecordDef[];
-    // }>(
-    //   (acc, { id, ...data }) => {
-    //     if (typeof id === 'string') {
-    //       acc.new.push({ ...data, collectionId: record.id, userId });
-    //     } else {
-    //       acc.existing.push({ id, ...data, userId });
-    //     }
+    await db.transaction(async (tx) => {
+      await Promise.all([
+        // ? Updates collection record
+        tx
+          .update(collectionsTable)
+          .set(record)
+          .where(
+            and(
+              eq(collectionsTable.id, record.id),
+              eq(collectionsTable.userId, record.userId),
+              isNull(collectionsTable.deletedAt),
+            ),
+          ),
 
-    //     return acc;
-    //   },
-    //   {
-    //     existing: [],
-    //     new: [],
-    //   },
-    // );
+        // ? Delete any existing links between this collection and custom fields
+        tx
+          .delete(collectionsToCustomFieldsTable)
+          .where(eq(collectionsToCustomFieldsTable.collectionId, record.id)),
+      ]);
 
-    // if (separatedCustomFields.new.length) {
-    //   await createCustomFieldsDbQuery({
-    //     records: separatedCustomFields.new,
-    //   });
-    // }
-    // if (separatedCustomFields.existing.length) {
-    //   // await updateCustomFieldsDbQuery({
-    //   //   records: separatedCustomFields.existing,
-    //   // });
-    // }
-
-    const existingCustomFieldLinks =
-      await db.query.collectionsToCustomFields.findMany({
-        where: {
-          collectionId: record.id,
-          customFieldId: {
-            in: customFields.map(({ id }) => {
-              return id;
-            }),
-          },
-        },
-      });
-
-    await db.delete(collectionsToCustomFieldsTable).where(
-      eq(collectionsToCustomFieldsTable.collectionId, record.id),
-      // inArray(
-      //   collectionsToCustomFieldsTable.customFieldId,
-      //   customFields.map(({ id }) => {
-      //     return id;
-      //   }),
-      // ),
-    );
-
-    await db.insert(collectionsToCustomFieldsTable).values(
-      customFields.map(({ id }) => {
-        return { collectionId: record.id, customFieldId: id };
-      }),
-    );
-
-    await db
-      .update(collectionsTable)
-      .set(record)
-      .where(
-        and(
-          eq(collectionsTable.id, record.id),
-          eq(collectionsTable.userId, record.userId),
-          isNull(collectionsTable.deletedAt),
-        ),
-      );
+      // ? Create brand new links between this collection and custom fields
+      const newCollectionToCustomFieldRecords: InsertLinkCollectionsToCustomFieldsRecordDef[] =
+        customFields.map(({ id }) => {
+          return { collectionId: record.id, customFieldId: id };
+        });
+      await tx
+        .insert(collectionsToCustomFieldsTable)
+        .values(newCollectionToCustomFieldRecords);
+    });
   }
 };

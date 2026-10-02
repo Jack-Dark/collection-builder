@@ -53,12 +53,16 @@ export const useGenericMutateQuery = <
   const { hideSpinner, isSpinnerShowing, showSpinner } = useSpinner();
   const { notifyError } = useNotifications();
 
-  const handleMutationFn = async (requestArgs: TRequestArgs) => {
-    const response = await mutationFn(requestArgs);
+  const handleMutationFn = async (
+    ...requestArgs: Parameters<typeof mutationFn>
+  ) => {
+    const { data, error, success } = await mutationFn(...requestArgs);
 
-    return transform
-      ? transform(response)
-      : (response as unknown as TTransformedData);
+    if (!success) {
+      throw new Error(error);
+    }
+
+    return transform ? transform(data) : (data as unknown as TTransformedData);
   };
 
   const { mutateAsync, ...context } = useMutation<
@@ -68,13 +72,13 @@ export const useGenericMutateQuery = <
     TRequestArgs
   >({
     mutationFn: handleMutationFn,
-    onError: (err: unknown, requestArgs) => {
-      const error = err as Error;
-      const errorMsg = error?.message || fallbackErrorMessage;
+    onError: (error: unknown, requestArgs) => {
+      const message =
+        error instanceof Error ? error.message : fallbackErrorMessage;
 
-      notifyError(errorMsg);
+      notifyError(message);
 
-      onError?.(errorMsg, requestArgs);
+      onError?.(message, requestArgs);
     },
     ...configs,
   });

@@ -1,5 +1,6 @@
 import { createServerFn } from '@tanstack/react-start';
 
+import { formatServerResponse } from '#/api/react-query-hooks/react-query.helpers';
 import { authApiRouteMiddleware } from '#/auth/auth-middleware';
 
 import { deleteCollectionDbQuery } from './delete-collection-by-id.db-query';
@@ -12,8 +13,10 @@ export const deleteCollectionByIdServerFn = createServerFn({
   .middleware([authApiRouteMiddleware])
   .validator(deleteCollectionsByIdsSchema)
   .handler(async ({ context, data }) => {
-    return deleteCollectionDbQuery({
-      ids: data.ids,
-      userId: context.user.id,
+    return formatServerResponse(() => {
+      return deleteCollectionDbQuery({
+        ids: data.ids,
+        userId: context.user.id,
+      });
     });
   });
