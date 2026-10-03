@@ -25,7 +25,7 @@ export const CollectionsListTable = withCollectionsListForm({
     const { data } = useGetPaginatedCollections({
       placeholderData: {
         collections: [],
-        pagingation: getPaginationMetadataDefaults(1000),
+        pagination: getPaginationMetadataDefaults(1000),
       },
       requestArgs: { params: searchQueries },
     });
