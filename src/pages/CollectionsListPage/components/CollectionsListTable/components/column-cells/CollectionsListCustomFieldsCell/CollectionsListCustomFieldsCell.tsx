@@ -36,23 +36,23 @@ type CustomFieldFormItemDef =
       type: CustomFieldTypeDef;
     };
 
-const fieldTypeItems = [
+export const customFieldTypeLabelsMap = {
+  boolean: 'True/False',
+  number: 'Number',
+  string: 'Text',
+} as const;
+
+const fieldDataTypeItems = [
   {
     id: null as unknown as CustomFieldTypeDef,
     label: 'Select data type...',
   },
-  {
-    id: 'number',
-    label: 'Number',
-  },
-  {
-    id: 'string',
-    label: 'Text',
-  },
-  {
-    id: 'boolean',
-    label: 'True/False',
-  },
+  ...(['number', 'string', 'boolean'] as const).map((type) => {
+    return {
+      id: type,
+      label: customFieldTypeLabelsMap[type],
+    };
+  }),
 ] satisfies {
   id: CustomFieldTypeDef;
   label: string;
@@ -60,7 +60,7 @@ const fieldTypeItems = [
 
 const getFieldItemLabel = (type: CustomFieldTypeDef) => {
   return (
-    fieldTypeItems.find((fieldItem) => {
+    fieldDataTypeItems.find((fieldItem) => {
       return fieldItem.id === type;
     })?.label || '-'
   );
@@ -82,7 +82,7 @@ export const CollectionsListCustomFieldsCell = withCollectionsListForm({
     const editCustomFieldAtom = useEditCustomFieldAtom();
 
     // TODO - wrap inside conditional with Suspense so data is only fetched when editing a row
-    const { data: customFieldsInDb = [], dataUpdatedAt } = useGetCustomFields({
+    const { data: customFieldsInDb = [] } = useGetCustomFields({
       placeholderData: [],
       requestArgs: {
         params: {
@@ -98,8 +98,6 @@ export const CollectionsListCustomFieldsCell = withCollectionsListForm({
     });
 
     const customFieldsForRow = form.state.values.records[rowIndex].customFields;
-    const customFieldForDialog =
-      customFieldsForRow[editCustomFieldAtom.index.value];
 
     const [showAddOrEditCustomFieldsDialog, hideAddOrEditCustomFieldsDialog] =
       useDialog(() => {
@@ -311,18 +309,25 @@ export const AddOrEditCustomFieldDialog = withCollectionsListForm({
     rowIndex: 0,
   },
   render: ({ form, onClose, removeValue, replaceValue, rowIndex }) => {
-    const [isValid, setIsValid] = useState<boolean>(true);
-
-    const validateCustomField = () => {
-      const isValid = customFieldFormSchema.validate(getValue());
-      // debugger;
-
-      setIsValid(isValid);
-    };
     const editCustomFieldAtom = useEditCustomFieldAtom();
 
     const customFieldSnapshot = editCustomFieldAtom.data.value;
     const customFieldIndex = editCustomFieldAtom.index.value;
+
+    const [name, setName] = useState<string>(
+      form.state.values.records[rowIndex].customFields[customFieldIndex]?.name,
+    );
+    const [type, setType] = useState<CustomFieldTypeDef>(
+      form.state.values.records[rowIndex].customFields[customFieldIndex]?.type,
+    );
+    const [isValid, setIsValid] = useState<boolean>(false);
+
+    const validateCustomField = () => {
+      // TODO - ADD VALIDATION LOGIC FOR WHEN THE NAME IS UPDATED TO MATCH AN EXISTING NAME AND THE TYPE MATCHES AN EXISTING TYPE
+      const isValid = customFieldFormSchema.validate(getValue());
+
+      setIsValid(isValid);
+    };
 
     const { onInterceptProcessingRequest, processing } = useSpinner();
     const { onCreateCustomFields } = useCreateCustomFields();
@@ -379,19 +384,42 @@ export const AddOrEditCustomFieldDialog = withCollectionsListForm({
       });
     };
 
-    const customFieldDataTypeItems = fieldTypeItems.map((fieldTypeItem) => {
-      const disabled = form.state.values.records[rowIndex].customFields.some(
-        (selectedCustomField) => {
-          return (
-            !fieldTypeItem.id ||
-            (selectedCustomField.name === getValue()?.name &&
-              selectedCustomField.type === fieldTypeItem.id)
-          );
+    // TODO - wrap inside conditional with Suspense so data is only fetched when editing a row
+    const { data: customFieldsInDb = [] } = useGetCustomFields({
+      placeholderData: [],
+      requestArgs: {
+        params: {
+          limit: 1000,
+          page: 1,
+          search: '',
+          sort: {
+            direction: 'asc',
+            field: 'name',
+          },
         },
-      );
-
-      return { ...fieldTypeItem, disabled };
+      },
     });
+
+    const customFieldDataTypeItems = useMemo(() => {
+      return fieldDataTypeItems.map((fieldDataTypeItem) => {
+        const isPlaceholderItem = !fieldDataTypeItem.id;
+        const matchesCurrentType = type === fieldDataTypeItem.id;
+
+        if (isPlaceholderItem || matchesCurrentType) {
+          return { ...fieldDataTypeItem, disabled: true };
+        }
+
+        const disabled = customFieldsInDb.some((existingCustomField) => {
+          const matchesCurrentName = existingCustomField.name === name;
+          const matchesTypeInList =
+            existingCustomField.type === fieldDataTypeItem.id;
+
+          return matchesCurrentName && matchesTypeInList;
+        });
+
+        return { ...fieldDataTypeItem, disabled };
+      });
+    }, [name, type]);
 
     useLayoutEffect(() => {
       validateCustomField();
@@ -434,6 +462,7 @@ export const AddOrEditCustomFieldDialog = withCollectionsListForm({
                   name={nameField.name}
                   onValueChange={(value) => {
                     nameField.handleChange(value);
+                    setName(value);
                     validateCustomField();
                   }}
                   placeholder="Input column name..."
@@ -447,7 +476,7 @@ export const AddOrEditCustomFieldDialog = withCollectionsListForm({
             name={`records[${rowIndex}].customFields[${customFieldIndex}].type`}
           >
             {(typeField) => {
-              const value = fieldTypeItems.find(({ id }) => {
+              const value = fieldDataTypeItems.find(({ id }) => {
                 return id === typeField.state.value;
               });
 
@@ -458,8 +487,10 @@ export const AddOrEditCustomFieldDialog = withCollectionsListForm({
                   label="Data Type"
                   name={typeField.name}
                   onValueChange={(value) => {
-                    if (value?.id) {
-                      typeField.handleChange(value.id);
+                    const type = value?.id;
+                    if (type) {
+                      typeField.handleChange(type);
+                      setType(type);
                     }
                     validateCustomField();
                   }}
