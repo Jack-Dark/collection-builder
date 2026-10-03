@@ -43,9 +43,12 @@ export const updateCollectionByIdDbQuery = async ({
         customFields.map(({ id }) => {
           return { collectionId: record.id, customFieldId: id };
         });
-      await tx
-        .insert(collectionsToCustomFieldsTable)
-        .values(newCollectionToCustomFieldRecords);
+
+      if (newCollectionToCustomFieldRecords.length) {
+        await tx
+          .insert(collectionsToCustomFieldsTable)
+          .values(newCollectionToCustomFieldRecords);
+      }
     });
   }
 };
