@@ -50,7 +50,7 @@ export const getPaginatedCollectionsDbQuery = async (props: {
       where: {
         deletedAt: undefined,
         name: {
-          like: `%${search.toLowerCase()}%`,
+          ilike: `%${search.toLowerCase()}%`,
         },
         userId,
       },
