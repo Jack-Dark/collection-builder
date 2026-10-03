@@ -1,46 +1,48 @@
-import { getFieldError } from '#/helpers/get-field-error';
-import {
-  withCollectionsListForm,
-  collectionsListFormDefaultValues,
-} from '#/pages/CollectionsListPage/CollectionsListPage.form';
+import { useSelector } from '@tanstack/react-form';
+
+import type { CreateOrUpdateCollectionFormTypeDef } from '#/pages/CollectionsListPage/CollectionsListPage.types';
+
+import { TextAreaField } from '#/components/Fields/TextAreaField';
 import { useEditingCollectionsRowIds } from '#/pages/CollectionsListPage/hooks/use-editing-collections-row-ids';
 
-export const CollectionsListNotesCell = withCollectionsListForm({
-  defaultValues: collectionsListFormDefaultValues,
-  /** These values are only used for type-checking, and are not used at runtime */
-  props: {
-    index: 0,
-    rowId: '',
-    value: '',
-  },
-  render: (props) => {
-    const { form, index, rowId, value } = props;
+export const CollectionsListNotesCell = (props: {
+  form: CreateOrUpdateCollectionFormTypeDef;
+  index: number;
+  rowId: string;
+  value: string;
+}) => {
+  const { form, index, rowId, value } = props;
 
-    const { getIsEditingRowId } = useEditingCollectionsRowIds();
-    const isEditingRow = getIsEditingRowId(rowId);
+  const { getIsEditingRowId } = useEditingCollectionsRowIds();
+  const isEditingRow = getIsEditingRowId(rowId);
 
-    return isEditingRow ? (
-      <form.AppField mode="array" name="records">
-        {() => {
-          return (
-            <form.AppField name={`records[${index}].notes`}>
-              {(field) => {
-                return (
-                  <field.TextAreaField
-                    error={getFieldError(field)}
-                    name={field.name}
-                    onValueChange={field.handleChange}
-                    placeholder="Input notes..."
-                    value={field.state.value}
-                  />
-                );
-              }}
-            </form.AppField>
-          );
-        }}
-      </form.AppField>
-    ) : (
-      <p>{value || '-'}</p>
-    );
-  },
-});
+  const notesValue = useSelector(form.atom, ({ values }) => {
+    return values.records[index]?.notes;
+  });
+
+  return isEditingRow ? (
+    <form.ArrayField name="records">
+      {() => {
+        return (
+          <form.Field name={`records[${index}].notes`}>
+            {({ handleChange, name }) => {
+              return (
+                <TextAreaField
+                  // error={getFieldError(field)}
+                  name={name}
+                  onValueChange={(value) => {
+                    handleChange(value);
+                  }}
+                  placeholder="Input notes..."
+                  value={notesValue}
+                />
+              );
+            }}
+          </form.Field>
+        );
+      }}
+    </form.ArrayField>
+  ) : (
+    <p>{value || '-'}</p>
+  );
+};

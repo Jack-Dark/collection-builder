@@ -1,86 +1,79 @@
+import type { CreateOrUpdateCollectionItemFormTypeDef } from '#/pages/CollectionDetailsPage/CollectionDetailsPage.types';
+
+import { ComboboxField } from '#/components/Fields/ComboboxField';
 import { Popover } from '#/components/Popover';
 import { getFieldError } from '#/helpers/get-field-error';
-import {
-  withCollectionDetailsForm,
-  collectionDetailsFormDefaultValues,
-} from '#/pages/CollectionDetailsPage/CollectionDetailsPage.form';
 import { useEditingCollectionItemsRowIds } from '#/pages/CollectionsListPage/hooks/use-editing-collections-row-ids';
 
-export const CollectionDetailsCustomFieldCell = withCollectionDetailsForm({
-  defaultValues: collectionDetailsFormDefaultValues,
-  /** These values are only used for type-checking, and are not used at runtime */
-  props: {
-    addToCustomFieldValues: (_value: string) => {},
-    fieldName: '',
-    fieldValues: [''],
-    index: 0,
-    label: '',
-    rowId: '',
-    value: '',
-  },
-  render: (props) => {
-    const {
-      addToCustomFieldValues,
-      fieldName,
-      fieldValues,
-      form,
-      index,
-      label,
-      rowId,
-      value,
-    } = props;
+export const CollectionDetailsCustomFieldCell = (props: {
+  addToCustomFieldValues: (_value: string) => {};
+  fieldName: string;
+  fieldValues: string[];
+  form: CreateOrUpdateCollectionItemFormTypeDef;
+  index: number;
+  label: string;
+  rowId: string;
+  value: string;
+}) => {
+  const {
+    addToCustomFieldValues,
+    fieldName,
+    fieldValues,
+    form,
+    index,
+    label,
+    rowId,
+    value,
+  } = props;
 
-    const customFieldName = fieldName as `customField${1 | 2 | 3}Value`;
+  const customFieldName = fieldName as `customField${1 | 2 | 3}Value`;
 
-    const { getIsEditingRowId } = useEditingCollectionItemsRowIds();
+  const { getIsEditingRowId } = useEditingCollectionItemsRowIds();
 
-    const isEditingRow = getIsEditingRowId(rowId);
+  const isEditingRow = getIsEditingRowId(rowId);
 
-    return isEditingRow ? (
-      <form.AppField mode="array" name="collectionItems">
-        {() => {
-          return (
-            <form.AppField
-              name={`collectionItems[${index}].${customFieldName}`}
-            >
-              {(field) => {
-                return (
-                  <div className="flex gap-1 items-center">
-                    <field.ComboboxField
-                      createItem={(query) => {
-                        return query;
-                      }}
-                      error={getFieldError(field)}
-                      hideLabel
-                      inputValue={field.state.value}
-                      isItemEqualToValue={(item, value) => {
-                        return item === value;
-                      }}
-                      items={fieldValues}
-                      label={label}
-                      onValueChange={(value) => {
-                        const stringValue = value || '';
-                        field.setValue(stringValue);
+  return isEditingRow ? (
+    <form.ArrayField name="collectionItems">
+      {() => {
+        return (
+          <form.Field name={`collectionItems[${index}].${customFieldName}`}>
+            {(field) => {
+              return (
+                <div className="flex gap-1 items-center">
+                  <ComboboxField
+                    createItem={(query) => {
+                      return query;
+                    }}
+                    error={getFieldError(field)}
+                    hideLabel
+                    inputValue={field.state.value}
+                    isItemEqualToValue={(item, value) => {
+                      return item === value;
+                    }}
+                    items={fieldValues}
+                    label={label}
+                    onValueChange={(value) => {
+                      const stringValue = value || '';
+                      field.setValue(stringValue);
 
-                        if (stringValue && !fieldValues.includes(stringValue)) {
-                          addToCustomFieldValues(stringValue);
-                        }
-                      }}
-                      placeholder={`${label || ''}...`}
-                      required
-                    />
-                    <Popover
-                      Description={`Want to add a new item to the list? Just type it out and click on the "Add" option.`}
-                    />
-                  </div>
-                );
-              }}
-            </form.AppField>
-          );
-        }}
-      </form.AppField>
-    ) : (
-      <p>{value || '-'}</p>
-    );
-  },
-});
+                      if (stringValue && !fieldValues.includes(stringValue)) {
+                        addToCustomFieldValues(stringValue);
+                      }
+                    }}
+                    placeholder={`${label || ''}...`}
+                    required
+                  />
+                  <Popover
+                    Description={`Want to add a new item to the list? Just type it out and click on the "Add" option.`}
+                  />
+                </div>
+              );
+            }}
+          </form.Field>
+        );
+      }}
+    </form.ArrayField>
+  ) : (
+    <p>{value || '-'}</p>
+  );
+};

@@ -1,89 +1,88 @@
 import ClearIcon from '@mui/icons-material/Clear';
 import formatDate, { masks } from 'dateformat';
 
+import type { CreateOrUpdateCollectionItemFormTypeDef } from '#/pages/CollectionDetailsPage/CollectionDetailsPage.types';
+
 import { Button } from '#/components/Button';
 import { useEditingCollectionItemsRowIds } from '#/pages/CollectionsListPage/hooks/use-editing-collections-row-ids';
 
-import {
-  collectionDetailsFormDefaultValues,
-  withCollectionDetailsForm,
-} from '../../../../../CollectionDetailsPage.form';
 import { AddNewCollectionItemButton } from '../../CollectionDetailsTableRowActions/components/AddNewCollectionItemButton';
 
-export const CollectionDetailsCreatedAtCell = withCollectionDetailsForm({
-  defaultValues: collectionDetailsFormDefaultValues,
-  /** These values are only used for type-checking, and are not used at runtime */
-  props: {
-    index: 0,
-    rowId: '',
-    value: new Date(),
-  },
-  render: ({ form, index, rowId, value }) => {
-    const { getHasNewRecord, getIsEditingRowId } =
-      useEditingCollectionItemsRowIds();
-    const isEditingRow = getIsEditingRowId(rowId);
+export const CollectionDetailsCreatedAtCell = ({
+  form,
+  index,
+  rowId,
+  value,
+}: {
+  form: CreateOrUpdateCollectionItemFormTypeDef;
+  index: number;
+  rowId: string;
+  value: Date;
+}) => {
+  const { getHasNewRecord, getIsEditingRowId } =
+    useEditingCollectionItemsRowIds();
+  const isEditingRow = getIsEditingRowId(rowId);
 
-    const { getLastNewRecordIndex, removeFromIsEditingRowIds } =
-      useEditingCollectionItemsRowIds();
+  const { getLastNewRecordIndex, removeFromIsEditingRowIds } =
+    useEditingCollectionItemsRowIds();
 
-    const isLastNewRecordIndex = getLastNewRecordIndex() === index;
+  const isLastNewRecordIndex = getLastNewRecordIndex() === index;
 
-    return isEditingRow && getHasNewRecord() ? (
-      <form.AppField mode="array" name="collectionItems">
-        {(collectionItemsField) => {
-          return (
-            <div className="grid gap-2 justify-start">
-              <form.AppField name={`collectionItems[${index}]`}>
-                {(field) => {
-                  return (
-                    <>
-                      <Button
-                        Icon={ClearIcon}
-                        onClick={() => {
-                          collectionItemsField.removeValue(index);
-                          removeFromIsEditingRowIds(
-                            String(field.state.value.id),
+  return isEditingRow && getHasNewRecord() ? (
+    <form.ArrayField name="collectionItems">
+      {(collectionItemsField) => {
+        return (
+          <div className="grid gap-2 justify-start">
+            <form.Field name={`collectionItems[${index}]`}>
+              {(field) => {
+                return (
+                  <>
+                    <Button
+                      Icon={ClearIcon}
+                      onClick={() => {
+                        collectionItemsField.removeValue(index);
+                        removeFromIsEditingRowIds(String(field.state.value.id));
+                      }}
+                      text="Remove"
+                      variant="mono"
+                    />
+
+                    {isLastNewRecordIndex && (
+                      <form.Subscribe
+                        selector={(state) => {
+                          const { isPristine, isValid } = state;
+
+                          return {
+                            isPristine,
+                            isValid,
+                          };
+                        }}
+                      >
+                        {({ isPristine, isValid }) => {
+                          return (
+                            <>
+                              {/* <form.AppForm> */}
+                              <AddNewCollectionItemButton
+                                disabled={isPristine || !isValid}
+                                form={form}
+                                insertAtIndex={index + 1}
+                                text="Another"
+                              />
+                              {/* </form.AppForm> */}
+                            </>
                           );
                         }}
-                        text="Remove"
-                        variant="mono"
-                      />
-
-                      {isLastNewRecordIndex && (
-                        <form.Subscribe
-                          selector={(state) => {
-                            const { isFormValid, isPristine } = state;
-
-                            return {
-                              isFormValid,
-                              isPristine,
-                            };
-                          }}
-                        >
-                          {({ isFormValid, isPristine }) => {
-                            return (
-                              <form.AppForm>
-                                <AddNewCollectionItemButton
-                                  disabled={isPristine || !isFormValid}
-                                  form={form}
-                                  insertAtIndex={index + 1}
-                                  text="Another"
-                                />
-                              </form.AppForm>
-                            );
-                          }}
-                        </form.Subscribe>
-                      )}
-                    </>
-                  );
-                }}
-              </form.AppField>
-            </div>
-          );
-        }}
-      </form.AppField>
-    ) : (
-      <p>{formatDate(value, masks.paddedShortDate)}</p>
-    );
-  },
-});
+                      </form.Subscribe>
+                    )}
+                  </>
+                );
+              }}
+            </form.Field>
+          </div>
+        );
+      }}
+    </form.ArrayField>
+  ) : (
+    <p>{formatDate(value, masks.paddedShortDate)}</p>
+  );
+};

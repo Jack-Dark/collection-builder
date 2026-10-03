@@ -78,57 +78,27 @@ export const getCollectionsListTableColumns = (
     }),
     columnHelper.accessor('customField1Label', {
       cell: (props) => {
-        const { getValue, row } = props;
+        const { getValue } = props;
 
-        return (
-          <CollectionsListCustomFieldCell
-            enabledFieldName="customField1Enabled"
-            form={form}
-            index={row.index}
-            label="Custom Field 1 Label"
-            labelFieldName="customField1Label"
-            rowId={row.id}
-            value={getValue() || ''}
-          />
-        );
+        return <CollectionsListCustomFieldCell value={getValue() || ''} />;
       },
       header: 'Custom Field 1',
       size: 200,
     }),
     columnHelper.accessor('customField2Label', {
       cell: (props) => {
-        const { getValue, row } = props;
+        const { getValue } = props;
 
-        return (
-          <CollectionsListCustomFieldCell
-            enabledFieldName="customField2Enabled"
-            form={form}
-            index={row.index}
-            label="Custom Field 2 Label"
-            labelFieldName="customField2Label"
-            rowId={row.id}
-            value={getValue() || ''}
-          />
-        );
+        return <CollectionsListCustomFieldCell value={getValue() || ''} />;
       },
       header: 'Custom Field 2',
       size: 200,
     }),
     columnHelper.accessor('customField3Label', {
       cell: (props) => {
-        const { getValue, row } = props;
+        const { getValue } = props;
 
-        return (
-          <CollectionsListCustomFieldCell
-            enabledFieldName="customField3Enabled"
-            form={form}
-            index={row.index}
-            label="Custom Field 3 Label"
-            labelFieldName="customField3Label"
-            rowId={row.id}
-            value={getValue() || ''}
-          />
-        );
+        return <CollectionsListCustomFieldCell value={getValue() || ''} />;
       },
       header: 'Custom Field 3',
       size: 200,

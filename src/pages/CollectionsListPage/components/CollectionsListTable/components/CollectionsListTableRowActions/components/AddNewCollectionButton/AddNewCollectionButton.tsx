@@ -1,44 +1,40 @@
 import AddIcon from '@mui/icons-material/Add';
 
+import type { CreateOrUpdateCollectionFormTypeDef } from '#/pages/CollectionsListPage/CollectionsListPage.types';
+
 import { Button } from '#/components/Button';
-import {
-  collectionsListFormDefaultValues,
-  createNewCollection,
-  withCollectionsListForm,
-} from '#/pages/CollectionsListPage/CollectionsListPage.form';
+import { createNewCollection } from '#/pages/CollectionsListPage/CollectionsListPage.form';
 import { useEditingCollectionsRowIds } from '#/pages/CollectionsListPage/hooks/use-editing-collections-row-ids';
 
-export const AddNewCollectionButton = withCollectionsListForm({
-  /** These values are only used for type-checking, and are not used at runtime */
-  defaultValues: collectionsListFormDefaultValues,
-  props: {
-    disabled: false,
-    insertAtIndex: 0,
-    text: '',
-  },
-  render: ({ disabled, form, insertAtIndex, text }) => {
-    const { addToEditingRowIds } = useEditingCollectionsRowIds();
+export const AddNewCollectionButton = (props: {
+  disabled: boolean;
+  form: CreateOrUpdateCollectionFormTypeDef;
+  insertAtIndex: number;
+  text: string;
+}) => {
+  const { disabled, form, insertAtIndex, text } = props;
 
-    return (
-      <form.AppField mode="array" name="records">
-        {(recordsField) => {
-          return (
-            <Button
-              disabled={disabled}
-              Icon={AddIcon}
-              onClick={() => {
-                const newCollectionItem = createNewCollection();
+  const { addToEditingRowIds } = useEditingCollectionsRowIds();
 
-                recordsField.insertValue(insertAtIndex, newCollectionItem);
+  return (
+    <form.ArrayField name="records">
+      {(recordsField) => {
+        return (
+          <Button
+            disabled={disabled}
+            Icon={AddIcon}
+            onClick={() => {
+              const newCollectionItem = createNewCollection();
 
-                addToEditingRowIds(newCollectionItem.id);
-              }}
-              text={text}
-              variant="secondary"
-            />
-          );
-        }}
-      </form.AppField>
-    );
-  },
-});
+              recordsField.insertValue(insertAtIndex, newCollectionItem);
+
+              addToEditingRowIds(newCollectionItem.id);
+            }}
+            text={text}
+            variant="secondary"
+          />
+        );
+      }}
+    </form.ArrayField>
+  );
+};

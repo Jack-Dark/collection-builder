@@ -126,17 +126,17 @@ export const SignInForm = () => {
         <form.Subscribe
           selector={(state) => {
             return {
-              isFormValid: state.isFormValid,
+              isValid: state.isValid,
               values: state.values,
             };
           }}
         >
           {(state) => {
-            const { isFormValid } = state;
+            const { isValid } = state;
 
             return (
               <div className="justify-start">
-                <Button disabled={!isFormValid} text="Submit" type="submit" />
+                <Button disabled={!isValid} text="Submit" type="submit" />
               </div>
             );
           }}

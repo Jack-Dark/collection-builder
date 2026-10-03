@@ -1,5 +1,6 @@
 import type { RouteComponent } from '@tanstack/react-router';
 
+import { useForm } from '@tanstack/react-form';
 import { useLayoutEffect } from 'react';
 
 import type { OnCreateCollectionItemsArgsDef } from '#/api/routes/collection-items/create-collection-item/create-collection-item.types';
@@ -18,9 +19,8 @@ import { Route as CollectionRoute } from '#/routes/_protected/collections/$id';
 import { useEditingCollectionItemsRowIds } from '../CollectionsListPage/hooks/use-editing-collections-row-ids';
 import {
   collectionDetailsFormDefaultValues,
-  useCollectionDetailsForm,
+  collectionDetailsFormOptions,
 } from './CollectionDetailsPage.form';
-import { createOrUpdateCollectionItemFormSchema } from './CollectionDetailsPage.schema';
 import { CollectionDetailsTable } from './components/CollectionDetailsTable';
 import { useCollectionDetailsCustomFieldsStore } from './components/CollectionDetailsTable/hooks/use-collection-details-custom-fields-store';
 import { useCollectionDetailsFiltersStore } from './components/CollectionDetailsTable/hooks/use-collection-details-filters-store';
@@ -54,7 +54,8 @@ export const CollectionDetailsPage: RouteComponent = () => {
 
   const { resetEditingRowIds } = useEditingCollectionItemsRowIds();
 
-  const form = useCollectionDetailsForm({
+  const form = useForm({
+    ...collectionDetailsFormOptions,
     defaultValues: data?.items
       ? {
           collectionItems: data.items.map((item) => {
@@ -97,10 +98,6 @@ export const CollectionDetailsPage: RouteComponent = () => {
         resetEditingRowIds();
         await invalidateGetCollectionDetailsById({ id: collectionId });
       });
-    },
-    validators: {
-      onChange: createOrUpdateCollectionItemFormSchema,
-      onSubmit: createOrUpdateCollectionItemFormSchema,
     },
   });
 

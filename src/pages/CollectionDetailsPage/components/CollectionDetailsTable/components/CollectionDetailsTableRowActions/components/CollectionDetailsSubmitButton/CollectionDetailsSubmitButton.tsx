@@ -1,50 +1,50 @@
 import SaveIcon from '@mui/icons-material/Save';
 
-import {
-  collectionDetailsFormDefaultValues,
-  withCollectionDetailsForm,
-} from '../../../../../../CollectionDetailsPage.form';
+import type { CreateOrUpdateCollectionItemFormTypeDef } from '#/pages/CollectionDetailsPage/CollectionDetailsPage.types';
 
-export const CollectionDetailsSubmitButton = withCollectionDetailsForm({
-  /** These values are only used for type-checking, and are not used at runtime */
-  defaultValues: collectionDetailsFormDefaultValues,
-  props: {
-    resetRowSelection: () => {},
-  },
-  render: ({ form, resetRowSelection }) => {
-    return (
-      <form.Subscribe
-        selector={(state) => {
-          const { isFormValid, isPristine, isSubmitting } = state;
+import { Button } from '#/components/Button';
 
-          return {
-            isFormValid,
-            isPristine,
-            isSubmitting,
-          };
-        }}
-      >
-        {({ isFormValid, isPristine, isSubmitting }) => {
-          return (
-            <form.AppForm>
-              <form.Button
-                className="flex flex-nowrap gap-2"
-                disabled={isPristine || !isFormValid}
-                Icon={SaveIcon}
-                onClick={(e) => {
-                  e.preventDefault();
+export const CollectionDetailsSubmitButton = ({
+  form,
+  resetRowSelection,
+}: {
+  form: CreateOrUpdateCollectionItemFormTypeDef;
+  resetRowSelection: () => void;
+}) => {
+  return (
+    <form.Subscribe
+      selector={(state) => {
+        const { isPristine, isSubmitting, isValid } = state;
 
-                  form.handleSubmit();
-                  resetRowSelection();
-                }}
-                processing={isSubmitting}
-                text="Save"
-                type="submit"
-              />
-            </form.AppForm>
-          );
-        }}
-      </form.Subscribe>
-    );
-  },
-});
+        return {
+          isPristine,
+          isSubmitting,
+          isValid,
+        };
+      }}
+    >
+      {({ isPristine, isSubmitting, isValid }) => {
+        return (
+          <>
+            {/* <form.AppForm> */}
+            <Button
+              className="flex flex-nowrap gap-2"
+              disabled={isPristine || !isValid}
+              Icon={SaveIcon}
+              onClick={(e) => {
+                e.preventDefault();
+
+                form.handleSubmit();
+                resetRowSelection();
+              }}
+              processing={isSubmitting}
+              text="Save"
+              type="submit"
+            />
+            {/* </form.AppForm> */}
+          </>
+        );
+      }}
+    </form.Subscribe>
+  );
+};

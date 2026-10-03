@@ -1,16 +1,11 @@
-import { createFormHook, createFormHookContexts } from '@tanstack/react-form';
+import { formOptions } from '@tanstack/react-form';
 import { v4 as uuidv4 } from 'uuid';
 
 import type { CreateCollectionItemsFormDataSchemaDef } from '#/api/routes/collection-items/create-collection-item/create-collection-item.types';
 
-import { Button } from '#/components/Button';
-import { CheckboxField } from '#/components/Fields/CheckboxField';
-import { ComboboxField } from '#/components/Fields/ComboboxField';
-import { InputField } from '#/components/Fields/InputField';
-import { SwitchField } from '#/components/Fields/SwitchField';
-import { TextAreaField } from '#/components/Fields/TextAreaField';
-
 import type { CreateOrUpdateCollectionItemFormDataDef } from './CollectionDetailsPage.types';
+
+import { createOrUpdateCollectionItemFormSchema } from './CollectionDetailsPage.schema';
 
 export const createNewCollectionItem = ({
   collectionId,
@@ -39,27 +34,13 @@ export const collectionDetailsFormDefaultValues: CreateOrUpdateCollectionItemFor
     collectionItems: [],
   };
 
-export const {
-  fieldContext: addCollectionDetailsFormFieldContext,
-  formContext: addCollectionDetailsFormContext,
-  useFieldContext: useCollectionDetailsFormFieldContext,
-  useFormContext: useCollectionDetailsFormContext,
-} = createFormHookContexts();
-
-export const {
-  useAppForm: useCollectionDetailsForm,
-  withForm: withCollectionDetailsForm,
-} = createFormHook({
-  fieldComponents: {
-    CheckboxField,
-    ComboboxField,
-    InputField,
-    SwitchField,
-    TextAreaField,
-  },
-  fieldContext: addCollectionDetailsFormFieldContext,
-  formComponents: {
-    Button,
-  },
-  formContext: addCollectionDetailsFormContext,
+export const collectionDetailsFormOptions = formOptions({
+  defaultValues: collectionDetailsFormDefaultValues,
+  formId: 'collection-items',
+  validators: [
+    {
+      run: createOrUpdateCollectionItemFormSchema,
+      triggers: ['change'],
+    },
+  ],
 });

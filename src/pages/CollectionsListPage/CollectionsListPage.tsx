@@ -1,5 +1,6 @@
 import type { RouteComponent } from '@tanstack/react-router';
 
+import { useForm } from '@tanstack/react-form';
 import { useLayoutEffect } from 'react';
 
 import type { UpdateCollectionsFormRecordSchemaDef } from '#/api/routes/collections/update-collection-by-id/update-collection-by-id.types';
@@ -12,13 +13,9 @@ import {
 import { useUpdateCollectionById } from '#/api/routes/collections/update-collection-by-id/update-collection-by-id.react-query';
 import { useSpinner } from '#/components/FullPageLoadingSpinner/useSpinner';
 import { PageWrapper } from '#/page-wrapper';
-import { createOrUpdateCollectionFormSchema } from '#/pages/CollectionsListPage/collection-form.schema';
 import { Route as CollectionsListRoute } from '#/routes/_protected/collections';
 
-import {
-  collectionsListFormDefaultValues,
-  useCollectionsListForm,
-} from './CollectionsListPage.form';
+import { createOrUpdateCollectionFormOptions } from './CollectionsListPage.form';
 import { CollectionsListTable } from './components/CollectionsListTable/CollectionsListTable';
 import { useEditingCollectionsRowIds } from './hooks/use-editing-collections-row-ids';
 
@@ -44,14 +41,8 @@ export const CollectionsListPage: RouteComponent = () => {
 
   const { resetEditingRowIds } = useEditingCollectionsRowIds();
 
-  const form = useCollectionsListForm({
-    defaultValues: data?.collections
-      ? {
-          records: data.collections.map((collection) => {
-            return { ...collection, isEditing: false };
-          }),
-        }
-      : collectionsListFormDefaultValues,
+  const form = useForm({
+    ...createOrUpdateCollectionFormOptions,
     onSubmit: async ({ value: { records } }) => {
       await onInterceptProcessingRequest(async () => {
         const editedRecords = records.filter(({ isEditing }) => {
@@ -85,10 +76,6 @@ export const CollectionsListPage: RouteComponent = () => {
         resetEditingRowIds();
         await invalidateGetPaginatedCollections();
       });
-    },
-    validators: {
-      onChange: createOrUpdateCollectionFormSchema,
-      onSubmit: createOrUpdateCollectionFormSchema,
     },
   });
 

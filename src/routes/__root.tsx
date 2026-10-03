@@ -4,7 +4,7 @@ import type { QueryClient } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
 
 import { TanStackDevtools } from '@tanstack/react-devtools';
-import { FormDevtoolsPanel } from '@tanstack/react-form-devtools';
+import { formDevtoolsPlugin } from '@tanstack/react-form-devtools';
 import { QueryClientProvider, useQueryClient } from '@tanstack/react-query';
 import { ReactQueryDevtoolsPanel } from '@tanstack/react-query-devtools';
 import {
@@ -68,10 +68,7 @@ function RootComponent() {
         </RootDocument>
         <TanStackDevtools
           plugins={[
-            {
-              name: 'TanStack Form',
-              render: <FormDevtoolsPanel />,
-            },
+            formDevtoolsPlugin(),
             {
               name: 'TanStack Query',
               render: <ReactQueryDevtoolsPanel />,

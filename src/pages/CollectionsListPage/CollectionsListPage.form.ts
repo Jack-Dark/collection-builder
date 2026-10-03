@@ -1,17 +1,11 @@
-import { createFormHook, createFormHookContexts } from '@tanstack/react-form';
+import { formOptions } from '@tanstack/react-form';
 import { v4 as uuidv4 } from 'uuid';
 
 import type { CreateCollectionFormDataSchemaDef } from '#/api/routes/collections/create-collection/create-collection.types';
 
-import { Button } from '#/components/Button';
-import { CheckboxField } from '#/components/Fields/CheckboxField';
-import { ComboboxField } from '#/components/Fields/ComboboxField';
-import { InputField } from '#/components/Fields/InputField';
-import { SelectField } from '#/components/Fields/SelectField';
-import { SwitchField } from '#/components/Fields/SwitchField';
-import { TextAreaField } from '#/components/Fields/TextAreaField';
-
 import type { CreateOrUpdateCollectionFormDataSchemaDef } from './CollectionsListPage.types';
+
+import { createOrUpdateCollectionFormSchema } from './collection-form.schema';
 
 export const createNewCollection = (): CreateCollectionFormDataSchemaDef => {
   const id = uuidv4();
@@ -36,28 +30,13 @@ export const collectionsListFormDefaultValues: CreateOrUpdateCollectionFormDataS
     records: [],
   };
 
-export const {
-  fieldContext: collectionsListFormFieldContext,
-  formContext: collectionsListFormContext,
-  useFieldContext: useCollectionsListFormFieldContext,
-  useFormContext: useCollectionsListFormContext,
-} = createFormHookContexts();
-
-export const {
-  useAppForm: useCollectionsListForm,
-  withForm: withCollectionsListForm,
-} = createFormHook({
-  fieldComponents: {
-    CheckboxField,
-    ComboboxField,
-    InputField,
-    SelectField,
-    SwitchField,
-    TextAreaField,
-  },
-  fieldContext: collectionsListFormFieldContext,
-  formComponents: {
-    Button,
-  },
-  formContext: collectionsListFormContext,
+export const createOrUpdateCollectionFormOptions = formOptions({
+  defaultValues: collectionsListFormDefaultValues,
+  formId: 'collections-list',
+  validators: [
+    {
+      run: createOrUpdateCollectionFormSchema,
+      triggers: ['change'],
+    },
+  ],
 });
