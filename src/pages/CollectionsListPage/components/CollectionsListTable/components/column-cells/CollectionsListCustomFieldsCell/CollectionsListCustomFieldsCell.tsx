@@ -131,6 +131,7 @@ export const CollectionsListCustomFieldsCell = (props: {
       return (
         <DeleteCustomFieldDialog
           customField={editCustomFieldAtom.data.value}
+          form={form}
           onClose={hideConfirmDeleteCustomField}
         />
       );
@@ -283,18 +284,18 @@ export const CollectionsListCustomFieldsCell = (props: {
 
 export const DeleteCustomFieldDialog = (props: {
   customField: CustomFieldFormItemDef;
+  form: CreateOrUpdateCollectionFormTypeDef;
   onClose: HideDialog;
 }) => {
-  const { customField, onClose } = props;
+  const { customField, form, onClose } = props;
 
-  console.clear();
-  console.log('🚀 ~ DeleteCustomFieldDialog ~ customField:', customField);
+  const id = Number(customField.id);
 
   const { data: collectionsWithCustomField } =
     useGetCollectionsWithCustomFields({
       placeholderData: [],
       requestArgs: {
-        customFieldIds: [Number(customField.id)],
+        customFieldIds: [id],
       },
     });
 
@@ -302,9 +303,20 @@ export const DeleteCustomFieldDialog = (props: {
 
   const { onDeleteCustomFields, processing } = useDeleteCustomFields({
     onSuccess: async () => {
-      onClose();
-
       await invalidateGetCustomFields();
+
+      const cleanedRecords = form.state.values.records.map((record) => {
+        const filteredCustomFields = record.customFields.filter(
+          (customField) => {
+            return customField.id !== id;
+          },
+        );
+
+        return { ...record, customFields: filteredCustomFields };
+      });
+      form.setFieldValue('records', cleanedRecords);
+
+      onClose();
     },
   });
 
@@ -321,7 +333,7 @@ export const DeleteCustomFieldDialog = (props: {
             </Button>
             <Button
               onClick={async () => {
-                await onDeleteCustomFields({ ids: [Number(customField.id)] });
+                await onDeleteCustomFields({ ids: [id] });
               }}
               processing={processing}
               variant="alert"
