@@ -102,33 +102,6 @@ export const CollectionsListCustomFieldsCell = (props: {
     return values.records[rowIndex].customFields;
   });
 
-  const uniqueDisplayItems = useSelector(form.atom, ({ values }) => {
-    const unsavedCustomFields = values.records
-      .map(({ customFields }) => {
-        return customFields.filter(({ creatable, id }) => {
-          return typeof id === 'string' && !creatable;
-        });
-      })
-      .flat();
-
-    const includedItemsById = new Map<string, true>();
-
-    const uniqueDisplayItems: CustomFieldFormItemDef[] = [
-      ...customFieldsInDb,
-      ...unsavedCustomFields,
-    ].filter((item) => {
-      if (!item.id || includedItemsById.has(String(item.id))) {
-        return false;
-      } else {
-        includedItemsById.set(String(item.id), true);
-
-        return true;
-      }
-    });
-
-    return uniqueDisplayItems;
-  });
-
   const [showAddOrEditCustomFieldsDialog, hideAddOrEditCustomFieldsDialog] =
     useDialog(() => {
       return (
@@ -292,17 +265,15 @@ export const AddOrEditCustomFieldDialog = ({
   const customFieldSnapshot = editCustomFieldAtom.data.value;
   const customFieldIndex = editCustomFieldAtom.index.value;
 
-  const [name, setName] = useState<string>(
-    form.state.values.records[rowIndex].customFields[customFieldIndex]?.name,
-  );
-  const [type, setType] = useState<CustomFieldTypeDef>(
-    form.state.values.records[rowIndex].customFields[customFieldIndex]?.type,
-  );
+  const customFieldAtIndex = useSelector(form.atom, ({ values }) => {
+    return values.records[rowIndex]?.customFields?.[customFieldIndex];
+  });
+
   const [isValid, setIsValid] = useState<boolean>(false);
 
   const validateCustomField = () => {
     // TODO - ADD VALIDATION LOGIC FOR WHEN THE NAME IS UPDATED TO MATCH AN EXISTING NAME AND THE TYPE MATCHES AN EXISTING TYPE
-    const isValid = customFieldFormSchema.validate(getValue());
+    const isValid = customFieldFormSchema.validate(customFieldAtIndex);
 
     setIsValid(isValid);
   };
@@ -313,17 +284,9 @@ export const AddOrEditCustomFieldDialog = ({
 
   const invalidateGetCustomFields = useInvalidateGetCustomFields();
 
-  const getValue = () => {
-    return form.state.values.records[rowIndex].customFields[customFieldIndex];
-  };
-
   const isNewRecord = useMemo(() => {
-    return typeof getValue()?.id === 'string';
+    return typeof customFieldAtIndex?.id === 'string';
   }, []);
-
-  const customFieldAtIndex = useSelector(form.atom, ({ values }) => {
-    return values.records[rowIndex]?.customFields?.[customFieldIndex];
-  });
 
   const onCancel = () => {
     onClose();
@@ -337,7 +300,7 @@ export const AddOrEditCustomFieldDialog = ({
 
   const onSave = async () => {
     await onInterceptProcessingRequest(async () => {
-      const { id, name, type } = getValue();
+      const { id, name, type } = customFieldAtIndex;
 
       if (typeof id === 'string') {
         const [newRecord] = await onCreateCustomFields({
@@ -385,14 +348,16 @@ export const AddOrEditCustomFieldDialog = ({
   const customFieldDataTypeItems = useMemo(() => {
     return fieldDataTypeItems.map((fieldDataTypeItem) => {
       const isPlaceholderItem = !fieldDataTypeItem.id;
-      const matchesCurrentType = type === fieldDataTypeItem.id;
+      const matchesCurrentType =
+        customFieldAtIndex?.type === fieldDataTypeItem.id;
 
       if (isPlaceholderItem || matchesCurrentType) {
         return { ...fieldDataTypeItem, disabled: true };
       }
 
       const disabled = customFieldsInDb.some((existingCustomField) => {
-        const matchesCurrentName = existingCustomField.name === name;
+        const matchesCurrentName =
+          existingCustomField.name === customFieldAtIndex?.name;
         const matchesTypeInList =
           existingCustomField.type === fieldDataTypeItem.id;
 
@@ -401,7 +366,7 @@ export const AddOrEditCustomFieldDialog = ({
 
       return { ...fieldDataTypeItem, disabled };
     });
-  }, [name, type]);
+  }, [customFieldAtIndex?.name, customFieldAtIndex?.type]);
 
   useLayoutEffect(() => {
     validateCustomField();
@@ -444,7 +409,6 @@ export const AddOrEditCustomFieldDialog = ({
                 name={nameField.name}
                 onValueChange={(value) => {
                   nameField.handleChange(value);
-                  setName(value);
                   validateCustomField();
                 }}
                 placeholder="Input column name..."
@@ -472,7 +436,6 @@ export const AddOrEditCustomFieldDialog = ({
                   const type = value?.id;
                   if (type) {
                     typeField.handleChange(type);
-                    setType(type);
                   }
                   validateCustomField();
                 }}
