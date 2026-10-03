@@ -23,6 +23,9 @@ export const CollectionsListTable = ({
   const searchQueries = CollectionsRoute.useSearch();
 
   const { data } = useGetPaginatedCollections({
+    onSuccess: ({ collections }) => {
+      form.setFieldValue('records', collections);
+    },
     placeholderData: {
       collections: [],
       pagination: getPaginationMetadataDefaults(1000),

@@ -5,22 +5,16 @@ import { useForm } from '@tanstack/react-form';
 import type { UpdateCollectionsFormRecordSchemaDef } from '#/api/routes/collections/update-collection-by-id/update-collection-by-id.types';
 
 import { useCreateCollection } from '#/api/routes/collections/create-collection/create-collection.react-query';
-import {
-  useGetPaginatedCollections,
-  useInvalidateGetPaginatedCollections,
-} from '#/api/routes/collections/get-paginated-collections/get-paginated-collections.react-query';
+import { useInvalidateGetPaginatedCollections } from '#/api/routes/collections/get-paginated-collections/get-paginated-collections.react-query';
 import { useUpdateCollectionById } from '#/api/routes/collections/update-collection-by-id/update-collection-by-id.react-query';
 import { useSpinner } from '#/components/FullPageLoadingSpinner/useSpinner';
 import { PageWrapper } from '#/page-wrapper';
-import { Route as CollectionsListRoute } from '#/routes/_protected/collections';
 
 import { createOrUpdateCollectionFormOptions } from './CollectionsListPage.form';
 import { CollectionsListTable } from './components/CollectionsListTable/CollectionsListTable';
 import { useEditingCollectionsRowIds } from './hooks/use-editing-collections-row-ids';
 
 export const CollectionsListPage: RouteComponent = () => {
-  const searchQueries = CollectionsListRoute.useSearch();
-
   const { onInterceptRequest } = useSpinner();
 
   const invalidateGetPaginatedCollections =
@@ -29,13 +23,6 @@ export const CollectionsListPage: RouteComponent = () => {
   const { onCreateCollection } = useCreateCollection();
 
   const { onUpdateCollectionById } = useUpdateCollectionById();
-
-  const { data } = useGetPaginatedCollections({
-    onSuccess: ({ collections }) => {
-      form.setFieldValue('records', collections);
-    },
-    requestArgs: { params: searchQueries },
-  });
 
   const { resetEditingRowIds } = useEditingCollectionsRowIds();
 
