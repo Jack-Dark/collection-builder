@@ -66,7 +66,7 @@ export const TableCellActionsMenu = <
   }, []);
 
   return (
-    <div className="flex flex-nowrap gap-2 justify-end items-center">
+    <div className="flex flex-nowrap gap-2 justify-end items-center w-full">
       <MoreMenu
         disabled={disabled}
         items={[

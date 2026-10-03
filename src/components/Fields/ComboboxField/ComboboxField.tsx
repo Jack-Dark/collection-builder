@@ -83,10 +83,20 @@ export const ComboboxField = <
     onValueChange,
     placeholder,
     RenderChip = ({ item }) => {
-      return <>{itemToStringLabel(item)}</>;
+      return <p>{itemToStringLabel(item)}</p>;
     },
-    RenderItem = ({ item }) => {
-      return <>{itemToStringLabel(item)}</>;
+    RenderItem = ({ item, multiple, SelectedIndicator }) => {
+      return (
+        <>
+          <p>{itemToStringLabel(item)}</p>
+
+          {multiple && (
+            <SelectedIndicator>
+              <CheckIcon fontSize="inherit" />
+            </SelectedIndicator>
+          )}
+        </>
+      );
     },
     required,
     sortItems = (items) => {
@@ -257,7 +267,7 @@ export const ComboboxField = <
                     <RenderChip item={item} />
                     <Combobox.ChipRemove
                       aria-label={`Remove ${label}`}
-                      className="hover:text-red-700 cursor-pointer leading-0"
+                      className="text-gray-600 hover:text-red-700 cursor-pointer leading-0"
                       onClick={() => {
                         onRemoveChip?.(item);
                       }}
@@ -316,13 +326,11 @@ export const ComboboxField = <
                           <AddIcon className="ml-4" />
                         </span>
                       ) : (
-                        <RenderItem item={listItem} />
-                      )}
-
-                      {multiple && (
-                        <Combobox.ItemIndicator>
-                          <CheckIcon fontSize="inherit" />
-                        </Combobox.ItemIndicator>
+                        <RenderItem
+                          item={listItem}
+                          multiple={multiple}
+                          SelectedIndicator={Combobox.ItemIndicator}
+                        />
                       )}
                     </Combobox.Item>
                   );

@@ -16,6 +16,6 @@ export const getCustomFieldsServerFn = createServerFn({
   .handler(async ({ context, data }) => {
     return getCustomFieldsDbQuery({
       userId: context.user.id,
-      ...data.params,
+      ...data,
     });
   });

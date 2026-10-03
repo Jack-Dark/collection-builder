@@ -1,11 +1,12 @@
 import { db } from '#/api/db';
 
-import type { GetCustomFieldsRequestArgsDef } from './get-custom-fields.types';
+import type { GetCustomFieldsDbQueryArgsDef } from './get-custom-fields.types';
 
 export const getCustomFieldsDbQuery = async (
-  props: GetCustomFieldsRequestArgsDef['params'] & { userId: string },
+  props: GetCustomFieldsDbQueryArgsDef,
 ) => {
-  const { limit, page, search, sort, userId } = props;
+  const { ids, params, userId } = props;
+  const { limit, page, search, sort } = params;
 
   const customFields = await db.query.customFields.findMany({
     columns: {
@@ -19,6 +20,11 @@ export const getCustomFieldsDbQuery = async (
       [sort.field]: sort.direction,
     },
     where: {
+      id: ids.length
+        ? {
+            in: ids,
+          }
+        : undefined,
       name: {
         ilike: `%${search}%`,
       },

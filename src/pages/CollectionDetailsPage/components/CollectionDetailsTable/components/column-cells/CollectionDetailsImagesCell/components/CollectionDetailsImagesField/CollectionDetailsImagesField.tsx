@@ -43,7 +43,7 @@ export const CollectionDetailsImagesField = ({
                       <SimpleErrorBoundary key={src}>
                         <div className="relative grid grid-rows-[auto_1fr] items-center p-1 size-14 bg-white border border-gray-400 text-gray-500">
                           <div
-                            className="absolute right-0 top-0 flex justify-end p-4px bg-white border-l border-b border-gray-400 rounded-bl-sm text-lg hover:text-red-600 cursor-pointer"
+                            className="absolute right-0 top-0 flex justify-end p-4px bg-white border-l border-b border-gray-400 rounded-bl-sm text-lg hover:text-red-700 cursor-pointer"
                             onClick={() => {
                               const images = [...value];
                               images.splice(index, 1);

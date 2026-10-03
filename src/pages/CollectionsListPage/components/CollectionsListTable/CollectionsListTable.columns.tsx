@@ -1,13 +1,10 @@
-import type { AppFieldExtendedReactFormApi } from '@tanstack/react-form';
-
 import { createColumnHelper } from '@tanstack/react-table';
 
 import type { GetPaginatedCollectionsResponseDef } from '#/api/routes/collections/get-paginated-collections/get-paginated-collections.types';
 
-import type { CreateOrUpdateCollectionFormDataSchemaDef } from '../../CollectionsListPage.types';
+import type { CreateOrUpdateCollectionFormTypeDef } from '../../CollectionsListPage.types';
 
 import { CollectionsListActionsCell } from './components/column-cells/CollectionsListActionsCell';
-import { CollectionsListCustomFieldCell } from './components/column-cells/CollectionsListCustomFieldCell/CollectionsListCustomFieldCell';
 import { CollectionsListCustomFieldsCell } from './components/column-cells/CollectionsListCustomFieldsCell';
 import { CollectionsListNameCell } from './components/column-cells/CollectionsListNameCell/CollectionsListNameCell';
 import { CollectionsListNotesCell } from './components/column-cells/CollectionsListNotesCell/CollectionsListNotesCell';
@@ -18,22 +15,7 @@ const columnHelper =
   >();
 
 export type GetCollectionsListTableColumnsPropsDef = {
-  form: AppFieldExtendedReactFormApi<
-    CreateOrUpdateCollectionFormDataSchemaDef,
-    any,
-    any,
-    any,
-    any,
-    any,
-    any,
-    any,
-    any,
-    any,
-    any,
-    any,
-    any,
-    any
-  >;
+  form: CreateOrUpdateCollectionFormTypeDef;
   onCancel: () => void;
   onEditClick: (...rowIdsToAdd: string[]) => void;
 };
@@ -76,33 +58,6 @@ export const getCollectionsListTableColumns = (
       },
       minSize: 250,
     }),
-    columnHelper.accessor('customField1Label', {
-      cell: (props) => {
-        const { getValue } = props;
-
-        return <CollectionsListCustomFieldCell value={getValue() || ''} />;
-      },
-      header: 'Custom Field 1',
-      size: 200,
-    }),
-    columnHelper.accessor('customField2Label', {
-      cell: (props) => {
-        const { getValue } = props;
-
-        return <CollectionsListCustomFieldCell value={getValue() || ''} />;
-      },
-      header: 'Custom Field 2',
-      size: 200,
-    }),
-    columnHelper.accessor('customField3Label', {
-      cell: (props) => {
-        const { getValue } = props;
-
-        return <CollectionsListCustomFieldCell value={getValue() || ''} />;
-      },
-      header: 'Custom Field 3',
-      size: 200,
-    }),
     columnHelper.accessor('notes', {
       cell: ({ getValue, row }) => {
         return (
@@ -130,7 +85,7 @@ export const getCollectionsListTableColumns = (
       },
       header: '',
       id: 'actions',
-      size: 40,
+      maxSize: 40,
     }),
   ];
 };

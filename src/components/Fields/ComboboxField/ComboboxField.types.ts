@@ -1,4 +1,8 @@
-import type { ComboboxInputProps, ComboboxRootProps } from '@base-ui/react';
+import type {
+  ComboboxInputProps,
+  ComboboxItemIndicator,
+  ComboboxRootProps,
+} from '@base-ui/react';
 import type { HTMLAttributes, JSXElementConstructor } from 'react';
 
 import type { FieldWrapperProps } from '../FieldWrapper/FieldWrapper.types';
@@ -32,7 +36,11 @@ export type ComboboxFieldPropsDef<
       HTMLAttributes<HTMLElement> & { item: TItem }
     >;
     RenderItem?: JSXElementConstructor<
-      HTMLAttributes<HTMLElement> & { item: TItem }
+      HTMLAttributes<HTMLElement> & {
+        item: TItem;
+        multiple: boolean | undefined;
+        SelectedIndicator: typeof ComboboxItemIndicator;
+      }
     >;
     sortItems?: (items: TItem[]) => TItem[];
     /** Runs if the search query matches an existing item. Allows a second validation to compare more than just the query value. */

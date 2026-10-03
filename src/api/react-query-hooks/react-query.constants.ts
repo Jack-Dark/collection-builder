@@ -1,5 +1,6 @@
 export const reactQueryKeys = {
   getCollectionDetailsById: 'get-collection-details',
+  getCollectionsWithCustomFields: 'get-collections-with-custom-fields',
   getCustomFields: 'get-custom-fields',
   getNavMenuCollections: 'get-nav-menu-collections',
   getPaginatedCollections: 'get-paginated-collections',

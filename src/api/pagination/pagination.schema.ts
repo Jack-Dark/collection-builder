@@ -29,3 +29,25 @@ export const getRequiredPaginationQueriesSchema = <TSortField extends string>(
       }),
   });
 };
+
+export const getOptionalPaginationQueriesSchema = <TSortField extends string>(
+  defaultSortField: TSortField,
+) => {
+  return getRequiredPaginationQueriesSchema(defaultSortField)
+    .optional()
+    .default(getPaginationQueryDefaults(defaultSortField));
+};
+
+export const getPaginationQueryDefaults = <TSortField extends string>(
+  defaultSortField: TSortField,
+): z.output<ReturnType<typeof getRequiredPaginationQueriesSchema>> => {
+  return {
+    limit: 100,
+    page: 1,
+    search: '',
+    sort: {
+      direction: 'asc',
+      field: defaultSortField,
+    },
+  };
+};

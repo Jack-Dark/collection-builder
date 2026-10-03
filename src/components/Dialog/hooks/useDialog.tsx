@@ -15,9 +15,9 @@ import type { DialogComponentDef } from '../Dialog.Context';
 
 import { DialogContext } from '../Dialog.Context';
 
-type ShowDialog = () => void;
+export type ShowDialog = () => void;
 
-type HideDialog = () => void;
+export type HideDialog = () => void;
 
 type OnDialogOpenChange = (
   isOpen: boolean,
