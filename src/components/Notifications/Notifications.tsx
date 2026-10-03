@@ -44,7 +44,7 @@ export const Notifications = () => {
   }, [notifications]);
 
   return (
-    <div className="fixed t-0 grid w-full">
+    <div className="fixed z-99999 t-0 grid w-full">
       {notifications.map((notification) => {
         const { id, keepOpen, message, type } = notification;
 
