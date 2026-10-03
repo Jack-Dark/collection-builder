@@ -74,6 +74,7 @@ export const getCollectionsListTableColumns = (
       header: () => {
         return <span>Custom Fields</span>;
       },
+      minSize: 250,
     }),
     columnHelper.accessor('customField1Label', {
       cell: (props) => {
