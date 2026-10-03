@@ -2,7 +2,7 @@ import type { PropsWithChildren } from 'react';
 
 import EditIcon from '@mui/icons-material/Edit';
 import { useSelector } from '@tanstack/react-form';
-import { useLayoutEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 import type { CustomFieldTypeDef } from '#/api/db-tables-schema.types';
@@ -269,14 +269,9 @@ export const AddOrEditCustomFieldDialog = ({
     return values.records[rowIndex]?.customFields?.[customFieldIndex];
   });
 
-  const [isValid, setIsValid] = useState<boolean>(false);
-
-  const validateCustomField = () => {
-    // TODO - ADD VALIDATION LOGIC FOR WHEN THE NAME IS UPDATED TO MATCH AN EXISTING NAME AND THE TYPE MATCHES AN EXISTING TYPE
-    const isValid = customFieldFormSchema.validate(customFieldAtIndex);
-
-    setIsValid(isValid);
-  };
+  const isValid = useMemo(() => {
+    return customFieldFormSchema.validate(customFieldAtIndex);
+  }, [customFieldAtIndex]);
 
   const { onInterceptProcessingRequest, processing } = useSpinner();
   const { onCreateCustomFields } = useCreateCustomFields();
@@ -368,10 +363,6 @@ export const AddOrEditCustomFieldDialog = ({
     });
   }, [customFieldAtIndex?.name, customFieldAtIndex?.type]);
 
-  useLayoutEffect(() => {
-    validateCustomField();
-  }, []);
-
   return (
     <Dialog
       disableOnClose={processing}
@@ -409,7 +400,6 @@ export const AddOrEditCustomFieldDialog = ({
                 name={nameField.name}
                 onValueChange={(value) => {
                   nameField.handleChange(value);
-                  validateCustomField();
                 }}
                 placeholder="Input column name..."
                 value={customFieldAtIndex?.name}
@@ -437,7 +427,6 @@ export const AddOrEditCustomFieldDialog = ({
                   if (type) {
                     typeField.handleChange(type);
                   }
-                  validateCustomField();
                 }}
                 value={value}
               />
