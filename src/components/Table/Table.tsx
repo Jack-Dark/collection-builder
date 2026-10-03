@@ -192,7 +192,7 @@ export const Table = <TData,>({
             <SelectField
               items={sort.items}
               onValueChange={sort.onChange}
-              RenderValue={(item) => {
+              RenderValue={({ item }) => {
                 return (
                   <div className="flex items-center gap-2">
                     <SwapVertIcon />
@@ -366,8 +366,8 @@ export const Table = <TData,>({
                   pagination?.limit?.onChange?.(item.value);
                 }
               }}
-              RenderValue={({ label }) => {
-                return <span>Per page: {label}</span>;
+              RenderValue={({ item }) => {
+                return <span>Per page: {item.label}</span>;
               }}
               value={{
                 label: pagination.limit.value,
@@ -395,8 +395,8 @@ export const Table = <TData,>({
                   pagination?.page?.onChange?.(item.value);
                 }
               }}
-              RenderValue={({ label }) => {
-                return <span>Page: {label}</span>;
+              RenderValue={({ item }) => {
+                return <span>Page: {item.label}</span>;
               }}
               value={{
                 label: pagination.page.value,
