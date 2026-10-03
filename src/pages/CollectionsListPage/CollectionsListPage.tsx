@@ -1,7 +1,6 @@
 import type { RouteComponent } from '@tanstack/react-router';
 
 import { useForm } from '@tanstack/react-form';
-import { useLayoutEffect } from 'react';
 
 import type { UpdateCollectionsFormRecordSchemaDef } from '#/api/routes/collections/update-collection-by-id/update-collection-by-id.types';
 
@@ -22,8 +21,7 @@ import { useEditingCollectionsRowIds } from './hooks/use-editing-collections-row
 export const CollectionsListPage: RouteComponent = () => {
   const searchQueries = CollectionsListRoute.useSearch();
 
-  const { onInterceptProcessingRequest, processing, toggleSpinner } =
-    useSpinner();
+  const { onInterceptRequest } = useSpinner();
 
   const invalidateGetPaginatedCollections =
     useInvalidateGetPaginatedCollections();
@@ -44,7 +42,7 @@ export const CollectionsListPage: RouteComponent = () => {
   const form = useForm({
     ...createOrUpdateCollectionFormOptions,
     onSubmit: async ({ value: { records } }) => {
-      await onInterceptProcessingRequest(async () => {
+      await onInterceptRequest(async () => {
         const editedRecords = records.filter(({ isEditing }) => {
           return isEditing;
         });
@@ -78,10 +76,6 @@ export const CollectionsListPage: RouteComponent = () => {
       });
     },
   });
-
-  useLayoutEffect(() => {
-    toggleSpinner(processing);
-  }, [processing]);
 
   return (
     <PageWrapper title="Collections">
