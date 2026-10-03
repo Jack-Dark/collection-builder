@@ -44,15 +44,13 @@ export const CollectionsListTable = ({
   const onEditClick = (...rowIdsToAdd: string[]) => {
     addToEditingRowIds(...rowIdsToAdd);
 
-    const selectedRowsInEditMode = form.state.values.records.map(
-      (rowRecord) => {
-        const isEditing = rowIdsToAdd.includes(String(rowRecord.id));
+    const recordsWithEditStatus = form.state.values.records.map((rowRecord) => {
+      const isEditing = rowIdsToAdd.includes(String(rowRecord.id));
 
-        return { ...rowRecord, isEditing };
-      },
-    );
+      return { ...rowRecord, isEditing };
+    });
 
-    form.setFieldValue('records', selectedRowsInEditMode);
+    form.setFieldValue('records', recordsWithEditStatus);
   };
 
   const columns = useMemo(() => {
