@@ -99,7 +99,7 @@ export const collectionsTable = snakeCase.table('collections', {
   customField3Label: text('custom_field3_label'),
   id: serial().primaryKey(),
   name: text().notNull(),
-  notes: text().default(''),
+  notes: text().notNull().default(''),
   userId: text('user_id')
     .notNull()
     .references(
