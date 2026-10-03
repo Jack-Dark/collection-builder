@@ -86,7 +86,7 @@ export const SelectField = <TItem extends DefaultSelectItemDef>(
       >
         <Select.Trigger className="grid grid-cols-[1fr_auto] gap-1 md:gap-2 p-1.5 bg-white border border-black cursor-pointer">
           <Select.Value
-            className="grid justify-start data-placeholder:text-gray-500"
+            className="grid justify-start data-placeholder:text-gray-400"
             placeholder={placeholder}
           >
             {(item) => {
@@ -106,7 +106,7 @@ export const SelectField = <TItem extends DefaultSelectItemDef>(
         </Select.Trigger>
         <Select.Portal>
           <Select.Positioner align="start" alignItemWithTrigger={false}>
-            <Select.Popup className="min-w-25 bg-white text-black py-2 rounded-sm shadow-lg max-h-100 overflow-auto">
+            <Select.Popup className="min-w-25 bg-white text-black border border-gray-300 py-2 rounded-sm shadow-lg max-h-100 overflow-auto">
               <Select.List>
                 {items.map((item, index) => {
                   return (
@@ -117,7 +117,7 @@ export const SelectField = <TItem extends DefaultSelectItemDef>(
                         <Select.Item
                           className={`p-2 flex align-items-center ${
                             item.disabled
-                              ? 'text-gray-500 cursor-not-allowed'
+                              ? 'text-gray-400 cursor-not-allowed'
                               : 'hover:bg-menu-primary-hover data-selected:bg-menu-primary-selected data-highlighted:bg-menu-primary-hover cursor-pointer'
                           }`}
                           disabled={item.disabled}

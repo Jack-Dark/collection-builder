@@ -4,6 +4,7 @@ import { Dialog as MuiDialog } from '@base-ui/react/dialog';
 import CloseIcon from '@mui/icons-material/Close';
 
 export type DialogPropsDef = PropsWithChildren<{
+  disableOnClose?: boolean;
   Footer?: JSXElementConstructor<{}>;
   Header?: JSXElementConstructor<{}> | string;
   hideClose?: boolean;
@@ -12,7 +13,15 @@ export type DialogPropsDef = PropsWithChildren<{
 }>;
 
 export const Dialog = (props: DialogPropsDef) => {
-  const { children, Footer, Header, hideClose, isFullScreen, onClose } = props;
+  const {
+    children,
+    disableOnClose,
+    Footer,
+    Header,
+    hideClose,
+    isFullScreen,
+    onClose,
+  } = props;
 
   return (
     <MuiDialog.Root disablePointerDismissal={hideClose} modal open>
@@ -38,14 +47,18 @@ export const Dialog = (props: DialogPropsDef) => {
                 ))}
 
               {!hideClose && (
-                <MuiDialog.Close className="cursor-pointer" onClick={onClose}>
+                <MuiDialog.Close
+                  className="cursor-pointer"
+                  disabled={disableOnClose}
+                  onClick={onClose}
+                >
                   <CloseIcon />
                 </MuiDialog.Close>
               )}
             </div>
           )}
 
-          <div className="overflow-y-auto py-8 px-4">{children}</div>
+          <div className="overflow-y-auto py-4 px-4">{children}</div>
 
           {Footer && (
             <div className="grid grid-flow-col gap-1 p-1 border-t border-gray-400">

@@ -1,18 +1,22 @@
 import type { PropsWithChildren } from 'react';
 
 import EditIcon from '@mui/icons-material/Edit';
+import { useLayoutEffect, useMemo, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 import type { CustomFieldTypeDef } from '#/api/db-tables-schema.types';
 
 import { useCreateCustomFields } from '#/api/routes/custom-fields/create-custom-fields/create-custom-fields.react-query';
+import { customFieldFormSchema } from '#/api/routes/custom-fields/custom-fields.schema';
 import {
   useGetCustomFields,
   useInvalidateGetCustomFields,
 } from '#/api/routes/custom-fields/get-custom-fields/get-custom-fields.react-query';
+import { useUpdateCustomFields } from '#/api/routes/custom-fields/update-custom-fields/update-custom-fields.react-query';
 import { Button } from '#/components/Button';
 import { Dialog } from '#/components/Dialog';
 import { useDialog } from '#/components/Dialog/hooks/useDialog';
+import { useSpinner } from '#/components/FullPageLoadingSpinner/useSpinner';
 import { getCreateDefaultZustandStore } from '#/helpers/get-create-default-zustand-state';
 import {
   collectionsListFormDefaultValues,
@@ -77,169 +81,8 @@ export const CollectionsListCustomFieldsCell = withCollectionsListForm({
 
     const editCustomFieldAtom = useEditCustomFieldAtom();
 
-    const [showAddOrEditCustomFieldsDialog, hideAddOrEditCustomFieldsDialog] =
-      useDialog(() => {
-        const lastAddedCustomField = useEditCustomFieldAtom();
-
-        const customFieldAtIndexName =
-          `records[${rowIndex}].customFields[${editCustomFieldAtom.index.value}]` as const;
-
-        const { onCreateCustomFields, processing } = useCreateCustomFields();
-
-        const invalidateGetCustomFields = useInvalidateGetCustomFields();
-
-        return (
-          <form.AppField
-            mode="array"
-            name={`records[${rowIndex}].customFields`}
-          >
-            {(customFieldsForRowFormField) => {
-              const onCancel = () => {
-                customFieldsForRowFormField.replaceValue(
-                  lastAddedCustomField.index.value,
-                  lastAddedCustomField.data.value,
-                );
-                hideAddOrEditCustomFieldsDialog();
-              };
-
-              const onSave = async () => {
-                const customField =
-                  customFieldsForRowFormField.state.value[
-                    lastAddedCustomField.index.value
-                  ];
-
-                if (typeof customField.id === 'string') {
-                  const [newRecord] = await onCreateCustomFields({
-                    records: [
-                      {
-                        name: customField.name,
-                        type: customField.type,
-                      },
-                    ],
-                  });
-                  customFieldsForRowFormField.replaceValue(
-                    lastAddedCustomField.index.value,
-                    {
-                      id: newRecord.id,
-                      name: newRecord.name,
-                      type: newRecord.type,
-                    },
-                  );
-                } else {
-                  // TODO - ADD LOGIC TO UPDATE EXISTING FIELD
-                }
-                invalidateGetCustomFields();
-                hideAddOrEditCustomFieldsDialog();
-              };
-
-              return (
-                <Dialog
-                  Footer={() => {
-                    return (
-                      <>
-                        <Button
-                          disabled={processing}
-                          onClick={onCancel}
-                          text="Cancel"
-                          variant="mono"
-                        />
-                        <Button
-                          onClick={onSave}
-                          processing={processing}
-                          text="Save"
-                        />
-                      </>
-                    );
-                  }}
-                  Header="Edit Custom Field"
-                  onClose={onCancel}
-                >
-                  <div className="grid gap-4">
-                    <form.AppField name={customFieldAtIndexName}>
-                      {(customFieldAtIndexFormField) => {
-                        return (
-                          <>
-                            <form.AppField
-                              name={`${customFieldAtIndexName}.name`}
-                            >
-                              {(nameField) => {
-                                return (
-                                  <nameField.InputField
-                                    autoFocus
-                                    // error={getFieldError(nameField)}
-                                    label="Column Name"
-                                    name={nameField.name}
-                                    onValueChange={nameField.handleChange}
-                                    placeholder="Input column name..."
-                                    value={nameField.state.value}
-                                  />
-                                );
-                              }}
-                            </form.AppField>
-
-                            <form.AppField
-                              name={`${customFieldAtIndexName}.type`}
-                            >
-                              {(typeField) => {
-                                const value = fieldTypeItems.find(({ id }) => {
-                                  return id === typeField.state.value;
-                                });
-
-                                return (
-                                  <typeField.SelectField
-                                    // error={getFieldError(typeField)}
-                                    items={fieldTypeItems.map(
-                                      (fieldTypeItem) => {
-                                        const customFieldsForRow =
-                                          customFieldsForRowFormField.state
-                                            .value;
-                                        const customFieldBeingEdited =
-                                          customFieldAtIndexFormField.state
-                                            .value;
-
-                                        const disabled =
-                                          customFieldsForRow.some(
-                                            (selectedCustomField) => {
-                                              return (
-                                                !fieldTypeItem.id ||
-                                                (selectedCustomField.name ===
-                                                  customFieldBeingEdited.name &&
-                                                  selectedCustomField.type ===
-                                                    fieldTypeItem.id)
-                                              );
-                                            },
-                                          );
-
-                                        return { ...fieldTypeItem, disabled };
-                                      },
-                                    )}
-                                    label="Data Type"
-                                    name={typeField.name}
-                                    onValueChange={(value) => {
-                                      if (value?.id) {
-                                        typeField.handleChange(value.id);
-                                      }
-                                    }}
-                                    // placeholder="Select data type..."
-                                    value={value}
-                                  />
-                                );
-                              }}
-                            </form.AppField>
-                          </>
-                        );
-                      }}
-                    </form.AppField>
-                  </div>
-                </Dialog>
-              );
-            }}
-          </form.AppField>
-        );
-      }, []);
-
     // TODO - wrap inside conditional with Suspense so data is only fetched when editing a row
-    const { data: customFieldsInDb = [] } = useGetCustomFields({
+    const { data: customFieldsInDb = [], dataUpdatedAt } = useGetCustomFields({
       placeholderData: [],
       requestArgs: {
         params: {
@@ -253,6 +96,32 @@ export const CollectionsListCustomFieldsCell = withCollectionsListForm({
         },
       },
     });
+
+    const customFieldsForRow = form.state.values.records[rowIndex].customFields;
+    const customFieldForDialog =
+      customFieldsForRow[editCustomFieldAtom.index.value];
+
+    const [showAddOrEditCustomFieldsDialog, hideAddOrEditCustomFieldsDialog] =
+      useDialog(() => {
+        return (
+          <form.AppField
+            mode="array"
+            name={`records[${rowIndex}].customFields`}
+          >
+            {({ removeValue, replaceValue }) => {
+              return (
+                <AddOrEditCustomFieldDialog
+                  form={form}
+                  onClose={hideAddOrEditCustomFieldsDialog}
+                  removeValue={removeValue}
+                  replaceValue={replaceValue}
+                  rowIndex={rowIndex}
+                />
+              );
+            }}
+          </form.AppField>
+        );
+      }, [customFieldsForRow]);
 
     return (
       <div>
@@ -428,6 +297,184 @@ export const CollectionsListCustomFieldsCell = withCollectionsListForm({
           '-'
         )}
       </div>
+    );
+  },
+});
+
+export const AddOrEditCustomFieldDialog = withCollectionsListForm({
+  /** These values are only used for type-checking, and are not used at runtime */
+  defaultValues: collectionsListFormDefaultValues,
+  props: {
+    onClose: () => {},
+    removeValue: (index: number) => {},
+    replaceValue: (index: number, customField: CustomFieldFormItemDef) => {},
+    rowIndex: 0,
+  },
+  render: ({ form, onClose, removeValue, replaceValue, rowIndex }) => {
+    const [isValid, setIsValid] = useState<boolean>(true);
+
+    const validateCustomField = () => {
+      const isValid = customFieldFormSchema.validate(getValue());
+      // debugger;
+
+      setIsValid(isValid);
+    };
+    const editCustomFieldAtom = useEditCustomFieldAtom();
+
+    const customFieldSnapshot = editCustomFieldAtom.data.value;
+    const customFieldIndex = editCustomFieldAtom.index.value;
+
+    const { onInterceptProcessingRequest, processing } = useSpinner();
+    const { onCreateCustomFields } = useCreateCustomFields();
+    const { onUpdateCustomFields } = useUpdateCustomFields();
+
+    const invalidateGetCustomFields = useInvalidateGetCustomFields();
+
+    const getValue = () => {
+      return form.state.values.records[rowIndex].customFields[customFieldIndex];
+    };
+
+    const isNewRecord = useMemo(() => {
+      return typeof getValue()?.id === 'string';
+    }, []);
+
+    const onCancel = () => {
+      onClose();
+
+      if (isNewRecord) {
+        removeValue(customFieldIndex);
+      } else {
+        replaceValue(customFieldIndex, customFieldSnapshot);
+      }
+    };
+
+    const onSave = async () => {
+      await onInterceptProcessingRequest(async () => {
+        const { id, name, type } = getValue();
+
+        if (typeof id === 'string') {
+          const [newRecord] = await onCreateCustomFields({
+            records: [{ name, type }],
+          });
+
+          replaceValue(customFieldIndex, {
+            id: newRecord.id,
+            name: newRecord.name,
+            type: newRecord.type,
+          });
+        } else {
+          const [updatedRecord] = await onUpdateCustomFields({
+            records: [{ id, name, type }],
+          });
+
+          replaceValue(customFieldIndex, {
+            id: updatedRecord.id,
+            name: updatedRecord.name,
+            type: updatedRecord.type,
+          });
+        }
+
+        invalidateGetCustomFields();
+        onClose();
+      });
+    };
+
+    const customFieldDataTypeItems = fieldTypeItems.map((fieldTypeItem) => {
+      const disabled = form.state.values.records[rowIndex].customFields.some(
+        (selectedCustomField) => {
+          return (
+            !fieldTypeItem.id ||
+            (selectedCustomField.name === getValue()?.name &&
+              selectedCustomField.type === fieldTypeItem.id)
+          );
+        },
+      );
+
+      return { ...fieldTypeItem, disabled };
+    });
+
+    useLayoutEffect(() => {
+      validateCustomField();
+    }, []);
+
+    return (
+      <Dialog
+        disableOnClose={processing}
+        Footer={() => {
+          return (
+            <>
+              <Button
+                disabled={processing}
+                onClick={onCancel}
+                text="Cancel"
+                variant="mono"
+              />
+              <Button
+                disabled={!isValid}
+                onClick={onSave}
+                processing={processing}
+                text="Save"
+              />
+            </>
+          );
+        }}
+        Header={`${isNewRecord ? 'Create' : 'Edit'} Custom Field`}
+        onClose={onCancel}
+      >
+        <div className="grid gap-4">
+          <form.AppField
+            name={`records[${rowIndex}].customFields[${customFieldIndex}].name`}
+          >
+            {(nameField) => {
+              return (
+                <nameField.InputField
+                  autoFocus
+                  // error={getFieldError(nameField)}
+                  label="Field Name"
+                  name={nameField.name}
+                  onValueChange={(value) => {
+                    nameField.handleChange(value);
+                    validateCustomField();
+                  }}
+                  placeholder="Input column name..."
+                  value={nameField.state.value}
+                />
+              );
+            }}
+          </form.AppField>
+
+          <form.AppField
+            name={`records[${rowIndex}].customFields[${customFieldIndex}].type`}
+          >
+            {(typeField) => {
+              const value = fieldTypeItems.find(({ id }) => {
+                return id === typeField.state.value;
+              });
+
+              return (
+                <typeField.SelectField
+                  // error={getFieldError(typeField)}
+                  items={customFieldDataTypeItems}
+                  label="Data Type"
+                  name={typeField.name}
+                  onValueChange={(value) => {
+                    if (value?.id) {
+                      typeField.handleChange(value.id);
+                    }
+                    validateCustomField();
+                  }}
+                  value={value}
+                />
+              );
+            }}
+          </form.AppField>
+
+          <p className="max-w-100 text-gray-500 text-sm">
+            Note: Saving will {isNewRecord ? 'create the' : 'update your'}{' '}
+            custom field, even if changes to your collection are dismissed.
+          </p>
+        </div>
+      </Dialog>
     );
   },
 });

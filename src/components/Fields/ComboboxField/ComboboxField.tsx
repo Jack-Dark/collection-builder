@@ -239,24 +239,6 @@ export const ComboboxField = <
         value={value}
       >
         <div className="grid gap-2">
-          <Combobox.Value>
-            {(value) => {
-              return multiple ? (
-                <Combobox.Input
-                  className="input w-full"
-                  placeholder={placeholder}
-                  // value={query}
-                />
-              ) : (
-                <Combobox.Input
-                  className="input w-full"
-                  placeholder={placeholder}
-                  value={value}
-                />
-              );
-            }}
-          </Combobox.Value>
-
           {Array.isArray(value) && (
             <Combobox.Chips
               aria-label={value.length > 0 ? 'Selected labels' : undefined}
@@ -287,6 +269,24 @@ export const ComboboxField = <
               })}
             </Combobox.Chips>
           )}
+
+          <Combobox.Value>
+            {(value) => {
+              return multiple ? (
+                <Combobox.Input
+                  className="input w-full"
+                  placeholder={placeholder}
+                  // value={query}
+                />
+              ) : (
+                <Combobox.Input
+                  className="input w-full"
+                  placeholder={placeholder}
+                  value={value}
+                />
+              );
+            }}
+          </Combobox.Value>
         </div>
 
         <Combobox.Portal>
@@ -295,7 +295,7 @@ export const ComboboxField = <
             className="styles.Positioner"
             sideOffset={4}
           >
-            <Combobox.Popup className="bg-white text-black py-2 rounded-sm shadow-lg max-h-100 overflow-auto">
+            <Combobox.Popup className="bg-white text-black border border-gray-300 py-2 rounded-sm shadow-lg max-h-100 overflow-auto">
               {!allowCreatable && (
                 <Combobox.Empty>
                   <div className="p-2 text-gray-500">No matches</div>
