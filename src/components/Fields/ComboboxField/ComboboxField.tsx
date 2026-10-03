@@ -310,10 +310,6 @@ export const ComboboxField = <
                       key={listItem[idProperty]}
                       value={listItem}
                     >
-                      <Combobox.ItemIndicator>
-                        <CheckIcon fontSize="inherit" />
-                      </Combobox.ItemIndicator>
-
                       {listItem.creatable ? (
                         <span className="flex gap-1">
                           <span>Add "{itemToStringLabel(listItem)}"</span>
@@ -321,6 +317,12 @@ export const ComboboxField = <
                         </span>
                       ) : (
                         <RenderItem item={listItem} />
+                      )}
+
+                      {multiple && (
+                        <Combobox.ItemIndicator>
+                          <CheckIcon fontSize="inherit" />
+                        </Combobox.ItemIndicator>
                       )}
                     </Combobox.Item>
                   );
