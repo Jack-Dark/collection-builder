@@ -70,37 +70,31 @@ export const CollectionsListTable = ({
   });
 
   return (
-    <form.ArrayField name="records">
-      {() => {
-        return (
-          <Table
-            AboveTableComponent={({ table }) => {
-              const selectedRowIds = table
-                .getSelectedRowModel()
-                .rows.map(({ id }) => {
-                  return id;
-                });
+    <Table
+      AboveTableComponent={({ table }) => {
+        const selectedRowIds = table
+          .getSelectedRowModel()
+          .rows.map(({ id }) => {
+            return id;
+          });
 
-              return (
-                <CollectionsListTableRowActions
-                  form={form}
-                  onCancel={onCancel}
-                  resetRowSelection={table.resetRowSelection}
-                  selectedRowIds={selectedRowIds}
-                />
-              );
-            }}
-            columns={columns}
-            // @ts-expect-error // TS type mismatch between new and old records
-            data={records}
-            disableRowSelection={isEditing}
-            enableRowSelection
-            pagination={paginationProps}
-            search={searchProps}
-            sort={sortProps}
+        return (
+          <CollectionsListTableRowActions
+            form={form}
+            onCancel={onCancel}
+            resetRowSelection={table.resetRowSelection}
+            selectedRowIds={selectedRowIds}
           />
         );
       }}
-    </form.ArrayField>
+      columns={columns}
+      // @ts-expect-error // TS type mismatch between new and old records
+      data={records}
+      disableRowSelection={isEditing}
+      enableRowSelection
+      pagination={paginationProps}
+      search={searchProps}
+      sort={sortProps}
+    />
   );
 };
