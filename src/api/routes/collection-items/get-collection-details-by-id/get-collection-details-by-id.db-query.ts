@@ -114,7 +114,6 @@ export const getCollectionDetailsByIdDbQuery = async (
       })
       .filter(Boolean);
 
-    // TODO - ADD FILTERS BACK IN (LOGIC AT BOTTOM)
     const items = await tx.query.collectionItems.findMany({
       limit,
       offset: (page - 1) * limit,
@@ -125,6 +124,7 @@ export const getCollectionDetailsByIdDbQuery = async (
         return directionFn(sql`lower(${table[sortingField || 'name']})`);
       },
       where: {
+        // TODO - ADD FILTERS BACK IN (LOGIC AT BOTTOM)
         collectionId,
         userId,
       },
@@ -139,50 +139,18 @@ export const getCollectionDetailsByIdDbQuery = async (
       },
     });
 
-    // const items = await tx
-    //   .select()
-    //   .from(collectionItemsTable)
-    //   .where(
-    //     and(
-    //       matchesCollectionIdAndUserIdAndNotDeleted,
-    //       ...formatFiltersSql({
-    //         filters,
-    //         search,
-    //         searchNotes,
-    //         table: collectionItemsTable,
-    //       }),
-    //     ),
-    //   )
-    //   .limit(limit)
-    //   .offset((page - 1) * limit)
-    //   .orderBy(
-    //     sort.direction === sortDirectionOptions.desc
-    //       ? desc(collectionItemsTable[sortingField])
-    //       : asc(collectionItemsTable[sortingField]),
-    //     asc(sql`lower(${collectionItemsTable.name})`),
-    //   );
+    const formattedItems = items.map(({ customFieldValues, ...item }) => {
+      const customFieldValuesByCustomFieldId = customFieldValues.reduce<
+        Record<number, { id: number; value: boolean | string | number }>
+      >((acc, { customFieldId, ...customFieldValue }) => {
+        return { ...acc, [customFieldId]: customFieldValue };
+      }, {});
 
-    // const ITEMS_NEW = await tx.query.collectionItems.findMany({
-    //   limit,
-    //   offset: (page - 1) * limit,
-    //   orderBy: {
-    //     [sortingField]: sort?.direction || 'asc',
-    //   },
-    //   where: {
-    //     deletedAt: undefined,
-    //     userId,
-    //     // todo - add filters/search logic
-    //   },
-    //   with: {
-    //     customFieldValues: {
-    //       columns: {
-    //         customFieldId: true,
-    //         id: true,
-    //         value: true,
-    //       },
-    //     },
-    //   },
-    // });
+      return {
+        ...item,
+        customFieldValues: customFieldValuesByCustomFieldId,
+      };
+    });
 
     return {
       collection,
@@ -191,7 +159,7 @@ export const getCollectionDetailsByIdDbQuery = async (
         customField2Values,
         customField3Values,
       },
-      items,
+      items: formattedItems,
       pagination,
     };
   });

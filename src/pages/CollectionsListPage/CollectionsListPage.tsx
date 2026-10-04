@@ -4,6 +4,7 @@ import { useForm } from '@tanstack/react-form';
 
 import type { UpdateCollectionsFormRecordSchemaDef } from '#/api/routes/collections/update-collection-by-id/update-collection-by-id.types';
 
+import { useInvalidateGetCollectionDetailsById } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.react-query';
 import { useCreateCollection } from '#/api/routes/collections/create-collection/create-collection.react-query';
 import { useInvalidateGetPaginatedCollections } from '#/api/routes/collections/get-paginated-collections/get-paginated-collections.react-query';
 import { useUpdateCollectionById } from '#/api/routes/collections/update-collection-by-id/update-collection-by-id.react-query';
@@ -19,6 +20,9 @@ export const CollectionsListPage: RouteComponent = () => {
 
   const invalidateGetPaginatedCollections =
     useInvalidateGetPaginatedCollections();
+
+  const invalidateGetCollectionDetailsById =
+    useInvalidateGetCollectionDetailsById();
 
   const { onCreateCollection } = useCreateCollection();
 
@@ -59,7 +63,13 @@ export const CollectionsListPage: RouteComponent = () => {
         }
 
         resetEditingRowIds();
-        await invalidateGetPaginatedCollections();
+
+        await Promise.all([
+          await invalidateGetPaginatedCollections(),
+          ...records.map(({ id }) => {
+            return invalidateGetCollectionDetailsById({ id });
+          }),
+        ]);
       });
     },
   });

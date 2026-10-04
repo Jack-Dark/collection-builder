@@ -44,7 +44,7 @@ export const CollectionDetailsTableRowActions = ({
 
   return (
     <form.ArrayField name="collectionItems">
-      {(collectionItemsField) => {
+      {({ handleChange, value }) => {
         return (
           <div className="flex justify-between">
             <div className="flex gap-2">
@@ -56,16 +56,15 @@ export const CollectionDetailsTableRowActions = ({
                     onClick={() => {
                       addToEditingRowIds(...selectedRowIds);
 
-                      const selectedRowsInEditMode =
-                        collectionItemsField.state.value.map((rowRecord) => {
-                          const isEditing = selectedRowIds.includes(
-                            String(rowRecord.id),
-                          );
+                      const rowsMarkedForEditing = value.map((rowRecord) => {
+                        const isEditing = selectedRowIds.includes(
+                          String(rowRecord.id),
+                        );
 
-                          return { ...rowRecord, isEditing };
-                        });
+                        return { ...rowRecord, isEditing };
+                      });
 
-                      collectionItemsField.setValue(selectedRowsInEditMode);
+                      handleChange(rowsMarkedForEditing);
                     }}
                     text="Edit"
                     variant="secondary"

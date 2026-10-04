@@ -69,15 +69,11 @@ export const CollectionDetailsPage: RouteComponent = () => {
           return isEditing;
         });
 
-        const isUpdatedRecords = editedRecords.some(({ createdAt }) => {
-          return createdAt;
+        const isNewRecords = editedRecords.some(({ id }) => {
+          return typeof id === 'string';
         });
 
-        if (isUpdatedRecords) {
-          await onUpdateCollectionItems(
-            editedRecords as OnUpdateCollectionItemsArgsDef[],
-          );
-        } else {
+        if (isNewRecords) {
           const newRecords = editedRecords.map((record) => {
             const {
               createdAt: _createdAt,
@@ -90,8 +86,13 @@ export const CollectionDetailsPage: RouteComponent = () => {
 
             return { ...newCollectionItemData, id: String(id) };
           });
+
           await onCreateCollectionItem(
             newRecords as OnCreateCollectionItemsArgsDef[],
+          );
+        } else {
+          await onUpdateCollectionItems(
+            editedRecords as OnUpdateCollectionItemsArgsDef[],
           );
         }
 
@@ -113,11 +114,9 @@ export const CollectionDetailsPage: RouteComponent = () => {
 
   return (
     <PageWrapper
-      title={`${data?.collection.name} (${data?.pagination.totalRecords})`}
+      title={`${data?.collection?.name || '-'} (${data?.pagination.totalRecords})`}
     >
-      <form>
-        <CollectionDetailsTable form={form} />
-      </form>
+      <CollectionDetailsTable form={form} />
     </PageWrapper>
   );
 };

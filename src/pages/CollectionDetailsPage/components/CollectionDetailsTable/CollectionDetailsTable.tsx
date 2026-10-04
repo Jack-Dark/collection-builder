@@ -57,25 +57,27 @@ export const CollectionDetailsTable = ({
 
   const columns = useMemo(() => {
     return getCollectionItemsTableColumns({
-      customField1Enabled: collection.customField1Enabled,
-      customField1Label: collection.customField1Label,
-      customField2Enabled: collection.customField2Enabled,
-      customField2Label: collection.customField2Label,
-      customField3Enabled: collection.customField3Enabled,
-      customField3Label: collection.customField3Label,
+      customField1Enabled: collection?.customField1Enabled,
+      customField1Label: collection?.customField1Label,
+      customField2Enabled: collection?.customField2Enabled,
+      customField2Label: collection?.customField2Label,
+      customField3Enabled: collection?.customField3Enabled,
+      customField3Label: collection?.customField3Label,
+      customFields: data?.collection?.customFields || [],
       form,
       onCancel,
       onEditClick,
     });
   }, [
-    collection.customField1Enabled,
-    collection.customField1Label,
-    collection.customField2Enabled,
-    collection.customField2Label,
-    collection.customField3Enabled,
-    collection.customField3Label,
+    collection?.customField1Enabled,
+    collection?.customField1Label,
+    collection?.customField2Enabled,
+    collection?.customField2Label,
+    collection?.customField3Enabled,
+    collection?.customField3Label,
     editingRowIds,
     customFields,
+    data?.collection?.customFields,
   ]);
 
   const filtersProps = useCollectionDetailsFiltersProps();

@@ -5,6 +5,17 @@ export const baseCollectionItemSchema = z.object({
   customField1Value: z.string().describe('Custom Field 1'),
   customField2Value: z.string().describe('Custom Field 2'),
   customField3Value: z.string().describe('Custom Field 3'),
+  customFieldValues: z.record(
+    z.number(),
+    z.object({
+      id: z
+        .union([z.number().min(1), z.string().min(1)])
+        .describe('Custom Field Value ID'),
+      value: z
+        .union([z.number(), z.boolean(), z.string()])
+        .describe('Custom Field Value'),
+    }),
+  ),
   editionDetails: z.string().describe('Edition details'),
   isSpecialEdition: z.boolean().describe('Is special edition'),
   name: z.string().describe('Name').min(1),

@@ -1,8 +1,15 @@
 import type { AccessorKeyColumnDefBase } from '@tanstack/react-table';
 
 import { createColumnHelper } from '@tanstack/react-table';
+import { Fragment } from 'react/jsx-runtime';
+import { v4 as uuidv4 } from 'uuid';
 
 import type { CollectionItemRecordDef } from '#/api/routes/collection-items/collection-item.types';
+
+import { CheckboxField } from '#/components/Fields/CheckboxField';
+import { InputField } from '#/components/Fields/InputField';
+import { SwitchField } from '#/components/Fields/SwitchField';
+import { useEditingCollectionItemsRowIds } from '#/pages/CollectionsListPage/hooks/use-editing-collections-row-ids';
 
 import type { CreateOrUpdateCollectionItemFormRowDataDef } from '../../CollectionDetailsPage.types';
 import type { GetCollectionItemsTableColumnsPropsDef } from './CollectionDetailsTable.types';
@@ -30,6 +37,7 @@ export const getCollectionItemsTableColumns = (
     customField2Label,
     customField3Enabled,
     customField3Label,
+    customFields,
     form,
     onCancel,
     onEditClick,
@@ -64,6 +72,87 @@ export const getCollectionItemsTableColumns = (
       },
       header: 'Images',
       minSize: 200,
+    }),
+    ...customFields.map((customField, index) => {
+      return columnHelper.accessor('customFieldValues', {
+        cell: ({ getValue, row }) => {
+          const { getIsEditingRowId } = useEditingCollectionItemsRowIds();
+
+          const isEditingRow = getIsEditingRowId(row.id);
+
+          const customFieldValueForIndex = getValue()[customField.id];
+
+          const key = customFieldValueForIndex?.id || customField?.id;
+
+          return isEditingRow ? (
+            <form.Field
+              key={key}
+              name={`collectionItems[${row.index}].customFieldValues.${customField.id}`}
+            >
+              {(field) => {
+                return (
+                  <>
+                    {customField.type === 'boolean' && (
+                      <div>
+                        <SwitchField
+                          checked={field.value?.value as boolean}
+                          onCheckedChange={(value) => {
+                            field.handleChange({
+                              id: field.value?.id || uuidv4(),
+                              value,
+                            });
+                          }}
+                        />
+                      </div>
+                    )}
+                    {customField.type === 'number' && (
+                      <div>
+                        <InputField
+                          onValueChange={(value) => {
+                            field.handleChange({
+                              id: field.value?.id || uuidv4(),
+                              value: Number(value),
+                            });
+                          }}
+                          placeholder={`Input ${customField.name}...`}
+                          type="number"
+                          value={field.value?.value as number}
+                        />
+                      </div>
+                    )}
+                    {customField.type === 'string' && (
+                      <div>
+                        <InputField
+                          onValueChange={(value) => {
+                            field.handleChange({
+                              id: field.value?.id || uuidv4(),
+                              value,
+                            });
+                          }}
+                          placeholder={`Input ${customField.name}...`}
+                          value={field.value?.value as string}
+                        />
+                      </div>
+                    )}
+                  </>
+                );
+              }}
+            </form.Field>
+          ) : (
+            <Fragment key={key}>
+              {typeof customFieldValueForIndex?.value === 'boolean' &&
+              customFieldValueForIndex?.value ? (
+                <CheckboxField checked={customFieldValueForIndex?.value} />
+              ) : (
+                <p>{customFieldValueForIndex?.value || '-'}</p>
+              )}
+            </Fragment>
+          );
+        },
+        header: customField.name,
+        id: String(customField.id),
+        minSize: 200,
+      });
     }),
     customField1Enabled &&
       columnHelper.accessor('customField1Value', {
