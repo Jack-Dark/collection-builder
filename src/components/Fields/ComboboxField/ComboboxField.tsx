@@ -321,9 +321,9 @@ export const ComboboxField = <
                       value={listItem}
                     >
                       {listItem.creatable ? (
-                        <span className="flex gap-1">
+                        <span className="flex gap-1 items-center">
                           <span>Add "{itemToStringLabel(listItem)}"</span>
-                          <AddIcon className="ml-4" />
+                          <AddIcon fontSize="inherit" />
                         </span>
                       ) : (
                         <RenderItem
