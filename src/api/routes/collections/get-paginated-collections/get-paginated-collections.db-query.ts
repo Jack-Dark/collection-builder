@@ -1,4 +1,4 @@
-import { and, count, eq, ilike, isNull } from 'drizzle-orm';
+import { and, eq, ilike, isNull } from 'drizzle-orm';
 
 import type { PaginationQueriesSchemaDef } from '#/api/pagination/pagination.types';
 
@@ -24,10 +24,11 @@ export const getPaginatedCollectionsDbQuery = async (props: {
         ? ilike(collectionsTable.name, `%${search.toLowerCase()}%`)
         : undefined,
     );
-    const [{ totalRecords }] = await tx
-      .select({ totalRecords: count() })
-      .from(collectionsTable)
-      .where(matchesUserAndSearch);
+
+    const totalRecords = await tx.$count(
+      collectionsTable,
+      matchesUserAndSearch,
+    );
 
     const pagination = getPaginationMetadataQuery({
       currentPage: page,
