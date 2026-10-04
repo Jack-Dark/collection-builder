@@ -66,7 +66,6 @@ export const useCreateCollectionItems = <
       }
     },
     mutationKey: [reactMutationKeys.createCollectionItems],
-    showLoading: true,
     ...props,
     onSuccess: async (data, requestArgs) => {
       await props?.onSuccess?.(data, requestArgs);

@@ -1,39 +1,33 @@
+import { createStore, useSelector } from '@tanstack/react-store';
 import { useState } from 'react';
 
-import { getCreateDefaultZustandStore } from '#/helpers/get-create-default-zustand-state';
-
-const createSpinnerStore = () => {
-  const createNotificationsStore = getCreateDefaultZustandStore<boolean>(false);
-
-  return () => {
-    const { setValue, value } = createNotificationsStore();
-
-    return {
-      hideSpinner: () => {
-        return setValue(false);
-      },
-      isSpinnerShowing: value,
-      showSpinner: () => {
-        return setValue(true);
-      },
-      toggleSpinner: (show?: boolean) => {
-        if (show !== undefined) {
-          setValue(show);
-        } else
-          setValue((prevValue) => {
-            return !prevValue;
-          });
-      },
-    };
-  };
-};
-
-const useSpinnerStore = createSpinnerStore();
+export const spinnerStore = createStore({ isSpinning: false });
 
 export const useSpinner = () => {
-  const spinnerStore = useSpinnerStore();
+  const { isSpinning } = useSelector(spinnerStore);
 
-  const { hideSpinner, showSpinner } = spinnerStore;
+  const hideSpinner = () => {
+    return spinnerStore.setState(() => {
+      return { isSpinning: false };
+    });
+  };
+
+  const showSpinner = () => {
+    return spinnerStore.setState(() => {
+      return { isSpinning: true };
+    });
+  };
+
+  const toggleSpinner = (show?: boolean) => {
+    if (show !== undefined) {
+      spinnerStore.setState(() => {
+        return { isSpinning: show };
+      });
+    } else
+      spinnerStore.setState((prevValue) => {
+        return { isSpinning: !prevValue };
+      });
+  };
 
   const [processing, setProcessing] = useState<boolean>();
 
@@ -104,9 +98,12 @@ export const useSpinner = () => {
   };
 
   return {
+    hideSpinner,
+    isSpinning,
     onInterceptProcessingRequest,
     onInterceptRequest,
     processing,
-    ...spinnerStore,
+    showSpinner,
+    toggleSpinner,
   };
 };

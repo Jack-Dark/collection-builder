@@ -36,7 +36,6 @@ export const useCreateCollection = <
       return response;
     },
     mutationKey: [reactMutationKeys.createCollections],
-    showLoading: true,
     ...props,
     onSuccess: async (data, requestArgs) => {
       await invalidateGetNavMenuCollections();

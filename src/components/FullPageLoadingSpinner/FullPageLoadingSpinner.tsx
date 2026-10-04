@@ -6,7 +6,7 @@ import { LoadingSpinner } from './components/LoadingSpinner';
 import { useSpinner } from './useSpinner';
 
 export const FullPageLoadingSpinner = () => {
-  const { hideSpinner, isSpinnerShowing } = useSpinner();
+  const { hideSpinner, isSpinning } = useSpinner();
 
   const [showForceClose, setShowForceClose] = useState<boolean>(false);
 
@@ -18,18 +18,18 @@ export const FullPageLoadingSpinner = () => {
   ).current;
 
   useLayoutEffect(() => {
-    if (isSpinnerShowing && !showForceClose) {
+    if (isSpinning && !showForceClose) {
       debouncedShowForceClose();
-    } else if (!isSpinnerShowing) {
+    } else if (!isSpinning) {
       if (showForceClose) {
         setShowForceClose(false);
       } else {
         debouncedShowForceClose.cancel();
       }
     }
-  }, [isSpinnerShowing]);
+  }, [isSpinning]);
 
-  return isSpinnerShowing ? (
+  return isSpinning ? (
     <div
       className="fixed z-99999 size-full flex items-center justify-center bg-[rgba(0,0,0,0.2)]"
       data-loading-overlay=""

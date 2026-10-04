@@ -51,7 +51,7 @@ export const useGenericFetchQuery = <
     ...configs
   } = props;
 
-  const { hideSpinner, showSpinner } = useSpinner();
+  const { hideSpinner, isSpinning, showSpinner } = useSpinner();
   const { notifyError } = useNotifications();
 
   const memoizedTransformDependencies = useMemo(() => {
@@ -81,7 +81,7 @@ export const useGenericFetchQuery = <
     if (enableSpinner) {
       if (isFetching) {
         showSpinner();
-      } else {
+      } else if (isSpinning) {
         hideSpinner();
       }
     }

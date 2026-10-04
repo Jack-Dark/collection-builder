@@ -32,7 +32,6 @@ export const useDeleteCollectionById = <
       return deleteCollectionByIdServerFn({ data });
     },
     mutationKey: [reactMutationKeys.deleteCollections],
-    showLoading: true,
     ...props,
     onSuccess: async (data, requestArgs) => {
       await invalidateGetNavMenuCollections();

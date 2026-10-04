@@ -30,7 +30,6 @@ export const useUpdateCollectionById = <
       return updateCollectionByIdServerFn({ data: { records } });
     },
     mutationKey: [reactMutationKeys.updateCollections],
-    showLoading: true,
     ...props,
     onSuccess: async (data, requestArgs) => {
       await invalidateGetNavMenuCollections();

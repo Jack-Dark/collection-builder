@@ -33,15 +33,18 @@ export const CollectionDetailsPage: RouteComponent = () => {
 
   const collectionId = Number(id);
 
-  const { onInterceptProcessingRequest, processing, toggleSpinner } =
-    useSpinner();
+  const { onInterceptRequest } = useSpinner();
 
   const invalidateGetCollectionDetailsById =
     useInvalidateGetCollectionDetailsById();
 
-  const { onCreateCollectionItem } = useCreateCollectionItems();
+  const { onCreateCollectionItem } = useCreateCollectionItems({
+    showLoading: true,
+  });
 
-  const { onUpdateCollectionItems } = useUpdateCollectionItems();
+  const { onUpdateCollectionItems } = useUpdateCollectionItems({
+    showLoading: true,
+  });
 
   const { data } = useGetCollectionDetailsById({
     onSuccess: ({ customFields, items }) => {
@@ -64,7 +67,7 @@ export const CollectionDetailsPage: RouteComponent = () => {
         }
       : createOrUpdateCollectionItemsFormDefaultValues,
     onSubmit: async ({ value: { collectionItems } }) => {
-      onInterceptProcessingRequest(async () => {
+      onInterceptRequest(async () => {
         const editedRecords = collectionItems.filter(({ isEditing }) => {
           return isEditing;
         });
@@ -101,10 +104,6 @@ export const CollectionDetailsPage: RouteComponent = () => {
       });
     },
   });
-
-  useLayoutEffect(() => {
-    toggleSpinner(processing);
-  }, [processing]);
 
   useLayoutEffect(() => {
     if (searchQueries.filters) {

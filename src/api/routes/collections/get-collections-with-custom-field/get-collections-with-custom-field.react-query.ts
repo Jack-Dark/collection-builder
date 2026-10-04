@@ -27,7 +27,6 @@ export const useGetCollectionsWithCustomFields = <
       reactQueryKeys.getCollectionsWithCustomFields,
       JSON.stringify(props.requestArgs),
     ],
-    showLoading: true,
     ...props,
     onSuccess: async (data, requestArgs) => {
       await props?.onSuccess?.(data, requestArgs);

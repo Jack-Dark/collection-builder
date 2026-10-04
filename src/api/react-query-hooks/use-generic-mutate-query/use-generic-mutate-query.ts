@@ -50,7 +50,7 @@ export const useGenericMutateQuery = <
     ...configs
   } = props;
 
-  const { hideSpinner, isSpinnerShowing, showSpinner } = useSpinner();
+  const { hideSpinner, isSpinning, showSpinner } = useSpinner();
   const { notifyError } = useNotifications();
 
   const handleMutationFn = async (
@@ -85,7 +85,7 @@ export const useGenericMutateQuery = <
     if (showLoading) {
       if (isPending) {
         showSpinner();
-      } else if (isSpinnerShowing) {
+      } else if (isSpinning) {
         hideSpinner();
       }
     }

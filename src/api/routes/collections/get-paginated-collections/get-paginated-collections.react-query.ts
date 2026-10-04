@@ -27,7 +27,6 @@ export const useGetPaginatedCollections = <
       reactQueryKeys.getPaginatedCollections,
       JSON.stringify(props.requestArgs),
     ],
-    showLoading: true,
     ...props,
     onSuccess: async (data, requestArgs) => {
       await props?.onSuccess?.(data, requestArgs);

@@ -21,7 +21,6 @@ export const useDeleteCollectionItemsByIds = <TTransformedData = void>(
         return deleteCollectionItemsByIdsServerFn({ data });
       },
       mutationKey: [reactMutationKeys.deleteCollectionItems],
-      showLoading: true,
       ...props,
       onSuccess: async (data, requestArgs) => {
         await props?.onSuccess?.(data, requestArgs);

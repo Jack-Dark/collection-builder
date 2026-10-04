@@ -28,7 +28,6 @@ export const useGetCollectionDetailsById = <
       props.requestArgs.collectionId,
       JSON.stringify(props.requestArgs),
     ],
-    showLoading: true,
     ...props,
     onSuccess: async (data, requestArgs) => {
       await props?.onSuccess?.(data, requestArgs);

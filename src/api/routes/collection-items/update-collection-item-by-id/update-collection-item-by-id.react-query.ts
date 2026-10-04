@@ -86,7 +86,6 @@ export const useUpdateCollectionItems = <
       }
     },
     mutationKey: [reactMutationKeys.updateCollectionItems],
-    showLoading: true,
     ...props,
     onSuccess: async (data, requestArgs) => {
       await props?.onSuccess?.(data, requestArgs);
