@@ -1,7 +1,6 @@
 import type { CreateOrUpdateCollectionItemFormTypeDef } from '#/pages/CollectionDetailsPage/CollectionDetailsPage.types';
 
 import { TextAreaField } from '#/components/Fields/TextAreaField';
-import { getFieldError } from '#/helpers/get-field-error';
 import { useEditingCollectionItemsRowIds } from '#/pages/CollectionsListPage/hooks/use-editing-collections-row-ids';
 
 export const CollectionDetailsNotesCell = (props: {
@@ -23,7 +22,7 @@ export const CollectionDetailsNotesCell = (props: {
             {(field) => {
               return (
                 <TextAreaField
-                  error={getFieldError(field)}
+                  error={field.errors}
                   name={field.name}
                   onValueChange={field.handleChange}
                   placeholder="Input notes..."

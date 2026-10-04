@@ -26,7 +26,7 @@ export const CollectionDetailsNameCell = ({
               return (
                 <InputField
                   autoFocus
-                  // error={getFieldError(field)}
+                  error={field.errors}
                   hideLabel
                   name={field.name}
                   onValueChange={field.handleChange}

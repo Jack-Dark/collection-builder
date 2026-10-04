@@ -2,7 +2,6 @@ import type { CreateOrUpdateCollectionItemFormTypeDef } from '#/pages/Collection
 
 import { ComboboxField } from '#/components/Fields/ComboboxField';
 import { Popover } from '#/components/Popover';
-import { getFieldError } from '#/helpers/get-field-error';
 import { useEditingCollectionItemsRowIds } from '#/pages/CollectionsListPage/hooks/use-editing-collections-row-ids';
 
 export const CollectionDetailsCustomFieldCell = (props: {
@@ -44,7 +43,7 @@ export const CollectionDetailsCustomFieldCell = (props: {
                     createItem={(query) => {
                       return query;
                     }}
-                    error={getFieldError(field)}
+                    error={field.errors}
                     hideLabel
                     inputValue={field.state.value}
                     isItemEqualToValue={(item, value) => {

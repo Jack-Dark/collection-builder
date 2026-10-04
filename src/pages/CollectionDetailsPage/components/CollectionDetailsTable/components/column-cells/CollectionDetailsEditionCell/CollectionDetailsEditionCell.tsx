@@ -2,7 +2,6 @@ import type { CreateOrUpdateCollectionItemFormTypeDef } from '#/pages/Collection
 
 import { SwitchField } from '#/components/Fields/SwitchField';
 import { TextAreaField } from '#/components/Fields/TextAreaField';
-import { getFieldError } from '#/helpers/get-field-error';
 import { useEditingCollectionItemsRowIds } from '#/pages/CollectionsListPage/hooks/use-editing-collections-row-ids';
 
 export const CollectionDetailsEditionCell = (props: {
@@ -35,7 +34,7 @@ export const CollectionDetailsEditionCell = (props: {
                 return (
                   <SwitchField
                     checked={field.state.value}
-                    error={getFieldError(field)}
+                    error={field.errors}
                     label="Special edition"
                     onCheckedChange={field.handleChange}
                   />
@@ -58,7 +57,7 @@ export const CollectionDetailsEditionCell = (props: {
                       return (
                         isSpecialEdition && (
                           <TextAreaField
-                            error={getFieldError(field)}
+                            error={field.errors}
                             name={field.name}
                             onValueChange={field.handleChange}
                             required

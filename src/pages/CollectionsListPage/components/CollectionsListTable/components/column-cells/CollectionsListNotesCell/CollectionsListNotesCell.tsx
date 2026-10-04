@@ -25,10 +25,10 @@ export const CollectionsListNotesCell = (props: {
       {() => {
         return (
           <form.Field name={`records[${index}].notes`}>
-            {({ handleChange, name }) => {
+            {({ errors, handleChange, name }) => {
               return (
                 <TextAreaField
-                  // error={getFieldError(field)}
+                  error={errors}
                   name={name}
                   onValueChange={(value) => {
                     handleChange(value);

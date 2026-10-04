@@ -30,11 +30,11 @@ export const CollectionsListNameCell = ({
       {() => {
         return (
           <form.Field name={`records[${index}].name`}>
-            {({ handleChange, name }) => {
+            {({ errors, handleChange, name }) => {
               return (
                 <InputField
                   autoFocus
-                  // error={getFieldError(field)}
+                  error={errors}
                   hideLabel
                   name={name}
                   onValueChange={handleChange}
