@@ -10,7 +10,8 @@ type ButtonProps = MuiButtonProps & {
   Icon?: JSXElementConstructor<{}>;
   iconPosition?: (typeof iconPositions)[keyof typeof iconPositions];
   processing?: boolean;
-  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  /** Applies standardized padding, font-size, and line-height styling. `'custom'` does not apply any. */
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'custom';
   text?: string;
   /** Set to `'submit'` for form submission. */
   type?: 'button' | 'submit';
