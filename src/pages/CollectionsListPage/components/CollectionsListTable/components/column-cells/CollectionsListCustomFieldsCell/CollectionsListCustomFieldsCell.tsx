@@ -4,7 +4,7 @@ import CheckIcon from '@mui/icons-material/Check';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { useSelector } from '@tanstack/react-form';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 import type { CustomFieldTypeDef } from '#/api/db-tables-schema.types';
@@ -164,7 +164,6 @@ export const CollectionsListCustomFieldsCell = (props: {
                         isItemEqualToValue={(item, value) => {
                           return item?.id === value?.id;
                         }}
-                        // items={uniqueDisplayItems}
                         items={customFieldsInDb}
                         labelProperty="name"
                         multiple
@@ -233,7 +232,7 @@ export const CollectionsListCustomFieldsCell = (props: {
                               )}
 
                               <Button
-                                className="text-gray-600 hover:text-red-700 cursor-pointer ml-auto"
+                                className="text-gray-600 hover:text-red-700 cursor-pointer ml-auto px-2 py-1"
                                 onClick={(e) => {
                                   e.preventDefault();
                                   e.stopPropagation();
@@ -242,7 +241,7 @@ export const CollectionsListCustomFieldsCell = (props: {
 
                                   showConfirmDeleteCustomField();
                                 }}
-                                size="xs"
+                                size="custom"
                                 variant="ghost"
                               >
                                 <DeleteIcon fontSize="inherit" />
@@ -385,6 +384,8 @@ export const AddOrEditCustomFieldDialog = (props: {
 }) => {
   const { form, onClose, removeValue, replaceValue, rowIndex } = props;
 
+  const [fieldTypeError, setFieldTypeError] = useState<string | undefined>();
+
   const editCustomFieldAtom = useEditCustomFieldAtom();
 
   const customFieldSnapshot = editCustomFieldAtom.data.value;
@@ -395,8 +396,10 @@ export const AddOrEditCustomFieldDialog = (props: {
   });
 
   const isValid = useMemo(() => {
-    return customFieldFormSchema.validate(customFieldAtIndex);
-  }, [customFieldAtIndex]);
+    return (
+      !fieldTypeError && customFieldFormSchema.validate(customFieldAtIndex)
+    );
+  }, [customFieldAtIndex?.name, customFieldAtIndex?.type, fieldTypeError]);
 
   const { onInterceptProcessingRequest, processing } = useSpinner();
   const { onCreateCustomFields } = useCreateCustomFields();
@@ -466,26 +469,40 @@ export const AddOrEditCustomFieldDialog = (props: {
   });
 
   const customFieldDataTypeItems = useMemo(() => {
-    return fieldDataTypeItems.map((fieldDataTypeItem) => {
-      const isPlaceholderItem = !fieldDataTypeItem.id;
-      const matchesCurrentType =
-        customFieldAtIndex?.type === fieldDataTypeItem.id;
+    const customFieldsInDbWithSameName = customFieldsInDb.filter(
+      ({ id, name }) => {
+        return (
+          name === customFieldAtIndex?.name && id !== customFieldAtIndex?.id
+        );
+      },
+    );
 
-      if (isPlaceholderItem || matchesCurrentType) {
-        return { ...fieldDataTypeItem, disabled: true };
-      }
+    let fieldTypeError: string | undefined;
 
-      const disabled = customFieldsInDb.some((existingCustomField) => {
-        const matchesCurrentName =
-          existingCustomField.name === customFieldAtIndex?.name;
-        const matchesTypeInList =
-          existingCustomField.type === fieldDataTypeItem.id;
+    const typeItemsWithDisabledStates = fieldDataTypeItems.map(
+      (fieldDataTypeItem) => {
+        const isPlaceholderItem = !fieldDataTypeItem.id;
 
-        return matchesCurrentName && matchesTypeInList;
-      });
+        if (isPlaceholderItem) {
+          return { ...fieldDataTypeItem, disabled: true };
+        }
 
-      return { ...fieldDataTypeItem, disabled };
-    });
+        // TODO - CONSIDER ADDING VALIDATION TO DATA TYPE FIELD
+        const disabled = customFieldsInDbWithSameName.some(({ type }) => {
+          return type === fieldDataTypeItem.id;
+        });
+
+        if (disabled) {
+          fieldTypeError = 'Matches existing custom field';
+        }
+
+        return { ...fieldDataTypeItem, disabled };
+      },
+    );
+
+    setFieldTypeError(fieldTypeError);
+
+    return typeItemsWithDisabledStates;
   }, [customFieldAtIndex?.name, customFieldAtIndex?.type]);
 
   return (
@@ -520,7 +537,7 @@ export const AddOrEditCustomFieldDialog = (props: {
             return (
               <InputField
                 autoFocus
-                // error={getFieldError(nameField)}
+                error={nameField.errors}
                 label="Field Name"
                 name={nameField.name}
                 onValueChange={(value) => {
@@ -543,7 +560,7 @@ export const AddOrEditCustomFieldDialog = (props: {
 
             return (
               <SelectField
-                // error={getFieldError(typeField)}
+                error={fieldTypeError || typeField.errors}
                 items={customFieldDataTypeItems}
                 label="Data Type"
                 name={typeField.name}
