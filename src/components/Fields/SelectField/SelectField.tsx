@@ -20,6 +20,9 @@ export const SelectField = <TItem extends DefaultSelectItemDef>(
     hideLabel,
     idProperty = 'id',
     invalid,
+    isItemEqualToValue = (item, value) => {
+      return item[idProperty] === value[idProperty];
+    },
     items,
     itemToStringLabel = (item) => {
       if (item) {
@@ -78,6 +81,7 @@ export const SelectField = <TItem extends DefaultSelectItemDef>(
     >
       <Select.Root
         {...rest}
+        isItemEqualToValue={isItemEqualToValue}
         itemToStringLabel={itemToStringLabel}
         itemToStringValue={itemToStringValue}
         onValueChange={(item) => {
