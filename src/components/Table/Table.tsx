@@ -28,7 +28,7 @@ import { FilterButton } from './components/FilterButton';
 import { Search } from './components/Search';
 
 export const tableCellClasses =
-  'text-left px-2 py-1 border-b z-0 first:sticky first:left-0 first:z-1 first:group-data-overflow-x-start:border-r last:sticky last:right-0 last:z-1 last:group-data-overflow-x-end:border-l';
+  'text-left px-2 py-1 border-b z-0 first:sticky first:left-0 first:z-1 first:group-data-overflow-x-start:border-r last:sticky last:right-0 last:z-1 last:group-data-overflow-x-end:border-l h-9';
 
 export type SortItemDef<TField = string> =
   | {
@@ -276,7 +276,7 @@ export const Table = <TData,>({
                               key={cell.id}
                               style={{ width: `${column.getSize()}px` }}
                             >
-                              <div className="flex items-center gap-2">
+                              <div className="relative h-full flex items-center gap-2">
                                 {index === 0 && enableRowSelection && (
                                   <CheckboxField
                                     checked={row.getIsSelected()}

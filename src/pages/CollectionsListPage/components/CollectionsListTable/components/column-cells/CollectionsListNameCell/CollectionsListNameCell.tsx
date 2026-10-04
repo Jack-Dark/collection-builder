@@ -1,3 +1,4 @@
+import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import { useSelector } from '@tanstack/react-form';
 import { Link } from '@tanstack/react-router';
 
@@ -49,11 +50,15 @@ export const CollectionsListNameCell = ({
     </form.ArrayField>
   ) : (
     <Link
-      className="hover:text-primary-700"
+      className="flex items-center size-full hover:text-primary-800 hover:*:data-arrow-icon:opacity-100"
       params={{ id: rowId }}
       to="/collections/$id"
     >
       <p>{value}</p>
+      <KeyboardArrowRightIcon
+        className="opacity-0 text-inherit"
+        data-arrow-icon=""
+      />
     </Link>
   );
 };
