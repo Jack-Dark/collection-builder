@@ -70,7 +70,7 @@ export const getCollectionsListTableColumns = (
         );
       },
       header: 'Notes',
-      minSize: 210,
+      minSize: 250,
     }),
     columnHelper.accessor('id', {
       cell: ({ row }) => {
