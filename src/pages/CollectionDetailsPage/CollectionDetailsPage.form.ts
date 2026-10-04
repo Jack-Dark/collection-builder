@@ -5,7 +5,7 @@ import type { CreateCollectionItemsFormDataSchemaDef } from '#/api/routes/collec
 
 import type { CreateOrUpdateCollectionItemFormDataDef } from './CollectionDetailsPage.types';
 
-import { createOrUpdateCollectionItemFormSchema } from './CollectionDetailsPage.schema';
+import { createOrUpdateCollectionItemsFormSchema } from './CollectionDetailsPage.schema';
 
 export const createNewCollectionItem = ({
   collectionId,
@@ -29,17 +29,17 @@ export const createNewCollectionItem = ({
   };
 };
 
-export const collectionDetailsFormDefaultValues: CreateOrUpdateCollectionItemFormDataDef =
+export const createOrUpdateCollectionItemsFormDefaultValues: CreateOrUpdateCollectionItemFormDataDef =
   {
     collectionItems: [],
   };
 
-export const collectionDetailsFormOptions = formOptions({
-  defaultValues: collectionDetailsFormDefaultValues,
+export const createOrUpdateCollectionItemsFormOptions = formOptions({
+  defaultValues: createOrUpdateCollectionItemsFormDefaultValues,
   formId: 'collection-items',
   validators: [
     {
-      run: createOrUpdateCollectionItemFormSchema,
+      run: createOrUpdateCollectionItemsFormSchema,
       triggers: ['change'],
     },
   ],

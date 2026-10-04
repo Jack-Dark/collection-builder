@@ -1,4 +1,4 @@
-type ZoomableImagePropsDef =
+export type ZoomableImagePropsDef =
   | {
       height?: never;
       publicId?: never;

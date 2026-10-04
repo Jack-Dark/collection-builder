@@ -5,7 +5,7 @@ import { Popover } from '#/components/Popover';
 import { useEditingCollectionItemsRowIds } from '#/pages/CollectionsListPage/hooks/use-editing-collections-row-ids';
 
 export const CollectionDetailsCustomFieldCell = (props: {
-  addToCustomFieldValues: (_value: string) => {};
+  addToCustomFieldValues: (value: string) => void;
   fieldName: string;
   fieldValues: string[];
   form: CreateOrUpdateCollectionItemFormTypeDef;

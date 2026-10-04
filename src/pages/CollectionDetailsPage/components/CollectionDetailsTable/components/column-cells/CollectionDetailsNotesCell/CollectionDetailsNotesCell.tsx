@@ -19,14 +19,16 @@ export const CollectionDetailsNotesCell = (props: {
       {() => {
         return (
           <form.Field name={`collectionItems[${index}].notes`}>
-            {(field) => {
+            {({ errors, handleChange, name, value }) => {
               return (
                 <TextAreaField
-                  error={field.errors}
-                  name={field.name}
-                  onValueChange={field.handleChange}
+                  error={errors}
+                  name={name}
+                  onValueChange={(value) => {
+                    handleChange(value);
+                  }}
                   placeholder="Input notes..."
-                  value={field.state.value}
+                  value={value}
                 />
               );
             }}

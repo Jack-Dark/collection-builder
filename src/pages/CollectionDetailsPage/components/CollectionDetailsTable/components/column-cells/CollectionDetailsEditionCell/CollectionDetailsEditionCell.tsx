@@ -19,31 +19,27 @@ export const CollectionDetailsEditionCell = (props: {
       {() => {
         return (
           <div className="grid gap-2">
-            <form.Field
-              listeners={{
-                onChange: ({ value: isSpecialEdition }) => {
-                  form.setFieldValue(
-                    `collectionItems[${index}].editionDetails`,
-                    isSpecialEdition ? "Collector's Edition" : '',
-                  );
-                },
-              }}
-              name={`collectionItems[${index}].isSpecialEdition`}
-            >
-              {(field) => {
+            <form.Field name={`collectionItems[${index}].isSpecialEdition`}>
+              {({ errors, handleChange, value }) => {
                 return (
                   <SwitchField
-                    checked={field.state.value}
-                    error={field.errors}
+                    checked={value}
+                    error={errors}
                     label="Special edition"
-                    onCheckedChange={field.handleChange}
+                    onCheckedChange={(checked) => {
+                      handleChange(checked);
+                      form.setFieldValue(
+                        `collectionItems[${index}].editionDetails`,
+                        checked ? "Collector's Edition" : '',
+                      );
+                    }}
                   />
                 );
               }}
             </form.Field>
 
             <form.Field name={`collectionItems[${index}].editionDetails`}>
-              {(field) => {
+              {({ errors, handleChange, name, value }) => {
                 return (
                   <form.Subscribe
                     selector={(state) => {
@@ -57,11 +53,13 @@ export const CollectionDetailsEditionCell = (props: {
                       return (
                         isSpecialEdition && (
                           <TextAreaField
-                            error={field.errors}
-                            name={field.name}
-                            onValueChange={field.handleChange}
+                            error={errors}
+                            name={name}
+                            onValueChange={(value) => {
+                              return handleChange(value);
+                            }}
                             required
-                            value={field.state.value}
+                            value={value}
                           />
                         )
                       );

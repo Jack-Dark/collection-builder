@@ -17,7 +17,7 @@ export const CollectionDetailsCreatedAtCell = ({
   form: CreateOrUpdateCollectionItemFormTypeDef;
   index: number;
   rowId: string;
-  value: Date;
+  value: Date | undefined;
 }) => {
   const { getHasNewRecord, getIsEditingRowId } =
     useEditingCollectionItemsRowIds();
@@ -34,14 +34,14 @@ export const CollectionDetailsCreatedAtCell = ({
         return (
           <div className="grid gap-2 justify-start">
             <form.Field name={`collectionItems[${index}]`}>
-              {(field) => {
+              {({ value }) => {
                 return (
                   <>
                     <Button
                       Icon={ClearIcon}
                       onClick={() => {
                         collectionItemsField.removeValue(index);
-                        removeFromIsEditingRowIds(String(field.state.value.id));
+                        removeFromIsEditingRowIds(String(value.id));
                       }}
                       text="Remove"
                       variant="mono"

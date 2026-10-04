@@ -39,9 +39,11 @@ export const CollectionDetailsActionsCell = (
     <TableCellActionsMenu
       deleteIsDisabled={isEditing || isDeletePending}
       deleteOnClick={async () => {
-        await onDeleteCollectionItemsByIds({
-          collectionItemIds: [collectionItemId],
-        });
+        if (typeof collectionItemId === 'number') {
+          await onDeleteCollectionItemsByIds({
+            collectionItemIds: [collectionItemId],
+          });
+        }
       }}
       editIsDisabled={isCreatingRecord || isDeletePending}
       editOnClick={({ id }) => {

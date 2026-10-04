@@ -4,6 +4,7 @@ import { createColumnHelper } from '@tanstack/react-table';
 
 import type { CollectionItemRecordDef } from '#/api/routes/collection-items/collection-item.types';
 
+import type { CreateOrUpdateCollectionItemFormRowDataDef } from '../../CollectionDetailsPage.types';
 import type { GetCollectionItemsTableColumnsPropsDef } from './CollectionDetailsTable.types';
 
 import { CollectionDetailsActionsCell } from './components/column-cells/CollectionDetailsActionsCell';
@@ -16,7 +17,8 @@ import { CollectionDetailsNameCell } from './components/column-cells/CollectionD
 import { CollectionDetailsNotesCell } from './components/column-cells/CollectionDetailsNotesCell';
 import { useCollectionDetailsCustomFieldsStore } from './hooks/use-collection-details-custom-fields-store';
 
-const columnHelper = createColumnHelper<CollectionItemRecordDef>();
+const columnHelper =
+  createColumnHelper<CreateOrUpdateCollectionItemFormRowDataDef>();
 
 export const getCollectionItemsTableColumns = (
   props: GetCollectionItemsTableColumnsPropsDef,

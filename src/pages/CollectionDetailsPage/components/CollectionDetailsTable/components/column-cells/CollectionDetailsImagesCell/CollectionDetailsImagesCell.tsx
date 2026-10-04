@@ -1,7 +1,8 @@
 import type { CellContext } from '@tanstack/react-table';
 import type { PropsWithChildren } from 'react';
 
-import type { CollectionItemRecordDef } from '#/api/routes/collection-items/collection-item.types';
+import type { ZoomableImagePropsDef } from '#/components/ZoomableThumbnail/ZoomableThumbnail.types';
+import type { CreateOrUpdateCollectionItemFormRowDataDef } from '#/pages/CollectionDetailsPage/CollectionDetailsPage.types';
 
 import { thumbnailSize } from '#/api/routes/cloudinary/cloudinary-url';
 import { ZoomableThumbnail } from '#/components/ZoomableThumbnail';
@@ -9,7 +10,12 @@ import { useEditingCollectionItemsRowIds } from '#/pages/CollectionsListPage/hoo
 
 /** `children` should be the editing field view. */
 export const CollectionDetailsImagesCell = (
-  props: PropsWithChildren<CellContext<CollectionItemRecordDef, string[]>>,
+  props: PropsWithChildren<
+    CellContext<
+      CreateOrUpdateCollectionItemFormRowDataDef,
+      CreateOrUpdateCollectionItemFormRowDataDef['images']
+    >
+  >,
 ) => {
   const { children, getValue, row } = props;
 
@@ -24,22 +30,28 @@ export const CollectionDetailsImagesCell = (
         children
       ) : images.length ? (
         <>
-          {images.map((publicId, index) => {
+          {images.map((data, index) => {
+            const isPublicId = typeof data === 'string';
+
+            const key: string = isPublicId ? data : data.previewUrl;
+
+            const image: ZoomableImagePropsDef = isPublicId
+              ? { publicId: data }
+              : { src: data.previewUrl };
+
+            const thumbnail: ZoomableImagePropsDef = isPublicId
+              ? { height: thumbnailSize, publicId: data, width: thumbnailSize }
+              : { src: data.previewUrl };
+
             return (
               <div
                 className="p-1 size-14 bg-white border border-gray-400 text-gray-500"
-                key={publicId}
+                key={key}
               >
                 <ZoomableThumbnail
                   alt={`${row.original.name} image ${index + 1}`}
-                  image={{
-                    publicId,
-                  }}
-                  thumbnail={{
-                    height: thumbnailSize,
-                    publicId,
-                    width: thumbnailSize,
-                  }}
+                  image={image}
+                  thumbnail={thumbnail}
                 />
               </div>
             );

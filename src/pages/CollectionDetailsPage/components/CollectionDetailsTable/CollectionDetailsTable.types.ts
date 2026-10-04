@@ -1,8 +1,6 @@
-import type { AppFieldExtendedReactFormApi } from '@tanstack/react-form';
-
 import type { CollectionRecordDef } from '#/api/routes/collections/collection.types';
 
-import type { CreateOrUpdateCollectionItemFormDataDef } from '../../CollectionDetailsPage.types';
+import type { CreateOrUpdateCollectionItemFormTypeDef } from '../../CollectionDetailsPage.types';
 
 export type GetCollectionItemsTableColumnsPropsDef = Pick<
   CollectionRecordDef,
@@ -13,22 +11,7 @@ export type GetCollectionItemsTableColumnsPropsDef = Pick<
   | 'customField3Enabled'
   | 'customField3Label'
 > & {
-  form: AppFieldExtendedReactFormApi<
-    CreateOrUpdateCollectionItemFormDataDef,
-    any,
-    any,
-    any,
-    any,
-    any,
-    any,
-    any,
-    any,
-    any,
-    any,
-    any,
-    any,
-    any
-  >;
+  form: CreateOrUpdateCollectionItemFormTypeDef;
   onCancel: () => void;
   onEditClick: (...rowIdsToAdd: string[]) => void;
 };

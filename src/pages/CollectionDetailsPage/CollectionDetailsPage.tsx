@@ -18,8 +18,8 @@ import { Route as CollectionRoute } from '#/routes/_protected/collections/$id';
 
 import { useEditingCollectionItemsRowIds } from '../CollectionsListPage/hooks/use-editing-collections-row-ids';
 import {
-  collectionDetailsFormDefaultValues,
-  collectionDetailsFormOptions,
+  createOrUpdateCollectionItemsFormDefaultValues,
+  createOrUpdateCollectionItemsFormOptions,
 } from './CollectionDetailsPage.form';
 import { CollectionDetailsTable } from './components/CollectionDetailsTable';
 import { useCollectionDetailsCustomFieldsStore } from './components/CollectionDetailsTable/hooks/use-collection-details-custom-fields-store';
@@ -55,14 +55,14 @@ export const CollectionDetailsPage: RouteComponent = () => {
   const { resetEditingRowIds } = useEditingCollectionItemsRowIds();
 
   const form = useForm({
-    ...collectionDetailsFormOptions,
+    ...createOrUpdateCollectionItemsFormOptions,
     defaultValues: data?.items
       ? {
           collectionItems: data.items.map((item) => {
             return { ...item, isEditing: false };
           }),
         }
-      : collectionDetailsFormDefaultValues,
+      : createOrUpdateCollectionItemsFormDefaultValues,
     onSubmit: async ({ value: { collectionItems } }) => {
       onInterceptProcessingRequest(async () => {
         const editedRecords = collectionItems.filter(({ isEditing }) => {
