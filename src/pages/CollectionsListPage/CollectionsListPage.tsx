@@ -66,9 +66,7 @@ export const CollectionsListPage: RouteComponent = () => {
 
   return (
     <PageWrapper title="Collections">
-      <form>
-        <CollectionsListTable form={form} />
-      </form>
+      <CollectionsListTable form={form} />
     </PageWrapper>
   );
 };
