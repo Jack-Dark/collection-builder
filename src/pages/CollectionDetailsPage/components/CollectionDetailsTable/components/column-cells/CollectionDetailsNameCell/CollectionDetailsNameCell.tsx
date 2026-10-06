@@ -14,8 +14,11 @@ export const CollectionDetailsNameCell = ({
   rowId: string;
   value: string;
 }) => {
-  const { getIsEditingRowId } = useEditingCollectionItemsRowIds();
+  const { editingRowIds, getIsEditingRowId } =
+    useEditingCollectionItemsRowIds();
   const isEditingRow = getIsEditingRowId(rowId);
+
+  const isFirstEditRow = editingRowIds[0] === rowId;
 
   return isEditingRow ? (
     <form.ArrayField name="collectionItems">
@@ -25,14 +28,14 @@ export const CollectionDetailsNameCell = ({
             {(field) => {
               return (
                 <InputField
-                  autoFocus
+                  autoFocus={isFirstEditRow}
                   error={field.errors}
                   hideLabel
                   name={field.name}
                   onValueChange={field.handleChange}
                   placeholder="Input name..."
                   required
-                  value={field.state.value}
+                  value={field.value}
                 />
               );
             }}
