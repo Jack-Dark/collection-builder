@@ -348,7 +348,6 @@ export const DeleteCustomFieldDialog = (props: {
         );
       }}
       Header="Delete Custom Field"
-      maxWidthClassName="md:max-w-100"
       onClose={onClose}
     >
       <div className="grid gap-4">
