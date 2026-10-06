@@ -15,9 +15,9 @@ export const createCustomFieldValuesDbQuery = async ({
   userId,
 }: CreateCustomFieldValuesDbQueryArgsDef) => {
   return db.transaction(async (tx) => {
-    const formattedCustomFieldValues = records.map(({ value, ...record }) => {
+    const formattedCustomFieldValues = records.map(({ value, ...rest }) => {
       return {
-        ...record,
+        ...rest,
         data: { value },
         userId,
       } satisfies InsertCustomFieldValueRecordDef;
