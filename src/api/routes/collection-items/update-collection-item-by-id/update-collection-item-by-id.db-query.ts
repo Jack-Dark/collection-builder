@@ -1,4 +1,4 @@
-import { and, eq, inArray, isNull } from 'drizzle-orm';
+import { and, eq, inArray, isNull, sql } from 'drizzle-orm';
 
 import type {
   CustomFieldValueRecordDef,
@@ -39,6 +39,7 @@ export const updateCollectionItemsDbQuery = async (
           inArray(collectionItemsTable.id, updatedCollectionItemIds),
           eq(collectionItemsTable.userId, userId),
           isNull(collectionItemsTable.deletedAt),
+          sql`json_array_length(${collectionItemsTable.images}) > 0`,
         ),
       );
 
