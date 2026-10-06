@@ -1,7 +1,12 @@
+import type { HTMLAttributes, JSXElementConstructor } from 'react';
+
 import { Combobox } from '@base-ui/react';
+import { DragDropProvider } from '@dnd-kit/react';
+import { useSortable, isSortable } from '@dnd-kit/react/sortable';
 import AddIcon from '@mui/icons-material/Add';
 import CheckIcon from '@mui/icons-material/Check';
 import ClearIcon from '@mui/icons-material/Clear';
+import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import _ from 'lodash';
 import { useLayoutEffect, useMemo, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
@@ -42,6 +47,7 @@ export const ComboboxField = <
     createNewItem,
     description,
     disabled,
+    enableChipSort,
     error,
     filter = (item, query) => {
       const normalizedQuery = getNormalizedValue(query, {
@@ -95,6 +101,7 @@ export const ComboboxField = <
     labelProperty = 'label',
     multiple,
     name,
+    onChipSort,
     onRemoveChip,
     onValueChange,
     placeholder,
@@ -267,34 +274,48 @@ export const ComboboxField = <
       >
         <div className="grid gap-2">
           {Array.isArray(value) && (
-            <Combobox.Chips
-              aria-label={value.length > 0 ? 'Selected labels' : undefined}
-              className="flex items-center gap-2 flex-wrap"
-            >
-              {value.map((item) => {
-                const label = itemToStringLabel(item);
+            <DragDropProvider
+              onDragEnd={(event) => {
+                if (event.canceled) return;
 
-                return (
-                  <Combobox.Chip
-                    aria-description="Press Backspace or Delete to remove"
-                    aria-label={label}
-                    className="flex items-center gap-1 border rounded-xl px-2 py-.5"
-                    key={item[idProperty]}
-                  >
-                    <RenderChip item={item} />
-                    <Combobox.ChipRemove
-                      aria-label={`Remove ${label}`}
-                      className="text-gray-600 hover:text-red-700 cursor-pointer leading-0"
-                      onClick={() => {
-                        onRemoveChip?.(item);
-                      }}
-                    >
-                      <ClearIcon fontSize="inherit" />
-                    </Combobox.ChipRemove>
-                  </Combobox.Chip>
-                );
-              })}
-            </Combobox.Chips>
+                const { source } = event.operation;
+
+                if (isSortable(source)) {
+                  const { index, initialIndex } = source;
+
+                  if (initialIndex !== index) {
+                    const newItems = [...value];
+                    const [removed] = newItems.splice(initialIndex, 1);
+                    newItems.splice(index, 0, removed);
+
+                    onChipSort?.(newItems);
+                  }
+                }
+              }}
+            >
+              <Combobox.Chips
+                aria-label={value.length > 0 ? 'Selected labels' : undefined}
+                className="flex items-center gap-2 flex-wrap"
+              >
+                {value.map((item, index) => {
+                  const label = itemToStringLabel(item);
+                  const key = itemToStringValue(item);
+
+                  return (
+                    <SortableChip
+                      enableChipSort={enableChipSort}
+                      id={key}
+                      index={index}
+                      item={item}
+                      key={key}
+                      label={label}
+                      onRemoveChip={onRemoveChip}
+                      RenderChip={RenderChip}
+                    />
+                  );
+                })}
+              </Combobox.Chips>
+            </DragDropProvider>
           )}
 
           <Combobox.Value>
@@ -368,5 +389,48 @@ export const ComboboxField = <
         </Combobox.Portal>
       </Combobox.Root>
     </FieldWrapper>
+  );
+};
+
+const SortableChip = <TValue extends TValueRecordDef>(props: {
+  enableChipSort: boolean | undefined;
+  id: string;
+  index: number;
+  item: TValue;
+  label: string;
+  onRemoveChip: ((item: TValue) => void) | undefined;
+  RenderChip: JSXElementConstructor<
+    HTMLAttributes<HTMLElement> & { item: TValue }
+  >;
+}) => {
+  const { enableChipSort, id, index, item, label, onRemoveChip, RenderChip } =
+    props;
+
+  const { ref } = useSortable({ disabled: !enableChipSort, id, index });
+
+  return (
+    <Combobox.Chip
+      aria-description="Press Backspace or Delete to remove"
+      aria-label={label}
+      className="flex items-center gap-1 border rounded-xl px-2 py-.5"
+      ref={ref}
+    >
+      {enableChipSort && (
+        <DragIndicatorIcon
+          className="text-gray-500 cursor-grab active:cursor-grabbing"
+          fontSize="inherit"
+        />
+      )}
+      <RenderChip item={item} />
+      <Combobox.ChipRemove
+        aria-label={`Remove ${label}`}
+        className="text-gray-600 hover:text-red-700 cursor-pointer leading-0"
+        onClick={() => {
+          onRemoveChip?.(item);
+        }}
+      >
+        <ClearIcon fontSize="inherit" />
+      </Combobox.ChipRemove>
+    </Combobox.Chip>
   );
 };

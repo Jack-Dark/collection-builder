@@ -4,6 +4,7 @@ import CheckIcon from '@mui/icons-material/Check';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { useSelector } from '@tanstack/react-form';
+import _ from 'lodash';
 import { useMemo, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -146,7 +147,7 @@ export const CollectionsListCustomFieldsCell = (props: {
           {() => {
             return (
               <form.ArrayField name={`records[${rowIndex}].customFields`}>
-                {({ name, removeValue }) => {
+                {({ handleChange, name, removeValue }) => {
                   return (
                     <div className="w-full max-w-80">
                       <ComboboxField
@@ -164,6 +165,7 @@ export const CollectionsListCustomFieldsCell = (props: {
 
                           return newRecord;
                         }}
+                        enableChipSort
                         idProperty="id"
                         isItemEqualToValue={(item, value) => {
                           return item?.id === value?.id;
@@ -172,6 +174,16 @@ export const CollectionsListCustomFieldsCell = (props: {
                         labelProperty="name"
                         multiple
                         name={name}
+                        onChipSort={(items) => {
+                          const itemsWithOrder = items.map((item, index) => {
+                            return { ...item, details: { order: index } };
+                          });
+                          console.log(
+                            '🚀 ~ onChipSort ~ items:',
+                            itemsWithOrder,
+                          );
+                          handleChange(itemsWithOrder);
+                        }}
                         onRemoveChip={(chip) => {
                           const matchingIndex = customFieldsForRow.findIndex(
                             (field) => {
@@ -266,7 +278,9 @@ export const CollectionsListCustomFieldsCell = (props: {
           }}
         </form.ArrayField>
       ) : customFields.length ? (
-        customFields.map((item) => {
+        _.sortBy(customFields, (item) => {
+          return item.details.order;
+        }).map((item) => {
           const { id } = item;
 
           return (

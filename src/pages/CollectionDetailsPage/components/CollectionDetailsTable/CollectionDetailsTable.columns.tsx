@@ -1,5 +1,5 @@
 import { createColumnHelper } from '@tanstack/react-table';
-import { sortBy } from 'lodash';
+import _ from 'lodash';
 
 import type { TTableFeatures } from '#/components/Table';
 
@@ -54,7 +54,7 @@ export const getCollectionItemsTableColumns = (
       header: 'Images',
       minSize: 200,
     }),
-    ...sortBy(customFields, (item) => {
+    ..._.sortBy(customFields, (item) => {
       return item.details.order;
     }).map((customField) => {
       return columnHelper.accessor('customFieldValues', {

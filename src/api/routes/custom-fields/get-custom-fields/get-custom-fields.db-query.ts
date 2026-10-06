@@ -30,6 +30,13 @@ export const getCustomFieldsDbQuery = async (
       },
       userId,
     },
+    with: {
+      details: {
+        columns: {
+          order: true,
+        },
+      },
+    },
   });
 
   return customFields;

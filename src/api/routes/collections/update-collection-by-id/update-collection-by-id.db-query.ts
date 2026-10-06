@@ -40,10 +40,11 @@ export const updateCollectionByIdDbQuery = async ({
 
       // ? Create brand new links between this collection and custom fields
       const newCollectionToCustomFieldRecords: InsertLinkCollectionsToCustomFieldsRecordDef[] =
-        customFields.map(({ id }) => {
+        customFields.map(({ details, id }) => {
           return {
             collectionId: record.id,
             customFieldId: id,
+            order: details.order,
             userId: record.userId,
           };
         });

@@ -30,10 +30,12 @@ export type ComboboxFieldPropsDef<
     caseSensitiveCreation?: boolean;
     caseSensitiveFilter?: boolean;
     createNewItem?: (trimmedQuery: string) => TValue;
+    enableChipSort?: boolean;
     hideLabel?: boolean;
     idProperty?: keyof TValue;
     inputValue?: string;
     labelProperty?: keyof TValue;
+    onChipSort?: (items: TValue[]) => void;
     onRemoveChip?: (item: TValue) => void;
     RenderChip?: JSXElementConstructor<
       HTMLAttributes<HTMLElement> & { item: TValue }

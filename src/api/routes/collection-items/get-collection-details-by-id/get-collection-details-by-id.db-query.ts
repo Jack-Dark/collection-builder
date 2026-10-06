@@ -46,7 +46,6 @@ export const getCollectionDetailsByIdDbQuery = async (
         name: true,
       },
       where: {
-        deletedAt: undefined,
         id: collectionId,
         userId,
       },

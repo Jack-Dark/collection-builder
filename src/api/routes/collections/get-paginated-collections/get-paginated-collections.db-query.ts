@@ -49,7 +49,6 @@ export const getPaginatedCollectionsDbQuery = async (props: {
         [sortingField]: sort?.direction || 'asc',
       },
       where: {
-        deletedAt: undefined,
         name: {
           ilike: `%${search.toLowerCase()}%`,
         },
@@ -62,8 +61,12 @@ export const getPaginatedCollectionsDbQuery = async (props: {
             name: true,
             type: true,
           },
-          orderBy: {
-            name: 'asc',
+          with: {
+            details: {
+              columns: {
+                order: true,
+              },
+            },
           },
         },
       },

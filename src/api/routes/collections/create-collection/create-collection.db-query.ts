@@ -6,49 +6,44 @@ import {
   collectionsToCustomFieldsTable,
 } from '#/api/db-tables-schema';
 
-import type { CollectionRecordDef } from '../collection.types';
 import type { CreateCollectionDbQueryArgsDef } from './create-collection.types';
 
 export const createCollectionDbQuery = async (
   records: CreateCollectionDbQueryArgsDef,
-): Promise<CollectionRecordDef[]> => {
+) => {
   if (!records || records.length === 0) {
     return [];
   }
 
-  const response = await db.transaction(async (tx) => {
-    // ? Create new category records
-    const newRecords = await tx
-      .insert(collectionsTable)
-      .values(records)
-      .onConflictDoNothing()
-      .returning();
+  await db.transaction(async (tx) => {
+    for (const { customFields, ...record } of records) {
+      // ? Create new collection records
+      const [newCollectionRecord] = await tx
+        .insert(collectionsTable)
+        .values(record)
+        .onConflictDoNothing()
+        .returning();
 
-    // ? Create brand new links between this collection and custom fields
-    const newCollectionToCustomFieldRecords: InsertLinkCollectionsToCustomFieldsRecordDef[] =
-      [];
-    newRecords.forEach(({ id: collectionId }, index) => {
-      const customFieldIds = records[index].customFields.map(({ id }) => {
-        return id;
-      });
+      // ? Create brand new links between this collection and custom fields
+      const newCollectionToCustomFieldRecords = customFields.reduce<
+        InsertLinkCollectionsToCustomFieldsRecordDef[]
+      >((acc, customField) => {
+        return [
+          ...acc,
+          {
+            collectionId: newCollectionRecord.id,
+            customFieldId: customField.id,
+            order: customField.details.order,
+            userId: records[0].userId,
+          },
+        ];
+      }, []);
 
-      customFieldIds.forEach((customFieldId) => {
-        newCollectionToCustomFieldRecords.push({
-          collectionId,
-          customFieldId,
-          userId: records[0].userId,
-        });
-      });
-    });
-
-    if (newCollectionToCustomFieldRecords.length) {
-      await tx
-        .insert(collectionsToCustomFieldsTable)
-        .values(newCollectionToCustomFieldRecords);
+      if (newCollectionToCustomFieldRecords.length) {
+        await tx
+          .insert(collectionsToCustomFieldsTable)
+          .values(newCollectionToCustomFieldRecords);
+      }
     }
-
-    return newRecords;
   });
-
-  return response;
 };
