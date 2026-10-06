@@ -4,6 +4,9 @@ import type { CreateOrUpdateCollectionItemFormTypeDef } from '../../CollectionDe
 
 export type GetCollectionItemsTableColumnsPropsDef = {
   customFields: {
+    details: {
+      order: number;
+    };
     id: number;
     name: string;
     type: CustomFieldTypeDef;

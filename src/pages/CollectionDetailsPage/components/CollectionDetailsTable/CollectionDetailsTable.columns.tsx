@@ -54,7 +54,9 @@ export const getCollectionItemsTableColumns = (
       header: 'Images',
       minSize: 200,
     }),
-    ...customFields.map((customField) => {
+    ...sortBy(customFields, (item) => {
+      return item.details.order;
+    }).map((customField) => {
       return columnHelper.accessor('customFieldValues', {
         cell: ({ row }) => {
           return (
