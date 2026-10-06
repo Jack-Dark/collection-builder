@@ -1,21 +1,41 @@
 import type { RouteComponent } from '@tanstack/react-router';
 
 import { useForm } from '@tanstack/react-form';
+import { useBlocker } from '@tanstack/react-router';
+import { useEffect } from 'react';
 
 import type { UpdateCollectionsFormRecordSchemaDef } from '#/api/routes/collections/update-collection-by-id/update-collection-by-id.types';
 
+import { getPaginationMetadataDefaults } from '#/api/pagination/pagination.constants';
 import { useInvalidateGetCollectionDetailsById } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.react-query';
 import { useCreateCollection } from '#/api/routes/collections/create-collection/create-collection.react-query';
-import { useInvalidateGetPaginatedCollections } from '#/api/routes/collections/get-paginated-collections/get-paginated-collections.react-query';
+import {
+  useGetPaginatedCollections,
+  useInvalidateGetPaginatedCollections,
+} from '#/api/routes/collections/get-paginated-collections/get-paginated-collections.react-query';
 import { useUpdateCollectionById } from '#/api/routes/collections/update-collection-by-id/update-collection-by-id.react-query';
 import { useSpinner } from '#/components/FullPageLoadingSpinner/useSpinner';
 import { PageWrapper } from '#/page-wrapper';
+import { Route as CollectionsRoute } from '#/routes/_protected/collections';
 
 import { createOrUpdateCollectionFormOptions } from './CollectionsListPage.form';
 import { CollectionsListTable } from './components/CollectionsListTable/CollectionsListTable';
 import { useEditingCollectionsRowIds } from './hooks/use-editing-collections-row-ids';
 
 export const CollectionsListPage: RouteComponent = () => {
+  const searchQueries = CollectionsRoute.useSearch();
+
+  const { data } = useGetPaginatedCollections({
+    onSuccess: ({ collections }) => {
+      form.setFieldValue('records', collections);
+    },
+    placeholderData: {
+      collections: [],
+      pagination: getPaginationMetadataDefaults(1000),
+    },
+    requestArgs: { params: searchQueries },
+  });
+
   const { onInterceptRequest } = useSpinner();
 
   const invalidateGetPaginatedCollections =
@@ -28,7 +48,7 @@ export const CollectionsListPage: RouteComponent = () => {
 
   const { onUpdateCollectionById } = useUpdateCollectionById();
 
-  const { resetEditingRowIds } = useEditingCollectionsRowIds();
+  const { isEditing, resetEditingRowIds } = useEditingCollectionsRowIds();
 
   const form = useForm({
     ...createOrUpdateCollectionFormOptions,
@@ -74,8 +94,29 @@ export const CollectionsListPage: RouteComponent = () => {
     },
   });
 
+  useBlocker({
+    disabled: !isEditing,
+    shouldBlockFn: () => {
+      if (isEditing) {
+        const shouldLeave = confirm(
+          'You will lose any unsaved changes. Are you sure you want to leave?',
+        );
+
+        return !shouldLeave;
+      } else {
+        return false;
+      }
+    },
+  });
+
+  useEffect(() => {
+    return () => {
+      resetEditingRowIds();
+    };
+  }, []);
+
   return (
-    <PageWrapper title="Collections">
+    <PageWrapper title={`Collections (${data.pagination.totalRecords})`}>
       <CollectionsListTable form={form} />
     </PageWrapper>
   );

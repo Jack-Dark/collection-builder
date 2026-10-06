@@ -1,8 +1,13 @@
 import type { CellContext } from '@tanstack/react-table';
 import type { PropsWithChildren } from 'react';
 
+import { useSelector } from '@tanstack/react-store';
+
 import type { ZoomableImagePropsDef } from '#/components/ZoomableThumbnail/ZoomableThumbnail.types';
-import type { CreateOrUpdateCollectionItemFormRowDataDef } from '#/pages/CollectionDetailsPage/CollectionDetailsPage.types';
+import type {
+  CreateOrUpdateCollectionItemFormRowDataDef,
+  CreateOrUpdateCollectionItemFormTypeDef,
+} from '#/pages/CollectionDetailsPage/CollectionDetailsPage.types';
 
 import { thumbnailSize } from '#/api/routes/cloudinary/cloudinary-url';
 import { ZoomableThumbnail } from '#/components/ZoomableThumbnail';
@@ -14,12 +19,19 @@ export const CollectionDetailsImagesCell = (
     CellContext<
       CreateOrUpdateCollectionItemFormRowDataDef,
       CreateOrUpdateCollectionItemFormRowDataDef['images']
-    >
+    > & {
+      form: CreateOrUpdateCollectionItemFormTypeDef;
+    }
   >,
 ) => {
-  const { children, getValue, row } = props;
+  const { children, form, row } = props;
 
-  const images = getValue();
+  const name = useSelector(form.atom, ({ values }) => {
+    return values.collectionItems[row.index].name;
+  });
+  const images = useSelector(form.atom, ({ values }) => {
+    return values.collectionItems[row.index].images;
+  });
 
   const { getIsEditingRowId } = useEditingCollectionItemsRowIds();
   const isEditingRow = getIsEditingRowId(row.id);
@@ -49,7 +61,7 @@ export const CollectionDetailsImagesCell = (
                 key={key}
               >
                 <ZoomableThumbnail
-                  alt={`${row.original.name} image ${index + 1}`}
+                  alt={`${name} image ${index + 1}`}
                   image={image}
                   thumbnail={thumbnail}
                 />

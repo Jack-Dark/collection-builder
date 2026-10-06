@@ -15,7 +15,7 @@ import { CollectionDetailsNotesCell } from './components/column-cells/Collection
 const columnHelper =
   createColumnHelper<CreateOrUpdateCollectionItemFormRowDataDef>();
 
-export const useGetCollectionItemsTableColumns = (
+export const getCollectionItemsTableColumns = (
   props: GetCollectionItemsTableColumnsPropsDef,
 ) => {
   const { customFields, form, onCancel, onEditClick } = props;
@@ -23,14 +23,13 @@ export const useGetCollectionItemsTableColumns = (
   return [
     columnHelper.accessor('name', {
       cell: (props) => {
-        const { getValue, row } = props;
+        const { row } = props;
 
         return (
           <CollectionDetailsNameCell
             form={form}
-            index={row.index}
             rowId={row.id}
-            value={getValue()}
+            rowIndex={row.index}
           />
         );
       },
@@ -38,11 +37,11 @@ export const useGetCollectionItemsTableColumns = (
       size: 250,
     }),
     columnHelper.accessor('images', {
-      cell: (props) => {
-        const { row } = props;
+      cell: (cellContext) => {
+        const { row } = cellContext;
 
         return (
-          <CollectionDetailsImagesCell {...props}>
+          <CollectionDetailsImagesCell {...cellContext} form={form}>
             <CollectionDetailsImagesField form={form} index={row.index} />
           </CollectionDetailsImagesCell>
         );
@@ -52,14 +51,10 @@ export const useGetCollectionItemsTableColumns = (
     }),
     ...customFields.map((customField) => {
       return columnHelper.accessor('customFieldValues', {
-        cell: ({ getValue, row }) => {
-          const customFieldId = customField.id;
-
+        cell: ({ row }) => {
           return (
             <CollectionDetailsCustomFieldCell
-              collectionItemId={row.original.id}
               customField={customField}
-              customFieldValue={getValue()?.[customFieldId]}
               form={form}
               rowId={row.id}
               rowIndex={row.index}
@@ -72,13 +67,12 @@ export const useGetCollectionItemsTableColumns = (
       });
     }),
     columnHelper.accessor('editionDetails', {
-      cell: ({ getValue, row }) => {
+      cell: ({ row }) => {
         return (
           <CollectionDetailsEditionCell
             form={form}
-            index={row.index}
             rowId={row.id}
-            value={getValue()}
+            rowIndex={row.index}
           />
         );
       },
@@ -86,13 +80,12 @@ export const useGetCollectionItemsTableColumns = (
       minSize: 200,
     }),
     columnHelper.accessor('notes', {
-      cell: ({ getValue, row }) => {
+      cell: ({ row }) => {
         return (
           <CollectionDetailsNotesCell
             form={form}
-            index={row.index}
             rowId={row.id}
-            value={getValue()}
+            rowIndex={row.index}
           />
         );
       },
@@ -100,13 +93,12 @@ export const useGetCollectionItemsTableColumns = (
       minSize: 210,
     }),
     columnHelper.accessor('createdAt', {
-      cell: ({ getValue, row }) => {
+      cell: ({ row }) => {
         return (
           <CollectionDetailsCreatedAtCell
             form={form}
-            index={row.index}
             rowId={row.id}
-            value={getValue()}
+            rowIndex={row.index}
           />
         );
       },
@@ -114,12 +106,13 @@ export const useGetCollectionItemsTableColumns = (
       size: 200,
     }),
     columnHelper.accessor('id', {
-      cell: (context) => {
+      cell: (cellContext) => {
         return (
           <CollectionDetailsActionsCell
+            {...cellContext}
+            form={form}
             onCancel={onCancel}
             onEditClick={onEditClick}
-            {...context}
           />
         );
       },

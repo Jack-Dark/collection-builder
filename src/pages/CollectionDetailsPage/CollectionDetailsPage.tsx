@@ -1,6 +1,8 @@
 import type { RouteComponent } from '@tanstack/react-router';
 
 import { useForm } from '@tanstack/react-form';
+import { useBlocker } from '@tanstack/react-router';
+import { useEffect } from 'react';
 
 import type { OnCreateCollectionItemsArgsDef } from '#/api/routes/collection-items/create-collection-item/create-collection-item.types';
 import type { OnUpdateCollectionItemsArgsDef } from '#/api/routes/collection-items/update-collection-item-by-id/update-collection-item-by-id.types';
@@ -16,10 +18,7 @@ import { PageWrapper } from '#/page-wrapper';
 import { Route as CollectionRoute } from '#/routes/_protected/collections/$id';
 
 import { useEditingCollectionItemsRowIds } from '../CollectionsListPage/hooks/use-editing-collections-row-ids';
-import {
-  createOrUpdateCollectionItemsFormDefaultValues,
-  createOrUpdateCollectionItemsFormOptions,
-} from './CollectionDetailsPage.form';
+import { createOrUpdateCollectionItemsFormOptions } from './CollectionDetailsPage.form';
 import { CollectionDetailsTable } from './components/CollectionDetailsTable';
 
 export const CollectionDetailsPage: RouteComponent = () => {
@@ -48,17 +47,10 @@ export const CollectionDetailsPage: RouteComponent = () => {
     requestArgs: { collectionId, params: searchQueries },
   });
 
-  const { resetEditingRowIds } = useEditingCollectionItemsRowIds();
+  const { isEditing, resetEditingRowIds } = useEditingCollectionItemsRowIds();
 
   const form = useForm({
     ...createOrUpdateCollectionItemsFormOptions,
-    defaultValues: data?.items
-      ? {
-          collectionItems: data.items.map((item) => {
-            return { ...item, isEditing: false };
-          }),
-        }
-      : createOrUpdateCollectionItemsFormDefaultValues,
     onSubmit: async ({ value: { collectionItems } }) => {
       onInterceptRequest(async () => {
         const editedRecords = collectionItems.filter(({ isEditing }) => {
@@ -97,6 +89,27 @@ export const CollectionDetailsPage: RouteComponent = () => {
       });
     },
   });
+
+  useBlocker({
+    disabled: !isEditing,
+    shouldBlockFn: () => {
+      if (isEditing) {
+        const shouldLeave = confirm(
+          'You will lose any unsaved changes. Are you sure you want to leave?',
+        );
+
+        return !shouldLeave;
+      } else {
+        return false;
+      }
+    },
+  });
+
+  useEffect(() => {
+    return () => {
+      resetEditingRowIds();
+    };
+  }, []);
 
   return (
     <PageWrapper

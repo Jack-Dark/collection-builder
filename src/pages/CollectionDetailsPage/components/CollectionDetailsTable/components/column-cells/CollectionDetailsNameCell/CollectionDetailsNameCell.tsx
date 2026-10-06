@@ -1,3 +1,5 @@
+import { useSelector } from '@tanstack/react-store';
+
 import type { CreateOrUpdateCollectionItemFormTypeDef } from '#/pages/CollectionDetailsPage/CollectionDetailsPage.types';
 
 import { InputField } from '#/components/Fields/InputField';
@@ -5,26 +7,29 @@ import { useEditingCollectionItemsRowIds } from '#/pages/CollectionsListPage/hoo
 
 export const CollectionDetailsNameCell = ({
   form,
-  index,
   rowId,
-  value,
+  rowIndex,
 }: {
   form: CreateOrUpdateCollectionItemFormTypeDef;
-  index: number;
   rowId: string;
-  value: string;
+  rowIndex: number;
 }) => {
   const { editingRowIds, getIsEditingRowId } =
     useEditingCollectionItemsRowIds();
+
   const isEditingRow = getIsEditingRowId(rowId);
 
   const isFirstEditRow = editingRowIds[0] === rowId;
+
+  const name = useSelector(form.atom, ({ values }) => {
+    return values.collectionItems[rowIndex].name;
+  });
 
   return isEditingRow ? (
     <form.ArrayField name="collectionItems">
       {() => {
         return (
-          <form.Field name={`collectionItems[${index}].name`}>
+          <form.Field name={`collectionItems[${rowIndex}].name`}>
             {(field) => {
               return (
                 <InputField
@@ -44,6 +49,6 @@ export const CollectionDetailsNameCell = ({
       }}
     </form.ArrayField>
   ) : (
-    <p>{value}</p>
+    <p>{name}</p>
   );
 };

@@ -1,4 +1,5 @@
 import ClearIcon from '@mui/icons-material/Clear';
+import { useSelector } from '@tanstack/react-store';
 import formatDate, { masks } from 'dateformat';
 
 import type { CreateOrUpdateCollectionItemFormTypeDef } from '#/pages/CollectionDetailsPage/CollectionDetailsPage.types';
@@ -10,14 +11,12 @@ import { AddNewCollectionItemButton } from '../../CollectionDetailsTableRowActio
 
 export const CollectionDetailsCreatedAtCell = ({
   form,
-  index,
   rowId,
-  value,
+  rowIndex,
 }: {
   form: CreateOrUpdateCollectionItemFormTypeDef;
-  index: number;
   rowId: string;
-  value: Date | undefined;
+  rowIndex: number;
 }) => {
   const { getHasNewRecord, getIsEditingRowId } =
     useEditingCollectionItemsRowIds();
@@ -26,21 +25,25 @@ export const CollectionDetailsCreatedAtCell = ({
   const { getLastNewRecordIndex, removeFromIsEditingRowIds } =
     useEditingCollectionItemsRowIds();
 
-  const isLastNewRecordIndex = getLastNewRecordIndex() === index;
+  const isLastNewRecordIndex = getLastNewRecordIndex() === rowIndex;
+
+  const createdAt = useSelector(form.atom, ({ values }) => {
+    return values.collectionItems[rowIndex].createdAt;
+  });
 
   return isEditingRow && getHasNewRecord() ? (
     <form.ArrayField name="collectionItems">
       {(collectionItemsField) => {
         return (
           <div className="grid gap-2 justify-start">
-            <form.Field name={`collectionItems[${index}]`}>
+            <form.Field name={`collectionItems[${rowIndex}]`}>
               {({ value }) => {
                 return (
                   <>
                     <Button
                       Icon={ClearIcon}
                       onClick={() => {
-                        collectionItemsField.removeValue(index);
+                        collectionItemsField.removeValue(rowIndex);
                         removeFromIsEditingRowIds(String(value.id));
                       }}
                       text="Remove"
@@ -65,7 +68,7 @@ export const CollectionDetailsCreatedAtCell = ({
                               <AddNewCollectionItemButton
                                 disabled={isPristine || !isValid}
                                 form={form}
-                                insertAtIndex={index + 1}
+                                insertAtIndex={rowIndex + 1}
                                 text="Another"
                               />
                               {/* </form.AppForm> */}
@@ -83,6 +86,6 @@ export const CollectionDetailsCreatedAtCell = ({
       }}
     </form.ArrayField>
   ) : (
-    <p>{formatDate(value, masks.paddedShortDate)}</p>
+    <p>{formatDate(createdAt, masks.paddedShortDate)}</p>
   );
 };

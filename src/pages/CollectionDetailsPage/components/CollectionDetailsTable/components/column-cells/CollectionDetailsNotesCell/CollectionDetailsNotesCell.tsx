@@ -1,3 +1,5 @@
+import { useSelector } from '@tanstack/react-store';
+
 import type { CreateOrUpdateCollectionItemFormTypeDef } from '#/pages/CollectionDetailsPage/CollectionDetailsPage.types';
 
 import { TextAreaField } from '#/components/Fields/TextAreaField';
@@ -5,38 +7,35 @@ import { useEditingCollectionItemsRowIds } from '#/pages/CollectionsListPage/hoo
 
 export const CollectionDetailsNotesCell = (props: {
   form: CreateOrUpdateCollectionItemFormTypeDef;
-  index: number;
   rowId: string;
-  value: string;
+  rowIndex: number;
 }) => {
-  const { form, index, rowId, value } = props;
+  const { form, rowId, rowIndex } = props;
 
   const { getIsEditingRowId } = useEditingCollectionItemsRowIds();
   const isEditingRow = getIsEditingRowId(rowId);
 
+  const notes = useSelector(form.atom, ({ values }) => {
+    return values.collectionItems[rowIndex].notes;
+  });
+
   return isEditingRow ? (
-    <form.ArrayField name="collectionItems">
-      {() => {
+    <form.Field name={`collectionItems[${rowIndex}].notes`}>
+      {({ errors, handleChange, name }) => {
         return (
-          <form.Field name={`collectionItems[${index}].notes`}>
-            {({ errors, handleChange, name, value }) => {
-              return (
-                <TextAreaField
-                  error={errors}
-                  name={name}
-                  onValueChange={(value) => {
-                    handleChange(value);
-                  }}
-                  placeholder="Input notes..."
-                  value={value}
-                />
-              );
+          <TextAreaField
+            error={errors}
+            name={name}
+            onValueChange={(value) => {
+              handleChange(value);
             }}
-          </form.Field>
+            placeholder="Input notes..."
+            value={notes}
+          />
         );
       }}
-    </form.ArrayField>
+    </form.Field>
   ) : (
-    <p>{value || '-'}</p>
+    <p>{notes || '-'}</p>
   );
 };

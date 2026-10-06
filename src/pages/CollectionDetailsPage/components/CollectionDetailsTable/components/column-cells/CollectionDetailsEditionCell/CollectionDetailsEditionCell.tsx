@@ -1,3 +1,5 @@
+import { useSelector } from '@tanstack/react-store';
+
 import type { CreateOrUpdateCollectionItemFormTypeDef } from '#/pages/CollectionDetailsPage/CollectionDetailsPage.types';
 
 import { SwitchField } from '#/components/Fields/SwitchField';
@@ -6,20 +8,24 @@ import { useEditingCollectionItemsRowIds } from '#/pages/CollectionsListPage/hoo
 
 export const CollectionDetailsEditionCell = (props: {
   form: CreateOrUpdateCollectionItemFormTypeDef;
-  index: number;
   rowId: string;
-  value: string;
+  rowIndex: number;
 }) => {
-  const { form, index, rowId, value } = props;
+  const { form, rowId, rowIndex } = props;
+
   const { getIsEditingRowId } = useEditingCollectionItemsRowIds();
   const isEditingRow = getIsEditingRowId(rowId);
+
+  const editionDetails = useSelector(form.atom, ({ values }) => {
+    return values.collectionItems[rowIndex].editionDetails;
+  });
 
   return isEditingRow ? (
     <form.ArrayField name="collectionItems">
       {() => {
         return (
           <div className="grid gap-2">
-            <form.Field name={`collectionItems[${index}].isSpecialEdition`}>
+            <form.Field name={`collectionItems[${rowIndex}].isSpecialEdition`}>
               {({ errors, handleChange, value }) => {
                 return (
                   <SwitchField
@@ -29,7 +35,7 @@ export const CollectionDetailsEditionCell = (props: {
                     onCheckedChange={(checked) => {
                       handleChange(checked);
                       form.setFieldValue(
-                        `collectionItems[${index}].editionDetails`,
+                        `collectionItems[${rowIndex}].editionDetails`,
                         checked ? "Collector's Edition" : '',
                       );
                     }}
@@ -38,14 +44,15 @@ export const CollectionDetailsEditionCell = (props: {
               }}
             </form.Field>
 
-            <form.Field name={`collectionItems[${index}].editionDetails`}>
+            <form.Field name={`collectionItems[${rowIndex}].editionDetails`}>
               {({ errors, handleChange, name, value }) => {
                 return (
                   <form.Subscribe
                     selector={(state) => {
                       return {
                         isSpecialEdition:
-                          state.values.collectionItems[index].isSpecialEdition,
+                          state.values.collectionItems[rowIndex]
+                            .isSpecialEdition,
                       };
                     }}
                   >
@@ -73,6 +80,6 @@ export const CollectionDetailsEditionCell = (props: {
       }}
     </form.ArrayField>
   ) : (
-    <p>{value || '-'}</p>
+    <p>{editionDetails || '-'}</p>
   );
 };

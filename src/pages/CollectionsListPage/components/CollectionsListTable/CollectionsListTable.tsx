@@ -1,5 +1,4 @@
 import { useSelector } from '@tanstack/react-form';
-import { useBlocker } from '@tanstack/react-router';
 import { useEffect, useMemo } from 'react';
 
 import { getPaginationMetadataDefaults } from '#/api/pagination/pagination.constants';
@@ -24,9 +23,6 @@ export const CollectionsListTable = ({
   const searchQueries = CollectionsRoute.useSearch();
 
   const { data } = useGetPaginatedCollections({
-    onSuccess: ({ collections }) => {
-      form.setFieldValue('records', collections);
-    },
     placeholderData: {
       collections: [],
       pagination: getPaginationMetadataDefaults(1000),
@@ -44,20 +40,6 @@ export const CollectionsListTable = ({
 
   const { addToEditingRowIds, editingRowIds, isEditing, resetEditingRowIds } =
     useEditingCollectionsRowIds();
-
-  useBlocker({
-    shouldBlockFn: () => {
-      if (isEditing) {
-        const shouldLeave = confirm(
-          'You will lose any unsaved changes. Are you sure you want to leave?',
-        );
-
-        return !shouldLeave;
-      } else {
-        return false;
-      }
-    },
-  });
 
   const onEditClick = (...rowIdsToAdd: string[]) => {
     addToEditingRowIds(...rowIdsToAdd);
@@ -83,7 +65,7 @@ export const CollectionsListTable = ({
   const paginationProps = useCollectionsListPaginationProps({ pagination });
   const sortProps = useCollectionsListSortProps();
 
-  const records = useSelector(form.atom, ({ values }) => {
+  const tableData = useSelector(form.atom, ({ values }) => {
     return values.records;
   });
 
@@ -112,7 +94,7 @@ export const CollectionsListTable = ({
       }}
       columns={columns}
       // @ts-expect-error // TS type mismatch between new and old records
-      data={records}
+      data={tableData}
       disableRowSelection={isEditing}
       enableRowSelection
       pagination={paginationProps}

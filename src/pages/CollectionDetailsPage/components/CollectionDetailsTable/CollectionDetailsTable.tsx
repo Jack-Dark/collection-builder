@@ -1,5 +1,5 @@
-import { useBlocker } from '@tanstack/react-router';
-import { useEffect } from 'react';
+import { useSelector } from '@tanstack/react-store';
+import { useEffect, useMemo } from 'react';
 
 import { useGetCollectionDetailsById } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.react-query';
 import { Table } from '#/components/Table';
@@ -8,7 +8,7 @@ import { Route as CollectionRoute } from '#/routes/_protected/collections/$id';
 import type { CreateOrUpdateCollectionItemFormTypeDef } from '../../CollectionDetailsPage.types';
 
 import { useEditingCollectionItemsRowIds } from '../../../CollectionsListPage/hooks/use-editing-collections-row-ids';
-import { useGetCollectionItemsTableColumns } from './CollectionDetailsTable.columns';
+import { getCollectionItemsTableColumns } from './CollectionDetailsTable.columns';
 import { CollectionDetailsTableRowActions } from './components/CollectionDetailsTableRowActions';
 import { CollectionDetailsFiltersContent } from './components/CollectionItemsFiltersContent';
 import { useCollectionDetailsFiltersProps } from './hooks/use-collection-details-filters-props';
@@ -38,22 +38,8 @@ export const CollectionDetailsTable = ({
 
     // TODO - ADD CALL TO ENDPOINT THAT CHECKS FOR ANY CUSTOM FIELDS UNDER USER WITH VALUES THAT DO NOT HAVE LINKS AND DELETE THEM
   };
-  const { addToEditingRowIds, editingRowIds, isEditing, resetEditingRowIds } =
+  const { addToEditingRowIds, isEditing, resetEditingRowIds } =
     useEditingCollectionItemsRowIds();
-
-  useBlocker({
-    shouldBlockFn: () => {
-      if (isEditing) {
-        const shouldLeave = confirm(
-          'You will lose any unsaved changes. Are you sure you want to leave?',
-        );
-
-        return !shouldLeave;
-      } else {
-        return false;
-      }
-    },
-  });
 
   const onEditClick = (...rowIdsToAdd: string[]) => {
     addToEditingRowIds(...rowIdsToAdd);
@@ -69,17 +55,23 @@ export const CollectionDetailsTable = ({
     form.setFieldValue('collectionItems', selectedRowsInEditMode);
   };
 
-  const columns = useGetCollectionItemsTableColumns({
-    customFields: data?.collection?.customFields || [],
-    form,
-    onCancel,
-    onEditClick,
-  });
+  const columns = useMemo(() => {
+    return getCollectionItemsTableColumns({
+      customFields: data?.collection?.customFields || [],
+      form,
+      onCancel,
+      onEditClick,
+    });
+  }, [data?.collection?.customFields]);
 
   const filtersProps = useCollectionDetailsFiltersProps();
   const searchProps = useCollectionDetailsSearchProps();
   const paginationProps = useCollectionDetailsPaginationProps({ pagination });
   const sortProps = useCollectionDetailsSortProps({ collection });
+
+  const tableData = useSelector(form.atom, ({ values }) => {
+    return values.collectionItems;
+  });
 
   useEffect(() => {
     // ? clear edit state on unmount
@@ -87,48 +79,41 @@ export const CollectionDetailsTable = ({
   }, []);
 
   return (
-    <form.ArrayField name="collectionItems">
-      {(collectionItemsField) => {
-        return (
-          <Table
-            AboveTableComponent={({ table }) => {
-              const selectedRowIds = table
-                .getSelectedRowModel()
-                .rows.map(({ id }) => {
-                  return id;
-                });
+    <Table
+      AboveTableComponent={({ table }) => {
+        const selectedRowIds = table
+          .getSelectedRowModel()
+          .rows.map(({ id }) => {
+            return id;
+          });
 
-              return (
-                <CollectionDetailsTableRowActions
-                  form={form}
-                  onCancel={onCancel}
-                  resetRowSelection={table.resetRowSelection}
-                  selectedRowIds={selectedRowIds}
-                />
-              );
-            }}
-            columns={columns}
-            // @ts-expect-error // TS type mismatch between new and old records
-            data={collectionItemsField.state.value}
-            disableRowSelection={isEditing}
-            enableRowSelection
-            filters={{
-              ...filtersProps,
-              FiltersContent: () => {
-                return (
-                  <CollectionDetailsFiltersContent
-                    collection={collection}
-                    customFields={data.customFields}
-                  />
-                );
-              },
-            }}
-            pagination={paginationProps}
-            search={searchProps}
-            sort={sortProps}
+        return (
+          <CollectionDetailsTableRowActions
+            form={form}
+            onCancel={onCancel}
+            resetRowSelection={table.resetRowSelection}
+            selectedRowIds={selectedRowIds}
           />
         );
       }}
-    </form.ArrayField>
+      columns={columns}
+      data={tableData}
+      disableRowSelection={isEditing}
+      enableRowSelection
+      filters={{
+        ...filtersProps,
+        FiltersContent: () => {
+          return (
+            <CollectionDetailsFiltersContent
+              collection={collection}
+              customFields={data.customFields}
+            />
+          );
+        },
+      }}
+      pagination={paginationProps}
+      search={searchProps}
+      sort={sortProps}
+    />
   );
 };

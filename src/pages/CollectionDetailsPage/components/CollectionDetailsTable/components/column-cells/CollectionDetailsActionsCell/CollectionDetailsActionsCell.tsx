@@ -1,3 +1,5 @@
+import { useSelector } from '@tanstack/react-store';
+
 import { useDeleteCollectionItemsByIds } from '#/api/routes/collection-items/delete-collection-items-by-ids/delete-collection-items-by-ids.react-query';
 import { useInvalidateGetCollectionDetailsById } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.react-query';
 import { TableCellActionsMenu } from '#/components/TableCellActionsMenu';
@@ -9,7 +11,7 @@ import type { CollectionDetailsActionsCellPropsDef } from './CollectionDetailsAc
 export const CollectionDetailsActionsCell = (
   props: CollectionDetailsActionsCellPropsDef,
 ) => {
-  const { getValue, onCancel, onEditClick, row } = props;
+  const { form, onCancel, onEditClick, row } = props;
 
   const invalidateGetCollectionDetailsById =
     useInvalidateGetCollectionDetailsById();
@@ -26,7 +28,9 @@ export const CollectionDetailsActionsCell = (
       },
     });
 
-  const collectionItemId = getValue();
+  const collectionItem = useSelector(form.atom, ({ values }) => {
+    return values.collectionItems[row.index];
+  });
 
   const { getHasNewRecord, getIsEditingRowId, isEditing } =
     useEditingCollectionItemsRowIds();
@@ -39,9 +43,9 @@ export const CollectionDetailsActionsCell = (
     <TableCellActionsMenu
       deleteIsDisabled={isEditing || isDeletePending}
       deleteOnClick={async () => {
-        if (typeof collectionItemId === 'number') {
+        if (typeof collectionItem.id === 'number') {
           await onDeleteCollectionItemsByIds({
-            collectionItemIds: [collectionItemId],
+            collectionItemIds: [collectionItem.id],
           });
         }
       }}
@@ -51,7 +55,7 @@ export const CollectionDetailsActionsCell = (
       }}
       isEditing={isEditingRow}
       onCancelEdit={onCancel}
-      rowData={row.original}
+      rowData={collectionItem}
     />
   );
 };
