@@ -20,6 +20,7 @@ export const InputField = (props: InputFieldProps) => {
     placeholder,
     ref,
     required,
+    triggerOnBlur,
     type,
     validationDebounceTime,
     validationMode,
@@ -45,7 +46,16 @@ export const InputField = (props: InputFieldProps) => {
         autoFocus={autoFocus}
         className="input"
         defaultValue={defaultValue}
-        onValueChange={onValueChange}
+        onBlur={(event) => {
+          const value = event.target.value;
+
+          onValueChange?.(value);
+        }}
+        onValueChange={(value) => {
+          if (!triggerOnBlur) {
+            onValueChange?.(value);
+          }
+        }}
         placeholder={placeholder}
         ref={ref}
         required={required}

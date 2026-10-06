@@ -1,5 +1,5 @@
-import { useMemo } from 'react';
 import { useBlocker } from '@tanstack/react-router';
+import { useEffect } from 'react';
 
 import { useGetCollectionDetailsById } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.react-query';
 import { Table } from '#/components/Table';
@@ -8,10 +8,9 @@ import { Route as CollectionRoute } from '#/routes/_protected/collections/$id';
 import type { CreateOrUpdateCollectionItemFormTypeDef } from '../../CollectionDetailsPage.types';
 
 import { useEditingCollectionItemsRowIds } from '../../../CollectionsListPage/hooks/use-editing-collections-row-ids';
-import { getCollectionItemsTableColumns } from './CollectionDetailsTable.columns';
+import { useGetCollectionItemsTableColumns } from './CollectionDetailsTable.columns';
 import { CollectionDetailsTableRowActions } from './components/CollectionDetailsTableRowActions';
 import { CollectionDetailsFiltersContent } from './components/CollectionItemsFiltersContent';
-import { useCollectionDetailsCustomFieldsStore } from './hooks/use-collection-details-custom-fields-store';
 import { useCollectionDetailsFiltersProps } from './hooks/use-collection-details-filters-props';
 import { useCollectionDetailsPaginationProps } from './hooks/use-collection-details-pagination-props';
 import { useCollectionDetailsSearchProps } from './hooks/use-collection-details-search-props';
@@ -26,8 +25,6 @@ export const CollectionDetailsTable = ({
   const collectionId = Number(id);
   const search = CollectionRoute.useSearch();
 
-  const { customFields } = useCollectionDetailsCustomFieldsStore();
-
   const { data } = useGetCollectionDetailsById({
     requestArgs: { collectionId, params: search },
   });
@@ -38,6 +35,8 @@ export const CollectionDetailsTable = ({
     resetEditingRowIds();
 
     form.setFieldValue('collectionItems', items);
+
+    // TODO - ADD CALL TO ENDPOINT THAT CHECKS FOR ANY CUSTOM FIELDS UNDER USER WITH VALUES THAT DO NOT HAVE LINKS AND DELETE THEM
   };
   const { addToEditingRowIds, editingRowIds, isEditing, resetEditingRowIds } =
     useEditingCollectionItemsRowIds();
@@ -70,35 +69,28 @@ export const CollectionDetailsTable = ({
     form.setFieldValue('collectionItems', selectedRowsInEditMode);
   };
 
-  const columns = useMemo(() => {
-    return getCollectionItemsTableColumns({
-      customField1Enabled: collection?.customField1Enabled,
-      customField1Label: collection?.customField1Label,
-      customField2Enabled: collection?.customField2Enabled,
-      customField2Label: collection?.customField2Label,
-      customField3Enabled: collection?.customField3Enabled,
-      customField3Label: collection?.customField3Label,
-      customFields: data?.collection?.customFields || [],
-      form,
-      onCancel,
-      onEditClick,
-    });
-  }, [
-    collection?.customField1Enabled,
-    collection?.customField1Label,
-    collection?.customField2Enabled,
-    collection?.customField2Label,
-    collection?.customField3Enabled,
-    collection?.customField3Label,
-    editingRowIds,
-    customFields,
-    data?.collection?.customFields,
-  ]);
+  const columns = useGetCollectionItemsTableColumns({
+    customField1Enabled: collection?.customField1Enabled,
+    customField1Label: collection?.customField1Label,
+    customField2Enabled: collection?.customField2Enabled,
+    customField2Label: collection?.customField2Label,
+    customField3Enabled: collection?.customField3Enabled,
+    customField3Label: collection?.customField3Label,
+    customFields: data?.collection?.customFields || [],
+    form,
+    onCancel,
+    onEditClick,
+  });
 
   const filtersProps = useCollectionDetailsFiltersProps();
   const searchProps = useCollectionDetailsSearchProps();
   const paginationProps = useCollectionDetailsPaginationProps({ pagination });
   const sortProps = useCollectionDetailsSortProps({ collection });
+
+  useEffect(() => {
+    // ? clear edit state on unmount
+    return resetEditingRowIds;
+  }, []);
 
   return (
     <form.ArrayField name="collectionItems">

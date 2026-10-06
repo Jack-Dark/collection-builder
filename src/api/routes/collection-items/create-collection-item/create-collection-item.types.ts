@@ -4,6 +4,7 @@ import type { QueryResponseDef } from '#/api/db-tables-schema.types';
 
 import type { createCollectionItemsDbQuery } from './create-collection-item.db-query';
 import type {
+  createCollectionItemsDbQuerySchema,
   createCollectionItemsFormSchema,
   createCollectionItemsServerFnSchema,
   onCreateCollectionItemsArgsSchema,
@@ -19,6 +20,10 @@ export type OnCreateCollectionItemsArgsDef = z.output<
 
 export type CreateCollectionItemsRequestArgsDef = z.output<
   typeof createCollectionItemsServerFnSchema
+>;
+
+export type CreateCollectionItemsDbQueryArgs = z.output<
+  typeof createCollectionItemsDbQuerySchema
 >;
 
 export type CreateCollectionItemsResponseDef = QueryResponseDef<

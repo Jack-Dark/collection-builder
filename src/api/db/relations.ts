@@ -37,7 +37,7 @@ export const relations = defineRelations(
         }),
       },
       collections: {
-        collectionItem: r.many.collectionItems({
+        collectionItems: r.many.collectionItems({
           [x.original]: r.collections.id,
           [x.references]: r.collectionItems.collectionId,
         }),

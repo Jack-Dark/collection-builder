@@ -126,16 +126,18 @@ export const CollectionsListCustomFieldsCell = (props: {
       );
     }, [customFieldsForRow]);
 
-  const [showConfirmDeleteCustomField, hideConfirmDeleteCustomField] =
-    useDialog(() => {
-      return (
-        <DeleteCustomFieldDialog
-          customField={editCustomFieldAtom.data.value}
-          form={form}
-          onClose={hideConfirmDeleteCustomField}
-        />
-      );
-    }, [editCustomFieldAtom.data.value]);
+  const [
+    showConfirmDeleteCustomFieldDialog,
+    hideConfirmDeleteCustomFieldDialog,
+  ] = useDialog(() => {
+    return (
+      <DeleteCustomFieldDialog
+        customField={editCustomFieldAtom.data.value}
+        form={form}
+        onClose={hideConfirmDeleteCustomFieldDialog}
+      />
+    );
+  }, [editCustomFieldAtom.data.value]);
 
   return (
     <div>
@@ -149,7 +151,9 @@ export const CollectionsListCustomFieldsCell = (props: {
                     <div className="w-full max-w-80">
                       <ComboboxField
                         allowCreatable
-                        createItem={(trimmedQuery) => {
+                        ariaLabel="Custom Field"
+                        caseSensitiveCreation
+                        createNewItem={(trimmedQuery) => {
                           const newRecord: CustomFieldFormItemDef = {
                             id: uuidv4(),
                             name: trimmedQuery,
@@ -239,7 +243,7 @@ export const CollectionsListCustomFieldsCell = (props: {
 
                                   editCustomFieldAtom.data.setValue(item);
 
-                                  showConfirmDeleteCustomField();
+                                  showConfirmDeleteCustomFieldDialog();
                                 }}
                                 size="custom"
                                 variant="ghost"
@@ -304,6 +308,7 @@ export const DeleteCustomFieldDialog = (props: {
     onSuccess: async () => {
       await invalidateGetCustomFields();
 
+      // TODO - PASS FIELD ONCHANGE FUNCTION TO MODAL TO UPDATE ONLY THAT FIELD
       const cleanedRecords = form.state.values.records.map((record) => {
         const filteredCustomFields = record.customFields.filter(
           (customField) => {

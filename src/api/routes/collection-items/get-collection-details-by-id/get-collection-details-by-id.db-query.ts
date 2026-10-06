@@ -7,6 +7,7 @@ import { collectionItemsTable } from '#/api/db-tables-schema';
 import { sortDirectionOptions } from '#/api/pagination/pagination.constants';
 import { getPaginationMetadataQuery } from '#/api/pagination/pagination.query';
 
+import type { CustomFieldValuesByFieldId } from '../../custom-field-values/custom-field-values.types';
 import type { CollectionItemsTableColumn } from '../collection-item.types';
 import type { GetCollectionDetailsByIdRequestArgsDef } from './get-collection-details-by-id.types';
 
@@ -40,6 +41,9 @@ export const getCollectionDetailsByIdDbQuery = async (
     });
 
     const collection = await tx.query.collections.findFirst({
+      columns: {
+        userId: false,
+      },
       where: {
         deletedAt: undefined,
         id: collectionId,
@@ -55,8 +59,8 @@ export const getCollectionDetailsByIdDbQuery = async (
           with: {
             customFieldValues: {
               columns: {
+                data: true,
                 id: true,
-                value: true,
               },
             },
           },
@@ -69,6 +73,10 @@ export const getCollectionDetailsByIdDbQuery = async (
       eq(collectionItemsTable.userId, userId),
       isNull(collectionItemsTable.deletedAt),
     );
+
+    // ############
+    // START IGNORE
+    // ############
 
     const [customField1, customField2, customField3] = await Promise.all([
       await tx
@@ -114,6 +122,10 @@ export const getCollectionDetailsByIdDbQuery = async (
       })
       .filter(Boolean);
 
+    // ############
+    // STOP IGNORE
+    // ############
+
     const items = await tx.query.collectionItems.findMany({
       limit,
       offset: (page - 1) * limit,
@@ -132,19 +144,24 @@ export const getCollectionDetailsByIdDbQuery = async (
         customFieldValues: {
           columns: {
             customFieldId: true,
+            data: true,
             id: true,
-            value: true,
           },
         },
       },
     });
 
     const formattedItems = items.map(({ customFieldValues, ...item }) => {
-      const customFieldValuesByCustomFieldId = customFieldValues.reduce<
-        Record<number, { id: number; value: boolean | string | number }>
-      >((acc, { customFieldId, ...customFieldValue }) => {
-        return { ...acc, [customFieldId]: customFieldValue };
-      }, {});
+      const customFieldValuesByCustomFieldId =
+        customFieldValues.reduce<CustomFieldValuesByFieldId>(
+          (acc, { customFieldId, ...customFieldValue }) => {
+            return {
+              ...acc,
+              [customFieldId]: customFieldValue,
+            };
+          },
+          {},
+        );
 
       return {
         ...item,

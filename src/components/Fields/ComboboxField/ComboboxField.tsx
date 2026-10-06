@@ -9,33 +9,50 @@ import { v4 as uuidv4 } from 'uuid';
 import type {
   ComboboxFieldPropsDef,
   ComboboxValueDef,
-  TItemRecordDef,
+  TValueRecordDef,
 } from './ComboboxField.types';
 
 import { FieldWrapper } from '../FieldWrapper';
 
-export const getNormalizedValue = (value: string) => {
-  return value.trim().toLocaleLowerCase();
+export const getNormalizedValue = (
+  value: string,
+  options?: { caseSensitive?: boolean },
+) => {
+  const trimmedQuery = value.trim();
+  if (options?.caseSensitive) {
+    return trimmedQuery;
+  } else {
+    return trimmedQuery.toLocaleLowerCase();
+  }
 };
 
 export const ComboboxField = <
-  TItem extends TItemRecordDef,
+  TValue extends TValueRecordDef,
   TMultiple extends boolean | undefined = false,
 >(
-  props: ComboboxFieldPropsDef<TItem, TMultiple>,
+  props: ComboboxFieldPropsDef<TValue, TMultiple>,
 ) => {
   const {
     allowCreatable,
+    label,
+    ariaLabel = label,
+    caseSensitiveCreation,
+    caseSensitiveFilter,
     className,
-    createItem,
+    createNewItem,
     description,
     disabled,
     error,
     filter = (item, query) => {
-      const normalizedQuery = getNormalizedValue(query);
+      const normalizedQuery = getNormalizedValue(query, {
+        caseSensitive: caseSensitiveFilter,
+      });
 
       if (normalizedQuery) {
-        const searchPattern = new RegExp(normalizedQuery, 'i');
+        const searchPattern = new RegExp(
+          normalizedQuery,
+          caseSensitiveFilter ? undefined : 'i',
+        );
 
         const label = itemToStringLabel(item);
 
@@ -46,7 +63,7 @@ export const ComboboxField = <
     },
     hideLabel,
     idProperty = 'id',
-    inputValue,
+    inputValue = '',
     invalid,
     isItemEqualToValue = (item, value) => {
       return item[idProperty] === value[idProperty];
@@ -75,7 +92,6 @@ export const ComboboxField = <
 
       return '';
     },
-    label,
     labelProperty = 'label',
     multiple,
     name,
@@ -110,19 +126,21 @@ export const ComboboxField = <
     verifyShowNewItem,
   } = props;
 
-  const [displayItems, setDisplayItems] = useState<TItem[]>([]);
-  // const [selectedItems, setSelectedItems] = useState<TItem[]>([]);
-  const [query, setQuery] = useState('');
+  const [isInputFocused, setIsInputFocused] = useState<boolean>(false);
+  const [displayItems, setDisplayItems] = useState<TValue[]>([]);
+  const [query, setQuery] = useState(inputValue);
 
   const trimmedQuery = useMemo(() => {
     return query.trim();
   }, [query]);
 
   const normalizedQuery = useMemo(() => {
-    return getNormalizedValue(trimmedQuery);
+    return getNormalizedValue(trimmedQuery, {
+      caseSensitive: caseSensitiveCreation,
+    });
   }, [trimmedQuery]);
 
-  /** Item with label that matches query exactly (case insensitive) */
+  /** Item with label that matches query exactly */
   const exactMatchItem = useMemo(() => {
     if (!normalizedQuery) {
       return;
@@ -131,7 +149,9 @@ export const ComboboxField = <
     return displayItems.find((item) => {
       const label = itemToStringLabel(item);
 
-      const queryMatchesLabel = getNormalizedValue(label) === normalizedQuery;
+      const queryMatchesLabel =
+        getNormalizedValue(label, { caseSensitive: caseSensitiveCreation }) ===
+        normalizedQuery;
 
       return queryMatchesLabel;
     });
@@ -150,15 +170,16 @@ export const ComboboxField = <
   useLayoutEffect(() => {
     // ? Merge items in list with selected items. This ensures new items are always available even if they don't exist outside of the component yet
     // debugger;
-    const includedItemsById = new Map<number, true>();
-    const uniqueDisplayItems: TItem[] = [
+    const includedItemsById = new Map<string, true>();
+    const uniqueDisplayItems: TValue[] = [
       ...items,
       ...getSelectedItemsArray(),
     ].filter((item) => {
-      if (!item[idProperty] || includedItemsById.has(item[idProperty])) {
+      const idAsString = itemToStringValue(item);
+      if (!idAsString || includedItemsById.has(idAsString)) {
         return false;
       } else {
-        includedItemsById.set(item[idProperty], true);
+        includedItemsById.set(idAsString, true);
 
         return true;
       }
@@ -168,38 +189,34 @@ export const ComboboxField = <
 
     if (allowCreatable && normalizedQuery) {
       // @ts-expect-error
-      const newItem: TItem = createItem?.(trimmedQuery) || {
+      const creatableItem: TValue = createNewItem?.(trimmedQuery) || {
         [idProperty]: uuidv4(),
         [labelProperty]: trimmedQuery,
       };
 
-      newItem.creatable = true;
+      creatableItem.creatable = true;
 
       if (exactMatchItem) {
         if (
           verifyShowNewItem?.({
             itemMatchingQuery: exactMatchItem,
-            newItem,
+            newItem: creatableItem,
             normalizedQuery,
             query,
           })
         ) {
-          sortedDisplayItems.splice(0, 0, newItem);
+          sortedDisplayItems.splice(0, 0, creatableItem);
         }
       } else {
-        sortedDisplayItems.splice(0, 0, newItem);
+        sortedDisplayItems.splice(0, 0, creatableItem);
       }
     }
 
     setDisplayItems(sortedDisplayItems);
-  }, [!exactMatchItem, value, items, query]);
+  }, [!exactMatchItem, value, items, query, isInputFocused]);
 
   useLayoutEffect(() => {
-    if (multiple) {
-      setQuery('');
-    } else {
-      setQuery(inputValue || '');
-    }
+    setQuery(inputValue || '');
   }, [inputValue]);
 
   return (
@@ -228,10 +245,10 @@ export const ComboboxField = <
         onValueChange={(
           value:
             | (TMultiple extends true ? never : null)
-            | ComboboxValueDef<TItem, TMultiple>,
+            | ComboboxValueDef<TValue, TMultiple>,
           eventDetails: Combobox.Root.ChangeEventDetails,
         ) => {
-          setQuery('');
+          // setQuery('');
 
           if (Array.isArray(value)) {
             value.forEach((item) => {
@@ -242,7 +259,7 @@ export const ComboboxField = <
             // setSelectedItems(cleanValues);
           } else {
             delete value?.creatable;
-            // setSelectedItems([value as TItem]);
+            // setSelectedItems([value as TValue]);
           }
           onValueChange?.(value, eventDetails);
         }}
@@ -281,18 +298,25 @@ export const ComboboxField = <
           )}
 
           <Combobox.Value>
-            {(value) => {
+            {() => {
               return multiple ? (
                 <Combobox.Input
+                  aria-label={ariaLabel}
                   className="input w-full"
                   placeholder={placeholder}
-                  // value={query}
+                  value={query}
                 />
               ) : (
                 <Combobox.Input
+                  aria-label={ariaLabel}
                   className="input w-full"
+                  onBlur={() => {
+                    setIsInputFocused(false);
+                  }}
+                  onFocus={() => {
+                    setIsInputFocused(true);
+                  }}
                   placeholder={placeholder}
-                  value={value}
                 />
               );
             }}
@@ -305,19 +329,22 @@ export const ComboboxField = <
             className="styles.Positioner"
             sideOffset={4}
           >
-            <Combobox.Popup className="bg-white text-black border border-gray-300 py-2 rounded-sm shadow-lg max-h-100 overflow-auto">
+            <Combobox.Popup
+              className="bg-white text-black border border-gray-300 py-2 rounded-sm shadow-lg max-h-100 overflow-auto"
+              hidden={!displayItems.length && !query}
+            >
               {!allowCreatable && (
                 <Combobox.Empty>
                   <div className="p-2 text-gray-500">No matches</div>
                 </Combobox.Empty>
               )}
               <Combobox.List>
-                {(listItem: TItem) => {
+                {(listItem: TValue) => {
                   return (
                     <Combobox.Item
                       className="flex gap-2 items-center p-2 data-selected:bg-menu-primary-selected data-highlighted:bg-menu-primary-hover cursor-pointer"
                       disabled={listItem.disabled}
-                      key={listItem[idProperty]}
+                      key={itemToStringValue(listItem)}
                       value={listItem}
                     >
                       {listItem.creatable ? (

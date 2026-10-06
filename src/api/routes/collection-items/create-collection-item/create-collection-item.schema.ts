@@ -1,5 +1,7 @@
 import z from 'zod';
 
+import { userIdSchema } from '#/api/db-tables-schema';
+
 import {
   baseCollectionItemSchema,
   imagesSchema,
@@ -21,9 +23,19 @@ export const onCreateCollectionItemsArgsSchema =
 
 export const createCollectionItemsServerFnSchema = z.object({
   publicIds: z.array(z.array(z.string())),
-  records: z.array(
-    baseCollectionItemSchema.extend({
-      images: imagesSchema.publicIdsList,
-    }),
-  ),
+  records: z
+    .array(
+      baseCollectionItemSchema
+        .extend({
+          images: imagesSchema.publicIdsList,
+        })
+        .describe('Collection Item')
+        .strict(),
+    )
+    .describe('Collection Items'),
 });
+
+export const createCollectionItemsDbQuerySchema =
+  createCollectionItemsServerFnSchema.extend({
+    userId: userIdSchema,
+  });

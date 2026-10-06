@@ -80,14 +80,14 @@ export const CollectionDetailsPage: RouteComponent = () => {
           const newRecords = editedRecords.map((record) => {
             const {
               createdAt: _createdAt,
-              id,
+              id: _id,
               isEditing: _isEditing,
               updatedAt: _updatedAt,
               userId: _userId,
-              ...newCollectionItemData
+              ...cleanCollectionItem
             } = record;
 
-            return { ...newCollectionItemData, id: String(id) };
+            return cleanCollectionItem;
           });
 
           await onCreateCollectionItem(

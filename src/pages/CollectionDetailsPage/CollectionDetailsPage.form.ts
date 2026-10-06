@@ -19,6 +19,7 @@ export const createNewCollectionItem = ({
     customField1Value: '',
     customField2Value: '',
     customField3Value: '',
+    customFieldValues: {},
     editionDetails: '',
     id,
     images: [],

@@ -7,7 +7,7 @@ import type { HTMLAttributes, JSXElementConstructor } from 'react';
 
 import type { FieldWrapperProps } from '../FieldWrapper/FieldWrapper.types';
 
-export type TItemRecordDef = {
+export type TValueRecordDef = {
   [key: string]: any;
   /** DO NOT USE. Added by the system if input can create new items. */
   creatable?: true;
@@ -15,38 +15,41 @@ export type TItemRecordDef = {
 };
 
 export type ComboboxValueDef<
-  TItem extends TItemRecordDef,
+  TValue extends TValueRecordDef,
   TMultiple extends boolean | undefined,
-> = TMultiple extends true ? TItem[] : TItem;
+> = TMultiple extends true ? TValue[] : TValue;
 
 export type ComboboxFieldPropsDef<
-  TItem extends TItemRecordDef,
+  TValue extends TValueRecordDef,
   TMultiple extends boolean | undefined = false,
-> = ComboboxRootProps<TItem, TMultiple> &
+> = ComboboxRootProps<TValue, TMultiple> &
   Pick<ComboboxInputProps, 'placeholder'> &
   FieldWrapperProps & {
     allowCreatable?: boolean;
-    createItem?: (trimmedQuery: string) => TItem;
+    ariaLabel?: string;
+    caseSensitiveCreation?: boolean;
+    caseSensitiveFilter?: boolean;
+    createNewItem?: (trimmedQuery: string) => TValue;
     hideLabel?: boolean;
-    idProperty?: keyof TItem;
+    idProperty?: keyof TValue;
     inputValue?: string;
-    labelProperty?: keyof TItem;
-    onRemoveChip?: (item: TItem) => void;
+    labelProperty?: keyof TValue;
+    onRemoveChip?: (item: TValue) => void;
     RenderChip?: JSXElementConstructor<
-      HTMLAttributes<HTMLElement> & { item: TItem }
+      HTMLAttributes<HTMLElement> & { item: TValue }
     >;
     RenderItem?: JSXElementConstructor<
       HTMLAttributes<HTMLElement> & {
-        item: TItem;
+        item: TValue;
         multiple: boolean | undefined;
         SelectedIndicator: typeof ComboboxItemIndicator;
       }
     >;
-    sortItems?: (items: TItem[]) => TItem[];
+    sortItems?: (items: TValue[]) => TValue[];
     /** Runs if the search query matches an existing item. Allows a second validation to compare more than just the query value. */
     verifyShowNewItem?: (props: {
-      itemMatchingQuery: TItem | undefined;
-      newItem: TItem;
+      itemMatchingQuery: TValue | undefined;
+      newItem: TValue;
       normalizedQuery: string;
       query: string;
     }) => boolean;

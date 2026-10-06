@@ -13,6 +13,7 @@ import {
 } from '#/api/db-tables-schema';
 import { deleteCloudinaryAssetsByPublicIds } from '#/lib/cloudinary';
 
+import type { CustomFieldValueDef } from '../../custom-field-values/custom-field-values.types';
 import type { UpdateCollectionItemsRequestArgsDef } from './update-collection-item-by-id.types';
 
 export const updateCollectionItemsDbQuery = async (
@@ -68,26 +69,30 @@ export const updateCollectionItemsDbQuery = async (
         ).reduce<{
           toCreate: {
             customFieldId: number;
+            data: { value: CustomFieldValueDef };
             userId: string;
-            value: boolean | string | number;
           }[];
           toUpdate: {
             customFieldId: number;
+            data: { value: CustomFieldValueDef };
             id: number;
             userId: string;
-            value: boolean | string | number;
           }[];
         }>(
-          (acc, [customFieldId, { id, value }]) => {
-            if (typeof id === 'string') {
+          (acc, [customFieldIdAsString, customFieldValue]) => {
+            const customFieldId = Number(customFieldIdAsString);
+
+            if (!customFieldValue) {
+              return acc;
+            } else if (typeof customFieldValue.id === 'string') {
               return {
                 ...acc,
                 toCreate: [
                   ...acc.toCreate,
                   {
-                    customFieldId: Number(customFieldId),
+                    customFieldId,
+                    data: customFieldValue.data,
                     userId,
-                    value,
                   },
                 ],
               };
@@ -97,10 +102,10 @@ export const updateCollectionItemsDbQuery = async (
                 toUpdate: [
                   ...acc.toUpdate,
                   {
-                    customFieldId: Number(customFieldId),
-                    id,
+                    customFieldId,
+                    data: customFieldValue.data,
+                    id: customFieldValue.id,
                     userId,
-                    value,
                   },
                 ],
               };
@@ -125,6 +130,7 @@ export const updateCollectionItemsDbQuery = async (
             ...newRecords,
           ];
         }
+
         if (customFieldValueRecords.toUpdate.length) {
           const updatedRecords = await Promise.all(
             customFieldValueRecords.toUpdate.map(async (customFieldValue) => {

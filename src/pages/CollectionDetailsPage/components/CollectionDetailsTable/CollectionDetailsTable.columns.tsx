@@ -1,17 +1,37 @@
+import type { AnyFieldApi } from '@tanstack/react-form';
 import type { AccessorKeyColumnDefBase } from '@tanstack/react-table';
 
+import CheckIcon from '@mui/icons-material/Check';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { createColumnHelper } from '@tanstack/react-table';
 import { Fragment } from 'react/jsx-runtime';
 import { v4 as uuidv4 } from 'uuid';
 
 import type { CollectionItemRecordDef } from '#/api/routes/collection-items/collection-item.types';
+import type { CustomFieldValueDef } from '#/api/routes/custom-field-values/custom-field-values.types';
+import type { HideDialog } from '#/components/Dialog/hooks/useDialog';
 
-import { CheckboxField } from '#/components/Fields/CheckboxField';
+import { useGetCollectionItemsWithCustomFieldValue } from '#/api/routes/collection-items/get-collection-items-with-custom-field-value/get-collection-items-with-custom-field-value.react-query';
+import { useCreateCustomFieldValues } from '#/api/routes/custom-field-values/create-custom-field-value/create-custom-field-value.react-query';
+import { useDeleteCustomFieldValues } from '#/api/routes/custom-field-values/delete-custom-field-values/delete-custom-field-values.react-query';
+import {
+  useGetCustomFieldValuesByCustomFieldId,
+  useInvalidateGetCustomFieldValuesByCustomFieldId,
+} from '#/api/routes/custom-field-values/get-custom-field-values-by-collection-id/get-custom-field-values-by-collection-id.react-query';
+import { Button } from '#/components/Button';
+import { Dialog } from '#/components/Dialog';
+import { useDialog } from '#/components/Dialog/hooks/useDialog';
+import { ComboboxField } from '#/components/Fields/ComboboxField';
 import { InputField } from '#/components/Fields/InputField';
 import { SwitchField } from '#/components/Fields/SwitchField';
+import { pluralize } from '#/helpers/pluralize';
 import { useEditingCollectionItemsRowIds } from '#/pages/CollectionsListPage/hooks/use-editing-collections-row-ids';
+import { Route } from '#/routes/_protected/collections/$id';
 
-import type { CreateOrUpdateCollectionItemFormRowDataDef } from '../../CollectionDetailsPage.types';
+import type {
+  CreateOrUpdateCollectionItemFormDataDef,
+  CreateOrUpdateCollectionItemFormRowDataDef,
+} from '../../CollectionDetailsPage.types';
 import type { GetCollectionItemsTableColumnsPropsDef } from './CollectionDetailsTable.types';
 
 import { CollectionDetailsActionsCell } from './components/column-cells/CollectionDetailsActionsCell';
@@ -27,7 +47,7 @@ import { useCollectionDetailsCustomFieldsStore } from './hooks/use-collection-de
 const columnHelper =
   createColumnHelper<CreateOrUpdateCollectionItemFormRowDataDef>();
 
-export const getCollectionItemsTableColumns = (
+export const useGetCollectionItemsTableColumns = (
   props: GetCollectionItemsTableColumnsPropsDef,
 ) => {
   const {
@@ -42,6 +62,9 @@ export const getCollectionItemsTableColumns = (
     onCancel,
     onEditClick,
   } = props;
+
+  const { id } = Route.useParams();
+  const collectionId = Number(id);
 
   return [
     columnHelper.accessor('name', {
@@ -76,13 +99,59 @@ export const getCollectionItemsTableColumns = (
     ...customFields.map((customField, index) => {
       return columnHelper.accessor('customFieldValues', {
         cell: ({ getValue, row }) => {
+          const { data: customFieldValuesForColumn } =
+            useGetCustomFieldValuesByCustomFieldId({
+              placeholderData: [],
+              requestArgs: {
+                id: customField.id,
+              },
+            });
+
           const { getIsEditingRowId } = useEditingCollectionItemsRowIds();
 
           const isEditingRow = getIsEditingRowId(row.id);
 
-          const customFieldValueForIndex = getValue()[customField.id];
+          const customFieldId = customField.id;
 
-          const key = customFieldValueForIndex?.id || customField?.id;
+          const customFieldValueForIndex = getValue()?.[customFieldId];
+
+          const key = customFieldValueForIndex?.id || customFieldId;
+
+          const { onCreateCustomFieldValues, processing } =
+            useCreateCustomFieldValues();
+
+          const [showDeleteCustomFieldValueDialog, hideCustomFieldValueDialog] =
+            useDialog(() => {
+              return (
+                <form.Field
+                  key={key}
+                  name={`collectionItems[${row.index}].customFieldValues.${customField.id}`}
+                >
+                  {(field) => {
+                    return (
+                      <DeleteCustomFieldDialog
+                        collectionItemId={row.original.id}
+                        customFieldValue={customFieldValueForIndex}
+                        handleFieldChange={field.handleChange}
+                        onClose={hideCustomFieldValueDialog}
+                      />
+                    );
+                  }}
+                </form.Field>
+              );
+            }, []);
+
+          // TODO - LOOK MORE INTO `Combobox.createItems` LATER WHEN THINGS ARE WORKING AS EXPECTED
+          // const comboboxItems = useMemo(() => {
+          //   return Combobox.createItems(customFieldValuesForColumn, {
+          //     getLabel: (item) => {
+          //       return item.value;
+          //     },
+          //     getValue: (item) => {
+          //       return item.id;
+          //     },
+          //   });
+          // }, [customFieldValuesForColumn]);
 
           return isEditingRow ? (
             <form.Field
@@ -90,49 +159,212 @@ export const getCollectionItemsTableColumns = (
               name={`collectionItems[${row.index}].customFieldValues.${customField.id}`}
             >
               {(field) => {
+                const getValueForCustomField = <
+                  TValue extends CustomFieldValueDef,
+                >({
+                  values,
+                }: {
+                  values: CreateOrUpdateCollectionItemFormDataDef;
+                }) => {
+                  const valueForCustomField =
+                    values.collectionItems[row.index].customFieldValues?.[
+                      customField.id
+                    ];
+
+                  if (valueForCustomField) {
+                    const { data, ...rest } = valueForCustomField;
+
+                    return {
+                      valueForCustomField: {
+                        ...rest,
+                        data: { value: data.value as TValue },
+                      },
+                    };
+                  } else {
+                    return { valueForCustomField: undefined };
+                  }
+                };
+
                 return (
                   <>
                     {customField.type === 'boolean' && (
-                      <div>
-                        <SwitchField
-                          checked={field.value?.value as boolean}
-                          onCheckedChange={(value) => {
-                            field.handleChange({
-                              id: field.value?.id || uuidv4(),
-                              value,
-                            });
-                          }}
-                        />
-                      </div>
+                      <form.Subscribe
+                        selector={({ values }) => {
+                          return getValueForCustomField<boolean>({ values });
+                        }}
+                      >
+                        {({ valueForCustomField }) => {
+                          return (
+                            <SwitchField
+                              checked={valueForCustomField?.data?.value}
+                              disabled={processing}
+                              onCheckedChange={async (value) => {
+                                const customFieldValueId = field.value?.id;
+
+                                if (customFieldValueId) {
+                                  field.handleChange({
+                                    data: { value },
+                                    id: customFieldValueId,
+                                  });
+                                } else {
+                                  const [newCustomFieldValue] =
+                                    await onCreateCustomFieldValues({
+                                      records: [{ customFieldId, value }],
+                                    });
+
+                                  field.handleChange(newCustomFieldValue);
+                                }
+                              }}
+                            />
+                          );
+                        }}
+                      </form.Subscribe>
                     )}
+
                     {customField.type === 'number' && (
-                      <div>
-                        <InputField
-                          onValueChange={(value) => {
-                            field.handleChange({
-                              id: field.value?.id || uuidv4(),
-                              value: Number(value),
-                            });
-                          }}
-                          placeholder={`Input ${customField.name}...`}
-                          type="number"
-                          value={field.value?.value as number}
-                        />
-                      </div>
+                      <form.Subscribe
+                        selector={({ values }) => {
+                          return getValueForCustomField<number>({ values });
+                        }}
+                      >
+                        {({ valueForCustomField }) => {
+                          return (
+                            <InputField
+                              onValueChange={async (value) => {
+                                const customFieldValueId = field.value?.id;
+                                const formattedValue = Number(value);
+
+                                if (customFieldValueId) {
+                                  field.handleChange({
+                                    data: { value: formattedValue },
+                                    id: customFieldValueId,
+                                  });
+                                } else {
+                                  const [newCustomFieldValue] =
+                                    await onCreateCustomFieldValues({
+                                      records: [
+                                        {
+                                          customFieldId,
+                                          value: formattedValue,
+                                        },
+                                      ],
+                                    });
+
+                                  field.handleChange(newCustomFieldValue);
+                                }
+                              }}
+                              placeholder={`Input ${customField.name}...`}
+                              triggerOnBlur
+                              type="number"
+                              value={valueForCustomField?.data?.value}
+                            />
+                          );
+                        }}
+                      </form.Subscribe>
                     )}
+
                     {customField.type === 'string' && (
-                      <div>
-                        <InputField
-                          onValueChange={(value) => {
-                            field.handleChange({
-                              id: field.value?.id || uuidv4(),
-                              value,
-                            });
-                          }}
-                          placeholder={`Input ${customField.name}...`}
-                          value={field.value?.value as string}
-                        />
-                      </div>
+                      <form.Subscribe
+                        selector={({ values }) => {
+                          return getValueForCustomField<string>({ values });
+                        }}
+                      >
+                        {({ valueForCustomField }) => {
+                          const items = customFieldValuesForColumn.map(
+                            ({ data, id }) => {
+                              return { id, value: data.value };
+                            },
+                          );
+
+                          return (
+                            <ComboboxField
+                              allowCreatable
+                              ariaLabel={customField.name}
+                              caseSensitiveCreation
+                              createNewItem={(label) => {
+                                return {
+                                  id: uuidv4() as unknown as number,
+                                  value: label,
+                                };
+                              }}
+                              idProperty="id"
+                              items={items}
+                              labelProperty="value"
+                              name={field.name}
+                              onValueChange={async (selectedItem) => {
+                                if (selectedItem) {
+                                  const customFieldValueExistsInDB =
+                                    typeof selectedItem.id === 'number';
+
+                                  const matchesCurrentSelection =
+                                    valueForCustomField?.id === selectedItem.id;
+                                  if (matchesCurrentSelection) {
+                                    // ? deselect item
+                                    field.handleChange(undefined);
+                                  } else if (customFieldValueExistsInDB) {
+                                    // ? use selected item
+                                    field.handleChange({
+                                      data: {
+                                        value: selectedItem.value,
+                                      },
+                                      id: selectedItem.id,
+                                    });
+                                  } else {
+                                    // ? create selected item in DB
+                                    const [newCustomFieldValue] =
+                                      await onCreateCustomFieldValues({
+                                        records: [
+                                          {
+                                            customFieldId,
+                                            value: selectedItem.value,
+                                          },
+                                        ],
+                                      });
+
+                                    field.handleChange(newCustomFieldValue);
+                                  }
+                                }
+                              }}
+                              placeholder={`Input ${customField.name}...`}
+                              RenderItem={({ item, SelectedIndicator }) => {
+                                return (
+                                  <div className="flex gap-2 items-center w-full">
+                                    <span>{item.value}</span>
+                                    <SelectedIndicator>
+                                      <CheckIcon fontSize="inherit" />
+                                    </SelectedIndicator>
+
+                                    <Button
+                                      className="text-gray-600 hover:text-red-700 cursor-pointer ml-auto px-2 py-1"
+                                      onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+
+                                        showDeleteCustomFieldValueDialog();
+
+                                        // TODO - ADD LOGIC TO CHECK IF MORE THAN ONE LINK EXISTS IN DB. IF SO, JUST RETURN AND UPDATE FIELD. OTHERWISE OPEN MODAL TO CONFIRM DELETE CUSTOM FIELD VALUE. ON CONFIRM, UPDATE FIELD
+                                        // editCustomFieldAtom.data.setValue(item);
+                                      }}
+                                      size="custom"
+                                      variant="ghost"
+                                    >
+                                      <DeleteIcon fontSize="inherit" />
+                                    </Button>
+                                  </div>
+                                );
+                              }}
+                              value={
+                                valueForCustomField
+                                  ? {
+                                      id: valueForCustomField.id,
+                                      value: valueForCustomField.data.value,
+                                    }
+                                  : undefined
+                              }
+                            />
+                          );
+                        }}
+                      </form.Subscribe>
                     )}
                   </>
                 );
@@ -140,11 +372,13 @@ export const getCollectionItemsTableColumns = (
             </form.Field>
           ) : (
             <Fragment key={key}>
-              {typeof customFieldValueForIndex?.value === 'boolean' &&
-              customFieldValueForIndex?.value ? (
-                <CheckboxField checked={customFieldValueForIndex?.value} />
+              {typeof customFieldValueForIndex?.data?.value === 'boolean' &&
+              customFieldValueForIndex?.data?.value === true ? (
+                <CheckIcon fontSize="inherit" />
               ) : (
-                <p>{customFieldValueForIndex?.value || '-'}</p>
+                // ) : customFieldValueForIndex?.data?.value === false ? (
+                //   <CloseIcon fontSize="inherit" />
+                <p>{customFieldValueForIndex?.data?.value || '-'}</p>
               )}
             </Fragment>
           );
@@ -277,4 +511,113 @@ export const getCollectionItemsTableColumns = (
       size: 40,
     }),
   ].filter(Boolean) as AccessorKeyColumnDefBase<CollectionItemRecordDef>[];
+};
+
+export const DeleteCustomFieldDialog = <
+  THandleFieldChange extends AnyFieldApi['handleChange'],
+>(props: {
+  collectionItemId: number;
+  customFieldValue: {
+    id: number;
+    value: string;
+  };
+  handleFieldChange: THandleFieldChange;
+  onClose: HideDialog;
+}) => {
+  const { collectionItemId, customFieldValue, handleFieldChange, onClose } =
+    props;
+
+  const id = Number(customFieldValue.id);
+
+  const { data } = useGetCollectionItemsWithCustomFieldValue({
+    onSuccess: (data) => {
+      console.log('🚀 ~ DeleteCustomFieldDialog ~ data:', data);
+    },
+    placeholderData: (_data) => {
+      return {
+        affectedCollections: [],
+        numAffectedCollectionItems: 0,
+      } satisfies typeof _data;
+    },
+    requestArgs: {
+      id: customFieldValue.id,
+    },
+  });
+
+  const invalidateGetCustomFieldValuesByCustomFieldId =
+    useInvalidateGetCustomFieldValuesByCustomFieldId();
+
+  const { onDeleteCustomFieldValues, processing } = useDeleteCustomFieldValues({
+    onSuccess: async () => {
+      await invalidateGetCustomFieldValuesByCustomFieldId();
+
+      handleFieldChange(undefined);
+
+      onClose();
+    },
+  });
+
+  const { affectedCollections, numAffectedCollectionItems } = data;
+
+  return (
+    <Dialog
+      disableOnClose={processing}
+      Footer={() => {
+        return (
+          <>
+            <Button disabled={processing} onClick={onClose} variant="mono">
+              Cancel
+            </Button>
+            <Button
+              onClick={async () => {
+                await onDeleteCustomFieldValues({
+                  collectionItemId,
+                  ids: [id],
+                });
+              }}
+              processing={processing}
+              variant="alert"
+            >
+              Delete
+            </Button>
+          </>
+        );
+      }}
+      Header="Delete Custom Field"
+      maxWidthClassName="md:max-w-100"
+      onClose={onClose}
+    >
+      <div className="grid gap-4">
+        <p className="text-center">
+          Are you sure you want to delete this custom field value?
+        </p>
+
+        <h4 className="text-center">{customFieldValue.value}</h4>
+
+        {numAffectedCollectionItems > 1 && (
+          <div className="grid gap-1">
+            <p className="text-center text-sm text-gray-600">
+              This will remove the field from {numAffectedCollectionItems}{' '}
+              collection {pluralize('item', numAffectedCollectionItems)} across
+              the following collections:
+            </p>
+
+            <ul>
+              {affectedCollections.map(({ id, name }) => {
+                return (
+                  <li key={id}>
+                    <p>{name}</p>
+                  </li>
+                );
+              })}
+            </ul>
+
+            <p className="text-center text-sm text-gray-600">
+              <em>This cannot be undone.</em>
+            </p>
+          </div>
+        )}
+      </div>
+    </Dialog>
+  );
 };

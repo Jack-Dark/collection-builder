@@ -33,7 +33,11 @@ export const createCollectionDbQuery = async (
       });
 
       customFieldIds.forEach((customFieldId) => {
-        newCollectionToCustomFieldRecords.push({ collectionId, customFieldId });
+        newCollectionToCustomFieldRecords.push({
+          collectionId,
+          customFieldId,
+          userId: records[0].userId,
+        });
       });
     });
 
