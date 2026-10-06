@@ -7,6 +7,7 @@ import { Link } from '@tanstack/react-router';
 export const NavigationLinkWrapper = (props: NavigationMenuLinkProps) => {
   return (
     <NavigationMenu.Link
+      closeOnClick
       render={({ href, ...rest }: AnchorHTMLAttributes<HTMLAnchorElement>) => {
         const isExternal = /^https?:\/\//.test(href!);
 
