@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useBlocker } from '@tanstack/react-router';
 
 import { useGetCollectionDetailsById } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.react-query';
 import { Table } from '#/components/Table';
@@ -40,6 +41,20 @@ export const CollectionDetailsTable = ({
   };
   const { addToEditingRowIds, editingRowIds, isEditing, resetEditingRowIds } =
     useEditingCollectionItemsRowIds();
+
+  useBlocker({
+    shouldBlockFn: () => {
+      if (isEditing) {
+        const shouldLeave = confirm(
+          'You will lose any unsaved changes. Are you sure you want to leave?',
+        );
+
+        return !shouldLeave;
+      } else {
+        return false;
+      }
+    },
+  });
 
   const onEditClick = (...rowIdsToAdd: string[]) => {
     addToEditingRowIds(...rowIdsToAdd);

@@ -1,5 +1,6 @@
 import { useSelector } from '@tanstack/react-form';
-import { useMemo } from 'react';
+import { useBlocker } from '@tanstack/react-router';
+import { useEffect, useMemo } from 'react';
 
 import { getPaginationMetadataDefaults } from '#/api/pagination/pagination.constants';
 import { useGetPaginatedCollections } from '#/api/routes/collections/get-paginated-collections/get-paginated-collections.react-query';
@@ -44,6 +45,20 @@ export const CollectionsListTable = ({
   const { addToEditingRowIds, editingRowIds, isEditing, resetEditingRowIds } =
     useEditingCollectionsRowIds();
 
+  useBlocker({
+    shouldBlockFn: () => {
+      if (isEditing) {
+        const shouldLeave = confirm(
+          'You will lose any unsaved changes. Are you sure you want to leave?',
+        );
+
+        return !shouldLeave;
+      } else {
+        return false;
+      }
+    },
+  });
+
   const onEditClick = (...rowIdsToAdd: string[]) => {
     addToEditingRowIds(...rowIdsToAdd);
 
@@ -71,6 +86,11 @@ export const CollectionsListTable = ({
   const records = useSelector(form.atom, ({ values }) => {
     return values.records;
   });
+
+  useEffect(() => {
+    // ? clear edit state on unmount
+    return resetEditingRowIds;
+  }, []);
 
   return (
     <Table
