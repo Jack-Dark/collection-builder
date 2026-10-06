@@ -162,18 +162,6 @@ export const useGetCollectionItemsTableColumns = (
               );
             }, [customFieldValueToDelete, customFieldValueForIndex?.id]);
 
-          // TODO - LOOK MORE INTO `Combobox.createItems` LATER WHEN THINGS ARE WORKING AS EXPECTED
-          // const comboboxItems = useMemo(() => {
-          //   return Combobox.createItems(customFieldValuesForColumn, {
-          //     getLabel: (item) => {
-          //       return item.value;
-          //     },
-          //     getValue: (item) => {
-          //       return item.id;
-          //     },
-          //   });
-          // }, [customFieldValuesForColumn]);
-
           return isEditingRow ? (
             <form.Field
               key={key}

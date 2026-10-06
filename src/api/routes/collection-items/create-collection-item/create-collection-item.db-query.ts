@@ -1,5 +1,3 @@
-import type { InsertLinkCollectionItemsToCustomFieldValuesRecordDef } from '#/api/db-tables-schema.types';
-
 import { db } from '#/api/db';
 import { addCloudinaryTagsToPublicIds } from '#/lib/cloudinary';
 
@@ -23,9 +21,6 @@ export const createCollectionItemsDbQuery = async (
 
   const formattedCollectionItemRecords = records.map(
     ({ customFieldValues, ...record }) => {
-      const [foo, bar] = Object.entries(customFieldValues).map(
-        ([customFieldId, customFieldValue]) => {},
-      );
       customFieldValuesIndexedToRecord.push(customFieldValues);
 
       return { ...record, userId } satisfies InsertCollectionItemRecordDef;
@@ -39,48 +34,6 @@ export const createCollectionItemsDbQuery = async (
       .values(formattedCollectionItemRecords)
       .onConflictDoNothing()
       .returning();
-
-    await Promise.all(
-      newCollectionItems.map(async (collectionItem, index) => {
-        // ? Create brand new links between this collection item and custom field values
-      }),
-    );
-
-    const foo = newCollectionItems.reduce<
-      InsertLinkCollectionItemsToCustomFieldValuesRecordDef[]
-    >((acc, { id: collectionItemId }, index) => {
-      const customFieldValues = records[index]?.customFieldValues || [];
-
-      const customFieldValueLinksForCollectionItem = Object.values(
-        customFieldValues,
-      ).reduce<InsertLinkCollectionItemsToCustomFieldValuesRecordDef[]>(
-        (acc, customFieldValue) => {
-          if (customFieldValue) {
-            return [
-              ...acc,
-              {
-                collectionItemId,
-                customFieldValueId: customFieldValue.id,
-                userId,
-              } satisfies InsertLinkCollectionItemsToCustomFieldValuesRecordDef,
-            ];
-          } else {
-            return acc;
-          }
-        },
-        [],
-      );
-
-      return [...acc, ...customFieldValueLinksForCollectionItem];
-    }, []);
-
-    // await tx.insert(collectionItemsToCustomFieldValuesTable).values([
-    //   {
-    //     collectionItemId,
-    //     customFieldValueId,
-    //     userId,
-    //   },
-    // ]);
 
     // ? add tags to Cloudinary assets
     await Promise.all(
