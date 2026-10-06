@@ -55,6 +55,10 @@ export const relations = defineRelations(
           [x.original]: r.customFields.id,
           [x.references]: r.customFieldValues.customFieldId,
         }),
+        details: r.one.collectionsToCustomFields({
+          [x.original]: r.customFields.id,
+          [x.references]: r.collectionsToCustomFields.customFieldId,
+        }),
       },
       users: {
         accounts: r.one.accounts({

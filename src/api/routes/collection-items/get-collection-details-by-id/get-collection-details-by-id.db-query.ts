@@ -42,7 +42,8 @@ export const getCollectionDetailsByIdDbQuery = async (
 
     const collection = await tx.query.collections.findFirst({
       columns: {
-        userId: false,
+        id: true,
+        name: true,
       },
       where: {
         deletedAt: undefined,
@@ -57,10 +58,9 @@ export const getCollectionDetailsByIdDbQuery = async (
             type: true,
           },
           with: {
-            customFieldValues: {
+            details: {
               columns: {
-                data: true,
-                id: true,
+                order: true,
               },
             },
           },
@@ -69,6 +69,10 @@ export const getCollectionDetailsByIdDbQuery = async (
     });
 
     const items = await tx.query.collectionItems.findMany({
+      columns: {
+        collectionId: false,
+        userId: false,
+      },
       limit,
       offset: (page - 1) * limit,
       orderBy: (table, { asc, desc, sql }) => {
