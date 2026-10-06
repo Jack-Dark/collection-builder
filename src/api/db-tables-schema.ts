@@ -84,24 +84,6 @@ export const verificationsTable = snakeCase.table('verifications', {
 });
 
 export const collectionsTable = snakeCase.table('collections', {
-  /** @deprecated */
-  customField1Enabled: boolean('custom_field1_enabled')
-    .default(false)
-    .notNull(),
-  /** @deprecated */
-  customField1Label: text('custom_field1_label'),
-  /** @deprecated */
-  customField2Enabled: boolean('custom_field2_enabled')
-    .default(false)
-    .notNull(),
-  /** @deprecated */
-  customField2Label: text('custom_field2_label'),
-  /** @deprecated */
-  customField3Enabled: boolean('custom_field3_enabled')
-    .default(false)
-    .notNull(),
-  /** @deprecated */
-  customField3Label: text('custom_field3_label'),
   id: serial().primaryKey(),
   name: text().notNull(),
   notes: text().notNull().default(''),
@@ -125,12 +107,6 @@ export const collectionItemsTable = snakeCase.table('collection_items', {
       },
       { onDelete: 'cascade' },
     ),
-  /** @deprecated */
-  customField1Value: text('custom_field1_value').default('').notNull(),
-  /** @deprecated */
-  customField2Value: text('custom_field2_value').default('').notNull(),
-  /** @deprecated */
-  customField3Value: text('custom_field3_value').default('').notNull(),
   editionDetails: text('edition_details').default('').notNull(),
   id: serial().primaryKey(),
   images: json().$type<string[]>().default([]).notNull(),

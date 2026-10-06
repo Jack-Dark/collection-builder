@@ -4,9 +4,6 @@ import { customFieldValuesFormSchema } from '../custom-field-values/custom-field
 
 export const baseCollectionItemSchema = z.object({
   collectionId: z.number().min(1).describe('Collection ID'),
-  customField1Value: z.string().describe('Custom Field 1'),
-  customField2Value: z.string().describe('Custom Field 2'),
-  customField3Value: z.string().describe('Custom Field 3'),
   customFieldValues: customFieldValuesFormSchema,
   editionDetails: z.string().describe('Edition details'),
   isSpecialEdition: z.boolean().describe('Is special edition'),

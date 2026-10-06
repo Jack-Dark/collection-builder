@@ -16,9 +16,6 @@ export const createNewCollectionItem = ({
 
   return {
     collectionId,
-    customField1Value: '',
-    customField2Value: '',
-    customField3Value: '',
     customFieldValues: {},
     editionDetails: '',
     id,

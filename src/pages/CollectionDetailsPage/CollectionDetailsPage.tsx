@@ -1,7 +1,6 @@
 import type { RouteComponent } from '@tanstack/react-router';
 
 import { useForm } from '@tanstack/react-form';
-import { useLayoutEffect } from 'react';
 
 import type { OnCreateCollectionItemsArgsDef } from '#/api/routes/collection-items/create-collection-item/create-collection-item.types';
 import type { OnUpdateCollectionItemsArgsDef } from '#/api/routes/collection-items/update-collection-item-by-id/update-collection-item-by-id.types';
@@ -22,14 +21,10 @@ import {
   createOrUpdateCollectionItemsFormOptions,
 } from './CollectionDetailsPage.form';
 import { CollectionDetailsTable } from './components/CollectionDetailsTable';
-import { useCollectionDetailsCustomFieldsStore } from './components/CollectionDetailsTable/hooks/use-collection-details-custom-fields-store';
-import { useCollectionDetailsFiltersStore } from './components/CollectionDetailsTable/hooks/use-collection-details-filters-store';
 
 export const CollectionDetailsPage: RouteComponent = () => {
   const { id } = CollectionRoute.useParams();
   const searchQueries = CollectionRoute.useSearch();
-
-  const { setAllFilters: setFilters } = useCollectionDetailsFiltersStore();
 
   const collectionId = Number(id);
 
@@ -47,13 +42,11 @@ export const CollectionDetailsPage: RouteComponent = () => {
   });
 
   const { data } = useGetCollectionDetailsById({
-    onSuccess: ({ customFields, items }) => {
+    onSuccess: ({ items }) => {
       form.setFieldValue('collectionItems', items);
-      setCustomFields(customFields);
     },
     requestArgs: { collectionId, params: searchQueries },
   });
-  const { setCustomFields } = useCollectionDetailsCustomFieldsStore();
 
   const { resetEditingRowIds } = useEditingCollectionItemsRowIds();
 
@@ -104,12 +97,6 @@ export const CollectionDetailsPage: RouteComponent = () => {
       });
     },
   });
-
-  useLayoutEffect(() => {
-    if (searchQueries.filters) {
-      setFilters(searchQueries.filters);
-    }
-  }, [searchQueries.filters]);
 
   return (
     <PageWrapper

@@ -70,12 +70,6 @@ export const CollectionDetailsTable = ({
   };
 
   const columns = useGetCollectionItemsTableColumns({
-    customField1Enabled: collection?.customField1Enabled,
-    customField1Label: collection?.customField1Label,
-    customField2Enabled: collection?.customField2Enabled,
-    customField2Label: collection?.customField2Label,
-    customField3Enabled: collection?.customField3Enabled,
-    customField3Label: collection?.customField3Label,
     customFields: data?.collection?.customFields || [],
     form,
     onCancel,

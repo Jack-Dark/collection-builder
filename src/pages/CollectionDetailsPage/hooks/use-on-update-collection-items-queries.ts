@@ -10,10 +10,7 @@ export const useOnUpdateCollectionItemsQueries = () => {
     updatedQueries: Partial<typeof searchQueries>,
     options?: NavigateOptions,
   ) => {
-    const shouldResetPage =
-      !!updatedQueries.filters ||
-      !!updatedQueries.limit ||
-      !!updatedQueries.search;
+    const shouldResetPage = !!updatedQueries.limit || !!updatedQueries.search;
 
     const newSearch = {
       ...searchQueries,

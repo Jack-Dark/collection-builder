@@ -9,9 +9,6 @@ import type { SetZustandStoreFnDef } from '#/helpers/get-create-default-zustand-
 
 import { sortDirectionOptions } from '#/api/pagination/pagination.constants';
 import { Button } from '#/components/Button';
-import { CheckboxField } from '#/components/Fields/CheckboxField';
-
-import { useCollectionDetailsFiltersStore } from '../../hooks/use-collection-details-filters-store';
 
 const FiltersBlock = (
   props: PropsWithChildren<{
@@ -42,24 +39,14 @@ const FiltersBlock = (
 
 type CollectionDetailsFiltersContentPropsDef = {
   collection: CollectionRecordDef;
-  customFields: {
-    customField1Values: string[];
-    customField2Values: string[];
-    customField3Values: string[];
-  };
 };
 
 export const CollectionDetailsFiltersContent = (
   props: CollectionDetailsFiltersContentPropsDef,
 ) => {
-  const { collection, customFields } = props;
+  const { collection } = props;
 
-  const {
-    customField1Store,
-    customField2Store,
-    customField3Store,
-    saveAllFiltersSnapshot,
-  } = useCollectionDetailsFiltersStore();
+  // const { saveAllFiltersSnapshot } = useCollectionDetailsFiltersStore();
 
   const getOnCheckedChange = (props: {
     setValue: SetZustandStoreFnDef<string[]>;
@@ -83,79 +70,19 @@ export const CollectionDetailsFiltersContent = (
   };
 
   useEffect(() => {
-    saveAllFiltersSnapshot();
+    // saveAllFiltersSnapshot();
   }, []);
 
   return (
     <div className="grid gap-5">
-      {collection.customField1Enabled && (
-        <FiltersBlock
-          label={collection.customField1Label}
-          onReset={customField1Store.resetValue}
-        >
-          {customFields.customField1Values.map((value) => {
-            const onCheckedChange = getOnCheckedChange({
-              setValue: customField1Store.setValue,
-              value,
-            });
-
-            return (
-              <CheckboxField
-                checked={customField1Store.value.includes(value)}
-                key={value}
-                label={value}
-                onCheckedChange={onCheckedChange}
-              />
-            );
-          })}
-        </FiltersBlock>
-      )}
-
-      {collection.customField2Enabled && (
-        <FiltersBlock
-          label={collection.customField2Label}
-          onReset={customField2Store.resetValue}
-        >
-          {customFields.customField2Values.map((value) => {
-            const onCheckedChange = getOnCheckedChange({
-              setValue: customField2Store.setValue,
-              value,
-            });
-
-            return (
-              <CheckboxField
-                checked={customField2Store.value.includes(value)}
-                key={value}
-                label={value}
-                onCheckedChange={onCheckedChange}
-              />
-            );
-          })}
-        </FiltersBlock>
-      )}
-
-      {collection.customField3Enabled && (
-        <FiltersBlock
-          label={collection.customField3Label}
-          onReset={customField3Store.resetValue}
-        >
-          {customFields.customField3Values.map((value) => {
-            const onCheckedChange = getOnCheckedChange({
-              setValue: customField3Store.setValue,
-              value,
-            });
-
-            return (
-              <CheckboxField
-                checked={customField3Store.value.includes(value)}
-                key={value}
-                label={value}
-                onCheckedChange={onCheckedChange}
-              />
-            );
-          })}
-        </FiltersBlock>
-      )}
+      <FiltersBlock
+        label="EXAMPLE LABEL"
+        onReset={() => {
+          // ON RESET
+        }}
+      >
+        CONTENT
+      </FiltersBlock>
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import type { InferModelFromColumns, SQL } from 'drizzle-orm';
 
-import { and, asc, eq, isNull, ilike, inArray } from 'drizzle-orm';
+import { and, eq, isNull, ilike, inArray } from 'drizzle-orm';
 
 import { db } from '#/api/db';
 import { collectionItemsTable } from '#/api/db-tables-schema';
@@ -68,64 +68,6 @@ export const getCollectionDetailsByIdDbQuery = async (
       },
     });
 
-    const matchesCollectionIdAndUserIdAndNotDeleted = and(
-      eq(collectionItemsTable.collectionId, collectionId),
-      eq(collectionItemsTable.userId, userId),
-      isNull(collectionItemsTable.deletedAt),
-    );
-
-    // ############
-    // START IGNORE
-    // ############
-
-    const [customField1, customField2, customField3] = await Promise.all([
-      await tx
-        .selectDistinct({
-          value: collectionItemsTable.customField1Value,
-        })
-        .from(collectionItemsTable)
-        .where(matchesCollectionIdAndUserIdAndNotDeleted)
-        .orderBy(asc(collectionItemsTable.customField1Value)),
-
-      await tx
-        .selectDistinct({
-          value: collectionItemsTable.customField2Value,
-        })
-        .from(collectionItemsTable)
-        .where(matchesCollectionIdAndUserIdAndNotDeleted)
-        .orderBy(asc(collectionItemsTable.customField2Value)),
-
-      await tx
-        .selectDistinct({
-          value: collectionItemsTable.customField3Value,
-        })
-        .from(collectionItemsTable)
-        .where(matchesCollectionIdAndUserIdAndNotDeleted)
-        .orderBy(asc(collectionItemsTable.customField3Value)),
-    ]);
-
-    const customField1Values = customField1
-      .map(({ value }) => {
-        return value;
-      })
-      .filter(Boolean);
-
-    const customField2Values = customField2
-      .map(({ value }) => {
-        return value;
-      })
-      .filter(Boolean);
-
-    const customField3Values = customField3
-      .map(({ value }) => {
-        return value;
-      })
-      .filter(Boolean);
-
-    // ############
-    // STOP IGNORE
-    // ############
-
     const items = await tx.query.collectionItems.findMany({
       limit,
       offset: (page - 1) * limit,
@@ -186,11 +128,6 @@ export const getCollectionDetailsByIdDbQuery = async (
 
     return {
       collection,
-      customFields: {
-        customField1Values,
-        customField2Values,
-        customField3Values,
-      },
       items: formattedItems,
       pagination,
     };
@@ -200,18 +137,11 @@ export const getCollectionDetailsByIdDbQuery = async (
 const formatFiltersSql = <
   TTable extends InferModelFromColumns<
     {
-      customField1Value: any;
-      customField2Value: any;
-      customField3Value: any;
       name: any;
     } & Record<string, any>
   >,
 >(props: {
-  filters: {
-    customField1: string[];
-    customField2: string[];
-    customField3: string[];
-  };
+  filters: {};
   search: string | undefined;
   searchNotes: boolean;
   table: TTable;

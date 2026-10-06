@@ -11,12 +11,6 @@ export const createNewCollection = (): CreateCollectionFormDataSchemaDef => {
   const id = uuidv4();
 
   return {
-    customField1Enabled: false,
-    customField1Label: '',
-    customField2Enabled: false,
-    customField2Label: '',
-    customField3Enabled: false,
-    customField3Label: '',
     customFields: [],
     id,
     isEditing: true,

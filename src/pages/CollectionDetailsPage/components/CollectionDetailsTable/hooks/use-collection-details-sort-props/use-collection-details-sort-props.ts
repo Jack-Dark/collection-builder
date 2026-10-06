@@ -24,27 +24,6 @@ export const useCollectionDetailsSortProps = (props: {
       { separator: true },
       {
         bidirectional: true,
-        field: 'customField1Value',
-        hide: !collection.customField1Enabled,
-        label: collection.customField1Label,
-      },
-      { hide: !collection.customField1Enabled, separator: true },
-      {
-        bidirectional: true,
-        field: 'customField2Value',
-        hide: !collection.customField2Enabled,
-        label: collection.customField2Label,
-      },
-      { hide: !collection.customField2Enabled, separator: true },
-      {
-        bidirectional: true,
-        field: 'customField3Value',
-        hide: !collection.customField3Enabled,
-        label: collection.customField3Label,
-      },
-      { hide: !collection.customField3Enabled, separator: true },
-      {
-        bidirectional: true,
         field: 'createdAt',
         label: 'Date added',
       },
