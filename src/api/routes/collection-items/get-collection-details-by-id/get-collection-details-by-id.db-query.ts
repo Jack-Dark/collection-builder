@@ -136,9 +136,24 @@ export const getCollectionDetailsByIdDbQuery = async (
         return directionFn(sql`lower(${table[sortingField || 'name']})`);
       },
       where: {
-        // TODO - ADD FILTERS BACK IN (LOGIC AT BOTTOM)
-        collectionId,
-        userId,
+        AND: [
+          {
+            collectionId,
+            userId,
+          },
+          searchNotes
+            ? {
+                notes: {
+                  ilike: `%${search.trim()}%`,
+                },
+              }
+            : {
+                name: {
+                  ilike: `%${search.trim()}%`,
+                },
+              },
+          // TODO - ADD FILTERS BACK IN (LOGIC AT BOTTOM)
+        ],
       },
       with: {
         customFieldValues: {
