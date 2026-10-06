@@ -11,9 +11,13 @@ import { ScrollArea } from '@base-ui/react';
 import SwapVertIcon from '@mui/icons-material/SwapVert';
 import { useKeyHold } from '@tanstack/react-hotkeys';
 import {
+  columnSizingFeature,
+  columnVisibilityFeature,
+  coreRowModelsFeature,
   flexRender,
-  getCoreRowModel,
-  useReactTable,
+  rowSelectionFeature,
+  tableFeatures,
+  useTable,
 } from '@tanstack/react-table';
 import { useMemo, useRef } from 'react';
 
@@ -46,44 +50,44 @@ export type SortItemDef<TField = string> =
       separator: true;
     };
 
-export type RenderRowTypeDef<TData> = JSXElementConstructor<
+export type RenderRowTypeDef<TData extends RowData> = JSXElementConstructor<
   PropsWithChildren<{
-    row: Row<TData>;
+    row: Row<TFeatures, TData>;
     trClassName: string;
   }>
 >;
 
-export type AboveTableComponentDef<TData> = JSXElementConstructor<{
-  table: TableDef<TData>;
-}>;
+export type AboveTableComponentDef<TData extends RowData> =
+  JSXElementConstructor<{
+    table: TableDef<TFeatures, TData>;
+  }>;
 
-export type TablePropsDef<T> = Omit<
-  TableOptions<T>,
-  'filterFns' | 'getCoreRowModel'
-> &
-  Partial<Pick<TableOptions<T>, 'filterFns' | 'getCoreRowModel'>> & {
-    AboveTableComponent?: AboveTableComponentDef<T>;
-    disableRowSelection?: boolean;
-    enableRowSelection?: boolean;
-    filters?: FiltersButtonPropsDef;
-    pagination?: {
-      limit?: {
-        onChange: (limit: number) => void | Promise<void>;
-        value: number;
-      };
-      page?: {
-        max: number;
-        onChange: (limit: number) => void | Promise<void>;
-        value: number;
-      };
+export type TablePropsDef<TData extends RowData> = TableOptions<
+  TFeatures,
+  TData
+> & {
+  AboveTableComponent?: AboveTableComponentDef<TData>;
+  disableRowSelection?: boolean;
+  enableRowSelection?: boolean;
+  filters?: FiltersButtonPropsDef;
+  pagination?: {
+    limit?: {
+      onChange: (limit: number) => void | Promise<void>;
+      value: number;
     };
-    search?: SearchProps;
-    sort?: {
-      items: SortItemDef<keyof T>[];
-      onChange: (sort: SortItemDef<keyof T> | null) => void | Promise<void>;
-      value: SortItemDef<keyof T> | undefined;
+    page?: {
+      max: number;
+      onChange: (limit: number) => void | Promise<void>;
+      value: number;
     };
   };
+  search?: SearchProps;
+  sort?: {
+    items: SortItemDef<keyof TData>[];
+    onChange: (sort: SortItemDef<keyof TData> | null) => void | Promise<void>;
+    value: SortItemDef<keyof TData> | undefined;
+  };
+};
 
 const createLastSelectedRowIdStore = () => {
   const createStore = getCreateDefaultZustandStore<string | undefined>(
@@ -103,15 +107,29 @@ const createLastSelectedRowIdStore = () => {
 
 export const useLastSelectedTableRowsStore = createLastSelectedRowIdStore();
 
+const features = tableFeatures({
+  columnSizingFeature,
+  columnVisibilityFeature,
+  coreRowModelsFeature,
+  rowSelectionFeature,
+  // coreRowModel,
+  // rowSortingFeature, // new - import and pass the feature you want to use
+  // sortedRowModel: createSortedRowModel(), // now row models are defined on the features object
+  // sortFns, // now Fns are defined on the features object
+  // ...more features, row models, etc.
+});
+
+type TFeatures = typeof features;
+
 export interface GetRowRangeProps<TData extends RowData> {
   currentIndex: number;
   prevIndex: number;
-  rows: Row<TData>[];
+  rows: Row<TFeatures, TData>[];
 }
 
 export const getRowRange = <TData extends RowData>(
   props: GetRowRangeProps<TData>,
-): Row<TData>[] => {
+): Row<TFeatures, TData>[] => {
   const { currentIndex, prevIndex, rows } = props;
 
   const rangeStart = prevIndex > currentIndex ? currentIndex : prevIndex;
@@ -120,7 +138,7 @@ export const getRowRange = <TData extends RowData>(
   return rows.slice(rangeStart, rangeEnd + 1);
 };
 
-export const Table = <TData,>({
+export const Table = <TData extends RowData>({
   AboveTableComponent,
   columns,
   data = [],
@@ -137,11 +155,12 @@ export const Table = <TData,>({
 }: TablePropsDef<TData>) => {
   const tableRef = useRef<HTMLTableElement>(null);
 
-  const table = useReactTable<TData>({
+  const table = useTable({
     columns,
     data,
     enableRowSelection,
-    getCoreRowModel: getCoreRowModel(),
+    features,
+    // getCoreRowModel: getCoreRowModel(),
     getRowId,
   });
 
