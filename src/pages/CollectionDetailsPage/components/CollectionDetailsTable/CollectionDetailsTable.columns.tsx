@@ -1,4 +1,7 @@
 import { createColumnHelper } from '@tanstack/react-table';
+import { sortBy } from 'lodash';
+
+import type { TTableFeatures } from '#/components/Table';
 
 import type { CreateOrUpdateCollectionItemFormRowDataDef } from '../../CollectionDetailsPage.types';
 import type { GetCollectionItemsTableColumnsPropsDef } from './CollectionDetailsTable.types';
@@ -12,8 +15,10 @@ import { CollectionDetailsImagesField } from './components/column-cells/Collecti
 import { CollectionDetailsNameCell } from './components/column-cells/CollectionDetailsNameCell';
 import { CollectionDetailsNotesCell } from './components/column-cells/CollectionDetailsNotesCell';
 
-const columnHelper =
-  createColumnHelper<CreateOrUpdateCollectionItemFormRowDataDef>();
+const columnHelper = createColumnHelper<
+  TTableFeatures,
+  CreateOrUpdateCollectionItemFormRowDataDef
+>();
 
 export const getCollectionItemsTableColumns = (
   props: GetCollectionItemsTableColumnsPropsDef,

@@ -52,18 +52,18 @@ export type SortItemDef<TField = string> =
 
 export type RenderRowTypeDef<TData extends RowData> = JSXElementConstructor<
   PropsWithChildren<{
-    row: Row<TFeatures, TData>;
+    row: Row<TTableFeatures, TData>;
     trClassName: string;
   }>
 >;
 
 export type AboveTableComponentDef<TData extends RowData> =
   JSXElementConstructor<{
-    table: TableDef<TFeatures, TData>;
+    table: TableDef<TTableFeatures, TData>;
   }>;
 
 export type TablePropsDef<TData extends RowData> = TableOptions<
-  TFeatures,
+  TTableFeatures,
   TData
 > & {
   AboveTableComponent?: AboveTableComponentDef<TData>;
@@ -119,17 +119,17 @@ const features = tableFeatures({
   // ...more features, row models, etc.
 });
 
-type TFeatures = typeof features;
+export type TTableFeatures = typeof features;
 
 export interface GetRowRangeProps<TData extends RowData> {
   currentIndex: number;
   prevIndex: number;
-  rows: Row<TFeatures, TData>[];
+  rows: Row<TTableFeatures, TData>[];
 }
 
 export const getRowRange = <TData extends RowData>(
   props: GetRowRangeProps<TData>,
-): Row<TFeatures, TData>[] => {
+): Row<TTableFeatures, TData>[] => {
   const { currentIndex, prevIndex, rows } = props;
 
   const rangeStart = prevIndex > currentIndex ? currentIndex : prevIndex;
