@@ -75,7 +75,11 @@ export const getCollectionDetailsByIdDbQuery = async (
         const directionFn =
           sort.direction === sortDirectionOptions.desc ? desc : asc;
 
-        return directionFn(sql`lower(${table[sortingField || 'name']})`);
+        const column = table[sortingField || 'name'];
+
+        return directionFn(
+          column.dataType === 'string' ? sql`lower(${column})` : sql`${column}`,
+        );
       },
       where: {
         AND: [
