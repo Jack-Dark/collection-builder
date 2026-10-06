@@ -17,7 +17,7 @@ export const getCollectionDetailsByIdDbQuery = async (
   },
 ) => {
   const { collectionId, params, userId } = props;
-  const { filters, limit, page, search, searchNotes, sort } = params;
+  const { limit, page, search, searchNotes, sort } = params;
 
   const sortingField: CollectionItemsTableColumn =
     sort.field && collectionItemsTable.hasOwnProperty(sort.field)

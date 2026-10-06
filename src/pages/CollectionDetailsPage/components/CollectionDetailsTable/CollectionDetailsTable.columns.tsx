@@ -27,7 +27,6 @@ import { ComboboxField } from '#/components/Fields/ComboboxField';
 import { InputField } from '#/components/Fields/InputField';
 import { pluralize } from '#/helpers/pluralize';
 import { useEditingCollectionItemsRowIds } from '#/pages/CollectionsListPage/hooks/use-editing-collections-row-ids';
-import { Route } from '#/routes/_protected/collections/$id';
 
 import type {
   CreateOrUpdateCollectionItemFormDataDef,
@@ -50,9 +49,6 @@ export const useGetCollectionItemsTableColumns = (
   props: GetCollectionItemsTableColumnsPropsDef,
 ) => {
   const { customFields, form, onCancel, onEditClick } = props;
-
-  const { id } = Route.useParams();
-  const collectionId = Number(id);
 
   return [
     columnHelper.accessor('name', {
