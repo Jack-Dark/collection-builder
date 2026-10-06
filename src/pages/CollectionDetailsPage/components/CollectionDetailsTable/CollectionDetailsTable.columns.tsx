@@ -4,6 +4,7 @@ import type { AccessorKeyColumnDefBase } from '@tanstack/react-table';
 import CheckIcon from '@mui/icons-material/Check';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { createColumnHelper } from '@tanstack/react-table';
+import { useState } from 'react';
 import { Fragment } from 'react/jsx-runtime';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -21,9 +22,9 @@ import {
 import { Button } from '#/components/Button';
 import { Dialog } from '#/components/Dialog';
 import { useDialog } from '#/components/Dialog/hooks/useDialog';
+import { CheckboxField } from '#/components/Fields/CheckboxField';
 import { ComboboxField } from '#/components/Fields/ComboboxField';
 import { InputField } from '#/components/Fields/InputField';
-import { SwitchField } from '#/components/Fields/SwitchField';
 import { pluralize } from '#/helpers/pluralize';
 import { useEditingCollectionItemsRowIds } from '#/pages/CollectionsListPage/hooks/use-editing-collections-row-ids';
 import { Route } from '#/routes/_protected/collections/$id';
@@ -96,7 +97,7 @@ export const useGetCollectionItemsTableColumns = (
       header: 'Images',
       minSize: 200,
     }),
-    ...customFields.map((customField, index) => {
+    ...customFields.map((customField) => {
       return columnHelper.accessor('customFieldValues', {
         cell: ({ getValue, row }) => {
           const { data: customFieldValuesForColumn } =
@@ -106,6 +107,9 @@ export const useGetCollectionItemsTableColumns = (
                 id: customField.id,
               },
             });
+
+          const invalidateGetCustomFieldValuesByCustomFieldId =
+            useInvalidateGetCustomFieldValuesByCustomFieldId();
 
           const { getIsEditingRowId } = useEditingCollectionItemsRowIds();
 
@@ -118,7 +122,19 @@ export const useGetCollectionItemsTableColumns = (
           const key = customFieldValueForIndex?.id || customFieldId;
 
           const { onCreateCustomFieldValues, processing } =
-            useCreateCustomFieldValues();
+            useCreateCustomFieldValues({
+              onSuccess: () => {
+                invalidateGetCustomFieldValuesByCustomFieldId({
+                  id: customField.id,
+                });
+              },
+            });
+
+          const [customFieldValueToDelete, setCustomFieldValueToDelete] =
+            useState<{
+              id: number;
+              value: string;
+            }>();
 
           const [showDeleteCustomFieldValueDialog, hideCustomFieldValueDialog] =
             useDialog(() => {
@@ -129,17 +145,22 @@ export const useGetCollectionItemsTableColumns = (
                 >
                   {(field) => {
                     return (
-                      <DeleteCustomFieldDialog
-                        collectionItemId={row.original.id}
-                        customFieldValue={customFieldValueForIndex}
-                        handleFieldChange={field.handleChange}
-                        onClose={hideCustomFieldValueDialog}
-                      />
+                      customFieldValueToDelete && (
+                        <DeleteCustomFieldValueDialog
+                          collectionItemId={row.original.id}
+                          customFieldValueToDelete={customFieldValueToDelete}
+                          handleFieldChange={field.handleChange}
+                          onClose={hideCustomFieldValueDialog}
+                          selectedCustomFieldValueId={
+                            customFieldValueForIndex?.id
+                          }
+                        />
+                      )
                     );
                   }}
                 </form.Field>
               );
-            }, []);
+            }, [customFieldValueToDelete, customFieldValueForIndex?.id]);
 
           // TODO - LOOK MORE INTO `Combobox.createItems` LATER WHEN THINGS ARE WORKING AS EXPECTED
           // const comboboxItems = useMemo(() => {
@@ -195,25 +216,16 @@ export const useGetCollectionItemsTableColumns = (
                       >
                         {({ valueForCustomField }) => {
                           return (
-                            <SwitchField
+                            <CheckboxField
                               checked={valueForCustomField?.data?.value}
                               disabled={processing}
                               onCheckedChange={async (value) => {
-                                const customFieldValueId = field.value?.id;
-
-                                if (customFieldValueId) {
-                                  field.handleChange({
-                                    data: { value },
-                                    id: customFieldValueId,
+                                const [newCustomFieldValue] =
+                                  await onCreateCustomFieldValues({
+                                    records: [{ customFieldId, value }],
                                   });
-                                } else {
-                                  const [newCustomFieldValue] =
-                                    await onCreateCustomFieldValues({
-                                      records: [{ customFieldId, value }],
-                                    });
 
-                                  field.handleChange(newCustomFieldValue);
-                                }
+                                field.handleChange(newCustomFieldValue);
                               }}
                             />
                           );
@@ -231,27 +243,19 @@ export const useGetCollectionItemsTableColumns = (
                           return (
                             <InputField
                               onValueChange={async (value) => {
-                                const customFieldValueId = field.value?.id;
                                 const formattedValue = Number(value);
 
-                                if (customFieldValueId) {
-                                  field.handleChange({
-                                    data: { value: formattedValue },
-                                    id: customFieldValueId,
+                                const [newCustomFieldValue] =
+                                  await onCreateCustomFieldValues({
+                                    records: [
+                                      {
+                                        customFieldId,
+                                        value: formattedValue,
+                                      },
+                                    ],
                                   });
-                                } else {
-                                  const [newCustomFieldValue] =
-                                    await onCreateCustomFieldValues({
-                                      records: [
-                                        {
-                                          customFieldId,
-                                          value: formattedValue,
-                                        },
-                                      ],
-                                    });
 
-                                  field.handleChange(newCustomFieldValue);
-                                }
+                                field.handleChange(newCustomFieldValue);
                               }}
                               placeholder={`Input ${customField.name}...`}
                               triggerOnBlur
@@ -288,6 +292,7 @@ export const useGetCollectionItemsTableColumns = (
                                 };
                               }}
                               idProperty="id"
+                              inputValue={valueForCustomField?.data?.value}
                               items={items}
                               labelProperty="value"
                               name={field.name}
@@ -340,6 +345,7 @@ export const useGetCollectionItemsTableColumns = (
                                         e.preventDefault();
                                         e.stopPropagation();
 
+                                        setCustomFieldValueToDelete(item);
                                         showDeleteCustomFieldValueDialog();
 
                                         // TODO - ADD LOGIC TO CHECK IF MORE THAN ONE LINK EXISTS IN DB. IF SO, JUST RETURN AND UPDATE FIELD. OTHERWISE OPEN MODAL TO CONFIRM DELETE CUSTOM FIELD VALUE. ON CONFIRM, UPDATE FIELD
@@ -372,12 +378,12 @@ export const useGetCollectionItemsTableColumns = (
             </form.Field>
           ) : (
             <Fragment key={key}>
-              {typeof customFieldValueForIndex?.data?.value === 'boolean' &&
-              customFieldValueForIndex?.data?.value === true ? (
-                <CheckIcon fontSize="inherit" />
+              {customField.type === 'boolean' ? (
+                <CheckboxField
+                  checked={!!customFieldValueForIndex?.data?.value}
+                  disabled
+                />
               ) : (
-                // ) : customFieldValueForIndex?.data?.value === false ? (
-                //   <CloseIcon fontSize="inherit" />
                 <p>{customFieldValueForIndex?.data?.value || '-'}</p>
               )}
             </Fragment>
@@ -513,26 +519,29 @@ export const useGetCollectionItemsTableColumns = (
   ].filter(Boolean) as AccessorKeyColumnDefBase<CollectionItemRecordDef>[];
 };
 
-export const DeleteCustomFieldDialog = <
+export const DeleteCustomFieldValueDialog = <
   THandleFieldChange extends AnyFieldApi['handleChange'],
 >(props: {
-  collectionItemId: number;
-  customFieldValue: {
+  collectionItemId: number | string;
+  customFieldValueToDelete: {
     id: number;
     value: string;
   };
   handleFieldChange: THandleFieldChange;
   onClose: HideDialog;
+  selectedCustomFieldValueId: number | undefined;
 }) => {
-  const { collectionItemId, customFieldValue, handleFieldChange, onClose } =
-    props;
+  const {
+    collectionItemId,
+    customFieldValueToDelete,
+    handleFieldChange,
+    onClose,
+    selectedCustomFieldValueId,
+  } = props;
 
-  const id = Number(customFieldValue.id);
+  const id = Number(customFieldValueToDelete.id);
 
   const { data } = useGetCollectionItemsWithCustomFieldValue({
-    onSuccess: (data) => {
-      console.log('🚀 ~ DeleteCustomFieldDialog ~ data:', data);
-    },
     placeholderData: (_data) => {
       return {
         affectedCollections: [],
@@ -540,7 +549,7 @@ export const DeleteCustomFieldDialog = <
       } satisfies typeof _data;
     },
     requestArgs: {
-      id: customFieldValue.id,
+      id: customFieldValueToDelete.id,
     },
   });
 
@@ -551,7 +560,9 @@ export const DeleteCustomFieldDialog = <
     onSuccess: async () => {
       await invalidateGetCustomFieldValuesByCustomFieldId();
 
-      handleFieldChange(undefined);
+      if (selectedCustomFieldValueId === customFieldValueToDelete.id) {
+        handleFieldChange(undefined);
+      }
 
       onClose();
     },
@@ -592,7 +603,7 @@ export const DeleteCustomFieldDialog = <
           Are you sure you want to delete this custom field value?
         </p>
 
-        <h4 className="text-center">{customFieldValue.value}</h4>
+        <h4 className="text-center">{customFieldValueToDelete.value}</h4>
 
         {numAffectedCollectionItems > 1 && (
           <div className="grid gap-1">

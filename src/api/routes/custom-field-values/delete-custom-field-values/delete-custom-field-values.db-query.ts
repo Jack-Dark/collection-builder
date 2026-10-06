@@ -14,47 +14,57 @@ export const deleteCustomFieldValuesDbQuery = async ({
   userId,
 }: DeleteCustomFieldValuesDbQueryArgsDef) => {
   return db.transaction(async (tx) => {
-    await Promise.all(
-      ids.map(async (customFieldValueId) => {
-        // ? get the number of links between all collection items and this custom field value
-        const numMatchingLinks = await tx.$count(
-          collectionItemsToCustomFieldValuesTable,
+    const deleteCustomFieldValueRecord = (customFieldValueId: number) => {
+      return db
+        .delete(customFieldValuesTable)
+        .where(
           and(
-            eq(
-              collectionItemsToCustomFieldValuesTable.customFieldValueId,
-              customFieldValueId,
-            ),
-            eq(collectionItemsToCustomFieldValuesTable.userId, userId),
+            eq(customFieldValuesTable.id, customFieldValueId),
+            eq(customFieldValuesTable.userId, userId),
           ),
         );
+    };
 
-        if (numMatchingLinks > 1) {
-          // ? delete only the link record that matches the collectionItemId
-          return db
-            .delete(customFieldValuesTable)
-            .where(
-              and(
-                eq(
-                  collectionItemsToCustomFieldValuesTable.collectionItemId,
-                  collectionItemId,
-                ),
-                eq(
-                  collectionItemsToCustomFieldValuesTable.customFieldValueId,
-                  customFieldValueId,
-                ),
-                eq(collectionItemsToCustomFieldValuesTable.userId, userId),
+    const collectionItemExistsInDb = typeof collectionItemId === 'number';
+
+    await Promise.all(
+      ids.map(async (customFieldValueId) => {
+        if (collectionItemExistsInDb) {
+          // ? get the number of links between this custom field and all collection items
+          const numMatchingLinks = await tx.$count(
+            collectionItemsToCustomFieldValuesTable,
+            and(
+              eq(
+                collectionItemsToCustomFieldValuesTable.customFieldValueId,
+                customFieldValueId,
               ),
-            );
+              eq(collectionItemsToCustomFieldValuesTable.userId, userId),
+            ),
+          );
+
+          if (numMatchingLinks > 1) {
+            // ? if custom field value is linked to multiple collection items, delete only the link for this collection item id
+            return db
+              .delete(customFieldValuesTable)
+              .where(
+                and(
+                  eq(
+                    collectionItemsToCustomFieldValuesTable.collectionItemId,
+                    collectionItemId,
+                  ),
+                  eq(
+                    collectionItemsToCustomFieldValuesTable.customFieldValueId,
+                    customFieldValueId,
+                  ),
+                  eq(collectionItemsToCustomFieldValuesTable.userId, userId),
+                ),
+              );
+          } else {
+            // ? otherwise delete the custom field value record which automatically deletes all its links
+            return deleteCustomFieldValueRecord(customFieldValueId);
+          }
         } else {
-          // ? delete the custom field value record
-          return db
-            .delete(customFieldValuesTable)
-            .where(
-              and(
-                eq(customFieldValuesTable.id, customFieldValueId),
-                eq(customFieldValuesTable.userId, userId),
-              ),
-            );
+          return deleteCustomFieldValueRecord(customFieldValueId);
         }
       }),
     );
