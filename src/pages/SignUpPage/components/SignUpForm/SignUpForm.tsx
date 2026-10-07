@@ -48,9 +48,12 @@ export const SignUpForm: RouteComponent = () => {
         throw new Error(error.message);
       }
     },
-    validators: {
-      onSubmit: signUpFormSchema,
-    },
+    validators: [
+      {
+        run: signUpFormSchema,
+        triggers: ['change'],
+      },
+    ],
   });
 
   return (
@@ -65,20 +68,17 @@ export const SignUpForm: RouteComponent = () => {
         <form.Subscribe
           selector={(state) => {
             return {
-              errors: state.errors,
               value: state.values.name,
             };
           }}
         >
-          {({ errors, value }) => {
+          {({ value }) => {
             return (
               <form.Field name="name">
                 {(field) => {
-                  const errorMsg = errors?.[0]?.[field.name]?.[0]?.message;
-
                   return (
                     <InputField
-                      error={errorMsg}
+                      error={field.errors}
                       label="Name"
                       name={field.name}
                       onValueChange={(value) => {
@@ -97,20 +97,17 @@ export const SignUpForm: RouteComponent = () => {
         <form.Subscribe
           selector={(state) => {
             return {
-              errors: state.errors,
               value: state.values.email,
             };
           }}
         >
-          {({ errors, value }) => {
+          {({ value }) => {
             return (
               <form.Field name="email">
                 {(field) => {
-                  const errorMsg = errors?.[0]?.[field.name]?.[0]?.message;
-
                   return (
                     <InputField
-                      error={errorMsg}
+                      error={field.errors}
                       label="Email"
                       name={field.name}
                       onValueChange={(value) => {
@@ -130,20 +127,17 @@ export const SignUpForm: RouteComponent = () => {
         <form.Subscribe
           selector={(state) => {
             return {
-              errors: state.errors,
               value: state.values.password,
             };
           }}
         >
-          {({ errors, value }) => {
+          {({ value }) => {
             return (
               <form.Field name="password">
                 {(field) => {
-                  const errorMsg = errors?.[0]?.[field.name]?.[0]?.message;
-
                   return (
                     <InputField
-                      error={errorMsg}
+                      error={field.errors}
                       label="Password"
                       name={field.name}
                       onValueChange={(value) => {
@@ -163,20 +157,17 @@ export const SignUpForm: RouteComponent = () => {
         <form.Subscribe
           selector={(state) => {
             return {
-              errors: state.errors,
               value: state.values.confirmPassword,
             };
           }}
         >
-          {({ errors, value }) => {
+          {({ value }) => {
             return (
               <form.Field name="confirmPassword">
                 {(field) => {
-                  const errorMsg = errors?.[0]?.[field.name]?.[0]?.message;
-
                   return (
                     <InputField
-                      error={errorMsg}
+                      error={field.errors}
                       label="Confirm password"
                       name={field.name}
                       onValueChange={(value) => {

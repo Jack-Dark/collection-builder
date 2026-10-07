@@ -44,9 +44,12 @@ export const SignInForm = () => {
         // throw new Error(error.message);
       }
     },
-    validators: {
-      onSubmit: signInFormSchema,
-    },
+    validators: [
+      {
+        run: signInFormSchema,
+        triggers: ['change'],
+      },
+    ],
   });
 
   return (
@@ -66,15 +69,13 @@ export const SignInForm = () => {
             };
           }}
         >
-          {({ errors, value }) => {
+          {({ value }) => {
             return (
               <form.Field name="email">
                 {(field) => {
-                  const errorMsg = errors?.[0]?.[field.name]?.[0]?.message;
-
                   return (
                     <InputField
-                      error={errorMsg}
+                      error={field.errors}
                       label="Email"
                       name={field.name}
                       onValueChange={(value) => {
@@ -93,20 +94,17 @@ export const SignInForm = () => {
         <form.Subscribe
           selector={(state) => {
             return {
-              errors: state.errors,
               value: state.values.password,
             };
           }}
         >
-          {({ errors, value }) => {
+          {({ value }) => {
             return (
               <form.Field name="password">
                 {(field) => {
-                  const errorMsg = errors?.[0]?.[field.name]?.[0]?.message;
-
                   return (
                     <InputField
-                      error={errorMsg}
+                      error={field.errors}
                       label="Password"
                       name={field.name}
                       onValueChange={(value) => {
