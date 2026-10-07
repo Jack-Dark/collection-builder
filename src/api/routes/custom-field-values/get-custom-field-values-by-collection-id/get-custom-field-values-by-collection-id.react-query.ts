@@ -14,7 +14,7 @@ import type {
 import { getCustomFieldValuesByCustomFieldIdServerFn } from './get-custom-field-values-by-collection-id.serverFn';
 
 export const useGetCustomFieldValuesByCustomFieldId = <
-  TTransformedData extends GetCustomFieldValuesByCustomFieldIdResponseDef,
+  TTransformedData = GetCustomFieldValuesByCustomFieldIdResponseDef,
 >(
   props: GenericFetchProps<
     GetCustomFieldValuesByCustomFieldIdRequestArgsDef,

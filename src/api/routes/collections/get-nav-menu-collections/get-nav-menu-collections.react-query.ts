@@ -12,7 +12,7 @@ import type {
 import { getNavMenuCollectionsServerFn } from './get-nav-menu-collections.serverFn';
 
 export const useGetNavMenuCollections = <
-  TTransformedData extends GetNavMenuCollectionsResponseDef,
+  TTransformedData = GetNavMenuCollectionsResponseDef,
 >(
   props: GenericFetchProps<
     GetNavMenuCollectionsRequestArgsDef,

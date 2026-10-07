@@ -1,5 +1,9 @@
-import type { UseQueryOptions } from '@tanstack/react-query';
-import type { DependencyList } from 'react';
+import type {
+  PlaceholderDataFunction,
+  UseQueryOptions,
+} from '@tanstack/react-query';
+
+import type { DeepPartial } from '#/types';
 
 import type { reactQueryKeys } from '../react-query.constants';
 
@@ -10,11 +14,10 @@ export type GenericFetchProps<
   TTransformedData = TResponseDef,
 > = Partial<
   Omit<
-    UseQueryOptions<TTransformedData, Error, TTransformedData, QueryKeyDef>,
-    'gcTime' | 'queryFn' | 'queryKey' | 'select'
+    UseQueryOptions<TResponseDef, Error, TTransformedData, QueryKeyDef>,
+    'queryFn' | 'queryKey' | 'placeholderData'
   >
 > & {
-  cacheTime?: number;
   onError?: (error: string, requestArgs?: TRequestArgs) => void;
   /** NOT called when returning a cached response. */
   onStart?: () => void | Promise<void>;
@@ -23,10 +26,11 @@ export type GenericFetchProps<
     response: TTransformedData,
     requestArgs: TRequestArgs,
   ) => Promise<void> | void;
+  placeholderData?:
+    | DeepPartial<TResponseDef>
+    | PlaceholderDataFunction<DeepPartial<TResponseDef>>;
   requestArgs: TRequestArgs;
   showLoading?: boolean;
-  transform?: (response: TResponseDef) => TTransformedData;
-  transformDependencies?: DependencyList;
 };
 
 // ? This type def applies specifically to the hook's props

@@ -5,7 +5,7 @@ export const sortDirectionOptions = {
   desc: 'desc',
 } as const;
 
-export const paginationDefaultValues = {
+export const paginationPropsDefaultValues = {
   limit: 100,
   page: 1,
   search: '',
@@ -14,7 +14,7 @@ export const paginationDefaultValues = {
   },
 };
 
-export const getPaginationMetadataDefaults = (limit: number) => {
+export const getPaginationMetadataDefaults = (limit: number = 100) => {
   const metadata: PaginationMetadata = {
     currentPage: 1,
     hasNextPage: false,

@@ -1,12 +1,11 @@
 import { queryOptions } from '@tanstack/react-query';
 
-import type { QueryKeyDef } from '../use-generic-fetch-query.types';
 import type { GetGenericFetchOptionsProps } from './get-generic-fetch-query-options.types';
 
 export const getGenericFetchQueryOptions = <
   TRequestArgs extends Record<string, any>,
   TResponseDef extends Record<any, any>,
-  TTransformedData extends TResponseDef,
+  TTransformedData = TResponseDef,
 >(
   props: GetGenericFetchOptionsProps<
     TRequestArgs,
@@ -14,23 +13,16 @@ export const getGenericFetchQueryOptions = <
     TTransformedData
   >,
 ) => {
-  const { cacheTime, onStart, queryFn, queryKey, requestArgs, ...configs } =
-    props;
+  const { onStart, placeholderData, queryFn, requestArgs, ...configs } = props;
 
-  const configuredQueryOptions = queryOptions<
-    TResponseDef,
-    Error,
-    TTransformedData,
-    QueryKeyDef
-  >({
+  const configuredQueryOptions = queryOptions({
     ...configs,
-    gcTime: cacheTime,
+    placeholderData: placeholderData as undefined,
     queryFn: async () => {
       await onStart?.();
 
       return queryFn({ data: requestArgs });
     },
-    queryKey,
   });
 
   return configuredQueryOptions;

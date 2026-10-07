@@ -4,7 +4,6 @@ import CheckIcon from '@mui/icons-material/Check';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { useSelector } from '@tanstack/react-form';
-import _ from 'lodash';
 import { useMemo, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -278,9 +277,7 @@ export const CollectionsListCustomFieldsCell = (props: {
           }}
         </form.ArrayField>
       ) : customFields.length ? (
-        _.sortBy(customFields, (item) => {
-          return item.details.order;
-        }).map((item) => {
+        customFields.map((item) => {
           const { id } = item;
 
           return (

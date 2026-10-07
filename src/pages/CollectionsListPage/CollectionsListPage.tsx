@@ -2,6 +2,7 @@ import type { RouteComponent } from '@tanstack/react-router';
 
 import { useForm } from '@tanstack/react-form';
 import { useBlocker } from '@tanstack/react-router';
+import _ from 'lodash';
 import { useEffect } from 'react';
 
 import type { UpdateCollectionsFormRecordSchemaDef } from '#/api/routes/collections/update-collection-by-id/update-collection-by-id.types';
@@ -26,14 +27,25 @@ export const CollectionsListPage: RouteComponent = () => {
   const searchQueries = CollectionsRoute.useSearch();
 
   const { data } = useGetPaginatedCollections({
-    onSuccess: ({ collections }) => {
-      form.setFieldValue('records', collections);
-    },
     placeholderData: {
       collections: [],
       pagination: getPaginationMetadataDefaults(1000),
     },
     requestArgs: { params: searchQueries },
+    select: ({ collections, pagination }) => {
+      const sortedRecords = collections.map(
+        ({ customFields, ...collection }) => {
+          return {
+            ...collection,
+            customFields: _.sortBy(customFields, ({ details }) => {
+              return details?.order;
+            }),
+          };
+        },
+      );
+
+      return { collections: sortedRecords, pagination };
+    },
   });
 
   const { onInterceptRequest } = useSpinner();
@@ -52,6 +64,7 @@ export const CollectionsListPage: RouteComponent = () => {
 
   const form = useForm({
     ...createOrUpdateCollectionFormOptions,
+    defaultValues: { records: data.collections },
     onSubmit: async ({ value: { records } }) => {
       await onInterceptRequest(async () => {
         const editedRecords = records.filter(({ isEditing }) => {

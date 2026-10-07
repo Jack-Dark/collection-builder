@@ -1,4 +1,9 @@
-import type { QueryOptions } from '@tanstack/react-query';
+import type {
+  PlaceholderDataFunction,
+  QueryOptions,
+} from '@tanstack/react-query';
+
+import type { DeepPartial } from '#/types';
 
 import type { QueryKeyDef } from '../use-generic-fetch-query.types';
 
@@ -9,17 +14,15 @@ export type GetGenericFetchOptionsProps<
 > = Partial<
   Omit<
     QueryOptions<TTransformedData, Error, TTransformedData, QueryKeyDef>,
-    'gcTime' | 'queryFn' | 'queryKey'
+    'queryFn' | 'queryKey' | 'placeholderData'
   >
 > & {
-  cacheTime?: number;
-  onError?: (error: string, requestArgs?: TRequestArgs) => void;
   /** NOT called when returning a cached response. */
   onStart?: () => void | Promise<void>;
-  /** This is called on the response every time, even if it's returned from cache. */
-  onSuccess?: (data: TTransformedData) => void;
+  placeholderData?:
+    | DeepPartial<TResponseDef>
+    | PlaceholderDataFunction<DeepPartial<TResponseDef>>;
   queryFn: (props: { data: TRequestArgs }) => Promise<TResponseDef>;
   queryKey: QueryKeyDef;
   requestArgs: TRequestArgs;
-  transform?: (response: TResponseDef) => TTransformedData;
 };

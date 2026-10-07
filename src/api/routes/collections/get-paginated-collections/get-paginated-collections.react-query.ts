@@ -12,7 +12,7 @@ import type {
 import { getPaginatedCollectionsServerFn } from './get-paginated-collections.serverFn';
 
 export const useGetPaginatedCollections = <
-  TTransformedData extends GetPaginatedCollectionsResponseDef,
+  TTransformedData = GetPaginatedCollectionsResponseDef,
 >(
   props: GenericFetchProps<
     GetPaginatedCollectionsRequestArgsDef,

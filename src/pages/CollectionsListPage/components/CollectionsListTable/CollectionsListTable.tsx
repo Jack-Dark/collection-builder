@@ -30,12 +30,12 @@ export const CollectionsListTable = ({
     requestArgs: { params: searchQueries },
   });
 
-  const { collections, pagination } = data;
+  const { pagination } = data;
 
   const onCancel = () => {
     resetEditingRowIds();
 
-    form.setFieldValue('records', collections);
+    form.reset();
   };
 
   const { addToEditingRowIds, editingRowIds, isEditing, resetEditingRowIds } =

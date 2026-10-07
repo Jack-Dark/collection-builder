@@ -1,5 +1,5 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { useCallback, useLayoutEffect, useMemo } from 'react';
+import { useLayoutEffect } from 'react';
 
 import { useSpinner } from '#/components/FullPageLoadingSpinner/useSpinner';
 import { useNotifications } from '#/components/Notifications';
@@ -35,7 +35,7 @@ import { getGenericFetchQueryOptions } from './get-generic-fetch-query-options';
 export const useGenericFetchQuery = <
   TRequestArgs extends Record<string, any>,
   TResponseDef extends Record<any, any>,
-  TTransformedData extends TResponseDef,
+  TTransformedData = TResponseDef,
 >(
   props: UseGenericFetchProps<TRequestArgs, TResponseDef, TTransformedData>,
 ) => {
@@ -43,42 +43,26 @@ export const useGenericFetchQuery = <
     fallbackErrorMessage,
     onError,
     onSuccess,
-    queryFn,
     requestArgs,
-    showLoading: enableSpinner,
-    transform,
-    transformDependencies = [],
+    select,
+    showLoading,
     ...configs
   } = props;
 
   const { hideSpinner, isSpinning, showSpinner } = useSpinner();
   const { notifyError } = useNotifications();
 
-  const memoizedTransformDependencies = useMemo(() => {
-    return transformDependencies;
-  }, transformDependencies);
-
-  const memoizedTransform = useCallback((response: TResponseDef) => {
-    if (transform) {
-      return transform?.(response);
-    }
-
-    return response;
-  }, memoizedTransformDependencies);
-
   const configuredQueryOptions = getGenericFetchQueryOptions({
     ...configs,
-    queryFn,
     requestArgs,
-    transform: memoizedTransform,
   });
 
-  const context = useSuspenseQuery(configuredQueryOptions);
+  const context = useSuspenseQuery({ ...configuredQueryOptions, select });
 
   const { data, error, isError, isFetching, isSuccess } = context;
 
   useLayoutEffect(() => {
-    if (enableSpinner) {
+    if (showLoading) {
       if (isFetching) {
         showSpinner();
       } else if (isSpinning) {

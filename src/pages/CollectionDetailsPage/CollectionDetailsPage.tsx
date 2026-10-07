@@ -41,8 +41,14 @@ export const CollectionDetailsPage: RouteComponent = () => {
   });
 
   const { data } = useGetCollectionDetailsById({
-    onSuccess: ({ items }) => {
-      form.setFieldValue('collectionItems', items);
+    placeholderData: {
+      collection: {
+        name: '-',
+      },
+      items: [],
+      pagination: {
+        totalRecords: 0,
+      },
     },
     requestArgs: { collectionId, params: searchQueries },
   });
@@ -51,6 +57,7 @@ export const CollectionDetailsPage: RouteComponent = () => {
 
   const form = useForm({
     ...createOrUpdateCollectionItemsFormOptions,
+    defaultValues: { collectionItems: data.items },
     onSubmit: async ({ value: { collectionItems } }) => {
       onInterceptRequest(async () => {
         const editedRecords = collectionItems.filter(({ isEditing }) => {

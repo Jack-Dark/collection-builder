@@ -1,7 +1,7 @@
 import z from 'zod';
 
 import {
-  paginationDefaultValues,
+  paginationPropsDefaultValues,
   sortDirectionOptions,
 } from './pagination.constants';
 
@@ -9,9 +9,17 @@ export const getRequiredPaginationQueriesSchema = <TSortField extends string>(
   defaultSortField: TSortField,
 ) => {
   return z.object({
-    limit: z.number().min(1).optional().default(paginationDefaultValues.limit),
-    page: z.number().min(1).optional().default(paginationDefaultValues.page),
-    search: z.string().optional().default(paginationDefaultValues.search),
+    limit: z
+      .number()
+      .min(1)
+      .optional()
+      .default(paginationPropsDefaultValues.limit),
+    page: z
+      .number()
+      .min(1)
+      .optional()
+      .default(paginationPropsDefaultValues.page),
+    search: z.string().optional().default(paginationPropsDefaultValues.search),
     sort: z
       .object({
         direction: z
@@ -19,12 +27,12 @@ export const getRequiredPaginationQueriesSchema = <TSortField extends string>(
             z.literal(sortDirectionOptions.asc),
             z.literal(sortDirectionOptions.desc),
           ])
-          .default(paginationDefaultValues.sort.direction),
+          .default(paginationPropsDefaultValues.sort.direction),
         field: z.string().default(defaultSortField),
       })
       .optional()
       .default({
-        direction: paginationDefaultValues.sort.direction,
+        direction: paginationPropsDefaultValues.sort.direction,
         field: defaultSortField,
       }),
   });

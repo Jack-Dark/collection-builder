@@ -12,7 +12,7 @@ import type {
 import { getCollectionDetailsByIdServerFn } from './get-collection-details-by-id.serverFn';
 
 export const useGetCollectionDetailsById = <
-  TTransformedData extends GetCollectionDetailsByIdResponseDef,
+  TTransformedData = GetCollectionDetailsByIdResponseDef,
 >(
   props: GenericFetchProps<
     GetCollectionDetailsByIdRequestArgsDef,

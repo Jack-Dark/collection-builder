@@ -12,7 +12,7 @@ import type {
 import { getCustomFieldsServerFn } from './get-custom-fields.serverFn';
 
 export const useGetCustomFields = <
-  TTransformedData extends GetCustomFieldsResponseDef,
+  TTransformedData = GetCustomFieldsResponseDef,
 >(
   props: GenericFetchProps<
     GetCustomFieldsRequestArgsDef,
