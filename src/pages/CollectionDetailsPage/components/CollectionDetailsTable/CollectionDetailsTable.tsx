@@ -82,7 +82,7 @@ export const CollectionDetailsTable = ({
   const filtersProps = useCollectionDetailsFiltersProps();
   const searchProps = useCollectionDetailsSearchProps();
   const paginationProps = useCollectionDetailsPaginationProps({ pagination });
-  const sortProps = useCollectionDetailsSortProps({ collection });
+  const sortProps = useCollectionDetailsSortProps();
 
   const tableData = useSelector(form.atom, ({ values }) => {
     return values.collectionItems;

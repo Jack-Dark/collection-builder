@@ -1,16 +1,11 @@
 import type { CollectionItemsTableColumn } from '#/api/routes/collection-items/collection-item.types';
-import type { CollectionRecordDef } from '#/api/routes/collections/collection.types';
 
 import { sortDirectionOptions } from '#/api/pagination/pagination.constants';
 import { useFormatSortProps } from '#/hooks/use-format-sort-props';
 
 import { useOnUpdateCollectionItemsQueries } from '../../../../hooks/use-on-update-collection-items-queries';
 
-export const useCollectionDetailsSortProps = (props: {
-  collection: CollectionRecordDef;
-}) => {
-  const { collection } = props;
-
+export const useCollectionDetailsSortProps = () => {
   const { onUpdateCollectionItemsQueries, searchQueries } =
     useOnUpdateCollectionItemsQueries();
 
