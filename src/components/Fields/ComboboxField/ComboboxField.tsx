@@ -176,7 +176,6 @@ export const ComboboxField = <
 
   useLayoutEffect(() => {
     // ? Merge items in list with selected items. This ensures new items are always available even if they don't exist outside of the component yet
-    // debugger;
     const includedItemsById = new Map<string, true>();
     const uniqueDisplayItems: TValue[] = [
       ...items,
@@ -213,11 +212,9 @@ export const ComboboxField = <
               query,
             })
           ) {
-            // debugger;
             sortedDisplayItems.splice(0, 0, creatableItem);
           }
         } else {
-          // debugger;
           sortedDisplayItems.splice(0, 0, creatableItem);
         }
       }
