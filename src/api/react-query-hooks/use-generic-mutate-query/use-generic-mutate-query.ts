@@ -78,7 +78,9 @@ export const useGenericMutateQuery = <
       onError?.(message, requestArgs);
     },
     onSettled: async (...args) => {
-      hideSpinner();
+      if (showLoading && isSpinning) {
+        hideSpinner();
+      }
       await onSettled?.(...args);
     },
     ...configs,
