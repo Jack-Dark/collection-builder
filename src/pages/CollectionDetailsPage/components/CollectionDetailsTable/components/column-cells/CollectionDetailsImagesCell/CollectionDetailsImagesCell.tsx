@@ -3,7 +3,7 @@ import type { PropsWithChildren } from 'react';
 
 import { useSelector } from '@tanstack/react-store';
 
-import type { TTableFeatures } from '#/components/Table';
+import type { TableFeaturesDef } from '#/components/Table';
 import type { ZoomableImagePropsDef } from '#/components/ZoomableThumbnail/ZoomableThumbnail.types';
 import type {
   CreateOrUpdateCollectionItemFormRowDataDef,
@@ -18,7 +18,7 @@ import { useEditingCollectionItemsRowIds } from '#/pages/CollectionsListPage/hoo
 export const CollectionDetailsImagesCell = (
   props: PropsWithChildren<
     CellContext<
-      TTableFeatures,
+      TableFeaturesDef,
       CreateOrUpdateCollectionItemFormRowDataDef,
       CreateOrUpdateCollectionItemFormRowDataDef['images']
     > & {

@@ -1,7 +1,7 @@
 import { createColumnHelper } from '@tanstack/react-table';
 
 import type { GetPaginatedCollectionsResponseDef } from '#/api/routes/collections/get-paginated-collections/get-paginated-collections.types';
-import type { TTableFeatures } from '#/components/Table';
+import type { TableFeaturesDef } from '#/components/Table';
 
 import type { CreateOrUpdateCollectionFormTypeDef } from '../../CollectionsListPage.types';
 
@@ -11,7 +11,7 @@ import { CollectionsListNameCell } from './components/column-cells/CollectionsLi
 import { CollectionsListNotesCell } from './components/column-cells/CollectionsListNotesCell/CollectionsListNotesCell';
 
 const columnHelper = createColumnHelper<
-  TTableFeatures,
+  TableFeaturesDef,
   GetPaginatedCollectionsResponseDef['collections'][number]
 >();
 

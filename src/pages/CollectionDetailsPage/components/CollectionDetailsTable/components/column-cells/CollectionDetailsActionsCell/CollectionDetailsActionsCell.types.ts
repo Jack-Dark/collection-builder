@@ -1,13 +1,13 @@
 import type { CellContext } from '@tanstack/react-table';
 
-import type { TTableFeatures } from '#/components/Table';
+import type { TableFeaturesDef } from '#/components/Table';
 import type {
   CreateOrUpdateCollectionItemFormRowDataDef,
   CreateOrUpdateCollectionItemFormTypeDef,
 } from '#/pages/CollectionDetailsPage/CollectionDetailsPage.types';
 
 export type CollectionDetailsActionsCellPropsDef = CellContext<
-  TTableFeatures,
+  TableFeaturesDef,
   CreateOrUpdateCollectionItemFormRowDataDef,
   CreateOrUpdateCollectionItemFormRowDataDef['id']
 > & {
