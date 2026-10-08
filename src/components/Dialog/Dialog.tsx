@@ -3,15 +3,24 @@ import type { JSXElementConstructor, PropsWithChildren } from 'react';
 import { Dialog as MuiDialog } from '@base-ui/react/dialog';
 import CloseIcon from '@mui/icons-material/Close';
 
-export type DialogPropsDef = PropsWithChildren<{
-  disableOnClose?: boolean;
-  Footer?: JSXElementConstructor<{}>;
-  Header?: JSXElementConstructor<{}> | string;
-  hideClose?: boolean;
-  isFullScreen?: boolean;
-  maxWidthClassName?: string;
-  onClose?: () => void;
-}>;
+export type DialogPropsDef = PropsWithChildren<
+  {
+    disableOnClose?: boolean;
+    Footer?: JSXElementConstructor<{}>;
+    Header?: JSXElementConstructor<{}> | string;
+    isFullScreen?: boolean;
+    maxWidthClassName?: string;
+  } & (
+    | {
+        hideClose: boolean;
+        onClose?: never;
+      }
+    | {
+        hideClose?: never;
+        onClose: () => void;
+      }
+  )
+>;
 
 export const Dialog = (props: DialogPropsDef) => {
   const {
@@ -31,7 +40,7 @@ export const Dialog = (props: DialogPropsDef) => {
         className={`fixed inset-0 flex md:items-center md:justify-center overflow-hidden ${isFullScreen ? '' : 'md:p-6'}`}
       >
         <MuiDialog.Popup
-          className={`relative grid auto-rows-[max-content_1fr_max-content] w-full h-full max-h-full max-w-full min-h-0 ${isFullScreen ? '' : `md:w-full ${maxWidthClassName} md:h-auto md:max-h-[90dvh]`} flex-col bg-white duration-100 ease-out rounded-sm`}
+          className={`relative grid auto-rows-[max-content_1fr_max-content] w-full max-w-full h-full md:min-h-70 max-h-full ${isFullScreen ? '' : `md:w-full ${maxWidthClassName} md:h-auto md:max-h-[90dvh]`} flex-col bg-white duration-100 ease-out rounded-sm`}
         >
           {(Header || !hideClose) && (
             <div
@@ -60,7 +69,7 @@ export const Dialog = (props: DialogPropsDef) => {
             </div>
           )}
 
-          <div className="overflow-y-auto py-4 px-4 md:min-h-30 md:content-center">
+          <div className="overflow-y-auto py-4 px-4 md:content-center">
             {children}
           </div>
 
