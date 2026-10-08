@@ -1,26 +1,26 @@
 import z from 'zod';
 
-import { userIdSchema } from '#/api/db-tables-schema';
-
 import {
   baseCollectionItemSchema,
   imagesSchema,
 } from '../base-collection-item.schema';
 
 export const createCollectionItemsFormSchema = baseCollectionItemSchema.extend({
-  createdAt: z.undefined().optional().describe('Created At'),
   id: z.string().describe('ID'),
   images: imagesSchema.filesList,
   isEditing: z.boolean().describe('Is Editing'),
-  updatedAt: z.undefined().optional().describe('Updated At'),
-  userId: z.undefined().optional().describe('User ID'),
 });
 
-export const onCreateCollectionItemsArgsSchema =
-  baseCollectionItemSchema.extend({
-    images: imagesSchema.filesList,
-  });
+// ? Separate schema in order to upload images client-side
+export const createCollectionItemsWithFileImagesSchema =
+  baseCollectionItemSchema
+    .extend({
+      images: imagesSchema.filesList,
+    })
+    .describe('Collection Item')
+    .strict();
 
+// ? Handle the rest server-side with uploaded files public IDs
 export const createCollectionItemsServerFnSchema = z.object({
   publicIds: z.array(z.array(z.string())),
   records: z
@@ -34,8 +34,3 @@ export const createCollectionItemsServerFnSchema = z.object({
     )
     .describe('Collection Items'),
 });
-
-export const createCollectionItemsDbQuerySchema =
-  createCollectionItemsServerFnSchema.extend({
-    userId: userIdSchema,
-  });

@@ -2,7 +2,6 @@ import type { RouteComponent } from '@tanstack/react-router';
 
 import { useForm } from '@tanstack/react-form';
 import { useBlocker } from '@tanstack/react-router';
-import _ from 'lodash';
 import { useEffect } from 'react';
 
 import type { UpdateCollectionsFormRecordSchemaDef } from '#/api/routes/collections/update-collection-by-id/update-collection-by-id.types';
@@ -10,6 +9,7 @@ import type { UpdateCollectionsFormRecordSchemaDef } from '#/api/routes/collecti
 import { getPaginationMetadataDefaults } from '#/api/pagination/pagination.constants';
 import { useInvalidateGetCollectionDetailsById } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.react-query';
 import { useCreateCollection } from '#/api/routes/collections/create-collection/create-collection.react-query';
+import { useInvalidateGetNavMenuCollections } from '#/api/routes/collections/get-nav-menu-collections/get-nav-menu-collections.react-query';
 import {
   useGetPaginatedCollections,
   useInvalidateGetPaginatedCollections,
@@ -32,20 +32,6 @@ export const CollectionsListPage: RouteComponent = () => {
       pagination: getPaginationMetadataDefaults(1000),
     },
     requestArgs: { params: searchQueries },
-    select: ({ collections, pagination }) => {
-      const sortedRecords = collections.map(
-        ({ customFields, ...collection }) => {
-          return {
-            ...collection,
-            customFields: _.sortBy(customFields, ({ details }) => {
-              return details?.order;
-            }),
-          };
-        },
-      );
-
-      return { collections: sortedRecords, pagination };
-    },
   });
 
   const { onInterceptRequest } = useSpinner();
@@ -55,6 +41,8 @@ export const CollectionsListPage: RouteComponent = () => {
 
   const invalidateGetCollectionDetailsById =
     useInvalidateGetCollectionDetailsById();
+
+  const invalidateGetNavMenuCollections = useInvalidateGetNavMenuCollections();
 
   const { onCreateCollection } = useCreateCollection();
 
@@ -79,6 +67,12 @@ export const CollectionsListPage: RouteComponent = () => {
           await onUpdateCollectionById(
             editedRecords as UpdateCollectionsFormRecordSchemaDef[],
           );
+
+          await Promise.all(
+            editedRecords.map(({ id }) => {
+              return invalidateGetCollectionDetailsById({ id });
+            }),
+          );
         } else {
           const newRecords = editedRecords.map((record) => {
             const {
@@ -86,7 +80,6 @@ export const CollectionsListPage: RouteComponent = () => {
               id: _id,
               isEditing: _isEditing,
               updatedAt: _updatedAt,
-              userId: _userId,
               ...newCollectionData
             } = record;
 
@@ -97,12 +90,10 @@ export const CollectionsListPage: RouteComponent = () => {
 
         resetEditingRowIds();
 
-        await Promise.all([
-          await invalidateGetPaginatedCollections(),
-          ...records.map(({ id }) => {
-            return invalidateGetCollectionDetailsById({ id });
-          }),
-        ]);
+        await invalidateGetNavMenuCollections();
+        await invalidateGetPaginatedCollections();
+
+        form.reset();
       });
     },
   });

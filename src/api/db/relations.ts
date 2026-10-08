@@ -2,12 +2,6 @@ import { defineRelations } from 'drizzle-orm';
 
 import * as schema from '../db-tables-schema';
 
-/** Maps to new keys for clarity. */
-const x = {
-  original: 'from',
-  references: 'to',
-} as const;
-
 // ? keys prefixed with `a_` are aliases
 export const relations = defineRelations(
   {
@@ -27,63 +21,81 @@ export const relations = defineRelations(
   (r) => {
     return {
       collectionItems: {
-        customFieldValues: r.many.customFieldValues({
-          [x.original]: r.collectionItems.id.through(
-            r.collectionItemsToCustomFieldValues.collectionItemId,
-          ),
-          [x.references]: r.customFieldValues.id.through(
-            r.collectionItemsToCustomFieldValues.customFieldValueId,
-          ),
+        customFieldValues: r.many.collectionItemsToCustomFieldValues({
+          from: r.collectionItems.id,
+          to: r.collectionItemsToCustomFieldValues.collectionItemId,
+        }),
+      },
+      collectionItemsToCustomFieldValues: {
+        collectionItem: r.one.collectionItems({
+          from: r.collectionItemsToCustomFieldValues.collectionItemId,
+          to: r.collectionItems.id,
+        }),
+        customFieldValue: r.one.customFieldValues({
+          from: r.collectionItemsToCustomFieldValues.customFieldValueId,
+          to: r.customFieldValues.id,
         }),
       },
       collections: {
         collectionItems: r.many.collectionItems({
-          [x.original]: r.collections.id,
-          [x.references]: r.collectionItems.collectionId,
+          from: r.collections.id,
+          to: r.collectionItems.collectionId,
         }),
-        customFields: r.many.customFields({
-          [x.original]: r.collections.id.through(
-            r.collectionsToCustomFields.collectionId,
-          ),
-          [x.references]: r.customFields.id.through(
-            r.collectionsToCustomFields.customFieldId,
-          ),
+        customFields: r.many.collectionsToCustomFields({
+          from: r.collections.id,
+          to: r.collectionsToCustomFields.collectionId,
+        }),
+      },
+      collectionsToCustomFields: {
+        collection: r.one.collections({
+          from: r.collectionsToCustomFields.collectionId,
+          to: r.collections.id,
+        }),
+        customField: r.one.customFields({
+          from: r.collectionsToCustomFields.customFieldId,
+          to: r.customFields.id,
         }),
       },
       customFields: {
-        customFieldValues: r.many.customFieldValues({
-          [x.original]: r.customFields.id,
-          [x.references]: r.customFieldValues.customFieldId,
+        collections: r.many.collectionsToCustomFields({
+          from: r.customFields.id,
+          to: r.collectionsToCustomFields.customFieldId,
         }),
-        details: r.one.collectionsToCustomFields({
-          [x.original]: r.customFields.id,
-          [x.references]: r.collectionsToCustomFields.customFieldId,
+        customFieldValues: r.many.customFieldValues({
+          from: r.customFields.id,
+          to: r.customFieldValues.customFieldId,
+        }),
+      },
+      customFieldValues: {
+        collectionItems: r.many.collectionItemsToCustomFieldValues({
+          from: r.customFieldValues.id,
+          to: r.collectionItemsToCustomFieldValues.customFieldValueId,
         }),
       },
       users: {
         accounts: r.one.accounts({
-          [x.original]: r.users.id,
-          [x.references]: r.accounts.userId,
+          from: r.users.id,
+          to: r.accounts.userId,
         }),
         collectionItems: r.many.collectionItems({
-          [x.original]: r.users.id,
-          [x.references]: r.collectionItems.userId,
+          from: r.users.id,
+          to: r.collectionItems.userId,
         }),
         collections: r.many.collections({
-          [x.original]: r.users.id,
-          [x.references]: r.collections.userId,
+          from: r.users.id,
+          to: r.collections.userId,
         }),
         customFields: r.many.customFields({
-          [x.original]: r.users.id,
-          [x.references]: r.customFields.userId,
+          from: r.users.id,
+          to: r.customFields.userId,
         }),
         customFieldValues: r.many.customFieldValues({
-          [x.original]: r.users.id,
-          [x.references]: r.customFieldValues.userId,
+          from: r.users.id,
+          to: r.customFieldValues.userId,
         }),
         sessions: r.many.sessions({
-          [x.original]: r.users.id,
-          [x.references]: r.sessions.userId,
+          from: r.users.id,
+          to: r.sessions.userId,
         }),
       },
     };

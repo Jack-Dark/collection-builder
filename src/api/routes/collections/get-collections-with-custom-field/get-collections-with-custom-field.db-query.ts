@@ -1,11 +1,15 @@
+import type { DbQueryArgsDef } from '#/auth/auth-middleware.types';
+
 import { db } from '#/api/db';
 
-import type { GetCollectionsWithCustomFieldsDbQueryArgsDef } from './get-collections-with-custom-field.types';
+import type { GetCollectionsWithCustomFieldsRequestArgsDef } from './get-collections-with-custom-field.types';
 
-export const getCollectionsWithCustomFieldsDbQuery = async (
-  props: GetCollectionsWithCustomFieldsDbQueryArgsDef,
-) => {
-  const { customFieldIds, userId } = props;
+export const getCollectionsWithCustomFieldsDbQuery = async ({
+  context,
+  data,
+}: DbQueryArgsDef<GetCollectionsWithCustomFieldsRequestArgsDef>) => {
+  const { customFieldIds } = data;
+  const userId = context.user.id;
 
   return db.query.collectionsToCustomFields.findMany({
     where: {

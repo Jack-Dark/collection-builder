@@ -1,17 +1,10 @@
 import { createMiddleware } from '@tanstack/react-start';
 import { ReasonPhrases, StatusCodes } from 'http-status-codes';
-import z from 'zod';
 
+import type { AuthContextDef } from './auth-middleware.types';
+
+import { authSchema } from './auth-middleware.schema';
 import { getUserContext } from './auth.functions';
-
-const authSchema = z
-  .object({
-    id: z.string().describe('User ID'),
-    image: z.string().describe('User image').nullable().optional(),
-    name: z.string().describe('User name'),
-    token: z.string().describe('User token'),
-  })
-  .describe('User context');
 
 /** Use this middleware to authenticate protected API routes. */
 export const authApiRouteMiddleware = createMiddleware().server(
@@ -29,13 +22,15 @@ export const authApiRouteMiddleware = createMiddleware().server(
       throw new Error(unauthorizedMsg);
     }
 
-    const { data, error, success } = z.safeParse(authSchema, userContext);
+    const { data, error, success } = authSchema.safeParse(userContext);
 
     if (success) {
+      const context: AuthContextDef = {
+        user: data,
+      };
+
       return await next({
-        context: {
-          user: data,
-        },
+        context,
       });
     }
 

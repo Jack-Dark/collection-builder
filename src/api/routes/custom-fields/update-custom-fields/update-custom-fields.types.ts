@@ -12,8 +12,3 @@ export type UpdateCustomFieldsRequestArgsDef = z.output<
 export type UpdateCustomFieldsResponseDef = QueryResponseDef<
   typeof updateCustomFieldsDbQuery
 >;
-
-export type UpdateCustomFieldsDbQueryRecordDef =
-  UpdateCustomFieldsRequestArgsDef['records'][number] & {
-    userId: string;
-  };

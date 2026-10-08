@@ -3,10 +3,7 @@ import type z from 'zod';
 import type { QueryResponseDef } from '#/api/db-tables-schema.types';
 
 import type { createCustomFieldValuesDbQuery } from './create-custom-field-value.db-query';
-import type {
-  createCustomFieldValuesDbQuerySchema,
-  createCustomFieldValuesSchema,
-} from './create-custom-field-value.schema';
+import type { createCustomFieldValuesSchema } from './create-custom-field-value.schema';
 
 export type CreateCustomFieldValuesRequestArgsDef = z.output<
   typeof createCustomFieldValuesSchema
@@ -14,8 +11,4 @@ export type CreateCustomFieldValuesRequestArgsDef = z.output<
 
 export type CreateCustomFieldValuesResponseDef = QueryResponseDef<
   typeof createCustomFieldValuesDbQuery
->;
-
-export type CreateCustomFieldValuesDbQueryArgsDef = z.output<
-  typeof createCustomFieldValuesDbQuerySchema
 >;

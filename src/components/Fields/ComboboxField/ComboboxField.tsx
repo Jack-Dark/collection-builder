@@ -162,7 +162,7 @@ export const ComboboxField = <
 
       return queryMatchesLabel;
     });
-  }, [normalizedQuery]);
+  }, [normalizedQuery, items]);
 
   const getSelectedItemsArray = () => {
     if (Array.isArray(value)) {
@@ -203,19 +203,23 @@ export const ComboboxField = <
 
       creatableItem.creatable = true;
 
-      if (exactMatchItem) {
-        if (
-          verifyShowNewItem?.({
-            itemMatchingQuery: exactMatchItem,
-            newItem: creatableItem,
-            normalizedQuery,
-            query,
-          })
-        ) {
+      if (normalizedQuery) {
+        if (exactMatchItem) {
+          if (
+            verifyShowNewItem?.({
+              itemMatchingQuery: exactMatchItem,
+              newItem: creatableItem,
+              normalizedQuery,
+              query,
+            })
+          ) {
+            // debugger;
+            sortedDisplayItems.splice(0, 0, creatableItem);
+          }
+        } else {
+          // debugger;
           sortedDisplayItems.splice(0, 0, creatableItem);
         }
-      } else {
-        sortedDisplayItems.splice(0, 0, creatableItem);
       }
     }
 

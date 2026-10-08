@@ -1,7 +1,5 @@
 import z from 'zod';
 
-import { userIdSchema } from '#/api/db-tables-schema';
-
 import { customFieldValueSchema } from '../custom-field-values.schema';
 
 export const createCustomFieldValuesSchema = z.object({
@@ -14,8 +12,3 @@ export const createCustomFieldValuesSchema = z.object({
       .strict(),
   ),
 });
-
-export const createCustomFieldValuesDbQuerySchema =
-  createCustomFieldValuesSchema.extend({
-    userId: userIdSchema,
-  });

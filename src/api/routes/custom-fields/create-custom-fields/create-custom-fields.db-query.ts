@@ -1,17 +1,21 @@
+import type { DbQueryArgsDef } from '#/auth/auth-middleware.types';
+
 import { db } from '#/api/db';
 import { customFieldsTable } from '#/api/db-tables-schema';
 import { customFieldTypeLabelsMap } from '#/pages/CollectionsListPage/components/CollectionsListTable/components/column-cells/CollectionsListCustomFieldsCell';
 
-import type { CreateCustomFieldsDbQueryRecordDef } from './create-custom-fields.types';
+import type { CreateCustomFieldsRequestArgsDef } from './create-custom-fields.types';
 
-export const createCustomFieldsDbQuery = async (props: {
-  records: CreateCustomFieldsDbQueryRecordDef[];
-}) => {
-  const { records } = props;
+export const createCustomFieldsDbQuery = async ({
+  context,
+  data,
+}: DbQueryArgsDef<CreateCustomFieldsRequestArgsDef>) => {
+  const { records } = data;
+  const userId = context.user.id;
 
   return db.transaction(async (tx) => {
     const matchingExistingCustomFields = await Promise.all(
-      records.map(async ({ name, type, userId }) => {
+      records.map(async ({ name, type }) => {
         const matchingRecord = await tx.query.customFields.findFirst({
           where: {
             name,
@@ -26,15 +30,21 @@ export const createCustomFieldsDbQuery = async (props: {
 
     for (const customField of matchingExistingCustomFields) {
       if (customField) {
+        const typeLabel = customFieldTypeLabelsMap[customField.type];
+
         throw new Error(
-          `Custom field "${customField.name} (${customFieldTypeLabelsMap[customField.type]})" already exists.`,
+          `Custom field "${customField.name} (${typeLabel})" already exists.`,
         );
       }
     }
 
+    const formattedRecords = records.map((record) => {
+      return { ...record, userId };
+    });
+
     const newRecords = await tx
       .insert(customFieldsTable)
-      .values(records)
+      .values(formattedRecords)
       .onConflictDoNothing()
       .returning();
 

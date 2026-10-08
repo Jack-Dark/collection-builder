@@ -63,16 +63,12 @@ export const CollectionDetailsCreatedAtCell = ({
                       >
                         {({ isPristine, isValid }) => {
                           return (
-                            <>
-                              {/* <form.AppForm> */}
-                              <AddNewCollectionItemButton
-                                disabled={isPristine || !isValid}
-                                form={form}
-                                insertAtIndex={rowIndex + 1}
-                                text="Another"
-                              />
-                              {/* </form.AppForm> */}
-                            </>
+                            <AddNewCollectionItemButton
+                              disabled={isPristine || !isValid}
+                              form={form}
+                              insertAtIndex={rowIndex + 1}
+                              text="Another"
+                            />
                           );
                         }}
                       </form.Subscribe>

@@ -3,20 +3,21 @@ import type { GenericMutateQueryProps } from '#/api/react-query-hooks/use-generi
 import { reactMutationKeys } from '#/api/react-query-hooks/react-query.constants';
 import { useGenericMutateQuery } from '#/api/react-query-hooks/use-generic-mutate-query';
 
-import type { CollectionItemRecordDef } from '../collection-item.types';
-import type { OnUpdateCollectionItemsArgsDef } from './update-collection-item-by-id.types';
+import type {
+  OnUpdateCollectionItemsArgsDef,
+  UpdateCollectionItemsResponseDef,
+} from './update-collection-item-by-id.types';
 
 import { deleteCloudinaryAssetsByPublicIdsServerFn } from '../../cloudinary/delete-cloudinary-assets-by-pubic-ids';
-import { createCloudinaryTags } from '../../cloudinary/helpers/create-collection-item-cloudinary-tags';
 import { uploadFileToCloudinary } from '../../cloudinary/helpers/upload-file-to-cloudinary';
 import { updateCollectionItemsServerFn } from './update-collection-item-by-id.serverFn';
 
 export const useUpdateCollectionItems = <
-  TTransformedData = CollectionItemRecordDef[],
+  TTransformedData = UpdateCollectionItemsResponseDef,
 >(
   props?: GenericMutateQueryProps<
     OnUpdateCollectionItemsArgsDef[],
-    CollectionItemRecordDef[],
+    UpdateCollectionItemsResponseDef,
     TTransformedData
   >,
 ) => {
@@ -32,29 +33,19 @@ export const useUpdateCollectionItems = <
         // ? https://www.answeroverflow.com/m/1433076253208084571
         const recordsWithImages = await Promise.all(
           formRecords.map(async (record) => {
-            const {
-              collectionId,
-              id: collectionItemId,
-              images,
-              userId,
-            } = record;
-
-            const tags = createCloudinaryTags({
-              collectionId,
-              collectionItemId,
-              userId,
-            });
+            const { images } = record;
 
             const uploadedPublicIdsForRecord: string[] = [];
 
             const updatedImages = await Promise.all(
               images.map(async (image) => {
                 if (typeof image === 'string') {
+                  // ? return existing public ID
                   return image;
                 } else {
+                  // ? upload new file and return public ID
                   const { public_id } = await uploadFileToCloudinary({
                     file: image.file,
-                    tags,
                   });
 
                   uploadedPublicIdsForRecord.push(public_id);
@@ -72,12 +63,12 @@ export const useUpdateCollectionItems = <
 
         return updateCollectionItemsServerFn({
           data: {
-            allUploadedPublicIds: uploadedPublicIds,
             records: recordsWithImages,
+            uploadedPublicIds,
           },
         });
       } catch (error) {
-        // ? Delete uploaded files on error
+        // ? Delete uploaded files if error
         await deleteCloudinaryAssetsByPublicIdsServerFn({
           data: { publicIds: uploadedPublicIds.flat() },
         });
@@ -85,11 +76,8 @@ export const useUpdateCollectionItems = <
         throw error;
       }
     },
-    mutationKey: [reactMutationKeys.updateCollectionItems],
+    mutationKey: [reactMutationKeys.collectionItems('update')],
     ...props,
-    onSuccess: async (data, requestArgs) => {
-      await props?.onSuccess?.(data, requestArgs);
-    },
   });
 
   return { ...rest, onUpdateCollectionItems };

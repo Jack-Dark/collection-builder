@@ -12,9 +12,3 @@ export type GetCustomFieldsRequestArgsDef = Partial<
 export type GetCustomFieldsResponseDef = QueryResponseDef<
   typeof getCustomFieldsDbQuery
 >;
-
-export type GetCustomFieldsDbQueryArgsDef = Required<
-  GetCustomFieldsRequestArgsDef & {
-    userId: string;
-  }
->;

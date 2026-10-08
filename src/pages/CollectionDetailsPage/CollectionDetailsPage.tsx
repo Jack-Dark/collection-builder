@@ -4,7 +4,7 @@ import { useForm } from '@tanstack/react-form';
 import { useBlocker } from '@tanstack/react-router';
 import { useEffect } from 'react';
 
-import type { OnCreateCollectionItemsArgsDef } from '#/api/routes/collection-items/create-collection-item/create-collection-item.types';
+import type { CreateCollectionItemsRequestArgsDef } from '#/api/routes/collection-items/create-collection-item/create-collection-item.types';
 import type { OnUpdateCollectionItemsArgsDef } from '#/api/routes/collection-items/update-collection-item-by-id/update-collection-item-by-id.types';
 
 import { useCreateCollectionItems } from '#/api/routes/collection-items/create-collection-item/create-collection-item.react-query';
@@ -12,6 +12,7 @@ import {
   useGetCollectionDetailsById,
   useInvalidateGetCollectionDetailsById,
 } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.react-query';
+import { useInvalidateGetCollectionItemsWithCustomFieldValue } from '#/api/routes/collection-items/get-collection-items-with-custom-field-value/get-collection-items-with-custom-field-value.react-query';
 import { useUpdateCollectionItems } from '#/api/routes/collection-items/update-collection-item-by-id/update-collection-item-by-id.react-query';
 import { useSpinner } from '#/components/FullPageLoadingSpinner/useSpinner';
 import { PageWrapper } from '#/page-wrapper';
@@ -32,6 +33,9 @@ export const CollectionDetailsPage: RouteComponent = () => {
   const invalidateGetCollectionDetailsById =
     useInvalidateGetCollectionDetailsById();
 
+  const invalidateGetCollectionItemsWithCustomFieldValue =
+    useInvalidateGetCollectionItemsWithCustomFieldValue();
+
   const { onCreateCollectionItem } = useCreateCollectionItems({
     showLoading: true,
   });
@@ -41,6 +45,9 @@ export const CollectionDetailsPage: RouteComponent = () => {
   });
 
   const { data } = useGetCollectionDetailsById({
+    onSuccess: () => {
+      form.reset();
+    },
     placeholderData: {
       collection: {
         name: '-',
@@ -71,11 +78,8 @@ export const CollectionDetailsPage: RouteComponent = () => {
         if (isNewRecords) {
           const newRecords = editedRecords.map((record) => {
             const {
-              createdAt: _createdAt,
               id: _id,
               isEditing: _isEditing,
-              updatedAt: _updatedAt,
-              userId: _userId,
               ...cleanCollectionItem
             } = record;
 
@@ -83,7 +87,7 @@ export const CollectionDetailsPage: RouteComponent = () => {
           });
 
           await onCreateCollectionItem(
-            newRecords as OnCreateCollectionItemsArgsDef[],
+            newRecords as CreateCollectionItemsRequestArgsDef[],
           );
         } else {
           await onUpdateCollectionItems(
@@ -93,6 +97,7 @@ export const CollectionDetailsPage: RouteComponent = () => {
 
         resetEditingRowIds();
         await invalidateGetCollectionDetailsById({ id: collectionId });
+        invalidateGetCollectionItemsWithCustomFieldValue();
       });
     },
   });

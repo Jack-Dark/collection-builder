@@ -9,7 +9,6 @@ const updateCollectionItemsBaseSchema = baseCollectionItemSchema.extend({
   createdAt: z.date().describe('Created At').min(1),
   id: z.number().describe('ID').min(1),
   updatedAt: z.date().describe('Updated At').min(1),
-  userId: z.string().describe('User ID').min(1),
 });
 
 export const updateCollectionItemsFormSchema =
@@ -24,10 +23,10 @@ export const onUpdateCollectionItemsArgsSchema =
   });
 
 export const updateCollectionItemsServerFnSchema = z.object({
-  allUploadedPublicIds: z.array(z.array(z.string())),
   records: z.array(
     updateCollectionItemsBaseSchema.extend({
       images: imagesSchema.publicIdsList,
     }),
   ),
+  uploadedPublicIds: z.array(z.array(z.string())),
 });

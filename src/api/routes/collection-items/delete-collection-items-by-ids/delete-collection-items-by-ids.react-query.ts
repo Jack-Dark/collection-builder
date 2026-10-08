@@ -16,15 +16,12 @@ export const useDeleteCollectionItemsByIds = <TTransformedData = void>(
 ) => {
   const { onMutate: onDeleteCollectionItemsByIds, ...rest } =
     useGenericMutateQuery({
-      fallbackErrorMessage: 'Unable to delete collection.',
+      fallbackErrorMessage: 'Unable to delete item(s) from collection.',
       mutationFn: (data) => {
         return deleteCollectionItemsByIdsServerFn({ data });
       },
-      mutationKey: [reactMutationKeys.deleteCollectionItems],
+      mutationKey: [reactMutationKeys.collectionItems('delete')],
       ...props,
-      onSuccess: async (data, requestArgs) => {
-        await props?.onSuccess?.(data, requestArgs);
-      },
     });
 
   return { ...rest, onDeleteCollectionItemsByIds };

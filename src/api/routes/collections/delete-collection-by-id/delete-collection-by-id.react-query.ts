@@ -27,11 +27,11 @@ export const useDeleteCollectionById = <
   const invalidateGetNavMenuCollections = useInvalidateGetNavMenuCollections();
 
   const { onMutate: onDeleteCollectionById, ...rest } = useGenericMutateQuery({
-    fallbackErrorMessage: 'Unable to delete item from collection.',
+    fallbackErrorMessage: 'Unable to delete collection.',
     mutationFn: (data) => {
       return deleteCollectionByIdServerFn({ data });
     },
-    mutationKey: [reactMutationKeys.deleteCollections],
+    mutationKey: [reactMutationKeys.collections('delete')],
     ...props,
     onSuccess: async (data, requestArgs) => {
       await invalidateGetNavMenuCollections();

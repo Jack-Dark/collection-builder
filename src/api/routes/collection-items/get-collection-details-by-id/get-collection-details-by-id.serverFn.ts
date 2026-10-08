@@ -13,10 +13,4 @@ export const getCollectionDetailsByIdServerFn = createServerFn({
 })
   .middleware([errorHandlingMiddleware, authApiRouteMiddleware])
   .validator(getCollectionDetailsByIdSchema)
-  .handler(async ({ context, data: { collectionId, params } }) => {
-    return getCollectionDetailsByIdDbQuery({
-      collectionId,
-      params,
-      userId: context.user.id,
-    });
-  });
+  .handler(getCollectionDetailsByIdDbQuery);

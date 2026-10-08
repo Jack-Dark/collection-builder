@@ -21,16 +21,13 @@ export const useGetCollectionItemsWithCustomFieldValue = <
   >,
 ) => {
   return useGenericFetchQuery({
-    fallbackErrorMessage: 'Unable to retrieve collections.',
+    fallbackErrorMessage: 'Unable to retrieve collections items.',
     queryFn: getCollectionItemsWithCustomFieldValueServerFn,
     queryKey: [
       reactQueryKeys.getCollectionItemsWithCustomFieldValue,
       JSON.stringify(props.requestArgs),
     ],
     ...props,
-    onSuccess: async (data, requestArgs) => {
-      await props?.onSuccess?.(data, requestArgs);
-    },
   });
 };
 

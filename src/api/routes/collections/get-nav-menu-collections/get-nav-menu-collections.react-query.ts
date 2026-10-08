@@ -25,9 +25,6 @@ export const useGetNavMenuCollections = <
     queryFn: getNavMenuCollectionsServerFn,
     queryKey: [reactQueryKeys.getNavMenuCollections],
     ...props,
-    onSuccess: async (data, requestArgs) => {
-      await props?.onSuccess?.(data, requestArgs);
-    },
   });
 };
 

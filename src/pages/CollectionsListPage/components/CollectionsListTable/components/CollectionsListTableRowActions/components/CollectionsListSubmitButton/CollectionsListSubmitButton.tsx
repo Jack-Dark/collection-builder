@@ -22,24 +22,20 @@ export const CollectionsListSubmitButton = (props: {
     >
       {({ isPristine, isSubmitting, isValid }) => {
         return (
-          <>
-            {/* <form.AppForm> */}
-            <Button
-              className="flex flex-nowrap gap-2"
-              disabled={isPristine || !isValid}
-              Icon={SaveIcon}
-              onClick={(e) => {
-                e.preventDefault();
+          <Button
+            className="flex flex-nowrap gap-2"
+            disabled={isPristine || !isValid}
+            Icon={SaveIcon}
+            onClick={(e) => {
+              e.preventDefault();
 
-                form.handleSubmit();
-                resetRowSelection();
-              }}
-              processing={isSubmitting}
-              text="Save"
-              type="submit"
-            />
-            {/* </form.AppForm> */}
-          </>
+              form.handleSubmit();
+              resetRowSelection();
+            }}
+            processing={isSubmitting}
+            text="Save"
+            type="submit"
+          />
         );
       }}
     </form.Subscribe>

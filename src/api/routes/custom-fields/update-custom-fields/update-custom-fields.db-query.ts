@@ -1,19 +1,23 @@
 import { and, eq, isNull } from 'drizzle-orm';
 
+import type { DbQueryArgsDef } from '#/auth/auth-middleware.types';
+
 import { db } from '#/api/db';
 import { customFieldsTable } from '#/api/db-tables-schema';
 import { customFieldTypeLabelsMap } from '#/pages/CollectionsListPage/components/CollectionsListTable/components/column-cells/CollectionsListCustomFieldsCell';
 
-import type { UpdateCustomFieldsDbQueryRecordDef } from './update-custom-fields.types';
+import type { UpdateCustomFieldsRequestArgsDef } from './update-custom-fields.types';
 
-export const updateCustomFieldsDbQuery = async (props: {
-  records: UpdateCustomFieldsDbQueryRecordDef[];
-}) => {
-  const { records } = props;
+export const updateCustomFieldsDbQuery = async ({
+  context,
+  data,
+}: DbQueryArgsDef<UpdateCustomFieldsRequestArgsDef>) => {
+  const userId = context.user.id;
+  const { records } = data;
 
   return db.transaction(async (tx) => {
     const matchingExistingCustomFields = await Promise.all(
-      records.map(async ({ name, type, userId }) => {
+      records.map(async ({ name, type }) => {
         const matchingRecord = await tx.query.customFields.findFirst({
           where: {
             name,
@@ -38,11 +42,11 @@ export const updateCustomFieldsDbQuery = async (props: {
       records.map(async (record) => {
         const [updatedRecord] = await tx
           .update(customFieldsTable)
-          .set(record)
+          .set({ ...record, userId })
           .where(
             and(
               eq(customFieldsTable.id, record.id),
-              eq(customFieldsTable.userId, record.userId),
+              eq(customFieldsTable.userId, userId),
               isNull(customFieldsTable.deletedAt),
             ),
           )

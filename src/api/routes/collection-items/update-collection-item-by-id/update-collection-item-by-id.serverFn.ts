@@ -14,6 +14,4 @@ export const updateCollectionItemsServerFn = createServerFn({
 })
   .middleware([errorHandlingMiddleware, authApiRouteMiddleware])
   .validator(updateCollectionItemsServerFnSchema)
-  .handler(async ({ data }) => {
-    return updateCollectionItemsDbQuery(data);
-  });
+  .handler(updateCollectionItemsDbQuery);

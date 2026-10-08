@@ -1,15 +1,23 @@
 import { and, eq, inArray, isNull } from 'drizzle-orm';
 
+import type { DbQueryArgsDef } from '#/auth/auth-middleware.types';
+
 import { db } from '#/api/db';
 import { collectionsTable } from '#/api/db-tables-schema';
 
-export const deleteCollectionDbQuery = async (props: {
-  ids: number[];
-  userId: string;
-}) => {
-  const { ids, userId } = props;
+import type { DeleteCollectionByIdRequestArgsDef } from './delete-collection-by-id.types';
+
+export const deleteCollectionDbQuery = async ({
+  context,
+  data,
+}: DbQueryArgsDef<DeleteCollectionByIdRequestArgsDef>) => {
+  const { ids } = data;
+
+  const userId = context.user.id;
 
   await db.transaction(async (tx) => {
+    // TODO - ADD LOGIC TO GET ALL IMAGES ON ITEMS IN COLLECTION
+
     // ? Delete collections
     await tx
       .delete(collectionsTable)
@@ -20,5 +28,7 @@ export const deleteCollectionDbQuery = async (props: {
           isNull(collectionsTable.deletedAt),
         ),
       );
+
+    // TODO - DELETE IMAGES
   });
 };

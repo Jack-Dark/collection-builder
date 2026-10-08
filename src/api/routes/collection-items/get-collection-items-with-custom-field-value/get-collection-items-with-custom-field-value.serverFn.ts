@@ -13,9 +13,4 @@ export const getCollectionItemsWithCustomFieldValueServerFn = createServerFn({
 })
   .middleware([errorHandlingMiddleware, authApiRouteMiddleware])
   .validator(getCollectionItemsWithCustomFieldValueSchema)
-  .handler(async ({ context, data }) => {
-    return getCollectionItemsWithCustomFieldValueDbQuery({
-      ...data,
-      userId: context.user.id,
-    });
-  });
+  .handler(getCollectionItemsWithCustomFieldValueDbQuery);

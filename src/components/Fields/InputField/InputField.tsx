@@ -46,11 +46,15 @@ export const InputField = (props: InputFieldProps) => {
         autoFocus={autoFocus}
         className="input"
         defaultValue={defaultValue}
-        onBlur={(event) => {
-          const value = event.target.value;
+        onBlur={
+          triggerOnBlur
+            ? (event) => {
+                const value = event.target.value;
 
-          onValueChange?.(value);
-        }}
+                onValueChange?.(value);
+              }
+            : undefined
+        }
         onValueChange={(value) => {
           if (!triggerOnBlur) {
             onValueChange?.(value);

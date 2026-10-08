@@ -8,7 +8,6 @@ import {
   snakeCase,
   integer,
 } from 'drizzle-orm/pg-core';
-import z from 'zod';
 
 import type { CustomFieldTypeDef } from './db-tables-schema.types';
 import type { CustomFieldValueDef } from './routes/custom-field-values/custom-field-values.types';
@@ -32,8 +31,6 @@ export const usersTable = snakeCase.table('users', {
   name: text('name').notNull(),
   ...timestamps,
 });
-
-export const userIdSchema = z.string().min(1).describe('User ID');
 
 export const sessionsTable = snakeCase.table('sessions', {
   expiresAt: timestamp('expires_at').notNull(),

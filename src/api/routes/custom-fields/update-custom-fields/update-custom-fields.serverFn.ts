@@ -13,17 +13,4 @@ export const updateCustomFieldsServerFn = createServerFn({
 })
   .middleware([errorHandlingMiddleware, authApiRouteMiddleware])
   .validator(updateCustomFieldsSchema)
-  .handler(async ({ context, data }) => {
-    const { records } = data;
-
-    const recordsWithUserId = records.map((item) => {
-      return {
-        ...item,
-        userId: context.user.id,
-      };
-    });
-
-    return updateCustomFieldsDbQuery({
-      records: recordsWithUserId,
-    });
-  });
+  .handler(updateCustomFieldsDbQuery);

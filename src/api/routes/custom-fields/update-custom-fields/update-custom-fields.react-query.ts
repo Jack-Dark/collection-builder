@@ -24,11 +24,11 @@ export const useUpdateCustomFields = <
   const serverFn = useServerFn(updateCustomFieldsServerFn);
 
   const { onMutate: onUpdateCustomFields, ...rest } = useGenericMutateQuery({
-    fallbackErrorMessage: 'Unable to create custom field.',
+    fallbackErrorMessage: 'Unable to update custom field.',
     mutationFn: (data) => {
       return serverFn({ data });
     },
-    mutationKey: [reactMutationKeys.updateCustomFields],
+    mutationKey: [reactMutationKeys.customFields('update')],
     ...props,
   });
 

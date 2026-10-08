@@ -12,3 +12,22 @@ export type GetPaginatedCollectionsRequestArgsDef = z.output<
 export type GetPaginatedCollectionsResponseDef = QueryResponseDef<
   typeof getPaginatedCollectionsDbQuery
 >;
+
+type BaseCustomFieldForCollectionDef =
+  GetPaginatedCollectionsResponseDef['collections'][number]['customFields'][number];
+
+type CustomFieldData = NonNullable<
+  BaseCustomFieldForCollectionDef['customField']
+>;
+
+export type OrderedCustomFieldForCollectionDef<TId = number> = Omit<
+  BaseCustomFieldForCollectionDef,
+  'customField'
+> & {
+  customField: CustomFieldDataForCollectionDef<TId>;
+};
+
+export type CustomFieldDataForCollectionDef<TId = number> = Omit<
+  CustomFieldData,
+  'id'
+> & { id: TId };

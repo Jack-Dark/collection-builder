@@ -13,15 +13,4 @@ export const createCollectionServerFn = createServerFn({
 })
   .middleware([errorHandlingMiddleware, authApiRouteMiddleware])
   .validator(createCollectionServerFnSchema)
-  .handler(async ({ context, data }) => {
-    const { records } = data;
-
-    const recordsWithUserId = records.map((item) => {
-      return {
-        ...item,
-        userId: context.user.id,
-      };
-    });
-
-    return createCollectionDbQuery(recordsWithUserId);
-  });
+  .handler(createCollectionDbQuery);

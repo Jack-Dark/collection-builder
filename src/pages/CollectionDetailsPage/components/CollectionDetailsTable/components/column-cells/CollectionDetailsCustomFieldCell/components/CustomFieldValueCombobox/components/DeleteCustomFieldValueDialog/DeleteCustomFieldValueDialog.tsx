@@ -38,6 +38,11 @@ export const DeleteCustomFieldValueDialog = <
   const id = Number(customFieldValueToDelete.id);
 
   const { data } = useGetCollectionItemsWithCustomFieldValue({
+    onSuccess: async ({ affectedCollections, numAffectedCollectionItems }) => {
+      if (!affectedCollections.length && !numAffectedCollectionItems) {
+        await onDelete();
+      }
+    },
     placeholderData: (_data) => {
       return {
         affectedCollections: [],
@@ -45,9 +50,11 @@ export const DeleteCustomFieldValueDialog = <
       } satisfies typeof _data;
     },
     requestArgs: {
-      id,
+      customFieldValueId: id,
     },
   });
+
+  const { affectedCollections, numAffectedCollectionItems } = data;
 
   const invalidateGetCustomFieldValuesByCustomFieldId =
     useInvalidateGetCustomFieldValuesByCustomFieldId();
@@ -57,17 +64,23 @@ export const DeleteCustomFieldValueDialog = <
       await invalidateGetCustomFieldValuesByCustomFieldId();
 
       if (selectedCustomFieldValueId === id) {
-        // TODO - FIELD IS NOT CORRECTLY CLEARED IF DELETING ITEM THAT WAS JUST CREATED
+        // TODO - FIELD IS NOT CORRECTLY CLEARED IF DELETING ITEM THAT IS CURRENTLY APPLIED
         handleFieldChange(undefined);
       }
 
       onClose();
     },
+    showLoading: true,
   });
 
-  const { affectedCollections, numAffectedCollectionItems } = data;
+  const onDelete = async () => {
+    await onDeleteCustomFieldValues({
+      collectionItemId,
+      ids: [id],
+    });
+  };
 
-  return (
+  return !affectedCollections.length && !numAffectedCollectionItems ? null : (
     <Dialog
       disableOnClose={processing}
       Footer={() => {
@@ -76,16 +89,7 @@ export const DeleteCustomFieldValueDialog = <
             <Button disabled={processing} onClick={onClose} variant="mono">
               Cancel
             </Button>
-            <Button
-              onClick={async () => {
-                await onDeleteCustomFieldValues({
-                  collectionItemId,
-                  ids: [id],
-                });
-              }}
-              processing={processing}
-              variant="alert"
-            >
+            <Button onClick={onDelete} processing={processing} variant="alert">
               Delete
             </Button>
           </>
@@ -101,28 +105,41 @@ export const DeleteCustomFieldValueDialog = <
 
         <h4 className="text-center">{customFieldValueToDelete.value}</h4>
 
-        {numAffectedCollectionItems > 1 && (
-          <div className="grid gap-1">
-            <p className="text-center text-sm text-gray-600">
-              This will remove the field from {numAffectedCollectionItems}{' '}
-              collection {pluralize('item', numAffectedCollectionItems)} across
-              the following collections:
-            </p>
+        {!!numAffectedCollectionItems && (
+          <>
+            <div className="grid gap-1">
+              <p className="text-center text-sm text-gray-600">
+                This will remove the custom field value from{' '}
+                {numAffectedCollectionItems} collection{' '}
+                {pluralize('item', numAffectedCollectionItems)}{' '}
+                {pluralize('in', numAffectedCollectionItems, 'across')} the
+                following {pluralize('collection', numAffectedCollectionItems)}:
+              </p>
 
-            <ul>
-              {affectedCollections.map(({ id, name }) => {
-                return (
-                  <li key={id}>
-                    <p>{name}</p>
-                  </li>
-                );
-              })}
-            </ul>
+              <div className="flex justify-center">
+                <ul className="list-inside list-disc">
+                  {affectedCollections.map(({ id, name }) => {
+                    return (
+                      <li key={id}>
+                        <span>{name}</span>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            </div>
 
-            <p className="text-center text-sm text-gray-600">
-              <em>This cannot be undone.</em>
-            </p>
-          </div>
+            <div className="grid gap-1">
+              <p className="max-w-100 text-gray-600 text-sm text-center">
+                Note: This will delete the custom field value, even if changes
+                to your collection are dismissed.
+              </p>
+
+              <p className="text-center text-sm text-gray-600">
+                <em>This cannot be undone.</em>
+              </p>
+            </div>
+          </>
         )}
       </div>
     </Dialog>

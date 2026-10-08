@@ -1,6 +1,7 @@
 import { and, eq } from 'drizzle-orm';
 
 import type { InsertCustomFieldValueRecordDef } from '#/api/db-tables-schema.types';
+import type { DbQueryArgsDef } from '#/auth/auth-middleware.types';
 
 import { db } from '#/api/db';
 import {
@@ -8,12 +9,16 @@ import {
   equalsCustomFieldValue,
 } from '#/api/db-tables-schema';
 
-import type { CreateCustomFieldValuesDbQueryArgsDef } from './create-custom-field-value.types';
+import type { CreateCustomFieldValuesRequestArgsDef } from './create-custom-field-value.types';
 
 export const createCustomFieldValuesDbQuery = async ({
-  records,
-  userId,
-}: CreateCustomFieldValuesDbQueryArgsDef) => {
+  context,
+  data,
+}: DbQueryArgsDef<CreateCustomFieldValuesRequestArgsDef>) => {
+  const { records } = data;
+
+  const userId = context.user.id;
+
   return db.transaction(async (tx) => {
     const formattedCustomFieldValues = records.map(({ value, ...rest }) => {
       return {
@@ -26,7 +31,10 @@ export const createCustomFieldValuesDbQuery = async ({
     const newRecords = await Promise.all(
       formattedCustomFieldValues.map(async (record) => {
         const [matchingRecord] = await tx
-          .select()
+          .select({
+            data: customFieldValuesTable.data,
+            id: customFieldValuesTable.id,
+          })
           .from(customFieldValuesTable)
           .where(
             and(

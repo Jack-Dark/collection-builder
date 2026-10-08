@@ -45,6 +45,7 @@ export const useGenericMutateQuery = <
     fallbackErrorMessage,
     mutationFn,
     onError,
+    onSettled,
     showLoading,
     transform,
     ...configs
@@ -76,6 +77,10 @@ export const useGenericMutateQuery = <
 
       onError?.(message, requestArgs);
     },
+    onSettled: async (...args) => {
+      hideSpinner();
+      await onSettled?.(...args);
+    },
     ...configs,
   });
 
@@ -85,8 +90,6 @@ export const useGenericMutateQuery = <
     if (showLoading) {
       if (isPending) {
         showSpinner();
-      } else if (isSpinning) {
-        hideSpinner();
       }
     }
   }, [isPending]);

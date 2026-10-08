@@ -28,7 +28,7 @@ export const useCreateCustomFields = <
     mutationFn: (data) => {
       return serverFn({ data });
     },
-    mutationKey: [reactMutationKeys.createCustomFields],
+    mutationKey: [reactMutationKeys.customFields('create')],
     ...props,
   });
 

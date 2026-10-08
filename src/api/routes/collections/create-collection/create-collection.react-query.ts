@@ -5,7 +5,7 @@ import { useGenericMutateQuery } from '#/api/react-query-hooks/use-generic-mutat
 
 import type {
   CreateCollectionResponseDef,
-  OnCreateCollectionRequestArgsDef,
+  CreateCollectionRequestArgsDef,
 } from './create-collection.types';
 
 import { useInvalidateGetNavMenuCollections } from '../get-nav-menu-collections/get-nav-menu-collections.react-query';
@@ -16,7 +16,7 @@ export const useCreateCollection = <
   TTransformedData = CreateCollectionResponseDef,
 >(
   props?: GenericMutateQueryProps<
-    OnCreateCollectionRequestArgsDef,
+    CreateCollectionRequestArgsDef,
     CreateCollectionResponseDef,
     TTransformedData
   >,
@@ -35,7 +35,7 @@ export const useCreateCollection = <
 
       return response;
     },
-    mutationKey: [reactMutationKeys.createCollections],
+    mutationKey: [reactMutationKeys.collections('create')],
     ...props,
     onSuccess: async (data, requestArgs) => {
       await invalidateGetNavMenuCollections();

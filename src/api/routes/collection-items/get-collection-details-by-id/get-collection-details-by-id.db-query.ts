@@ -2,6 +2,8 @@ import type { InferModelFromColumns, SQL } from 'drizzle-orm';
 
 import { and, eq, isNull, ilike, inArray } from 'drizzle-orm';
 
+import type { DbQueryArgsDef } from '#/auth/auth-middleware.types';
+
 import { db } from '#/api/db';
 import { collectionItemsTable } from '#/api/db-tables-schema';
 import { sortDirectionOptions } from '#/api/pagination/pagination.constants';
@@ -11,13 +13,14 @@ import type { CustomFieldValuesByFieldId } from '../../custom-field-values/custo
 import type { CollectionItemsTableColumn } from '../collection-item.types';
 import type { GetCollectionDetailsByIdRequestArgsDef } from './get-collection-details-by-id.types';
 
-export const getCollectionDetailsByIdDbQuery = async (
-  props: GetCollectionDetailsByIdRequestArgsDef & {
-    userId: string;
-  },
-) => {
-  const { collectionId, params, userId } = props;
+export const getCollectionDetailsByIdDbQuery = async ({
+  context,
+  data,
+}: DbQueryArgsDef<GetCollectionDetailsByIdRequestArgsDef>) => {
+  const { collectionId, params } = data;
   const { limit, page, search, searchNotes, sort } = params;
+
+  const userId = context.user.id;
 
   const sortingField: CollectionItemsTableColumn =
     sort.field && collectionItemsTable.hasOwnProperty(sort.field)
@@ -52,14 +55,17 @@ export const getCollectionDetailsByIdDbQuery = async (
       with: {
         customFields: {
           columns: {
-            id: true,
-            name: true,
-            type: true,
+            order: true,
+          },
+          orderBy: {
+            order: 'asc',
           },
           with: {
-            details: {
+            customField: {
               columns: {
-                order: true,
+                id: true,
+                name: true,
+                type: true,
               },
             },
           },
@@ -69,7 +75,6 @@ export const getCollectionDetailsByIdDbQuery = async (
 
     const items = await tx.query.collectionItems.findMany({
       columns: {
-        collectionId: false,
         userId: false,
       },
       limit,
@@ -106,10 +111,15 @@ export const getCollectionDetailsByIdDbQuery = async (
       },
       with: {
         customFieldValues: {
-          columns: {
-            customFieldId: true,
-            data: true,
-            id: true,
+          columns: {},
+          with: {
+            customFieldValue: {
+              columns: {
+                customFieldId: true,
+                data: true,
+                id: true,
+              },
+            },
           },
         },
       },
@@ -118,11 +128,17 @@ export const getCollectionDetailsByIdDbQuery = async (
     const formattedItems = items.map(({ customFieldValues, ...item }) => {
       const customFieldValuesByCustomFieldId =
         customFieldValues.reduce<CustomFieldValuesByFieldId>(
-          (acc, { customFieldId, ...customFieldValue }) => {
-            return {
-              ...acc,
-              [customFieldId]: customFieldValue,
-            };
+          (acc, { customFieldValue }) => {
+            if (customFieldValue) {
+              const { customFieldId, ...rest } = customFieldValue;
+
+              return {
+                ...acc,
+                [customFieldId]: rest,
+              };
+            } else {
+              return acc;
+            }
           },
           {},
         );

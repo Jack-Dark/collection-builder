@@ -3,19 +3,21 @@ import type { GenericMutateQueryProps } from '#/api/react-query-hooks/use-generi
 import { reactMutationKeys } from '#/api/react-query-hooks/react-query.constants';
 import { useGenericMutateQuery } from '#/api/react-query-hooks/use-generic-mutate-query';
 
-import type { CollectionRecordDef } from '../collection.types';
-import type { UpdateCollectionsFormRecordSchemaDef } from './update-collection-by-id.types';
+import type {
+  UpdateCollectionByIdResponseDef,
+  UpdateCollectionsFormRecordSchemaDef,
+} from './update-collection-by-id.types';
 
 import { useInvalidateGetNavMenuCollections } from '../get-nav-menu-collections/get-nav-menu-collections.react-query';
 import { useInvalidateGetPaginatedCollections } from '../get-paginated-collections/get-paginated-collections.react-query';
 import { updateCollectionByIdServerFn } from './update-collection-by-id.serverFn';
 
 export const useUpdateCollectionById = <
-  TTransformedData = CollectionRecordDef[],
+  TTransformedData = UpdateCollectionByIdResponseDef,
 >(
   props?: GenericMutateQueryProps<
     UpdateCollectionsFormRecordSchemaDef[],
-    CollectionRecordDef[],
+    UpdateCollectionByIdResponseDef,
     TTransformedData
   >,
 ) => {
@@ -29,7 +31,7 @@ export const useUpdateCollectionById = <
     mutationFn: (records) => {
       return updateCollectionByIdServerFn({ data: { records } });
     },
-    mutationKey: [reactMutationKeys.updateCollections],
+    mutationKey: [reactMutationKeys.collections('update')],
     ...props,
     onSuccess: async (data, requestArgs) => {
       await invalidateGetNavMenuCollections();

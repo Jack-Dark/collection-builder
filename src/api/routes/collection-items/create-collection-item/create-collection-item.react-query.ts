@@ -3,24 +3,26 @@ import type { GenericMutateQueryProps } from '#/api/react-query-hooks/use-generi
 import { reactMutationKeys } from '#/api/react-query-hooks/react-query.constants';
 import { useGenericMutateQuery } from '#/api/react-query-hooks/use-generic-mutate-query';
 
-import type { CollectionItemRecordDef } from '../collection-item.types';
-import type { OnCreateCollectionItemsArgsDef } from './create-collection-item.types';
+import type {
+  CreateCollectionItemsResponseDef,
+  CreateCollectionItemsRequestArgsDef,
+} from './create-collection-item.types';
 
 import { deleteCloudinaryAssetsByPublicIdsServerFn } from '../../cloudinary/delete-cloudinary-assets-by-pubic-ids';
 import { uploadFileToCloudinary } from '../../cloudinary/helpers/upload-file-to-cloudinary';
 import { createCollectionItemServerFn } from './create-collection-item.serverFn';
 
 export const useCreateCollectionItems = <
-  TTransformedData = CollectionItemRecordDef[],
+  TTransformedData = CreateCollectionItemsResponseDef,
 >(
   props?: GenericMutateQueryProps<
-    OnCreateCollectionItemsArgsDef[],
-    CollectionItemRecordDef[],
+    CreateCollectionItemsRequestArgsDef[],
+    CreateCollectionItemsResponseDef,
     TTransformedData
   >,
 ) => {
   const { onMutate: onCreateCollectionItem, ...rest } = useGenericMutateQuery({
-    fallbackErrorMessage: 'Unable to add item to collection.',
+    fallbackErrorMessage: 'Unable to add item(s) to collection.',
     mutationFn: async (formRecords) => {
       let uploadedPublicIds: string[][] = [];
 
@@ -43,7 +45,7 @@ export const useCreateCollectionItems = <
           }),
         );
 
-        // ? Create new record with images
+        // ? format record with images
         const recordsWithImages = formRecords.map((record, index) => {
           const images = uploadedPublicIds[index];
 
@@ -57,7 +59,7 @@ export const useCreateCollectionItems = <
           },
         });
       } catch (error) {
-        // ? Delete uploaded files on error
+        // ? Delete uploaded files if error
         await deleteCloudinaryAssetsByPublicIdsServerFn({
           data: { publicIds: uploadedPublicIds.flat() },
         });
@@ -65,11 +67,8 @@ export const useCreateCollectionItems = <
         throw error;
       }
     },
-    mutationKey: [reactMutationKeys.createCollectionItems],
+    mutationKey: [reactMutationKeys.collectionItems('create')],
     ...props,
-    onSuccess: async (data, requestArgs) => {
-      await props?.onSuccess?.(data, requestArgs);
-    },
   });
 
   return { ...rest, onCreateCollectionItem };

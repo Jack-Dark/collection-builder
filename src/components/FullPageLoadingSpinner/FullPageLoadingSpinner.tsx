@@ -37,9 +37,7 @@ export const FullPageLoadingSpinner = () => {
       {showForceClose && (
         <button
           className="absolute top-10 right-10 p-1 bg-[rgba(0,0,0,0.2)] rounded-full cursor-pointer"
-          onClick={() => {
-            hideSpinner();
-          }}
+          onClick={hideSpinner}
         >
           <CloseIcon className="text-white" fontSize="large" />
         </button>

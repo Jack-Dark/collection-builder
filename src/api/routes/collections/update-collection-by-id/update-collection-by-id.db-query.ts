@@ -1,6 +1,7 @@
 import { and, eq, isNull } from 'drizzle-orm';
 
 import type { InsertLinkCollectionsToCustomFieldsRecordDef } from '#/api/db-tables-schema.types';
+import type { DbQueryArgsDef } from '#/auth/auth-middleware.types';
 
 import { db } from '#/api/db';
 import {
@@ -11,8 +12,13 @@ import {
 import type { OnUpdateCollectionsArgsDef } from './update-collection-by-id.types';
 
 export const updateCollectionByIdDbQuery = async ({
-  records: recordsToUpdate,
-}: OnUpdateCollectionsArgsDef) => {
+  context,
+  data,
+}: DbQueryArgsDef<OnUpdateCollectionsArgsDef>) => {
+  const { records: recordsToUpdate } = data;
+
+  const userId = context.user.id;
+
   if (recordsToUpdate.length === 0) {
     return [];
   }
@@ -27,7 +33,7 @@ export const updateCollectionByIdDbQuery = async ({
           .where(
             and(
               eq(collectionsTable.id, record.id),
-              eq(collectionsTable.userId, record.userId),
+              eq(collectionsTable.userId, userId),
               isNull(collectionsTable.deletedAt),
             ),
           ),
@@ -38,14 +44,16 @@ export const updateCollectionByIdDbQuery = async ({
           .where(eq(collectionsToCustomFieldsTable.collectionId, record.id)),
       ]);
 
+      console.clear();
+
       // ? Create brand new links between this collection and custom fields
       const newCollectionToCustomFieldRecords: InsertLinkCollectionsToCustomFieldsRecordDef[] =
-        customFields.map(({ details, id }) => {
+        customFields.map(({ customField, order }) => {
           return {
             collectionId: record.id,
-            customFieldId: id,
-            order: details.order,
-            userId: record.userId,
+            customFieldId: customField.id,
+            order,
+            userId,
           };
         });
 

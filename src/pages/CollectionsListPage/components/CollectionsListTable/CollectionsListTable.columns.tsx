@@ -44,13 +44,13 @@ export const getCollectionsListTableColumns = (
       size: 250,
     }),
     columnHelper.accessor('customFields', {
-      cell: ({ getValue, row }) => {
+      cell: ({ row }) => {
+        // TODO - UPDATE GET VALUE TO USE FORM SELECTOR FOR STATE
         return (
           <CollectionsListCustomFieldsCell
             form={form}
             index={row.index}
             rowId={row.id}
-            value={getValue()}
           />
         );
       },

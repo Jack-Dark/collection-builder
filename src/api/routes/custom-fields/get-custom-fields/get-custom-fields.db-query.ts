@@ -1,12 +1,18 @@
+import type { DbQueryArgsDef } from '#/auth/auth-middleware.types';
+
 import { db } from '#/api/db';
+import { getPaginationQueryDefaults } from '#/api/pagination/pagination.schema';
 
-import type { GetCustomFieldsDbQueryArgsDef } from './get-custom-fields.types';
+import type { GetCustomFieldsRequestArgsDef } from './get-custom-fields.types';
 
-export const getCustomFieldsDbQuery = async (
-  props: GetCustomFieldsDbQueryArgsDef,
-) => {
-  const { ids, params, userId } = props;
-  const { limit, page, search, sort } = params;
+export const getCustomFieldsDbQuery = async ({
+  context,
+  data,
+}: DbQueryArgsDef<GetCustomFieldsRequestArgsDef>) => {
+  const userId = context.user.id;
+  const { ids = [], params } = data;
+  const { limit, page, search, sort } =
+    params || getPaginationQueryDefaults('name');
 
   const customFields = await db.query.customFields.findMany({
     columns: {
@@ -29,13 +35,6 @@ export const getCustomFieldsDbQuery = async (
         ilike: `%${search}%`,
       },
       userId,
-    },
-    with: {
-      details: {
-        columns: {
-          order: true,
-        },
-      },
     },
   });
 

@@ -1,20 +1,23 @@
 import { and, eq, ilike, isNull } from 'drizzle-orm';
 
-import type { PaginationQueriesSchemaDef } from '#/api/pagination/pagination.types';
+import type { DbQueryArgsDef } from '#/auth/auth-middleware.types';
 
 import { db } from '#/api/db';
 import { getPaginationMetadataQuery } from '#/api/pagination/pagination.query';
 
 import type { CollectionRecordDef } from '../collection.types';
+import type { GetPaginatedCollectionsRequestArgsDef } from './get-paginated-collections.types';
 
 import { collectionsTable } from '../../../db-tables-schema';
 
-export const getPaginatedCollectionsDbQuery = async (props: {
-  params: PaginationQueriesSchemaDef;
-  userId: string;
-}) => {
-  const { params, userId } = props;
+export const getPaginatedCollectionsDbQuery = async ({
+  context,
+  data,
+}: DbQueryArgsDef<GetPaginatedCollectionsRequestArgsDef>) => {
+  const { params } = data;
   const { limit, page, search, sort } = params;
+
+  const userId = context.user.id;
 
   return db.transaction(async (tx) => {
     const matchesUserAndSearch = and(
@@ -57,14 +60,17 @@ export const getPaginatedCollectionsDbQuery = async (props: {
       with: {
         customFields: {
           columns: {
-            id: true,
-            name: true,
-            type: true,
+            order: true,
+          },
+          orderBy: {
+            order: 'asc',
           },
           with: {
-            details: {
+            customField: {
               columns: {
-                order: true,
+                id: true,
+                name: true,
+                type: true,
               },
             },
           },

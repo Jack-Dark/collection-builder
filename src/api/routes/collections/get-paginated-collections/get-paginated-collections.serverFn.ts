@@ -13,9 +13,4 @@ export const getPaginatedCollectionsServerFn = createServerFn({
 })
   .middleware([errorHandlingMiddleware, authApiRouteMiddleware])
   .validator(getPaginatedCollectionsSchema)
-  .handler(async ({ context, data }) => {
-    return getPaginatedCollectionsDbQuery({
-      params: data.params,
-      userId: context.user.id,
-    });
-  });
+  .handler(getPaginatedCollectionsDbQuery);

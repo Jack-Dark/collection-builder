@@ -1,18 +1,22 @@
 import { and, eq } from 'drizzle-orm';
 
+import type { DbQueryArgsDef } from '#/auth/auth-middleware.types';
+
 import { db } from '#/api/db';
 import {
   collectionItemsToCustomFieldValuesTable,
   customFieldValuesTable,
 } from '#/api/db-tables-schema';
 
-import type { DeleteCustomFieldValuesDbQueryArgsDef } from './delete-custom-field-values.types';
+import type { DeleteCustomFieldValuesRequestArgsDef } from './delete-custom-field-values.types';
 
 export const deleteCustomFieldValuesDbQuery = async ({
-  collectionItemId,
-  ids,
-  userId,
-}: DeleteCustomFieldValuesDbQueryArgsDef) => {
+  context,
+  data,
+}: DbQueryArgsDef<DeleteCustomFieldValuesRequestArgsDef>) => {
+  const { collectionItemId, ids } = data;
+  const userId = context.user.id;
+
   return db.transaction(async (tx) => {
     const deleteCustomFieldValueRecord = (customFieldValueId: number) => {
       return db

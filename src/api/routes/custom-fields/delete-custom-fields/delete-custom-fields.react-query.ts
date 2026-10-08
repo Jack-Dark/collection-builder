@@ -28,7 +28,7 @@ export const useDeleteCustomFields = <
     mutationFn: (data) => {
       return serverFn({ data });
     },
-    mutationKey: [reactMutationKeys.deleteCustomFields],
+    mutationKey: [reactMutationKeys.customFields('delete')],
     ...props,
   });
 

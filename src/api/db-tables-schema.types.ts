@@ -28,14 +28,6 @@ export type InsertCustomFieldRecordDef = InferInsertModel<
 
 export type CustomFieldRecordDef = InferSelectModel<typeof customFieldsTable>;
 
-type RequiredFieldKeys = 'id' | 'userId';
-
-export type UpdateCustomFieldRecordDef = Pick<
-  CustomFieldRecordDef,
-  RequiredFieldKeys
-> &
-  Partial<Omit<CustomFieldRecordDef, RequiredFieldKeys>>;
-
 export type InsertCustomFieldValueRecordDef = InferInsertModel<
   typeof customFieldValuesTable
 >;
@@ -44,30 +36,12 @@ export type CustomFieldValueRecordDef = InferSelectModel<
   typeof customFieldValuesTable
 >;
 
-type RequiredCustomFieldValueKeys = 'customFieldId' | 'id' | 'userId';
-
-export type UpdateCustomFieldValueRecordDef = Pick<
-  CustomFieldValueRecordDef,
-  RequiredCustomFieldValueKeys
-> &
-  Partial<Omit<CustomFieldValueRecordDef, RequiredCustomFieldValueKeys>>;
-
 export type InsertLinkCollectionsToCustomFieldsRecordDef = InferInsertModel<
-  typeof collectionsToCustomFieldsTable
->;
-
-export type LinkCollectionsToCustomFieldsRecordDef = InferSelectModel<
   typeof collectionsToCustomFieldsTable
 >;
 
 export type InsertLinkCollectionItemsToCustomFieldValuesRecordDef =
   InferInsertModel<typeof collectionItemsToCustomFieldValuesTable>;
-
-export type LinkCollectionItemsToCustomFieldValuesRecordDef = InferSelectModel<
-  typeof collectionItemsToCustomFieldValuesTable
->;
-
-export type TablesRelationalConfig = typeof relations;
 
 export type TableTransactionDef = PgAsyncTransaction<
   NeonQueryResultHKT,

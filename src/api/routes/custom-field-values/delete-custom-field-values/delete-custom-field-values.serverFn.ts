@@ -13,11 +13,4 @@ export const deleteCustomFieldValuesServerFn = createServerFn({
 })
   .middleware([errorHandlingMiddleware, authApiRouteMiddleware])
   .validator(deleteCustomFieldValuesSchema)
-  .handler(async ({ context, data }) => {
-    const { ids: records } = data;
-
-    return deleteCustomFieldValuesDbQuery({
-      ids: records,
-      userId: context.user.id,
-    });
-  });
+  .handler(deleteCustomFieldValuesDbQuery);

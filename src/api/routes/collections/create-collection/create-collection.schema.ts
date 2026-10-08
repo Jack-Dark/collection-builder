@@ -1,24 +1,14 @@
 import z from 'zod';
 
-import {
-  customFieldDetailsSchema,
-  customFieldWithIdSchema,
-} from '../../custom-fields/custom-fields.schema';
+import { updateCustomFieldFormSchema } from '../../custom-fields/custom-fields.schema';
 import { baseCollectionSchema } from '../base-collection.schema';
 
 export const createCollectionFormSchema = baseCollectionSchema.extend({
   createdAt: z.undefined().optional().describe('Created At'),
-  customFields: z
-    .array(
-      customFieldWithIdSchema.extend({
-        details: customFieldDetailsSchema,
-      }),
-    )
-    .describe('Custom Fields'),
+  customFields: z.array(updateCustomFieldFormSchema).describe('Custom Fields'),
   id: z.string().describe('ID'),
   isEditing: z.boolean().describe('Is Editing'),
   updatedAt: z.undefined().optional().describe('Updated At'),
-  userId: z.undefined().optional().describe('User ID'),
 });
 
 export const createCollectionServerFnSchema = z.object({
@@ -29,24 +19,7 @@ export const createCollectionServerFnSchema = z.object({
         id: true,
         isEditing: true,
         updatedAt: true,
-        userId: true,
       }),
     )
     .min(1),
 });
-
-export const createCollectionDbArgsSchema = z
-  .array(
-    createCollectionFormSchema
-      .omit({
-        createdAt: true,
-        id: true,
-        isEditing: true,
-        updatedAt: true,
-        userId: true,
-      })
-      .extend({
-        userId: z.string().min(1).describe('User ID'),
-      }),
-  )
-  .min(1);

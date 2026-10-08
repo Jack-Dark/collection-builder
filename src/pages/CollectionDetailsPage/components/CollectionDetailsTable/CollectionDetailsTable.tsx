@@ -2,7 +2,10 @@ import { useSelector } from '@tanstack/react-store';
 import { useEffect, useMemo } from 'react';
 
 import { getPaginationMetadataDefaults } from '#/api/pagination/pagination.constants';
-import { useGetCollectionDetailsById } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.react-query';
+import {
+  useGetCollectionDetailsById,
+  useInvalidateGetCollectionDetailsById,
+} from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.react-query';
 import { Table } from '#/components/Table';
 import { Route as CollectionRoute } from '#/routes/_protected/collections/$id';
 
@@ -36,14 +39,19 @@ export const CollectionDetailsTable = ({
     requestArgs: { collectionId, params: search },
   });
 
+  const invalidateGetCollectionDetailsById =
+    useInvalidateGetCollectionDetailsById();
+
   const { collection, pagination } = data;
 
-  const onCancel = () => {
+  const onCancel = async () => {
     resetEditingRowIds();
 
     form.reset();
 
-    // TODO - ADD CALL TO ENDPOINT THAT CHECKS FOR ANY CUSTOM FIELDS UNDER USER WITH VALUES THAT DO NOT HAVE LINKS AND DELETE THEM
+    await invalidateGetCollectionDetailsById();
+
+    // TODO - CONSIDER ADDING CALL TO ENDPOINT THAT CHECKS FOR ANY CUSTOM FIELDS UNDER USER WITH VALUES THAT DO NOT HAVE LINKS AND DELETE THEM
   };
   const { addToEditingRowIds, isEditing, resetEditingRowIds } =
     useEditingCollectionItemsRowIds();

@@ -1,5 +1,6 @@
 import type z from 'zod';
 
+import type { updateCollectionByIdDbQuery } from './update-collection-by-id.db-query';
 import type {
   onUpdateCollectionsArgsSchema,
   updateCollectionsFormRecordSchema,
@@ -11,4 +12,8 @@ export type UpdateCollectionsFormRecordSchemaDef = z.output<
 
 export type OnUpdateCollectionsArgsDef = z.output<
   typeof onUpdateCollectionsArgsSchema
+>;
+
+export type UpdateCollectionByIdResponseDef = Awaited<
+  ReturnType<typeof updateCollectionByIdDbQuery>
 >;
