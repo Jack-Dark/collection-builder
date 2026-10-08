@@ -19,7 +19,7 @@ export const useOnUpdateCollectionItemsQueries = () => {
     const newSearch = {
       ...searchQueries,
       ...updatedQueries,
-      page: shouldUsePage ? searchQueries.page : 1,
+      page: shouldUsePage ? updatedQueries.page : 1,
     };
 
     await navigate({

@@ -10,12 +10,16 @@ export const useOnUpdateCollectionsListQueries = () => {
     updatedQueries: Partial<typeof searchQueries>,
     options?: NavigateOptions,
   ) => {
-    const shouldResetPage = !!updatedQueries.limit || !!updatedQueries.search;
+    const updatedQueriesKeys = Object.keys(
+      updatedQueries,
+    ) as (keyof typeof searchQueries)[];
+    const shouldUsePage =
+      updatedQueriesKeys.length === 1 && updatedQueriesKeys[0] === 'page';
 
     const newSearch = {
       ...searchQueries,
       ...updatedQueries,
-      page: shouldResetPage ? 1 : searchQueries.page,
+      page: shouldUsePage ? updatedQueries.page : 1,
     };
 
     await navigate({
