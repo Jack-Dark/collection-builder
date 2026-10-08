@@ -9,7 +9,7 @@ export const useCollectionDetailsPaginationProps = (props: {
 }) => {
   const { pagination } = props;
 
-  const search = CollectionRoute.useSearch();
+  const searchQueries = CollectionRoute.useSearch();
 
   const { onUpdateCollectionItemsQueries } =
     useOnUpdateCollectionItemsQueries();
@@ -19,14 +19,14 @@ export const useCollectionDetailsPaginationProps = (props: {
       onChange: (limit: number) => {
         onUpdateCollectionItemsQueries({ limit });
       },
-      value: search.limit || 100,
+      value: searchQueries.limit || 100,
     },
     page: {
       max: pagination.totalPages,
       onChange: (page: number) => {
         onUpdateCollectionItemsQueries({ page });
       },
-      value: search.page || 1,
+      value: searchQueries.page || 1,
     },
   };
 
