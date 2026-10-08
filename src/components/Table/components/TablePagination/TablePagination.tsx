@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+
 import { SelectField } from '#/components/Fields/SelectField';
 
 import type { TablePaginationPropsDef } from './TablePagination.types';
@@ -7,14 +9,34 @@ export const TablePagination = (props: {
 }) => {
   const { pagination } = props;
 
+  const limitItems = useMemo(() => {
+    return new Array(5).fill(null).map((_, index) => {
+      const value = (index + 1) * 50;
+
+      return {
+        label: value,
+        value,
+      };
+    });
+  }, []);
+
+  const pageItems = useMemo(() => {
+    return new Array(pagination.page?.max || 1).fill(null).map((_, index) => {
+      const value = index + 1;
+
+      return {
+        label: value,
+        value,
+      };
+    });
+  }, [pagination.page?.max]);
+
   return (
     <div className="flex gap-4 items-center justify-end">
       {pagination.limit && (
         <SelectField
           idProperty="value"
-          items={[50, 100, 150, 200, 250].map((value) => {
-            return { label: value, value };
-          })}
+          items={limitItems}
           keyPrefix="limit"
           onValueChange={(item) => {
             if (item?.value) {
@@ -34,14 +56,7 @@ export const TablePagination = (props: {
       {pagination.page && (
         <SelectField
           idProperty="value"
-          items={new Array(pagination.page.max).fill(null).map((_, index) => {
-            const value = index + 1;
-
-            return {
-              label: value,
-              value,
-            };
-          })}
+          items={pageItems}
           keyPrefix="page"
           onValueChange={(item) => {
             if (item?.value) {
