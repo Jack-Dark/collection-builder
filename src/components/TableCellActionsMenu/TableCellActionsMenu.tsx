@@ -55,11 +55,11 @@ export const TableCellActionsMenu = <
           );
         }}
         Header="Confirm Delete"
+        onClose={hideConfirmDeleteDialog}
       >
         <p className="text-center">
           Are you sure you want to delete{' '}
-          {recordName ? `"${recordName}"` : 'this item'}? This action cannot be
-          undone.
+          {recordName ? `"${recordName}"` : 'this item'}?
         </p>
       </Dialog>
     );
