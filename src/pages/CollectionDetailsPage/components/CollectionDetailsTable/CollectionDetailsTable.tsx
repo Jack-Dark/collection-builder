@@ -42,7 +42,7 @@ export const CollectionDetailsTable = ({
   const invalidateGetCollectionDetailsById =
     useInvalidateGetCollectionDetailsById();
 
-  const { collection, pagination } = data;
+  const { pagination } = data;
 
   const onCancel = async () => {
     resetEditingRowIds();
@@ -80,7 +80,7 @@ export const CollectionDetailsTable = ({
   }, [data?.collection?.customFields]);
 
   const { form: filtersForm, ...filtersProps } =
-    useCollectionDetailsFiltersProps({ collectionId });
+    useCollectionDetailsFiltersProps();
   const searchProps = useCollectionDetailsSearchProps();
   const paginationProps = useCollectionDetailsPaginationProps({ pagination });
   const sortProps = useCollectionDetailsSortProps();

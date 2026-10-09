@@ -3,6 +3,8 @@ import type { ReactFormType } from '@tanstack/react-form';
 import { formOptions, useForm } from '@tanstack/react-form';
 import z from 'zod';
 
+import type { FiltersButtonPropsDef } from '#/components/Table/components/FilterButton/FilterButton.types';
+
 import { collectionDetailsFiltersSchema } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.schema';
 import { useGetFiltersForCollection } from '#/api/routes/collection-items/get-filters-for-collection/get-filters-for-collection.react-query';
 import { Route as CollectionDetailsRoute } from '#/routes/_protected/collections/$id';
@@ -35,21 +37,24 @@ export type CollectionItemsFiltersFormDef = ReactFormType<
   typeof collectionItemsFiltersFormOptions
 >;
 
-export const useCollectionDetailsFiltersProps = ({
-  collectionId,
-}: {
-  collectionId: number;
-}) => {
+type UseCreateFiltersFormValuesPropsDef = {
+  startingValues: CollectionItemsFiltersFormSchemaDef['filters'];
+};
+
+const useCreateCollectionFiltersFormValues = (
+  props: UseCreateFiltersFormValuesPropsDef,
+) => {
+  const { startingValues = {} } = props;
+
+  const { id } = CollectionDetailsRoute.useParams();
+  const collectionId = Number(id);
+
   const { data: filterOptions } = useGetFiltersForCollection({
-    // TODO - create global store for when the filters have been opened
-    enabled: false,
     placeholderData: [],
     requestArgs: { id: collectionId },
   });
 
-  const { filters: searchQueryFilters } = CollectionDetailsRoute.useSearch();
-
-  const formDefaults: CollectionItemsFiltersFormSchemaDef['filters'] =
+  const formFullResetValues: CollectionItemsFiltersFormSchemaDef['filters'] =
     filterOptions.reduce<
       Record<number, CollectionItemsFiltersFormSchemaDef['filters'][number]>
     >((acc, { id, range, type }) => {
@@ -94,11 +99,25 @@ export const useCollectionDetailsFiltersProps = ({
       }
 
       return acc;
-    }, searchQueryFilters);
+    }, startingValues);
+
+  return formFullResetValues;
+};
+
+export const useCollectionDetailsFiltersProps = () => {
+  const { filters: searchQueryFilters } = CollectionDetailsRoute.useSearch();
+
+  const defaultValues = useCreateCollectionFiltersFormValues({
+    startingValues: searchQueryFilters,
+  });
+
+  const fullResetValues = useCreateCollectionFiltersFormValues({
+    startingValues: {},
+  });
 
   const form = useForm({
     ...collectionItemsFiltersFormOptions,
-    defaultValues: { filters: formDefaults },
+    defaultValues: { filters: defaultValues },
     onSubmit: ({ value }) => {
       onUpdateCollectionItemsQueries({
         filters: value.filters,
@@ -112,16 +131,19 @@ export const useCollectionDetailsFiltersProps = ({
     useOnUpdateCollectionItemsQueries();
 
   return {
-    filterOptions,
     form,
     numApplied,
     onCancel: () => {
-      // ON CANCEL
+      form.setFieldValue('filters', defaultValues);
     },
-    onReset: form.reset,
+    onReset: async () => {
+      form.setFieldValue('filters', fullResetValues);
+      await form.handleSubmit();
+    },
     onSubmit: async () => {
       await form.handleSubmit();
     },
+  } satisfies Omit<FiltersButtonPropsDef, 'FiltersContent'> & {
+    form: CollectionItemsFiltersFormDef;
   };
-  // } satisfies Omit<FiltersButtonPropsDef, 'FiltersContent'>;
 };

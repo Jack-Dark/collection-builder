@@ -23,7 +23,7 @@ export type SelectFieldPropsDef<TItem extends DefaultSelectItemDef> = Omit<
     HTMLAttributes<HTMLElement> & { item: TItem }
   >;
   RenderValue?: JSXElementConstructor<
-    HTMLAttributes<HTMLElement> & { item: TItem | undefined }
+    HTMLAttributes<HTMLElement> & { item: TItem }
   >;
 } & FieldWrapperProps &
   Pick<SelectValueProps, 'placeholder'>;

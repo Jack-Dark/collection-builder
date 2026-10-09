@@ -99,11 +99,11 @@ export const SelectField = <TItem extends DefaultSelectItemDef>(
               return (
                 item && (
                   <RenderValue
-                    className={
+                    className={`${
                       item?.disabled || item?.placeholder
-                        ? 'text-gray-500 cursor-not-allowed'
+                        ? 'text-gray-500 '
                         : ''
-                    }
+                    } ${item?.disabled ? 'cursor-not-allowed' : ''}`}
                     item={item}
                   />
                 )
