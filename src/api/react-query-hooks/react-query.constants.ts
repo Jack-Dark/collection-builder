@@ -6,6 +6,7 @@ export const reactQueryKeys = {
   getCustomFields: 'get-custom-fields',
   getCustomFieldValuesByCustomFieldId:
     'get-custom-field-values-by-custom-field-id',
+  getFiltersForCollection: 'get-filters-for-collection',
   getNavMenuCollections: 'get-nav-menu-collections',
   getPaginatedCollections: 'get-paginated-collections',
 } as const;

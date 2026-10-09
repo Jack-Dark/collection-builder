@@ -56,7 +56,7 @@ export const ComboboxField = <
 
       if (normalizedQuery) {
         const searchPattern = new RegExp(
-          normalizedQuery,
+          _.escapeRegExp(normalizedQuery),
           caseSensitiveFilter ? undefined : 'i',
         );
 

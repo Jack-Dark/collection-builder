@@ -62,7 +62,8 @@ export const SelectField = <TItem extends DefaultSelectItemDef>(
     required,
     validationDebounceTime,
     validationMode,
-    ...rest
+    value,
+    ...rootProps
   } = props;
 
   return (
@@ -80,27 +81,32 @@ export const SelectField = <TItem extends DefaultSelectItemDef>(
       validationMode={validationMode}
     >
       <Select.Root
-        {...rest}
+        {...rootProps}
         isItemEqualToValue={isItemEqualToValue}
         itemToStringLabel={itemToStringLabel}
         itemToStringValue={itemToStringValue}
         onValueChange={(item) => {
           onValueChange(item);
         }}
+        value={value}
       >
         <Select.Trigger className="grid grid-cols-[1fr_auto] gap-1 md:gap-2 p-1.5 bg-white border border-black cursor-pointer">
           <Select.Value
-            className="grid justify-start data-placeholder:text-gray-400"
+            className="grid justify-start"
             placeholder={placeholder}
           >
-            {(item) => {
+            {(item: TItem | undefined) => {
               return (
-                <RenderValue
-                  className={
-                    item.disabled ? 'text-gray-500 cursor-not-allowed' : ''
-                  }
-                  item={item}
-                />
+                item && (
+                  <RenderValue
+                    className={
+                      item?.disabled || item?.placeholder
+                        ? 'text-gray-500 cursor-not-allowed'
+                        : ''
+                    }
+                    item={item}
+                  />
+                )
               );
             }}
           </Select.Value>
@@ -114,17 +120,20 @@ export const SelectField = <TItem extends DefaultSelectItemDef>(
               <Select.List>
                 {items.map((item, index) => {
                   return (
-                    <Fragment key={`${keyPrefix}-${item[idProperty] || index}`}>
-                      {item.separator ? (
+                    <Fragment
+                      key={`${keyPrefix}-${itemToStringValue(item) || index}`}
+                    >
+                      {item?.separator ? (
                         <Select.Separator className="mx-2 my-0.5 h-px bg-gray-300" />
                       ) : (
                         <Select.Item
-                          className={`p-2 flex align-items-center ${
-                            item.disabled
-                              ? 'text-gray-400 cursor-not-allowed'
+                          className={`p-2 flex align-items-center ${item.disabled || item.placeholder ? 'text-gray-400' : ''} ${
+                            item?.disabled
+                              ? 'cursor-not-allowed'
                               : 'hover:bg-menu-primary-hover data-selected:bg-menu-primary-selected data-highlighted:bg-menu-primary-hover cursor-pointer'
                           }`}
-                          disabled={item.disabled}
+                          disabled={item?.disabled}
+                          key={itemToStringValue(item)}
                           value={item}
                         >
                           <Select.ItemText>

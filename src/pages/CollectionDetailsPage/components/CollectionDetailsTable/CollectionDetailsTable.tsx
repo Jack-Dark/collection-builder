@@ -79,7 +79,8 @@ export const CollectionDetailsTable = ({
     });
   }, [data?.collection?.customFields]);
 
-  const filtersProps = useCollectionDetailsFiltersProps();
+  const { form: filtersForm, ...filtersProps } =
+    useCollectionDetailsFiltersProps({ collectionId });
   const searchProps = useCollectionDetailsSearchProps();
   const paginationProps = useCollectionDetailsPaginationProps({ pagination });
   const sortProps = useCollectionDetailsSortProps();
@@ -120,8 +121,8 @@ export const CollectionDetailsTable = ({
         FiltersContent: () => {
           return (
             <CollectionDetailsFiltersContent
-              collection={collection}
-              customFields={data.customFields}
+              collectionId={collectionId}
+              form={filtersForm}
             />
           );
         },

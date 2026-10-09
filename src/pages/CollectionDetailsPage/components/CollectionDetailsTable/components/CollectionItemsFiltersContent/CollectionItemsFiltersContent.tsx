@@ -1,14 +1,17 @@
-import type { SortDirection } from '@tanstack/react-table';
 import type { PropsWithChildren } from 'react';
 
-import { useEffect } from 'react';
+import { Slider } from '@base-ui/react';
+import { useLayoutEffect, useMemo } from 'react';
 
-import type { CollectionRecordDef } from '#/api/routes/collections/collection.types';
-import type { SortItemDef } from '#/components/Table';
-import type { SetZustandStoreFnDef } from '#/helpers/get-create-default-zustand-state';
+import type { DefaultSelectItemDef } from '#/components/Fields/SelectField/SelectField.types';
 
-import { sortDirectionOptions } from '#/api/pagination/pagination.constants';
+import { useGetFiltersForCollection } from '#/api/routes/collection-items/get-filters-for-collection/get-filters-for-collection.react-query';
 import { Button } from '#/components/Button';
+import { CheckboxField } from '#/components/Fields/CheckboxField';
+import { FieldWrapper } from '#/components/Fields/FieldWrapper';
+import { SelectField } from '#/components/Fields/SelectField';
+
+import type { CollectionItemsFiltersFormDef } from '../../hooks/use-collection-details-filters-props';
 
 const FiltersBlock = (
   props: PropsWithChildren<{
@@ -38,128 +41,213 @@ const FiltersBlock = (
 };
 
 type CollectionDetailsFiltersContentPropsDef = {
-  collection: CollectionRecordDef;
+  collectionId: number;
+  form: CollectionItemsFiltersFormDef;
 };
 
 export const CollectionDetailsFiltersContent = (
   props: CollectionDetailsFiltersContentPropsDef,
 ) => {
-  const { collection } = props;
+  const { collectionId, form } = props;
 
-  // const { saveAllFiltersSnapshot } = useCollectionDetailsFiltersStore();
+  const { data: filterOptions } = useGetFiltersForCollection({
+    // TODO - create global store for when the filters have been opened
+    enabled: false,
+    placeholderData: [],
+    requestArgs: { id: collectionId },
+  });
 
-  const getOnCheckedChange = (props: {
-    setValue: SetZustandStoreFnDef<string[]>;
-    value: string;
-  }) => {
-    const { setValue, value } = props;
+  const booleanSelectItems = useMemo(() => {
+    return [
+      {
+        label: `Select status...`,
+        placeholder: true,
+        value: null,
+      },
+      { label: 'True', value: true },
+      { label: 'False', value: false },
+    ] satisfies DefaultSelectItemDef[];
+  }, []);
 
-    return (checked: boolean) => {
-      if (checked) {
-        setValue((prevFilters) => {
-          return [...prevFilters, value];
-        });
-      } else {
-        setValue((prevFilters) => {
-          return prevFilters.filter((field) => {
-            return field !== value;
-          });
-        });
-      }
-    };
-  };
-
-  useEffect(() => {
-    // saveAllFiltersSnapshot();
+  useLayoutEffect(() => {
+    form.reset();
   }, []);
 
   return (
     <div className="grid gap-5">
-      <FiltersBlock
-        label="EXAMPLE LABEL"
-        onReset={() => {
-          // ON RESET
-        }}
-      >
-        CONTENT
-      </FiltersBlock>
+      {filterOptions.map((customField) => {
+        return (
+          <form.Field key={customField.id} name={`filters.${customField.id}`}>
+            {(field) => {
+              return (
+                <form.Subscribe
+                  selector={({ values }) => {
+                    return values.filters[customField.id];
+                  }}
+                >
+                  {(fieldValue) => {
+                    if (
+                      customField.type === 'string' &&
+                      fieldValue?.type === 'string'
+                    ) {
+                      const { handleChange } = field;
+                      const { items } = fieldValue;
+
+                      const resetValue: typeof items = [];
+
+                      return (
+                        <FiltersBlock
+                          key={customField.id}
+                          label={customField.name}
+                          onReset={() => {
+                            handleChange({
+                              ...fieldValue,
+                              items: resetValue,
+                            });
+                          }}
+                        >
+                          {customField.items.map((item) => {
+                            const onCheckedChange = (checked: boolean) => {
+                              if (checked) {
+                                handleChange({
+                                  ...fieldValue,
+                                  items: [...fieldValue.items, item.value],
+                                });
+                              } else {
+                                handleChange({
+                                  ...fieldValue,
+                                  items: fieldValue.items.filter((value) => {
+                                    return value !== item.value;
+                                  }),
+                                });
+                              }
+                            };
+
+                            return (
+                              <CheckboxField
+                                checked={items.some((fieldValue) => {
+                                  return fieldValue === item.value;
+                                })}
+                                key={item.value}
+                                label={item.label}
+                                name={field.name}
+                                onCheckedChange={onCheckedChange}
+                              />
+                            );
+                          })}
+                        </FiltersBlock>
+                      );
+                    }
+
+                    if (
+                      customField.type === 'number' &&
+                      fieldValue?.type === 'number'
+                    ) {
+                      const { handleChange } = field;
+
+                      return (
+                        <FiltersBlock
+                          key={customField.id}
+                          label={customField.name}
+                          onReset={() => {
+                            field.handleChange({
+                              ...fieldValue,
+                              range: customField.range,
+                            });
+                          }}
+                        >
+                          <FieldWrapper
+                            error={field.errors}
+                            hideLabel
+                            label={customField.name}
+                            name={field.name}
+                          >
+                            <Slider.Root
+                              max={customField.range.max}
+                              min={customField.range.min}
+                              onValueChange={([min, max]) => {
+                                handleChange({
+                                  ...fieldValue,
+                                  range: {
+                                    max,
+                                    min,
+                                  },
+                                });
+                              }}
+                              value={[
+                                fieldValue?.range.min,
+                                fieldValue?.range.max,
+                              ]}
+                            >
+                              <Slider.Control className="py-2">
+                                <Slider.Track className="bg-gray-500 h-1 w-full">
+                                  <Slider.Indicator className="bg-primary-700" />
+                                  <Slider.Thumb
+                                    aria-label="Minimum value"
+                                    className="size-3 bg-primary-700 rounded-xl"
+                                    index={0}
+                                  />
+                                  <Slider.Thumb
+                                    aria-label="Maximum value"
+                                    className="size-3 bg-primary-700 rounded-xl"
+                                    index={1}
+                                  />
+                                </Slider.Track>
+                              </Slider.Control>
+                            </Slider.Root>
+                          </FieldWrapper>
+                          {fieldValue?.range.min} - {fieldValue?.range.max}
+                        </FiltersBlock>
+                      );
+                    }
+
+                    if (
+                      customField.type === 'boolean' &&
+                      fieldValue?.type === 'boolean'
+                    ) {
+                      const { handleChange } = field;
+                      const { value } = fieldValue;
+
+                      const selectedItem = booleanSelectItems.find((item) => {
+                        return item.value === value;
+                      });
+
+                      return (
+                        <FiltersBlock
+                          key={customField.id}
+                          label={customField.name}
+                          onReset={() => {
+                            handleChange({
+                              ...fieldValue,
+                              value: null,
+                            });
+                          }}
+                        >
+                          <SelectField
+                            idProperty="value"
+                            items={booleanSelectItems}
+                            labelProperty="label"
+                            name={field.name}
+                            onValueChange={(item) => {
+                              if (item) {
+                                handleChange({
+                                  ...fieldValue,
+                                  value: item.value,
+                                });
+                              }
+                            }}
+                            value={selectedItem}
+                          />
+                        </FiltersBlock>
+                      );
+                    }
+                  }}
+                </form.Subscribe>
+              );
+            }}
+          </form.Field>
+        );
+      })}
     </div>
   );
-};
-
-export type UnformattedSortItemDef<TField extends string> =
-  | ((
-      | {
-          bidirectional: true;
-          direction?: never;
-        }
-      | {
-          bidirectional?: never;
-          direction: SortDirection;
-        }
-    ) & {
-      field: TField;
-      /** Pass `true` to remove the item from the formatted output. */
-      hide?: boolean;
-      label?: string | null;
-      separator?: never;
-    })
-  | { hide?: boolean; separator: true };
-
-export const formatSortItems = <TField extends string>(
-  items: UnformattedSortItemDef<TField>[],
-): SortItemDef<TField>[] => {
-  const initialItems: SortItemDef<TField>[] = [];
-
-  return items.reduce((acc, item) => {
-    const { hide, separator } = item;
-
-    if (separator) {
-      return hide ? acc : [...acc, { separator }];
-    } else {
-      const { bidirectional, direction, field, label } = item;
-
-      const getFormattedLabel = (direction: SortDirection) => {
-        const prefix =
-          label ??
-          `${field.substring(0, 1).toUpperCase()}${field.substring(1)}`;
-
-        return `${prefix}, ${direction}.`;
-      };
-
-      const getId = (direction: SortDirection) => {
-        return `${field}_${direction}`;
-      };
-
-      if (hide) {
-        return acc;
-      }
-
-      if (bidirectional) {
-        const itemAsc: SortItemDef<TField> = {
-          direction: sortDirectionOptions.asc,
-          field,
-          id: getId(sortDirectionOptions.asc),
-          label: getFormattedLabel(sortDirectionOptions.asc),
-        };
-        const itemDesc: SortItemDef<TField> = {
-          direction: sortDirectionOptions.desc,
-          field,
-          id: getId(sortDirectionOptions.desc),
-          label: getFormattedLabel(sortDirectionOptions.desc),
-        };
-
-        return [...acc, itemAsc, itemDesc];
-      }
-
-      const formattedItem: SortItemDef<TField> = {
-        direction,
-        field,
-        id: getId(direction),
-        label: getFormattedLabel(direction),
-      };
-
-      return [...acc, formattedItem];
-    }
-  }, initialItems);
 };

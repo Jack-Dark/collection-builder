@@ -3,10 +3,28 @@ import type { SortDirection } from '@tanstack/react-table';
 import { useMemo } from 'react';
 
 import type { PaginationQueriesSchemaDef } from '#/api/pagination/pagination.types';
-import type { SortItemDef } from '#/components/Table';
-import type { UnformattedSortItemDef } from '#/pages/CollectionDetailsPage/components/CollectionDetailsTable/components/CollectionItemsFiltersContent';
+import type { SortItemDef } from '#/components/Table/components/TableActions/TableActions.types';
 
 import { sortDirectionOptions } from '#/api/pagination/pagination.constants';
+
+type UnformattedSortItemDef<TField extends string> =
+  | ((
+      | {
+          bidirectional: true;
+          direction?: never;
+        }
+      | {
+          bidirectional?: never;
+          direction: SortDirection;
+        }
+    ) & {
+      field: TField;
+      /** Pass `true` to remove the item from the formatted output. */
+      hide?: boolean;
+      label?: string | null;
+      separator?: never;
+    })
+  | { hide?: boolean; separator: true };
 
 export const useFormatSortProps = <TField extends string>(props: {
   items: UnformattedSortItemDef<TField>[];

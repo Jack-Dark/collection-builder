@@ -1,10 +1,12 @@
 import z from 'zod';
 
+import type { CustomFieldTypeDef } from '#/api/db-tables-schema.types';
+
 import type { OrderedCustomFieldForCollectionDef } from '../collections/get-paginated-collections/get-paginated-collections.types';
 
 export const customFieldTypeSchema = z
   .union([z.literal('boolean'), z.literal('number'), z.literal('string')])
-  .describe('Type');
+  .describe('Type') satisfies z.ZodType<CustomFieldTypeDef>;
 
 export const baseCustomFieldSchema = z.object({
   name: z.string().describe('Name').min(1),

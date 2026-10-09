@@ -27,8 +27,8 @@ export const FilterButton = (props: FiltersButtonPropsDef) => {
               />
               <Button
                 Icon={SearchIcon}
-                onClick={() => {
-                  onSubmit();
+                onClick={async () => {
+                  await onSubmit();
                   hideFilters();
                 }}
                 text="View Results"

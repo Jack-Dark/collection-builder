@@ -6,6 +6,7 @@ import type { FieldWrapperProps } from '../FieldWrapper/FieldWrapper.types';
 export type DefaultSelectItemDef = {
   [k: string]: any;
   disabled?: boolean;
+  placeholder?: boolean;
   separator?: true;
 };
 
@@ -22,7 +23,7 @@ export type SelectFieldPropsDef<TItem extends DefaultSelectItemDef> = Omit<
     HTMLAttributes<HTMLElement> & { item: TItem }
   >;
   RenderValue?: JSXElementConstructor<
-    HTMLAttributes<HTMLElement> & { item: TItem }
+    HTMLAttributes<HTMLElement> & { item: TItem | undefined }
   >;
 } & FieldWrapperProps &
   Pick<SelectValueProps, 'placeholder'>;
