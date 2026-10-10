@@ -1,4 +1,5 @@
 import type { SQL } from 'drizzle-orm';
+import type { PgColumn } from 'drizzle-orm/pg-core';
 
 import {
   and,
@@ -296,8 +297,17 @@ export const getCollectionDetailsByIdDbQuery = async ({
       return acc;
     }, []);
 
-    const collectionItemsSortDirection =
-      sort.direction === sortDirectionOptions.desc ? desc : asc;
+    const getOrderBy = (column: PgColumn) => {
+      const directionFn =
+        sort.direction === sortDirectionOptions.desc ? desc : asc;
+
+      return directionFn(
+        column.dataType === 'string'
+          ? // TODO - ADD SEARCH SETTINGS DIALOG TO IGNORE ARTICLES AND SEARCH NOTES
+            sql`REGEXP_REPLACE(lower(${column}), '^(the|a|an)\\s+', '', 'i')`
+          : sql`${column}`,
+      );
+    };
 
     const unformattedCollectionItemIds = tx
       .select({
@@ -317,11 +327,7 @@ export const getCollectionDetailsByIdDbQuery = async ({
       )
       .limit(limit)
       .offset((page - 1) * limit)
-      .orderBy(
-        collectionItemsSortDirection(
-          collectionItemsTable[sortingField || 'name'],
-        ),
-      );
+      .orderBy(getOrderBy(collectionItemsTable[sortingField || 'name']));
 
     const formattedCollectionItemIds = (await unformattedCollectionItemIds).map(
       ({ id }) => {
@@ -335,15 +341,8 @@ export const getCollectionDetailsByIdDbQuery = async ({
       },
       limit,
       offset: (page - 1) * limit,
-      orderBy: (table, { asc, desc, sql }) => {
-        const directionFn =
-          sort.direction === sortDirectionOptions.desc ? desc : asc;
-
-        const column = table[sortingField || 'name'];
-
-        return directionFn(
-          column.dataType === 'string' ? sql`lower(${column})` : sql`${column}`,
-        );
+      orderBy: (table) => {
+        return getOrderBy(table[sortingField || 'name']);
       },
       where: {
         AND: [
