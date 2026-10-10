@@ -39,8 +39,8 @@ export const createCustomFieldValuesDbQuery = async ({
           .where(
             and(
               eq(customFieldValuesTable.customFieldId, record.customFieldId),
-              equalsCustomFieldValue(record.data.value),
               eq(customFieldValuesTable.userId, record.userId),
+              ...equalsCustomFieldValue(record.data.value),
             ),
           );
 

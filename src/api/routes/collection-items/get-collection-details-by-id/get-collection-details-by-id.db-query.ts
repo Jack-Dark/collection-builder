@@ -1,11 +1,31 @@
-import type { InferModelFromColumns, SQL } from 'drizzle-orm';
+import type { SQL } from 'drizzle-orm';
 
-import { and, eq, isNull, ilike, inArray } from 'drizzle-orm';
+import {
+  and,
+  eq,
+  isNull,
+  ilike,
+  inArray,
+  sql,
+  gte,
+  lte,
+  asc,
+  desc,
+  notExists,
+  exists,
+} from 'drizzle-orm';
 
 import type { DbQueryArgsDef } from '#/auth/auth-middleware.types';
 
 import { db } from '#/api/db';
-import { collectionItemsTable } from '#/api/db-tables-schema';
+import {
+  collectionItemsTable,
+  collectionItemsToCustomFieldValuesTable,
+  collectionsTable,
+  collectionsToCustomFieldsTable,
+  customFieldsTable,
+  customFieldValuesTable,
+} from '#/api/db-tables-schema';
 import { sortDirectionOptions } from '#/api/pagination/pagination.constants';
 import { getPaginationMetadataQuery } from '#/api/pagination/pagination.query';
 
@@ -18,7 +38,7 @@ export const getCollectionDetailsByIdDbQuery = async ({
   data,
 }: DbQueryArgsDef<GetCollectionDetailsByIdRequestArgsDef>) => {
   const { collectionId, params } = data;
-  const { limit, page, search, searchNotes, sort } = params;
+  const { filters, limit, page, search, searchNotes, sort } = params;
 
   const userId = context.user.id;
 
@@ -73,6 +93,242 @@ export const getCollectionDetailsByIdDbQuery = async ({
       },
     });
 
+    const formattedFiltersSql = Object.entries(filters).reduce<
+      (SQL | undefined)[]
+    >((acc, [customFieldIdString, filter]) => {
+      const customFieldId = Number(customFieldIdString);
+
+      if (filter.type === 'string') {
+        const { items } = filter;
+        if (items.length) {
+          return [
+            ...acc,
+            exists(
+              tx
+                .select({ exists: sql<boolean>`1` })
+                .from(collectionItemsToCustomFieldValuesTable)
+                .leftJoin(
+                  customFieldValuesTable,
+                  eq(
+                    customFieldValuesTable.id,
+                    collectionItemsToCustomFieldValuesTable.customFieldValueId,
+                  ),
+                )
+                .leftJoin(
+                  collectionsTable,
+                  eq(collectionsTable.id, collectionItemsTable.collectionId),
+                )
+                .leftJoin(
+                  collectionsToCustomFieldsTable,
+                  eq(
+                    collectionsToCustomFieldsTable.collectionId,
+                    collectionsTable.id,
+                  ),
+                )
+                .leftJoin(
+                  customFieldsTable,
+                  eq(
+                    customFieldsTable.id,
+                    collectionsToCustomFieldsTable.customFieldId,
+                  ),
+                )
+                .where(
+                  and(
+                    eq(
+                      collectionItemsTable.id,
+                      collectionItemsToCustomFieldValuesTable.collectionItemId,
+                    ),
+                    eq(customFieldsTable.id, customFieldId),
+                    inArray(
+                      sql`${customFieldValuesTable.data}->>'value'`,
+                      items,
+                    ),
+                  ),
+                ),
+            ),
+          ];
+        }
+      } else if (filter.type === 'number') {
+        const { range } = filter;
+        const { max, min } = range;
+
+        return [
+          ...acc,
+          exists(
+            tx
+              .select({ exists: sql<boolean>`1` })
+              .from(collectionItemsToCustomFieldValuesTable)
+              .leftJoin(
+                customFieldValuesTable,
+                eq(
+                  customFieldValuesTable.id,
+                  collectionItemsToCustomFieldValuesTable.customFieldValueId,
+                ),
+              )
+              .leftJoin(
+                collectionsTable,
+                eq(collectionsTable.id, collectionItemsTable.collectionId),
+              )
+              .leftJoin(
+                collectionsToCustomFieldsTable,
+                eq(
+                  collectionsToCustomFieldsTable.collectionId,
+                  collectionsTable.id,
+                ),
+              )
+              .leftJoin(
+                customFieldsTable,
+                eq(
+                  customFieldsTable.id,
+                  collectionsToCustomFieldsTable.customFieldId,
+                ),
+              )
+              .where(
+                and(
+                  eq(
+                    collectionItemsTable.id,
+                    collectionItemsToCustomFieldValuesTable.collectionItemId,
+                  ),
+                  eq(customFieldsTable.id, customFieldId),
+                  gte(sql`${customFieldValuesTable.data}->>'value'`, min),
+                  lte(sql`${customFieldValuesTable.data}->>'value'`, max),
+                ),
+              ),
+          ),
+        ];
+      } else if (filter.type === 'boolean') {
+        const { value } = filter;
+        if (value === true) {
+          // ? check if `true` exists
+
+          return [
+            ...acc,
+            exists(
+              tx
+                .select({ exists: sql<boolean>`1` })
+                .from(collectionItemsToCustomFieldValuesTable)
+                .leftJoin(
+                  customFieldValuesTable,
+                  eq(
+                    customFieldValuesTable.id,
+                    collectionItemsToCustomFieldValuesTable.customFieldValueId,
+                  ),
+                )
+                .leftJoin(
+                  collectionsTable,
+                  eq(collectionsTable.id, collectionItemsTable.collectionId),
+                )
+                .leftJoin(
+                  collectionsToCustomFieldsTable,
+                  eq(
+                    collectionsToCustomFieldsTable.collectionId,
+                    collectionsTable.id,
+                  ),
+                )
+                .leftJoin(
+                  customFieldsTable,
+                  eq(
+                    customFieldsTable.id,
+                    collectionsToCustomFieldsTable.customFieldId,
+                  ),
+                )
+                .where(
+                  and(
+                    eq(
+                      collectionItemsTable.id,
+                      collectionItemsToCustomFieldValuesTable.collectionItemId,
+                    ),
+                    eq(customFieldsTable.id, customFieldId),
+                    eq(sql`${customFieldValuesTable.data}->>'value'`, 'true'),
+                  ),
+                ),
+            ),
+          ];
+        } else if (value === false) {
+          // ? check if `true` does not exist
+
+          return [
+            ...acc,
+            notExists(
+              tx
+                .select({ exists: sql<boolean>`1` })
+                .from(collectionItemsToCustomFieldValuesTable)
+                .leftJoin(
+                  customFieldValuesTable,
+                  eq(
+                    customFieldValuesTable.id,
+                    collectionItemsToCustomFieldValuesTable.customFieldValueId,
+                  ),
+                )
+                .leftJoin(
+                  collectionsTable,
+                  eq(collectionsTable.id, collectionItemsTable.collectionId),
+                )
+                .leftJoin(
+                  collectionsToCustomFieldsTable,
+                  eq(
+                    collectionsToCustomFieldsTable.collectionId,
+                    collectionsTable.id,
+                  ),
+                )
+                .leftJoin(
+                  customFieldsTable,
+                  eq(
+                    customFieldsTable.id,
+                    collectionsToCustomFieldsTable.customFieldId,
+                  ),
+                )
+                .where(
+                  and(
+                    eq(
+                      collectionItemsTable.id,
+                      collectionItemsToCustomFieldValuesTable.collectionItemId,
+                    ),
+                    eq(customFieldsTable.id, customFieldId),
+                    eq(sql`${customFieldValuesTable.data}->>'value'`, 'true'),
+                  ),
+                ),
+            ),
+          ];
+        }
+      }
+
+      return acc;
+    }, []);
+
+    const collectionItemsSortDirection =
+      sort.direction === sortDirectionOptions.desc ? desc : asc;
+
+    const unformattedCollectionItemIds = tx
+      .select({
+        id: collectionItemsTable.id,
+      })
+      .from(collectionItemsTable)
+      .where(
+        and(
+          eq(collectionItemsTable.collectionId, collectionId),
+          eq(collectionItemsTable.userId, userId),
+          searchNotes
+            ? ilike(collectionItemsTable.notes, `%${search.trim()}%`)
+            : ilike(collectionItemsTable.name, `%${search.trim()}%`),
+
+          ...formattedFiltersSql,
+        ),
+      )
+      .limit(limit)
+      .offset((page - 1) * limit)
+      .orderBy(
+        collectionItemsSortDirection(
+          collectionItemsTable[sortingField || 'name'],
+        ),
+      );
+
+    const formattedCollectionItemIds = (await unformattedCollectionItemIds).map(
+      ({ id }) => {
+        return id;
+      },
+    );
+
     const items = await tx.query.collectionItems.findMany({
       columns: {
         userId: false,
@@ -93,6 +349,9 @@ export const getCollectionDetailsByIdDbQuery = async ({
         AND: [
           {
             collectionId,
+            id: {
+              in: formattedCollectionItemIds,
+            },
             userId,
           },
           searchNotes
@@ -106,7 +365,6 @@ export const getCollectionDetailsByIdDbQuery = async ({
                   ilike: `%${search.trim()}%`,
                 },
               },
-          // TODO - ADD FILTERS BACK IN (LOGIC AT BOTTOM)
         ],
       },
       with: {
@@ -122,6 +380,26 @@ export const getCollectionDetailsByIdDbQuery = async ({
             },
           },
         },
+        // exists: and(
+        //   tx
+        //     .select({ exists: sql<boolean>`1` })
+        //     .from(collectionItemsToCustomFieldValuesTable)
+        //     .leftJoin(
+        //       customFieldValuesTable,
+        //       eq(
+        //         collectionItemsToCustomFieldValuesTable.customFieldValueId,
+        //         customFieldValuesTable.id,
+        //       ),
+        //     )
+        //     .where(
+        //       and(
+        //         eq(
+        //           collectionItemsToCustomFieldValuesTable.customFieldValueId,
+        //           customFieldId,
+        //         ),
+        //       ),
+        //     ),
+        // ),
       },
     });
 
@@ -155,61 +433,4 @@ export const getCollectionDetailsByIdDbQuery = async ({
       pagination,
     };
   });
-};
-
-const formatFiltersSql = <
-  TTable extends InferModelFromColumns<
-    {
-      name: any;
-    } & Record<string, any>
-  >,
->(props: {
-  filters: {};
-  search: string | undefined;
-  searchNotes: boolean;
-  table: TTable;
-}): SQL[] => {
-  const { filters = {}, search = '', searchNotes, table } = props;
-
-  const getCustomFieldColumnName = (key: string) => {
-    const num = Number(key.replace(/\D/g, ''));
-    const columnName = `customField${num}Value` as const;
-
-    return columnName;
-  };
-
-  const sqlFilters: SQL[] = [];
-
-  Object.entries(filters)
-    .filter(([key]) => {
-      const columnName = getCustomFieldColumnName(key);
-      const isTableColumn = table.hasOwnProperty(columnName);
-
-      return isTableColumn;
-    })
-    .forEach(([key, value]) => {
-      const columnName = getCustomFieldColumnName(key);
-
-      const isArray = Array.isArray(value);
-
-      if (isArray) {
-        if (value.length) {
-          sqlFilters.push(inArray(table[columnName], value as string[]));
-        }
-      } else {
-        return sqlFilters.push(eq(table[columnName], value as string));
-      }
-    });
-
-  const cleanSearchTerm = search.trim();
-
-  if (cleanSearchTerm) {
-    sqlFilters.push(
-      searchNotes
-        ? ilike(table.notes, `%${cleanSearchTerm}%`)
-        : ilike(table.name, `%${cleanSearchTerm}%`),
-    );
-  }
-
-  return sqlFilters;
 };
