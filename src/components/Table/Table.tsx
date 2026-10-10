@@ -130,13 +130,13 @@ export const Table = <TData extends RowData>({
 
   const tableWrapperClasses = useMemo(() => {
     if (showTableActions && pagination) {
-      return 'grid-rows-[auto_1fr_auto]';
+      return 'grid-rows-[auto_auto_1fr_auto]';
     }
     if (showTableActions) {
-      return 'grid-rows-[auto_1fr]';
+      return 'grid-rows-[auto_auto_1fr]';
     }
     if (pagination) {
-      return 'grid-rows-[1fr_auto]';
+      return 'grid-rows-[auto_1fr_auto]';
     }
 
     return '';
@@ -144,7 +144,7 @@ export const Table = <TData extends RowData>({
 
   return (
     <div
-      className={`grid gap-4 h-full max-h-[calc(100dvh-4rem)]  ${tableWrapperClasses}`}
+      className={`grid gap-4 h-full max-h-[calc(100dvh-4rem)] ${tableWrapperClasses}`}
     >
       {AboveTableComponent && <AboveTableComponent table={table} />}
       {showTableActions && (
@@ -153,8 +153,8 @@ export const Table = <TData extends RowData>({
       <div className="min-h-0 overflow-hidden">
         <ScrollArea.Root className="group h-full">
           <ScrollArea.Viewport className="h-full">
-            <ScrollArea.Content>
-              <table className="table table-fixed w-full overflow-auto border-spacing-0 border-separate">
+            <ScrollArea.Content className="h-full">
+              <table className="table table-fixed size-full overflow-auto border-spacing-0 border-separate">
                 <thead className="sticky top-0 z-2 group-data-overflow-y-start:shadow-[0_0_2rem_rgba(0,0,0,.25)]">
                   {table.getHeaderGroups().map((hg) => {
                     return (
@@ -194,7 +194,7 @@ export const Table = <TData extends RowData>({
                     );
                   })}
                 </thead>
-                <tbody>
+                <tbody className="overflow-auto min-h-100">
                   {table.getRowModel().rows.map((row) => {
                     const trClassName = 'not-last:*:border-b';
 
