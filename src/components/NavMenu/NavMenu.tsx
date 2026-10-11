@@ -11,101 +11,116 @@ export const NavMenu = (props: { items: NavMenuItem[] }) => {
   const { items } = props;
 
   return (
-    <NavigationMenu.Root className="min-w-max rounded-xs bg-gray-50 p-1 text-gray-900">
+    <NavigationMenu.Root className="min-w-max rounded-xs bg-surface-1 p-1 text-gray-900">
       <NavigationMenu.List className="relative flex items-center gap-2">
-        {items.map(({ hidden, href, Icon, items, label, onClick }) => {
-          const hasSubMenu = !!items?.some(({ hidden }) => {
-            return !hidden;
-          });
+        {items.map(
+          ({ hidden, href, Icon, items, label, onClick, RenderItem }) => {
+            const hasSubMenu = !!items?.some(({ hidden }) => {
+              return !hidden;
+            });
 
-          return hidden ? null : (
-            <NavigationMenu.Item
-              className={
-                (hasSubMenu ? '' : 'px-3 py-2 ') +
-                'rounded-xs no-underline text-black ' +
-                'hover:bg-primary-800 hover:text-white ' +
-                'data-[status="active"]:bg-primary-900 hover:data-[status="active"]:bg-primary-800 data-[status="active"]:text-white'
-              }
-              key={href || label}
-              onClick={onClick}
-            >
-              <ConditionalWrapper
-                condition={hasSubMenu}
-                Wrapper={({ children }) => {
-                  return (
-                    <NavigationMenu.Trigger
-                      className={
-                        'px-3 py-2 ' +
-                        'flex items-center justify-center gap-1.5 ' +
-                        'rounded-xs bg-inherit text-inherit font-medium ' +
-                        'text-[0.925rem] [@media(min-width:32rem)]:text-base leading-6 select-none no-underline '
-                      }
-                    >
-                      {children}
-                      {items && (
-                        <NavigationMenu.Icon className="transition-transform duration-200 ease-in-out data-[popup-open]:rotate-180">
-                          <ExpandMoreIcon />
-                        </NavigationMenu.Icon>
-                      )}
-                    </NavigationMenu.Trigger>
-                  );
-                }}
+            return hidden ? null : (
+              <NavigationMenu.Item
+                className={
+                  (hasSubMenu ? '' : 'px-3 py-2 ') +
+                  'rounded-xs no-underline text-t-1 ' +
+                  'hover:bg-primary-800 hover:text-white ' +
+                  'data-[status="active"]:bg-primary-900 hover:data-[status="active"]:bg-primary-800 data-[status="active"]:text-white'
+                }
+                key={href || label}
+                onClick={onClick}
               >
                 <ConditionalWrapper
-                  condition={!!href}
+                  condition={hasSubMenu}
                   Wrapper={({ children }) => {
                     return (
-                      <NavigationLinkWrapper
-                        className="text-inherit"
-                        href={href}
+                      <NavigationMenu.Trigger
+                        className={
+                          'px-3 py-2 ' +
+                          'flex items-center justify-center gap-1.5 ' +
+                          'rounded-xs bg-inherit text-inherit font-medium ' +
+                          'text-[0.925rem] [@media(min-width:32rem)]:text-base leading-6 select-none no-underline '
+                        }
                       >
                         {children}
-                      </NavigationLinkWrapper>
+                        {items && (
+                          <NavigationMenu.Icon className="transition-transform duration-200 ease-in-out data-[popup-open]:rotate-180">
+                            <ExpandMoreIcon />
+                          </NavigationMenu.Icon>
+                        )}
+                      </NavigationMenu.Trigger>
                     );
                   }}
                 >
-                  <div className="flex items-center justify-center  gap-1.5">
-                    {Icon && <Icon />}
-                    {label}
-                  </div>
-                </ConditionalWrapper>
-              </ConditionalWrapper>
-
-              {hasSubMenu && (
-                <NavigationMenu.Content
-                  className={
-                    'px-3 py-2 ' +
-                    'min-w-40 ' +
-                    'transition-[opacity,transform,translate] duration-[var(--duration)] ease-[var(--easing)] ' +
-                    'data-[starting-style]:opacity-0 data-[ending-style]:opacity-0 ' +
-                    'data-[starting-style]:data-[activation-direction=left]:translate-x-[-50%] ' +
-                    'data-[starting-style]:data-[activation-direction=right]:translate-x-[50%] ' +
-                    'data-[ending-style]:data-[activation-direction=left]:translate-x-[50%] ' +
-                    'data-[ending-style]:data-[activation-direction=right]:translate-x-[-50%]'
-                  }
-                  keepMounted
-                >
-                  <ul className="grid list-none gap-2">
-                    {items?.map(({ hidden, href, label, onClick }) => {
-                      // TODO - UPDATE TO SUPPORT NESTED SUBMENUS (items prop)
-                      return hidden ? null : (
-                        <li key={href || label}>
-                          <NavigationLinkWrapper
-                            className="text-black hover:text-anchor block"
-                            href={href}
-                            onClick={onClick}
-                          >
-                            {label}
-                          </NavigationLinkWrapper>
-                        </li>
+                  <ConditionalWrapper
+                    condition={!!href}
+                    Wrapper={({ children }) => {
+                      return (
+                        <NavigationLinkWrapper
+                          className="text-inherit"
+                          href={href}
+                        >
+                          {children}
+                        </NavigationLinkWrapper>
                       );
-                    })}
-                  </ul>
-                </NavigationMenu.Content>
-              )}
-            </NavigationMenu.Item>
-          );
-        })}
+                    }}
+                  >
+                    {RenderItem ? (
+                      <RenderItem />
+                    ) : (
+                      <div className="flex items-center justify-center  gap-1.5">
+                        {Icon && <Icon />}
+                        {label}
+                      </div>
+                    )}
+                  </ConditionalWrapper>
+                </ConditionalWrapper>
+
+                {hasSubMenu && (
+                  <NavigationMenu.Content
+                    className={
+                      'px-3 py-2 ' +
+                      'min-w-40 ' +
+                      'transition-[opacity,transform,translate] duration-[var(--duration)] ease-[var(--easing)] ' +
+                      'data-[starting-style]:opacity-0 data-[ending-style]:opacity-0 ' +
+                      'data-[starting-style]:data-[activation-direction=left]:translate-x-[-50%] ' +
+                      'data-[starting-style]:data-[activation-direction=right]:translate-x-[50%] ' +
+                      'data-[ending-style]:data-[activation-direction=left]:translate-x-[50%] ' +
+                      'data-[ending-style]:data-[activation-direction=right]:translate-x-[-50%]'
+                    }
+                    keepMounted
+                  >
+                    <ul className="grid list-none gap-2">
+                      {items?.map(
+                        (
+                          { hidden, href, label, onClick, RenderItem },
+                          index,
+                        ) => {
+                          // TODO - UPDATE TO SUPPORT NESTED SUBMENUS (items prop)
+                          return hidden ? null : (
+                            <li key={href || label || index}>
+                              {RenderItem ? (
+                                <RenderItem />
+                              ) : (
+                                <NavigationLinkWrapper
+                                  className="text-black hover:text-anchor block"
+                                  href={href}
+                                  onClick={onClick}
+                                >
+                                  {label}
+                                </NavigationLinkWrapper>
+                              )}
+                            </li>
+                          );
+                        },
+                      )}
+                    </ul>
+                  </NavigationMenu.Content>
+                )}
+              </NavigationMenu.Item>
+            );
+          },
+        )}
       </NavigationMenu.List>
 
       <NavigationMenu.Portal keepMounted>

@@ -34,6 +34,67 @@
 
   --color-anchor: var(--color-primary-700);
   --color-anchor-hover: var(--color-primary-900);
+
+  --color-surface-1: var(--surface-1);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-surface-link: var(--surface-link);
+  --color-surface-link-hover: var(--surface-link-hover);
+  --color-surface-success: var(--surface-success);
+  --color-surface-warning: var(--surface-warning);
+  --color-surface-alert: var(--surface-alert);
+
+  --color-t-1: var(--t-1);
+  --color-t-2: var(--t-2);
+  --color-t-3: var(--t-3);
+  --t-disabled: var(--t-disabled);
+  --color-t-link: var(--t-link);
+  --color-t-success: var(--t-success);
+  --color-t-warning: var(--t-warning);
+  --color-t-alert: var(--t-alert);
+}
+
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+
+:root {
+  --surface-1: var(--color-gray-50);
+  --surface-2: var(--color-gray-200);
+  --surface-3: var(--color-gray-300);
+  --surface-link: var(--color-primary-700);
+  --surface-link-hover: var(--color-primary-900);
+  --surface-success: var(--color-blue-800);
+  --surface-warning: var(--color-amber-400);
+  --surface-alert: var(--color-red-800);
+
+  --t-1: var(--color-black);
+  --t-2: var(--color-gray-200);
+  --t-3: var(--color-gray-300);
+  --t-disabled: var(--color-gray-500);
+  --t-link: var(--color-primary-700);
+  --t-success: var(--color-blue-800);
+  --t-warning: var(--color-amber-400);
+  --t-alert: var(--color-red-800);
+}
+
+[data-theme=dark] {
+  --surface-1: var(--color-gray-950);
+  --surface-2: var(--color-gray-900);
+  --surface-3: var(--color-gray-800);
+  --surface-link: var(--color-primary-700);
+  --surface-link-hover: var(--color-primary-900);
+  --surface-success: var(--color-blue-800);
+  --surface-warning: var(--color-amber-400);
+  --surface-alert: var(--color-red-800);
+
+  --t-1: var(--color-gray-50);
+  --t-2: var(--color-gray-200);
+  --t-3: var(--color-gray-300);
+  --t-disabled: var(--color-gray-500);
+  --t-link: var(--color-primary-700);
+  --t-success: var(--color-blue-800);
+  --t-warning: var(--color-amber-400);
+  --t-alert: var(--color-red-800);
 }
 
 .text-disabled {
@@ -48,8 +109,18 @@ body {
   position: relative;
 }
 
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  color: var(--color-text-t-1);
+}
+
 /* For some reason tailwind element styles are overriding the class level specificity. Only way I could think to apply anchor styling without it overriding classes was to apply the styles only to anchors in paragraph tags. */
-p a {
+a {
   color: var(--color-anchor);
 
   &:hover {

@@ -5,6 +5,9 @@ import { Button as MuiButton } from '@base-ui/react';
 
 import { LoadingSpinner } from '../FullPageLoadingSpinner/components/LoadingSpinner';
 
+export type ButtonVariant =
+  'primary' | 'secondary' | 'mono' | 'ghost' | 'alert';
+
 type ButtonProps = MuiButtonProps & {
   disabled?: boolean;
   Icon?: JSXElementConstructor<{}>;
@@ -15,7 +18,7 @@ type ButtonProps = MuiButtonProps & {
   text?: string;
   /** Set to `'submit'` for form submission. */
   type?: 'button' | 'submit';
-  variant?: 'primary' | 'secondary' | 'mono' | 'ghost' | 'alert';
+  variant?: ButtonVariant;
 };
 
 const iconPositions = {

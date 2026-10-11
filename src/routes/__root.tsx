@@ -94,7 +94,7 @@ export const RootDocument = ({
       </head>
 
       <DialogProvider>
-        <body className="bg-linear-to-b from-primary-900 to-secondary-900 root grid min-h-dvh grid-rows-[max-content_1fr_max-content]">
+        <body className="bg-linear-to-b from-primary-900 to-secondary-900 dark:from-primary-950 dark:to-secondary-950 root grid min-h-dvh grid-rows-[max-content_1fr_max-content]">
           {children}
           <Scripts />
         </body>

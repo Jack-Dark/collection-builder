@@ -5,7 +5,12 @@ type AuthSchemaDef = z.output<typeof authSchema>;
 
 export type AuthContextDef = Record<'user', AuthSchemaDef>;
 
-export type DbQueryArgsDef<TData> = {
-  context: AuthContextDef;
-  data: TData;
-};
+export type DbQueryArgsDef<TData extends any> = [TData] extends [never]
+  ? {
+      context: AuthContextDef;
+      data?: never;
+    }
+  : {
+      context: AuthContextDef;
+      data: TData;
+    };
