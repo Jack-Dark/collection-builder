@@ -111,10 +111,6 @@ export const useCollectionDetailsFiltersProps = () => {
     startingValues: searchQueryFilters,
   });
 
-  const fullResetValues = useCreateCollectionFiltersFormValues({
-    startingValues: {},
-  });
-
   const form = useForm({
     ...collectionItemsFiltersFormOptions,
     defaultValues: { filters: defaultValues },
@@ -137,7 +133,7 @@ export const useCollectionDetailsFiltersProps = () => {
       form.setFieldValue('filters', defaultValues);
     },
     onReset: async () => {
-      form.setFieldValue('filters', fullResetValues);
+      form.setFieldValue('filters', {});
       await form.handleSubmit();
     },
     onSubmit: async () => {
