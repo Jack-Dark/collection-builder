@@ -102,7 +102,7 @@ export const RootDocument = ({
 
       <ThemeProvider theme={theme}>
         <DialogProvider>
-          <body className="bg-linear-to-b from-primary-900 to-secondary-900 dark:from-primary-950 dark:to-secondary-950 root grid min-h-dvh grid-rows-[max-content_1fr_max-content]">
+          <body className="bg-linear-to-b from-primary-900 to-secondary-900 dark:from-primary-950 dark:to-secondary-950 root grid min-h-dvh grid-rows-[max-content_1fr_max-content] text-theme-t1">
             {children}
             <Scripts />
           </body>

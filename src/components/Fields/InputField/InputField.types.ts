@@ -16,6 +16,7 @@ export type InputFieldProps = Pick<
   | 'value'
 > &
   FieldWrapperProps & {
+    inputClassName?: string;
     onValueChange?: (value: string) => void;
     triggerOnBlur?: boolean;
   };

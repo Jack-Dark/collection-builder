@@ -28,9 +28,13 @@ export const Layout: RouteComponent = () => {
     <SimpleErrorBoundary>
       <FullPageLoadingSpinner />
       <Notifications />
-      <div className="p-4 h-dvh overflow-hidden size-full grid grid-rows-[auto_1fr] gap-4">
+      <div
+        className="p-4 h-dvh overflow-hidden size-full grid grid-rows-[auto_1fr] gap-4"
+
+        suppressHydrationWarning
+      >
         <header className="grid gap-4">
-          <div className="flex items-center gap-2 text-theme-t1">
+          <div className="flex items-center gap-2">
             <ListAltIcon className="text-inherit text-4xl" fontSize="large" />
             <h1 className="text-inherit">Start tracking your collections!</h1>
           </div>
@@ -48,7 +52,7 @@ export const Layout: RouteComponent = () => {
           </QueryErrorResetBoundary>
         </header>
 
-        <main className="size-full px-4 pt-6 pb-4 bg-theme-surface-1 text-theme-t1 rounded-xs">
+        <main className="size-full px-4 pt-6 pb-4 bg-theme-surface-1 rounded-xs">
           <QueryErrorResetBoundary>
             {({ reset }) => {
               return (

@@ -20,7 +20,7 @@ const MockedDialogToggle = (props: DialogPropsDef) => {
         Footer={() => {
           return (
             <>
-              <Button onClick={hideDialog} text="Cancel" variant="secondary" />
+              <Button onClick={hideDialog} text="Cancel" variant="mono" />
               <Button onClick={hideDialog} text="Save" />
             </>
           );

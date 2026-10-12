@@ -144,13 +144,13 @@
 
 
   .btn-alert {
-    background-color: var(--color-red-700);
+    background-color: var(--color-theme-alert);
     border-color: var(--color-red-700);
     color: var(--color-white);
 
     &:not(:disabled):hover {
       @media (hover: hover) {
-        background-color: var(--color-red-800);
+        background-color: var(--color-theme-alert-hover);
         color: var(--color-white);
       }
     }

@@ -1,6 +1,7 @@
 import { Select } from '@base-ui/react';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Fragment } from 'react/jsx-runtime';
+import { twMerge } from 'tailwind-merge';
 
 import type {
   DefaultSelectItemDef,
@@ -90,7 +91,7 @@ export const SelectField = <TItem extends DefaultSelectItemDef>(
         }}
         value={value}
       >
-        <Select.Trigger className="grid grid-cols-[1fr_auto] gap-1 md:gap-2 p-1.5 bg-white border border-black cursor-pointer">
+        <Select.Trigger className="grid grid-cols-[1fr_auto] gap-1 md:gap-2 p-1.5 bg-theme-surface-2 border border-theme-divider-1 dark:border-theme-divider-3 cursor-pointer">
           <Select.Value
             className="grid justify-start"
             placeholder={placeholder}
@@ -116,7 +117,7 @@ export const SelectField = <TItem extends DefaultSelectItemDef>(
         </Select.Trigger>
         <Select.Portal>
           <Select.Positioner align="start" alignItemWithTrigger={false}>
-            <Select.Popup className="min-w-25 bg-white text-black border border-gray-300 py-2 rounded-sm shadow-lg max-h-100 overflow-auto">
+            <Select.Popup className="min-w-25 bg-theme-surface-1 border border-theme-divider-2 py-2 rounded-sm shadow-lg max-h-100 overflow-auto">
               <Select.List>
                 {items.map((item, index) => {
                   return (
@@ -124,14 +125,20 @@ export const SelectField = <TItem extends DefaultSelectItemDef>(
                       key={`${keyPrefix}-${itemToStringValue(item) || index}`}
                     >
                       {item?.separator ? (
-                        <Select.Separator className="mx-2 my-0.5 h-px bg-gray-300" />
+                        <Select.Separator className="mx-2 my-0.5 h-px bg-theme-surface-3" />
                       ) : (
                         <Select.Item
-                          className={`p-2 flex align-items-center ${item.disabled || item.placeholder ? 'text-gray-400' : ''} ${
+                          className={twMerge(
+                            'p-2 flex align-items-center',
+                            item.disabled || item.placeholder
+                              ? 'text-gray-400'
+                              : '',
                             item?.disabled
                               ? 'cursor-not-allowed'
-                              : 'hover:bg-menu-primary-hover data-selected:bg-menu-primary-selected data-highlighted:bg-menu-primary-hover cursor-pointer'
-                          }`}
+                              : 'hover:bg-theme-surface-2  cursor-pointer',
+                            'data-selected:not-data-highlighted:bg-theme-surface-2',
+                            'data-highlighted:bg-theme-surface-3',
+                          )}
                           disabled={item?.disabled}
                           key={itemToStringValue(item)}
                           value={item}

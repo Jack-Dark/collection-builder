@@ -1,11 +1,10 @@
-import type { ChangeEventHandler } from 'react';
-
 import ClearIcon from '@mui/icons-material/Clear';
 import SearchIcon from '@mui/icons-material/Search';
 import _ from 'lodash';
 import { useMemo, useState } from 'react';
 
 import { Button } from '#/components/Button';
+import { InputField } from '#/components/Fields/InputField';
 import { SwitchField } from '#/components/Fields/SwitchField';
 
 import type { SearchProps } from './Search.types';
@@ -21,10 +20,7 @@ export const Search = (props: SearchProps) => {
     }, 300);
   }, []);
 
-  const handleChange: ChangeEventHandler<HTMLInputElement, HTMLInputElement> = (
-    e,
-  ) => {
-    const value = e.target.value;
+  const handleChange = (value: string) => {
     setText(value);
     debouncedSearch(value);
   };
@@ -59,10 +55,11 @@ export const Search = (props: SearchProps) => {
         />
       )}
 
-      <input
-        className="input size-full pl-10 pr-38"
+      <InputField
+        className="size-full"
+        inputClassName="size-full pl-10 pr-38"
         name="_search"
-        onChange={handleChange}
+        onValueChange={handleChange}
         placeholder="Search..."
         type="text"
         value={text}

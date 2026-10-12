@@ -1,4 +1,5 @@
 import { Input } from '@base-ui/react';
+import { twMerge } from 'tailwind-merge';
 
 import type { InputFieldProps } from './InputField.types';
 
@@ -13,6 +14,7 @@ export const InputField = (props: InputFieldProps) => {
     disabled,
     error,
     hideLabel,
+    inputClassName,
     invalid,
     label,
     name,
@@ -44,7 +46,10 @@ export const InputField = (props: InputFieldProps) => {
       <Input
         autoComplete={type === 'password' ? 'off' : undefined}
         autoFocus={autoFocus}
-        className="input"
+        className={twMerge(
+          'input border border-theme-divider-1 dark:border-theme-divider-3 bg-theme-surface-1 dark:bg-theme-surface-2',
+          inputClassName,
+        )}
         defaultValue={defaultValue}
         onBlur={
           triggerOnBlur
