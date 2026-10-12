@@ -31,7 +31,7 @@ export const AddNewCollectionButton = (props: {
               addToEditingRowIds(newCollectionItem.id);
             }}
             text={text}
-            variant="secondary"
+            variant="primary"
           />
         );
       }}

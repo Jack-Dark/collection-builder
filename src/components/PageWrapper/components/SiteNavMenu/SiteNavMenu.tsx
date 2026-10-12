@@ -107,7 +107,7 @@ const ThemeToggles = () => {
           return (
             <Toggle
               aria-label={label}
-              className={`p-1 rounded-4xl cursor-pointer ${isSelected ? 'bg-theme-link' : 'hover:bg-theme-surface-3'}`}
+              className={`p-1 flex items-center justify-center rounded-4xl cursor-pointer ${isSelected ? 'bg-theme-link' : 'hover:bg-theme-surface-3'}`}
               key={theme}
               onClick={() => {
                 setTheme(theme);
@@ -116,6 +116,7 @@ const ThemeToggles = () => {
             >
               <ThemeIcon
                 className={isSelected ? 'text-white' : 'dark:text-white'}
+                fontSize="small"
               />
             </Toggle>
           );

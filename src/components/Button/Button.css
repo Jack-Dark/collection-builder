@@ -163,14 +163,14 @@
 
   [data-theme="dark"] {
     .btn-mono {
-      background-color: var(--color-slate-800);
-      border-color: var(--color-slate-800);
+      background-color: var(--color-theme-surface-2);
+      border-color: var(--color-gray-800);
       color: var(--color-white);
 
       &:not(:disabled):hover {
         @media (hover: hover) {
-          background-color: var(--color-slate-700);
-          border-color: var(--color-slate-700);
+          background-color: var(--color-gray-800);
+          border-color: var(--color-gray-800);
           color: var(--color-white);
         }
       }

@@ -17,7 +17,7 @@ export const PageWrapper = (props: PageWrapperPropsDef) => {
   return (
     <>
       <header className="grid gap-4">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 text-white">
           <ListAltIcon className="text-inherit text-4xl" fontSize="large" />
           <h1 className="text-inherit">{title}</h1>
         </div>

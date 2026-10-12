@@ -47,9 +47,10 @@ export const InputField = (props: InputFieldProps) => {
         autoComplete={type === 'password' ? 'off' : undefined}
         autoFocus={autoFocus}
         className={twMerge(
-          'p-1.5 border rounded-xs border-theme-divider-1 dark:border-theme-divider-3 bg-theme-surface-1 dark:bg-theme-surface-2',
+          'p-1.5 border rounded-xs border-theme-divider-1 dark:border-theme-divider-3 bg-theme-surface-1 dark:bg-theme-surface-2 dialog:dark:bg-theme-surface-1',
           inputClassName,
         )}
+        data-input=""
         defaultValue={defaultValue}
         onBlur={
           triggerOnBlur

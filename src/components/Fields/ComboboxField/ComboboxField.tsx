@@ -256,18 +256,12 @@ export const ComboboxField = <
             | ComboboxValueDef<TValue, TMultiple>,
           eventDetails: Combobox.Root.ChangeEventDetails,
         ) => {
-          // setQuery('');
-
           if (Array.isArray(value)) {
             value.forEach((item) => {
               delete item.creatable;
-
-              // return item;
             });
-            // setSelectedItems(cleanValues);
           } else {
             delete value?.creatable;
-            // setSelectedItems([value as TValue]);
           }
           onValueChange?.(value, eventDetails);
         }}
@@ -324,14 +318,14 @@ export const ComboboxField = <
               return multiple ? (
                 <Combobox.Input
                   aria-label={ariaLabel}
-                  className="p-1.5 border rounded-xs border-theme-divider-1 dark:border-theme-divider-3 bg-theme-surface-1 dark:bg-theme-surface-2"
+                  className="p-1.5 border rounded-xs border-theme-divider-1 dark:border-theme-divider-3 bg-theme-surface-1 dark:bg-theme-surface-2  dialog:dark:bg-theme-surface-1"
                   placeholder={placeholder}
                   value={query}
                 />
               ) : (
                 <Combobox.Input
                   aria-label={ariaLabel}
-                  className="p-1.5 border rounded-xs border-theme-divider-1 dark:border-theme-divider-3 bg-theme-surface-1 dark:bg-theme-surface-2"
+                  className="p-1.5 border rounded-xs border-theme-divider-1 dark:border-theme-divider-3 bg-theme-surface-1 dark:bg-theme-surface-2  dialog:bg-theme-surface-1"
                   onBlur={() => {
                     setIsInputFocused(false);
                   }}

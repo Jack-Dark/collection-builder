@@ -31,7 +31,7 @@ export const CheckboxField = (props: CheckboxFieldProps) => {
     return label ? (
       <Field.Label className="cursor-pointer">
         {label}
-        {required ? <span className="text-red-600">*</span> : undefined}
+        {required ? <span className="text-theme-alert">*</span> : undefined}
       </Field.Label>
     ) : null;
   }, [label, required]);
@@ -59,21 +59,25 @@ export const CheckboxField = (props: CheckboxFieldProps) => {
               <CheckBoxIcon
                 className={
                   disabled
-                    ? 'text-gray-400'
-                    : 'text-primary-900 hover:text-primary-800'
+                    ? 'text-theme-disabled'
+                    : 'text-theme-link hover:text-theme-link-hover'
                 }
               />
             ) : indeterminate ? (
               <IndeterminateCheckBoxIcon
                 className={
                   disabled
-                    ? 'text-gray-400'
-                    : 'text-primary-900 hover:text-primary-800'
+                    ? 'text-theme-disabled'
+                    : 'text-theme-link hover:text-theme-link-hover'
                 }
               />
             ) : (
               <CheckBoxOutlineBlankIcon
-                className={disabled ? 'text-gray-400' : ''}
+                className={
+                  disabled
+                    ? 'text-theme-disabled'
+                    : 'text-theme-t1 dark:text-theme-t2 hover:text-theme-link-hover'
+                }
               />
             )}
           </Checkbox.Indicator>

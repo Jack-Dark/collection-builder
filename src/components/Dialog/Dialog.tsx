@@ -41,6 +41,7 @@ export const Dialog = (props: DialogPropsDef) => {
       >
         <MuiDialog.Popup
           className={`relative grid auto-rows-[max-content_1fr_max-content] w-full max-w-full h-full md:min-h-70 max-h-full ${isFullScreen ? '' : `md:w-full ${maxWidthClassName} md:h-auto md:max-h-[90dvh]`} flex-col bg-theme-surface-1 dark:bg-theme-surface-2 text-theme-t1 duration-100 ease-out rounded-sm`}
+          data-dialog=""
         >
           {(Header || !hideClose) && (
             <div
@@ -59,7 +60,7 @@ export const Dialog = (props: DialogPropsDef) => {
 
               {!hideClose && (
                 <MuiDialog.Close
-                  className="cursor-pointer hover:text-theme-t3 p-2"
+                  className="cursor-pointer hover:text-theme-alert p-2"
                   disabled={disableOnClose}
                   onClick={onClose}
                 >
