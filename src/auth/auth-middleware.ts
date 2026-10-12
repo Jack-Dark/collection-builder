@@ -6,36 +6,6 @@ import type { AuthContextDef } from './auth-middleware.types';
 import { authSchema } from './auth-middleware.schema';
 import { getUserContext } from './auth.functions';
 
-/** Use this middleware to authenticate the user but not throw an error. */
-export const userContextMiddleware = createMiddleware().server(
-  async ({ next }) => {
-    const fallbackContext: AuthContextDef = {
-      user: {} as unknown as AuthContextDef['user'],
-    };
-    try {
-      const userContext = await getUserContext();
-
-      const { data, success } = authSchema.safeParse(userContext);
-
-      if (success) {
-        const context: AuthContextDef = {
-          user: data,
-        };
-
-        return await next({
-          context,
-        });
-      }
-    } catch {
-      // DO NOTHING
-    }
-
-    return await next({
-      context: fallbackContext,
-    });
-  },
-);
-
 /** Use this middleware to authenticate protected API routes. */
 export const authApiRouteMiddleware = createMiddleware().server(
   async ({ next }) => {

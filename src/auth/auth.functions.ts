@@ -5,22 +5,18 @@ import { auth } from './auth';
 
 export const getUserContext = createServerFn({ method: 'GET' }).handler(
   async () => {
-    try {
-      const headers = getRequestHeaders();
-      const data = await auth.api.getSession({
-        headers,
-      });
+    const headers = getRequestHeaders();
+    const data = await auth.api.getSession({
+      headers,
+    });
 
-      if (data) {
-        return {
-          id: data?.user?.id,
-          image: data?.user?.image,
-          name: data?.user?.name,
-          token: data?.session?.token,
-        };
-      }
-    } catch (error) {
-      console.error(error);
+    if (data) {
+      return {
+        id: data?.user.id,
+        image: data?.user.image,
+        name: data?.user.name,
+        token: data?.session.token,
+      };
     }
   },
 );

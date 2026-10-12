@@ -12,20 +12,17 @@ export const getNavMenuCollectionsDbQuery = async ({
   context,
 }: DbQueryArgsDef<GetNavMenuCollectionsRequestArgsDef>) => {
   const userId = context.user.id;
-  if (userId) {
-    const collections = await db
-      .select({ id: collectionsTable.id, name: collectionsTable.name })
-      .from(collectionsTable)
-      .where(
-        and(
-          eq(collectionsTable.userId, userId),
-          isNull(collectionsTable.deletedAt),
-        ),
-      )
-      .orderBy(asc(sql`lower(${collectionsTable.name})`));
 
-    return { collections };
-  } else {
-    return { collections: [] };
-  }
+  const collections = await db
+    .select({ id: collectionsTable.id, name: collectionsTable.name })
+    .from(collectionsTable)
+    .where(
+      and(
+        eq(collectionsTable.userId, userId),
+        isNull(collectionsTable.deletedAt),
+      ),
+    )
+    .orderBy(asc(sql`lower(${collectionsTable.name})`));
+
+  return { collections };
 };
