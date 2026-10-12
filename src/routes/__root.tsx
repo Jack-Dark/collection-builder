@@ -18,6 +18,8 @@ import { StrictMode } from 'react';
 
 import { DialogProvider } from '#/components/Dialog/Dialog.Provider';
 import { SimpleErrorBoundaryContent } from '#/components/SimpleErrorBoundary';
+import { ThemeProvider } from '#/components/ThemeProvider';
+import { getThemeServerFn } from '#/lib/theme';
 
 import appCss from '../styles.css?url';
 
@@ -47,6 +49,9 @@ export const Route = createRootRouteWithContext<{
         },
       ],
     };
+  },
+  loader: () => {
+    return getThemeServerFn();
   },
   notFoundComponent: () => {
     return (
@@ -87,18 +92,22 @@ function RootComponent() {
 export const RootDocument = ({
   children,
 }: Readonly<{ children: ReactNode }>) => {
+  const theme = Route.useLoaderData();
+
   return (
-    <html>
+    <html data-theme={theme} suppressHydrationWarning>
       <head>
         <HeadContent />
       </head>
 
-      <DialogProvider>
-        <body className="bg-linear-to-b from-primary-900 to-secondary-900 dark:from-primary-950 dark:to-secondary-950 root grid min-h-dvh grid-rows-[max-content_1fr_max-content]">
-          {children}
-          <Scripts />
-        </body>
-      </DialogProvider>
+      <ThemeProvider theme={theme}>
+        <DialogProvider>
+          <body className="bg-linear-to-b from-primary-900 to-secondary-900 dark:from-primary-950 dark:to-secondary-950 root grid min-h-dvh grid-rows-[max-content_1fr_max-content]">
+            {children}
+            <Scripts />
+          </body>
+        </DialogProvider>
+      </ThemeProvider>
     </html>
   );
 };

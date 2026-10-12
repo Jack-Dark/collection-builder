@@ -19,6 +19,8 @@ import { FullPageLoadingSpinner } from './components/FullPageLoadingSpinner';
 import { NavMenu } from './components/NavMenu';
 import { Notifications } from './components/Notifications';
 import { SimpleErrorBoundary } from './components/SimpleErrorBoundary';
+import { useTheme } from './components/ThemeProvider';
+import { getSystemTheme, userPreferenceThemes } from './lib/theme';
 import { Route as CollectionsRoute } from './routes/_protected/collections';
 import { Route as CollectionRoute } from './routes/_protected/collections/$id';
 
@@ -121,7 +123,7 @@ const SiteNavMenu = () => {
 };
 
 const ThemeToggles = () => {
-  const { setTheme, theme: userTheme } = useUserPreferences();
+  const { setTheme, theme: userTheme } = useTheme();
 
   const themeToggleItems = [
     {
@@ -135,6 +137,14 @@ const ThemeToggles = () => {
       ThemeIcon: DarkModeIcon,
     },
   ] as const;
+
+  useEffect(() => {
+    if (!userTheme) {
+      const theme = getSystemTheme();
+
+      setTheme(theme);
+    }
+  }, []);
 
   return (
     <div className="grid gap-1 py-2">
@@ -163,111 +173,4 @@ const ThemeToggles = () => {
       </ToggleGroup>
     </div>
   );
-};
-
-const userPreferenceThemes = {
-  dark: 'dark',
-  light: 'light',
-} as const;
-
-type UserPreferencesThemeDef =
-  (typeof userPreferenceThemes)[keyof typeof userPreferenceThemes];
-
-const systemPreferencesKeys = {
-  ignoreSortArticles: 'ignore-sort-articles',
-  theme: 'ui-theme',
-} as const;
-
-const getLocalStorageTheme = createClientOnlyFn(() => {
-  const localStorageTheme = localStorage.getItem(
-    systemPreferencesKeys.theme,
-  ) as UserPreferencesThemeDef | null;
-
-  return localStorageTheme ?? userPreferenceThemes.light;
-});
-
-const setLocalStorageTheme = createClientOnlyFn(
-  (theme: UserPreferencesThemeDef) => {
-    return localStorage.setItem(systemPreferencesKeys.theme, theme);
-  },
-);
-
-const getLocalStorageIgnoreSortArticles = createClientOnlyFn(() => {
-  const localStorageValue = localStorage.getItem(
-    systemPreferencesKeys.ignoreSortArticles,
-  ) as 'true' | 'false' | null;
-
-  if (localStorageValue) {
-    return localStorageValue === 'true' ? true : false;
-  } else {
-    return true;
-  }
-});
-
-const setLocalStorageIgnoreSortArticles = createClientOnlyFn(
-  (ignoreSortArticles: boolean) => {
-    return localStorage.setItem(
-      systemPreferencesKeys.ignoreSortArticles,
-      String(ignoreSortArticles),
-    );
-  },
-);
-
-export const useUserPreferences = () => {
-  const [theme, setTheme] = useState<UserPreferencesThemeDef>(
-    userPreferenceThemes.dark,
-  );
-  const [ignoreSortArticles, setIgnoreSortArticles] = useState<boolean>(true);
-
-  const handleSetTheme = createClientOnlyFn(
-    (theme: UserPreferencesThemeDef) => {
-      setLocalStorageTheme(theme);
-      setTheme(theme);
-    },
-  );
-  const handleSetIgnoreSortArticles = createClientOnlyFn(
-    (ignoreSortArticles: boolean) => {
-      setLocalStorageIgnoreSortArticles(ignoreSortArticles);
-      setIgnoreSortArticles(ignoreSortArticles);
-    },
-  );
-
-  useEffect(() => {
-    const systemPrefersDarkMode = window?.matchMedia(
-      '(prefers-color-scheme: dark)',
-    ).matches;
-
-    const systemTheme: UserPreferencesThemeDef = systemPrefersDarkMode
-      ? userPreferenceThemes.dark
-      : userPreferenceThemes.light;
-
-    const localStorageTheme = getLocalStorageTheme();
-
-    if (localStorageTheme) {
-      setTheme(localStorageTheme);
-    } else {
-      handleSetTheme(systemTheme);
-    }
-
-    const localStorageIgnoreSortArticles = getLocalStorageIgnoreSortArticles();
-
-    if (localStorageTheme) {
-      setIgnoreSortArticles(localStorageIgnoreSortArticles);
-    } else {
-      handleSetIgnoreSortArticles(localStorageIgnoreSortArticles);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (theme) {
-      document.documentElement.setAttribute('data-theme', theme);
-    }
-  }, [theme]);
-
-  return {
-    ignoreSortArticles,
-    setIgnoreSortArticles: handleSetIgnoreSortArticles,
-    setTheme: handleSetTheme,
-    theme,
-  };
 };
