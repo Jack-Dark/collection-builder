@@ -2,9 +2,7 @@ import type { FC } from 'react';
 
 import { createContext } from 'react';
 
-import type { DialogPropsDef } from '.';
-
-export type DialogComponentDef = FC<DialogPropsDef>;
+export type DialogComponentDef = FC;
 
 export interface DialogContextType {
   closeLast: () => void;

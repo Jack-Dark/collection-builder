@@ -8,7 +8,7 @@ import { Dialog } from '#/components/Dialog';
 import { DialogProvider } from './Dialog.Provider';
 import { useDialog } from './hooks/useDialog';
 
-const MockedDialogToggle = (props: Partial<DialogPropsDef>) => {
+const MockedDialogToggle = (props: DialogPropsDef) => {
   const [openDialog, hideDialog] = useDialog(() => {
     const content = new Array(100).fill(null).map((_value, index) => {
       return <p key={index}>Dialog content here...</p>;
