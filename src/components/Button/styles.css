@@ -92,7 +92,7 @@
       &:disabled {
         background-color: var(--color-gray-600);
         border-color: var(--color-gray-600);
-        color: var(--color-white);
+        color: var(--color-gray-400);
       }
     }
   }
@@ -132,7 +132,7 @@
       }
 
       &:disabled {
-        background-color: var(--color-white);
+        background-color: var(--color-gray-500);
         border-color: var(--color-gray-600);
         color: var(--color-gray-600);
       }
@@ -176,7 +176,7 @@
       }
 
       &:disabled {
-        background-color: var(--color-white);
+        background-color: var(--color-gray-500);
         border-color: var(--color-gray-600);
         color: var(--color-gray-600);
       }
@@ -264,7 +264,7 @@
       &:disabled {
         background-color: var(--color-gray-600);
         border-color: var(--color-gray-600);
-        color: var(--color-white);
+        color: var(--color-gray-400);
       }
     }
   }

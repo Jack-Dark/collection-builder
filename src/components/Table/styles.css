@@ -1,24 +1,32 @@
 @layer components {
+  .table {
 
-  .table th,
-  .table td {
-    border-color: var(--color-theme-surface-3);
-  }
+    th,
+    p {
+      color: var(--color-theme-t1);
+    }
 
-  .table th {
-    background-color: var(--color-theme-surface-1);
-  }
 
-  .table td {
-    background-color: inherit;
-  }
+    th,
+    td {
+      border-color: var(--color-theme-surface-3);
+    }
 
-  .table tr,
-  .table tr:nth-child(odd) {
-    background-color: var(--color-theme-surface-2);
-  }
+    th {
+      background-color: var(--color-theme-surface-1);
+    }
 
-  .table tr:nth-child(even) {
-    background-color: var(--color-theme-surface-1);
+    td {
+      background-color: inherit;
+    }
+
+    tr,
+    tr:nth-child(odd) {
+      background-color: var(--color-theme-surface-2);
+    }
+
+    tr:nth-child(even) {
+      background-color: var(--color-theme-surface-1);
+    }
   }
 }

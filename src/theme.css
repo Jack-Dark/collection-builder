@@ -107,7 +107,7 @@
   --theme-disabled: var(--color-gray-500);
 
   --theme-link: var(--color-primary-500);
-  --theme-link-hover: var(--color-primary-400);
+  --theme-link-hover: var(--color-primary-600);
 
   --theme-success: var(--color-blue-800);
   --theme-success-hover: var(--color-blue-800);
