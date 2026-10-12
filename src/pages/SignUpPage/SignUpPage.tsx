@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router';
 
-import { PageWrapper } from '#/page-wrapper';
+import { PageWrapper } from '#/components/PageWrapper';
 
 import { SignUpForm } from './components/SignUpForm';
 

@@ -16,7 +16,7 @@ import {
 } from '#/api/routes/collections/get-paginated-collections/get-paginated-collections.react-query';
 import { useUpdateCollectionById } from '#/api/routes/collections/update-collection-by-id/update-collection-by-id.react-query';
 import { useSpinner } from '#/components/FullPageLoadingSpinner/useSpinner';
-import { PageWrapper } from '#/page-wrapper';
+import { PageWrapper } from '#/components/PageWrapper';
 import { Route as CollectionsRoute } from '#/routes/_protected/collections';
 
 import { createOrUpdateCollectionFormOptions } from './CollectionsListPage.form';
