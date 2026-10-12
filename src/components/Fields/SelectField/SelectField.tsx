@@ -91,7 +91,7 @@ export const SelectField = <TItem extends DefaultSelectItemDef>(
         }}
         value={value}
       >
-        <Select.Trigger className="grid grid-cols-[1fr_auto] gap-1 md:gap-2 p-1.5 bg-theme-surface-2 border border-theme-divider-1 dark:border-theme-divider-3 cursor-pointer">
+        <Select.Trigger className="grid grid-cols-[1fr_auto] gap-1 md:gap-2 p-1.5 bg-theme-surface-1 border rounded-xs border-theme-divider-1 dark:border-theme-divider-3 cursor-pointer">
           <Select.Value
             className="grid justify-start"
             placeholder={placeholder}
@@ -136,8 +136,10 @@ export const SelectField = <TItem extends DefaultSelectItemDef>(
                             item?.disabled
                               ? 'cursor-not-allowed'
                               : 'hover:bg-theme-surface-2  cursor-pointer',
-                            'data-selected:not-data-highlighted:bg-theme-surface-2',
-                            'data-highlighted:bg-theme-surface-3',
+                            'data-selected:not-data-highlighted:bg-primary-950',
+                            'data-selected:not-data-highlighted:text-white',
+                            'data-highlighted:bg-primary-900',
+                            'data-highlighted:text-white',
                           )}
                           disabled={item?.disabled}
                           key={itemToStringValue(item)}

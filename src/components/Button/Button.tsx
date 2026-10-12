@@ -2,13 +2,22 @@ import type { ButtonProps as MuiButtonProps } from '@base-ui/react';
 import type { JSXElementConstructor } from 'react';
 
 import { Button as MuiButton } from '@base-ui/react';
+import { twMerge } from 'tailwind-merge';
 
 import { LoadingSpinner } from '../FullPageLoadingSpinner/components/LoadingSpinner';
 
-export type ButtonVariant =
-  'primary' | 'secondary' | 'mono' | 'ghost' | 'alert';
+export const buttonVariants = [
+  'primary',
+  'secondary',
+  'mono',
+  'ghost',
+  'alert',
+] as const;
+
+export type ButtonVariant = (typeof buttonVariants)[number];
 
 type ButtonProps = MuiButtonProps & {
+  className?: string;
   disabled?: boolean;
   Icon?: JSXElementConstructor<{}>;
   iconPosition?: (typeof iconPositions)[keyof typeof iconPositions];
@@ -43,13 +52,16 @@ export const Button = ({
     <MuiButton
       disabled={disabled || processing}
       {...rest}
-      className={`btn btn-${size} btn-${variant} flex items-center justify-center gap-2 ${className}`}
+      className={twMerge(
+        `btn btn-${size} btn-${variant} flex items-center justify-center gap-2`,
+        className,
+      )}
       type={type}
     >
       {iconPosition === iconPositions.left &&
         (processing ? <LoadingSpinner /> : Icon && <Icon />)}
 
-      {children ? children : text && <p>{text}</p>}
+      {children || text}
 
       {iconPosition === iconPositions.right &&
         (processing ? <LoadingSpinner /> : Icon && <Icon />)}

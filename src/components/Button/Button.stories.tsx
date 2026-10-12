@@ -2,14 +2,14 @@ import type { Meta, StoryObj } from '@storybook/tanstack-react';
 
 import { fn } from 'storybook/test';
 
-import { Button } from '#/components/Button';
+import { Button, buttonVariants } from '#/components/Button';
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
 const meta = {
   // Use `fn` to spy on the onClick arg, which will appear in the actions panel once invoked: https://storybook.js.org/docs/essentials/actions#story-args
   args: {
-    children: <>Button</>,
     onClick: fn(),
+    text: 'Button',
   },
   // More on argTypes: https://storybook.js.org/docs/api/arg-types#argtypes
   argTypes: {
@@ -54,6 +54,28 @@ export const Alert: Story = {
   args: {
     variant: 'alert',
   },
+};
+
+export const Variants: Story = {
+  args: {},
+  decorators: [
+    (_Story, { args: props }) => {
+      return (
+        <div className="flex gap-2 items-center">
+          {buttonVariants.map((variant) => {
+            return (
+              <Button
+                key={variant}
+                {...props}
+                text={variant}
+                variant={variant}
+              />
+            );
+          })}
+        </div>
+      );
+    },
+  ],
 };
 
 export const Sizes: Story = {

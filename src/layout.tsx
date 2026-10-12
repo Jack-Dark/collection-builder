@@ -150,7 +150,7 @@ const ThemeToggles = () => {
   }, []);
 
   return (
-    <div className="grid gap-1 py-2">
+    <div className="px-3 py-2 grid gap-1">
       <p>Theme</p>
       <ToggleGroup
         aria-label="User Theme"
@@ -163,7 +163,7 @@ const ThemeToggles = () => {
           return (
             <Toggle
               aria-label={label}
-              className={`p-1 rounded-4xl cursor-pointer ${isSelected ? 'bg-theme-success' : 'hover:bg-theme-surface-3'}`}
+              className={`p-1 rounded-4xl cursor-pointer ${isSelected ? 'bg-theme-link' : 'hover:bg-theme-surface-3'}`}
               key={theme}
               onClick={() => {
                 setTheme(theme);

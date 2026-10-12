@@ -324,14 +324,14 @@ export const ComboboxField = <
               return multiple ? (
                 <Combobox.Input
                   aria-label={ariaLabel}
-                  className="input w-full"
+                  className="p-1.5 border rounded-xs border-theme-divider-1 dark:border-theme-divider-3 bg-theme-surface-1 dark:bg-theme-surface-2"
                   placeholder={placeholder}
                   value={query}
                 />
               ) : (
                 <Combobox.Input
                   aria-label={ariaLabel}
-                  className="input w-full"
+                  className="p-1.5 border rounded-xs border-theme-divider-1 dark:border-theme-divider-3 bg-theme-surface-1 dark:bg-theme-surface-2"
                   onBlur={() => {
                     setIsInputFocused(false);
                   }}

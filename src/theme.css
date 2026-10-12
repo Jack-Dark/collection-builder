@@ -51,7 +51,7 @@
   --color-theme-disabled: var(--theme-disabled);
 
   --color-theme-link: var(--theme-link);
-  --color-theme-link-hover: var(--theme-link);
+  --color-theme-link-hover: var(--theme-link-hover);
 
   --color-theme-success: var(--theme-success);
   --color-theme-success-hover: var(--theme-success-hover);
@@ -64,7 +64,7 @@
 }
 
 :root {
-  --theme-divider-1: var(--color-gray-300);
+  --theme-divider-1: var(--color-gray-200);
   --theme-divider-2: var(--color-gray-400);
   --theme-divider-3: var(--color-gray-500);
 
@@ -78,8 +78,8 @@
 
   --theme-disabled: var(--color-gray-500);
 
-  --theme-link: var(--color-primary-700);
-  --theme-link-hover: var(--color-primary-600);
+  --theme-link: var(--color-primary-800);
+  --theme-link-hover: var(--color-primary-700);
 
   --theme-success: var(--color-blue-800);
   --theme-success-hover: var(--color-blue-800);
@@ -91,8 +91,7 @@
   --theme-alert-hover: var(--color-red-800);
 }
 
-[data-theme="dark"],
-[data-theme="dark"] * {
+[data-theme="dark"] {
   --theme-divider-1: var(--color-gray-900);
   --theme-divider-2: var(--color-gray-700);
   --theme-divider-3: var(--color-gray-500);
@@ -107,8 +106,8 @@
 
   --theme-disabled: var(--color-gray-500);
 
-  --theme-link: var(--color-primary-700);
-  --theme-link-hover: var(--color-primary-600);
+  --theme-link: var(--color-primary-500);
+  --theme-link-hover: var(--color-primary-400);
 
   --theme-success: var(--color-blue-800);
   --theme-success-hover: var(--color-blue-800);
@@ -116,6 +115,6 @@
   --theme-warning: var(--color-amber-400);
   --theme-warning-hover: var(--color-amber-400);
 
-  --theme-alert: var(--color-red-800);
-  --theme-alert-hover: var(--color-red-700);
+  --theme-alert: var(--color-red-900);
+  --theme-alert-hover: var(--color-red-800);
 }

@@ -11,7 +11,7 @@ export const NavMenu = (props: { items: NavMenuItem[] }) => {
   const { items } = props;
 
   return (
-    <NavigationMenu.Root className="min-w-max rounded-xs bg-theme-surface-1 p-1 text-gray-900">
+    <NavigationMenu.Root className="min-w-max rounded-xs p-1 bg-theme-surface-1 text-theme-t1">
       <NavigationMenu.List className="relative flex items-center gap-2">
         {items.map(
           ({ hidden, href, Icon, items, label, onClick, RenderItem }) => {
@@ -24,8 +24,8 @@ export const NavMenu = (props: { items: NavMenuItem[] }) => {
                 className={
                   (hasSubMenu ? '' : 'px-3 py-2 ') +
                   'rounded-xs no-underline text-theme-t1 ' +
-                  'hover:bg-primary-800 hover:text-white ' +
-                  'data-[status="active"]:bg-primary-900 hover:data-[status="active"]:bg-primary-800 data-[status="active"]:text-white'
+                  'hover:bg-primary-900 hover:text-white ' +
+                  'data-[status="active"]:bg-primary-950 hover:data-[status="active"]:bg-primary-950 data-[status="active"]:text-white'
                 }
                 key={href || label}
                 onClick={onClick}
@@ -79,8 +79,7 @@ export const NavMenu = (props: { items: NavMenuItem[] }) => {
                 {hasSubMenu && (
                   <NavigationMenu.Content
                     className={
-                      'px-3 py-2 ' +
-                      'min-w-40 ' +
+                      'min-w-40 rounded-xs overflow-hidden ' +
                       'transition-[opacity,transform,translate] duration-[var(--duration)] ease-[var(--easing)] ' +
                       'data-[starting-style]:opacity-0 data-[ending-style]:opacity-0 ' +
                       'data-[starting-style]:data-[activation-direction=left]:translate-x-[-50%] ' +
@@ -90,7 +89,7 @@ export const NavMenu = (props: { items: NavMenuItem[] }) => {
                     }
                     keepMounted
                   >
-                    <ul className="grid list-none gap-2">
+                    <ul className="list-none">
                       {items?.map(
                         (
                           { hidden, href, label, onClick, RenderItem },
@@ -103,7 +102,8 @@ export const NavMenu = (props: { items: NavMenuItem[] }) => {
                                 <RenderItem />
                               ) : (
                                 <NavigationLinkWrapper
-                                  className="text-black hover:text-anchor block"
+                                  className="block px-3 py-2
+                                  text-theme-t1 hover:bg-primary-900 hover:text-white"
                                   href={href}
                                   onClick={onClick}
                                 >
@@ -134,7 +134,7 @@ export const NavMenu = (props: { items: NavMenuItem[] }) => {
             ['--easing' as string]: 'cubic-bezier(0.22, 1, 0.36, 1)',
           }}
         >
-          <NavigationMenu.Popup className="data-[ending-style]:easing-[ease] relative h-[var(--popup-height)] origin-[var(--transform-origin)] rounded-xs bg-[canvas] text-gray-900 shadow-lg shadow-gray-200 outline-1 outline-gray-200 transition-[opacity,transform,width,height,scale,translate] duration-[var(--duration)] ease-[var(--easing)] data-[ending-style]:scale-90 data-[ending-style]:opacity-0 data-[ending-style]:duration-150 data-[starting-style]:scale-90 data-[starting-style]:opacity-0 w-[var(--popup-width)] dark:shadow-none dark:-outline-offset-1 dark:outline-gray-300">
+          <NavigationMenu.Popup className="data-[ending-style]:easing-[ease] relative h-[var(--popup-height)] origin-[var(--transform-origin)] rounded-xs bg-theme-surface-1 text-theme-t1 shadow-lg shadow-gray-200 outline-1 outline-theme-divider-1 transition-[opacity,transform,width,height,scale,translate] duration-[var(--duration)] ease-[var(--easing)] data-[ending-style]:scale-90 data-[ending-style]:opacity-0 data-[ending-style]:duration-150 data-[starting-style]:scale-90 data-[starting-style]:opacity-0 w-[var(--popup-width)] dark:shadow-none dark:-outline-offset-1 dark:outline-theme-divider-2">
             <NavigationMenu.Arrow className="flex transition-[left] duration-[var(--duration)] ease-[var(--easing)] data-[side=bottom]:top-[-8px] data-[side=left]:right-[-13px] data-[side=left]:rotate-90 data-[side=right]:left-[-13px] data-[side=right]:-rotate-90 data-[side=top]:bottom-[-8px] data-[side=top]:rotate-180">
               <MenuArrowSvg />
             </NavigationMenu.Arrow>
