@@ -11,7 +11,7 @@ export const NavMenu = (props: { items: NavMenuItem[] }) => {
   const { items } = props;
 
   return (
-    <NavigationMenu.Root className="min-w-max rounded-xs bg-surface-1 p-1 text-gray-900">
+    <NavigationMenu.Root className="min-w-max rounded-xs bg-theme-surface-1 p-1 text-gray-900">
       <NavigationMenu.List className="relative flex items-center gap-2">
         {items.map(
           ({ hidden, href, Icon, items, label, onClick, RenderItem }) => {
@@ -23,7 +23,7 @@ export const NavMenu = (props: { items: NavMenuItem[] }) => {
               <NavigationMenu.Item
                 className={
                   (hasSubMenu ? '' : 'px-3 py-2 ') +
-                  'rounded-xs no-underline text-t-1 ' +
+                  'rounded-xs no-underline text-theme-t1 ' +
                   'hover:bg-primary-800 hover:text-white ' +
                   'data-[status="active"]:bg-primary-900 hover:data-[status="active"]:bg-primary-800 data-[status="active"]:text-white'
                 }

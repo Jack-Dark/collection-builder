@@ -7,8 +7,7 @@ import LightModeIcon from '@mui/icons-material/LightMode';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import { QueryErrorResetBoundary } from '@tanstack/react-query';
 import { Outlet, useRouter } from '@tanstack/react-router';
-import { createClientOnlyFn } from '@tanstack/react-start';
-import { Suspense, useEffect, useState } from 'react';
+import { Suspense, useEffect } from 'react';
 
 import type { NavMenuItem } from './components/NavMenu/NavMenu.types';
 import type { RouterPath } from './types';
@@ -31,7 +30,7 @@ export const Layout: RouteComponent = () => {
       <Notifications />
       <div className="p-4 h-dvh overflow-hidden size-full grid grid-rows-[auto_1fr] gap-4">
         <header className="grid gap-4">
-          <div className="flex items-center gap-2 text-t-1">
+          <div className="flex items-center gap-2 text-theme-t1">
             <ListAltIcon className="text-inherit text-4xl" fontSize="large" />
             <h1 className="text-inherit">Start tracking your collections!</h1>
           </div>
@@ -49,7 +48,7 @@ export const Layout: RouteComponent = () => {
           </QueryErrorResetBoundary>
         </header>
 
-        <main className="size-full px-4 pt-6 pb-4 bg-surface-1 text-t-1 rounded-xs">
+        <main className="size-full px-4 pt-6 pb-4 bg-theme-surface-1 text-theme-t1 rounded-xs">
           <QueryErrorResetBoundary>
             {({ reset }) => {
               return (
@@ -151,22 +150,25 @@ const ThemeToggles = () => {
       <p>Theme</p>
       <ToggleGroup
         aria-label="User Theme"
-        className="grid gap-1 grid-cols-3"
+        className="grid gap-1 grid-cols-2 border rounded-4xl bg-theme-surface-2 p-1"
         defaultValue={[userPreferenceThemes.dark]}
       >
         {themeToggleItems.map(({ label, theme, ThemeIcon }) => {
           const isSelected = theme === userTheme;
 
           return (
-            <Toggle aria-label={label} key={theme} value={theme}>
-              <div
-                className={`border rounded-sm ${isSelected ? '' : ''}`}
-                onClick={() => {
-                  setTheme(theme);
-                }}
-              >
-                <ThemeIcon />
-              </div>
+            <Toggle
+              aria-label={label}
+              className={`p-1 rounded-4xl cursor-pointer ${isSelected ? 'bg-theme-success' : 'hover:bg-theme-surface-3'}`}
+              key={theme}
+              onClick={() => {
+                setTheme(theme);
+              }}
+              value={theme}
+            >
+              <ThemeIcon
+                className={isSelected ? 'text-white' : 'dark:text-white'}
+              />
             </Toggle>
           );
         })}

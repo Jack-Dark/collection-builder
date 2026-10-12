@@ -50,11 +50,11 @@ export const CollectionsListNameCell = ({
     </form.ArrayField>
   ) : (
     <Link
-      className="flex items-center size-full hover:text-primary-800 hover:*:data-arrow-icon:opacity-100"
+      className="flex items-center size-full text-theme-t1 text-foo hover:text-theme-link-hover hover:*:data-arrow-icon:opacity-100"
       params={{ id: rowId }}
       to="/collections/$id"
     >
-      <p>{value}</p>
+      <p className="text-inherit">{value}</p>
       <KeyboardArrowRightIcon
         className="opacity-0 text-inherit"
         data-arrow-icon=""

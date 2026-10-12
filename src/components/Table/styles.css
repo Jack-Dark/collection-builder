@@ -2,11 +2,11 @@
 
   .table th,
   .table td {
-    border-color: var(--color-surface-3);
+    border-color: var(--color-theme-surface-3);
   }
 
   .table th {
-    background-color: var(--color-surface-1);
+    background-color: var(--color-theme-surface-1);
   }
 
   .table td {
@@ -15,10 +15,10 @@
 
   .table tr,
   .table tr:nth-child(odd) {
-    background-color: var(--color-surface-2);
+    background-color: var(--color-theme-surface-2);
   }
 
   .table tr:nth-child(even) {
-    background-color: var(--color-surface-1);
+    background-color: var(--color-theme-surface-1);
   }
 }
