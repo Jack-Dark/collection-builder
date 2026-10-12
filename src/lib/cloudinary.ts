@@ -2,10 +2,12 @@ import type { UploadApiOptions, UploadApiResponse } from 'cloudinary';
 
 import { v2 as cloudinary } from 'cloudinary';
 
+import { configs } from '#/configs';
+
 cloudinary.config({
-  api_key: import.meta.env.CLOUDINARY_API_KEY,
-  api_secret: import.meta.env.CLOUDINARY_API_SECRET,
-  cloud_name: import.meta.env.CLOUDINARY_CLOUD_NAME,
+  api_key: configs.cloudinaryApiKey,
+  api_secret: configs.cloudinaryApiSecret,
+  cloud_name: configs.cloudinaryCloudName,
   secure: true,
 });
 
@@ -44,7 +46,7 @@ export const uploadChunkToCloudinary = async (props: {
         width: 800,
       },
     ],
-    upload_preset: import.meta.env.CLOUDINARY_UPLOAD_PRESET,
+    upload_preset: configs.cloudinaryUploadPreset,
   };
 
   return new Promise((resolve, reject) => {
