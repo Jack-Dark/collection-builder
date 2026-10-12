@@ -1,9 +1,10 @@
 @import "tailwindcss";
 @import "./theme.css";
-@import "./components/Button/styles.css";
-@import "./components/Fields/InputField/styles.css";
-@import "./components/MoreMenu/components/MenuList/styles.css";
-@import "./components/Table/styles.css";
+@import "./components/Button/Button.css";
+@import "./components/Fields/InputField/InputField.css";
+@import "./components/Fields/TextAreaField/TextAreaField.css";
+@import "./components/MoreMenu/components/MenuList/MenuList.css";
+@import "./components/Table/Table.css";
 
 
 @layer components {
