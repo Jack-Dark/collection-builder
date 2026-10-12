@@ -1,10 +1,8 @@
 import { defineConfig } from 'drizzle-kit';
 
-import { configs } from '#/configs';
-
 export default defineConfig({
   dbCredentials: {
-    url: configs.dbUrl,
+    url: import.meta.env.DATABASE_URL,
   },
   dialect: 'postgresql',
   out: './migrations',

@@ -4,12 +4,11 @@ import { tanstackStartCookies } from 'better-auth/tanstack-start';
 import { Resend } from 'resend';
 
 import { db } from '#/api/db';
-import { configs } from '#/configs';
 
 import * as schema from '../api/db-tables-schema';
 
 // @ts-expect-error
-const _resend = new Resend(configs.resendApiKey);
+const _resend = new Resend(import.meta.env.RESEND_API_KEY);
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -29,7 +28,7 @@ export const auth = betterAuth({
   //     // TODO - UPDATE BACK TO void FROM await
   //     const { data, error } = await resend.emails.send({
   //       from: 'onboarding@resend.dev',
-  //       html: `<p>Click the link to <a href="${configs.siteUrl}/account?token=${token}">verify your email</a></p>`,
+  //       html: `<p>Click the link to <a href="${import.meta.env.SITE_URL}/account?token=${token}">verify your email</a></p>`,
   //       subject: 'Hello World',
   //       to: 'decker3d@gmail.com',
   //     });
