@@ -1,4 +1,4 @@
-import { and, eq, inArray, isNull } from 'drizzle-orm';
+import { and, eq, inArray } from 'drizzle-orm';
 
 import type { DbQueryArgsDef } from '#/auth/auth-middleware.types';
 
@@ -16,7 +16,6 @@ export const deleteCustomFieldsDbQuery = async ({
 
   const matchesUserAndIds = and(
     eq(customFieldsTable.userId, userId),
-    isNull(customFieldsTable.deletedAt),
     inArray(customFieldsTable.id, ids),
   );
 

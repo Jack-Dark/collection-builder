@@ -1,4 +1,4 @@
-import { and, eq, inArray, isNull, sql } from 'drizzle-orm';
+import { and, eq, inArray, sql } from 'drizzle-orm';
 
 import type { InsertLinkCollectionItemsToCustomFieldValuesRecordDef } from '#/api/db-tables-schema.types';
 import type { DbQueryArgsDef } from '#/auth/auth-middleware.types';
@@ -43,7 +43,6 @@ export const updateCollectionItemsDbQuery = async ({
         and(
           inArray(collectionItemsTable.id, collectionItemIds),
           eq(collectionItemsTable.userId, userId),
-          isNull(collectionItemsTable.deletedAt),
           sql`json_array_length(${collectionItemsTable.images}) > 0`,
         ),
       );
@@ -186,7 +185,6 @@ export const updateCollectionItemsDbQuery = async ({
                 and(
                   eq(collectionItemsTable.id, record.id),
                   eq(collectionItemsTable.userId, userId),
-                  isNull(collectionItemsTable.deletedAt),
                 ),
               ),
             // ? Delete any existing links between this collection item and custom field values

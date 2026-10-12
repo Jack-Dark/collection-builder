@@ -16,7 +16,6 @@ import type { CustomFieldValueDef } from './routes/custom-field-values/custom-fi
 
 export const timestamps = {
   createdAt: timestamp('created_at').notNull().defaultNow(),
-  deletedAt: timestamp('deleted_at'),
   updatedAt: timestamp('updated_at')
     .defaultNow()
     .$onUpdate(() => {

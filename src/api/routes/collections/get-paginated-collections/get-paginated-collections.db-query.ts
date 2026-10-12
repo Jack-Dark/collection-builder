@@ -1,4 +1,4 @@
-import { and, eq, ilike, isNull } from 'drizzle-orm';
+import { and, eq, ilike } from 'drizzle-orm';
 
 import type { DbQueryArgsDef } from '#/auth/auth-middleware.types';
 
@@ -22,7 +22,6 @@ export const getPaginatedCollectionsDbQuery = async ({
   return db.transaction(async (tx) => {
     const matchesUserAndSearch = and(
       eq(collectionsTable.userId, userId),
-      isNull(collectionsTable.deletedAt),
       search
         ? ilike(collectionsTable.name, `%${search.toLowerCase()}%`)
         : undefined,

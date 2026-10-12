@@ -1,4 +1,4 @@
-import { and, eq, isNull } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 
 import type { InsertLinkCollectionsToCustomFieldsRecordDef } from '#/api/db-tables-schema.types';
 import type { DbQueryArgsDef } from '#/auth/auth-middleware.types';
@@ -34,7 +34,6 @@ export const updateCollectionByIdDbQuery = async ({
             and(
               eq(collectionsTable.id, record.id),
               eq(collectionsTable.userId, userId),
-              isNull(collectionsTable.deletedAt),
             ),
           ),
 

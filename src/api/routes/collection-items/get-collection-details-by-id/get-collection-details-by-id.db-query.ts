@@ -4,7 +4,6 @@ import type { PgColumn } from 'drizzle-orm/pg-core';
 import {
   and,
   eq,
-  isNull,
   ilike,
   inArray,
   sql,
@@ -54,7 +53,6 @@ export const getCollectionDetailsByIdDbQuery = async ({
       and(
         eq(collectionItemsTable.collectionId, collectionId),
         eq(collectionItemsTable.userId, userId),
-        isNull(collectionItemsTable.deletedAt),
       ),
     );
 

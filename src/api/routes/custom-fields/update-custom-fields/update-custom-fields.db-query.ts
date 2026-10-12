@@ -1,4 +1,4 @@
-import { and, eq, isNull } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 
 import type { DbQueryArgsDef } from '#/auth/auth-middleware.types';
 
@@ -47,7 +47,6 @@ export const updateCustomFieldsDbQuery = async ({
             and(
               eq(customFieldsTable.id, record.id),
               eq(customFieldsTable.userId, userId),
-              isNull(customFieldsTable.deletedAt),
             ),
           )
           .returning();

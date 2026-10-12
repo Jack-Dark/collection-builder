@@ -1,4 +1,4 @@
-import { and, eq, inArray, isNull } from 'drizzle-orm';
+import { and, eq, inArray } from 'drizzle-orm';
 
 import type { DbQueryArgsDef } from '#/auth/auth-middleware.types';
 
@@ -23,7 +23,6 @@ export const deleteCollectionItemsByIdsDbQuery = async ({
         and(
           inArray(collectionItemsTable.id, collectionItemIds),
           eq(collectionItemsTable.userId, userId),
-          isNull(collectionItemsTable.deletedAt),
         ),
       )
       .returning({ images: collectionItemsTable.images });

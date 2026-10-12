@@ -1,4 +1,4 @@
-import { and, asc, eq, isNull, sql } from 'drizzle-orm';
+import { and, asc, eq, sql } from 'drizzle-orm';
 
 import type { DbQueryArgsDef } from '#/auth/auth-middleware.types';
 
@@ -16,12 +16,7 @@ export const getNavMenuCollectionsDbQuery = async ({
   const collections = await db
     .select({ id: collectionsTable.id, name: collectionsTable.name })
     .from(collectionsTable)
-    .where(
-      and(
-        eq(collectionsTable.userId, userId),
-        isNull(collectionsTable.deletedAt),
-      ),
-    )
+    .where(and(eq(collectionsTable.userId, userId)))
     .orderBy(asc(sql`lower(${collectionsTable.name})`));
 
   return { collections };
