@@ -4,8 +4,17 @@ import '../src/styles.css';
 import { withThemeByDataAttribute } from '@storybook/addon-themes';
 import { useEffect } from 'react';
 
+import { DialogProvider } from '#/components/Dialog/Dialog.Provider';
+
 const preview: Preview = {
   decorators: [
+    (Component) => {
+      return (
+        <DialogProvider>
+          <Component />
+        </DialogProvider>
+      );
+    },
     withThemeByDataAttribute({
       attributeName: 'data-theme',
       defaultTheme: 'light',
@@ -40,9 +49,9 @@ const preview: Preview = {
     },
     // https://storybook.js.org/docs/configure/story-layout
     layout: 'centered',
-    // https://storybook.js.org/docs/writing-docs/autodocs
-    tags: ['autodocs'],
   },
+  // https://storybook.js.org/docs/writing-docs/autodocs
+  tags: ['autodocs'],
 };
 
 export default preview;

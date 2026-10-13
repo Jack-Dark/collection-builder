@@ -18,7 +18,7 @@ const meta = {
     },
   },
   component: Button,
-  title: 'Example/Button',
+  title: 'Button',
 } satisfies Meta<typeof Button>;
 
 export default meta;
