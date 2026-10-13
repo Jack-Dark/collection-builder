@@ -9,7 +9,7 @@ export type DialogPropsDef = PropsWithChildren<
     Footer?: JSXElementConstructor<{}>;
     Header?: JSXElementConstructor<{}> | string;
     isFullScreen?: boolean;
-    maxWidthClassName?: string;
+    maxWidthClassName?: `md:max-w-${string}`;
   } & (
     | {
         hideClose: boolean;
@@ -30,7 +30,7 @@ export const Dialog = (props: DialogPropsDef) => {
     Header,
     hideClose,
     isFullScreen,
-    maxWidthClassName = 'md:max-w-100',
+    maxWidthClassName = 'md:max-w-100' satisfies DialogPropsDef['maxWidthClassName'],
     onClose,
   } = props;
 
