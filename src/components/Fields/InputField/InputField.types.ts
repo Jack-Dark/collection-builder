@@ -14,9 +14,10 @@ export type InputFieldProps = Pick<
   | 'required'
   | 'type'
   | 'value'
+  | 'onBlur'
+  | 'onChange'
 > &
   FieldWrapperProps & {
     inputClassName?: string;
     onValueChange?: (value: string) => void;
-    triggerOnBlur?: boolean;
   };

@@ -30,7 +30,9 @@ export const createOrUpdateCollectionFormOptions = formOptions({
   validators: [
     {
       run: createOrUpdateCollectionFormSchema,
-      triggers: ['change'],
+      runOnSubmit: true,
+      triggerDebounceMs: 300,
+      triggers: ['blur'],
     },
   ],
 });

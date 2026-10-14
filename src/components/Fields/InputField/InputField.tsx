@@ -18,11 +18,12 @@ export const InputField = (props: InputFieldProps) => {
     invalid,
     label,
     name,
+    onBlur,
+    onChange,
     onValueChange,
     placeholder,
     ref,
     required,
-    triggerOnBlur,
     type,
     validationDebounceTime,
     validationMode,
@@ -52,20 +53,9 @@ export const InputField = (props: InputFieldProps) => {
         )}
         data-input=""
         defaultValue={defaultValue}
-        onBlur={
-          triggerOnBlur
-            ? (event) => {
-                const value = event.target.value;
-
-                onValueChange?.(value);
-              }
-            : undefined
-        }
-        onValueChange={(value) => {
-          if (!triggerOnBlur) {
-            onValueChange?.(value);
-          }
-        }}
+        onBlur={onBlur}
+        onChange={onChange}
+        onValueChange={onValueChange}
         placeholder={placeholder}
         ref={ref}
         required={required}

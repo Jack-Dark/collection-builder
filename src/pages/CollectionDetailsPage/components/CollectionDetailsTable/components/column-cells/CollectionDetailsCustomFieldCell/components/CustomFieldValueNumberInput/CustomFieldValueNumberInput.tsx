@@ -41,7 +41,9 @@ export const CustomFieldValueNumberInput = <TField extends AnyFieldApi>({
   return (
     <InputField
       disabled={processing}
-      onValueChange={async (value) => {
+      onBlur={async (event) => {
+        const value = event.target.value;
+
         const formattedValue = Number(value);
 
         const [newCustomFieldValue] = await onCreateCustomFieldValues({
@@ -56,7 +58,6 @@ export const CustomFieldValueNumberInput = <TField extends AnyFieldApi>({
         field.handleChange(newCustomFieldValue);
       }}
       placeholder={`Input ${customField.name}...`}
-      triggerOnBlur
       type="number"
       value={customFieldValue?.data?.value}
     />

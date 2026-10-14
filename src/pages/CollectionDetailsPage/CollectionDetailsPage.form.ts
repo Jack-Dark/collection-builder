@@ -38,7 +38,9 @@ export const createOrUpdateCollectionItemsFormOptions = formOptions({
   validators: [
     {
       run: createOrUpdateCollectionItemsFormSchema,
-      triggers: ['change'],
+      runOnSubmit: true,
+      triggerDebounceMs: 300,
+      triggers: ['blur'],
     },
   ],
 });
