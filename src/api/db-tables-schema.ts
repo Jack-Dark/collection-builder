@@ -9,6 +9,7 @@ import {
   json,
   snakeCase,
   integer,
+  numeric,
 } from 'drizzle-orm/pg-core';
 
 import type { CustomFieldTypeDef } from './db-tables-schema.types';
@@ -158,6 +159,9 @@ export const customFieldValuesTable = snakeCase.table('custom_field_values', {
       { onDelete: 'cascade' },
     )
     .notNull(),
+  valueBoolean: boolean(),
+  valueNumber: numeric(),
+  valueText: text(),
   ...timestamps,
 });
 
