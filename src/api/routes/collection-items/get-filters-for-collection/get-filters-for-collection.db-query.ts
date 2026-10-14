@@ -64,14 +64,15 @@ export const getFiltersForCollectionDbQuery = async ({
       }
     }, []);
 
-    // return customFieldsInCollection;
-
+    // TODO - UPDATE LOGIC TO USE `selectDistinctOn([collectionItemsToCustomFieldValuesTable.id])` TO ENSURE ONLY **APPLIED** CUSTOM FIELD VALUES ARE CONSIDERED
     const uniqueCustomFieldValues = await Promise.all(
       customFieldsInCollection.map(async (customField) => {
         if (customField) {
           return await tx
             .selectDistinctOn([customFieldValuesTable.id], {
-              data: customFieldValuesTable.data,
+              valueBoolean: customFieldValuesTable.valueBoolean,
+              valueNumber: customFieldValuesTable.valueNumber,
+              valueText: customFieldValuesTable.valueText,
             })
             .from(customFieldValuesTable)
             .innerJoin(
@@ -117,8 +118,8 @@ export const getFiltersForCollectionDbQuery = async ({
         const matchingCustomFieldValues = uniqueCustomFieldValues[index];
 
         if (matchingCustomFieldValues) {
-          const values = matchingCustomFieldValues.map(({ data }) => {
-            const value = data.value as string;
+          const values = matchingCustomFieldValues.map(({ valueText }) => {
+            const value = valueText || '';
 
             return {
               label: value,
@@ -145,12 +146,19 @@ export const getFiltersForCollectionDbQuery = async ({
         const matchingCustomFieldValues = uniqueCustomFieldValues[index];
 
         if (matchingCustomFieldValues) {
-          const values = matchingCustomFieldValues.map(({ data }) => {
-            return data.value as number;
-          });
+          const allNumberValues = matchingCustomFieldValues.reduce<number[]>(
+            (acc, { valueNumber }) => {
+              if (typeof valueNumber === 'number') {
+                return [...acc, valueNumber];
+              } else {
+                return acc;
+              }
+            },
+            [],
+          );
 
-          const min = Math.min(...values);
-          const max = Math.max(...values);
+          const min = Math.floor(Math.min(...allNumberValues));
+          const max = Math.ceil(Math.max(...allNumberValues));
 
           return [
             ...acc,

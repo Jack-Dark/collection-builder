@@ -127,6 +127,7 @@ const CustomFieldBooleanFilter = (props: {
   return (
     <form.Field key={customField.id} name={`filters.${customField.id}`}>
       {(field) => {
+        // ? Comparison is really just for type safety
         if (customField.type === 'boolean' && fieldValue?.type === 'boolean') {
           const { handleChange } = field;
           const { value } = fieldValue;
@@ -182,6 +183,7 @@ const CustomFieldNumberFilter = (props: {
   return (
     <form.Field key={customField.id} name={`filters.${customField.id}`}>
       {(field) => {
+        // ? Comparison is really just for type safety
         if (customField.type === 'number' && fieldValue?.type === 'number') {
           const { handleChange } = field;
 
@@ -216,17 +218,17 @@ const CustomFieldNumberFilter = (props: {
                   }}
                   value={[fieldValue?.range.min, fieldValue?.range.max]}
                 >
-                  <Slider.Control className="py-2">
+                  <Slider.Control className="py-2 data-dragging:cursor-grabbing">
                     <Slider.Track className="bg-gray-500 h-1 w-full">
                       <Slider.Indicator className="bg-primary-700" />
                       <Slider.Thumb
                         aria-label="Minimum value"
-                        className="size-3 bg-primary-700 rounded-xl"
+                        className="size-3 bg-primary-700 rounded-xl cursor-grab"
                         index={0}
                       />
                       <Slider.Thumb
                         aria-label="Maximum value"
-                        className="size-3 bg-primary-700 rounded-xl"
+                        className="size-3 bg-primary-700 rounded-xl cursor-grab"
                         index={1}
                       />
                     </Slider.Track>

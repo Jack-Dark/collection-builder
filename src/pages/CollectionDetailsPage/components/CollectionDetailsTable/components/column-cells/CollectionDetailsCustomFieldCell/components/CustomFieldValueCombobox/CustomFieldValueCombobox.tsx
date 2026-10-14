@@ -2,7 +2,7 @@ import type { AnyFieldApi } from '@tanstack/react-form';
 
 import CheckIcon from '@mui/icons-material/Check';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 import type { CustomFieldTypeDef } from '#/api/db-tables-schema.types';
@@ -43,7 +43,9 @@ export const CustomFieldValueCombobox = <TField extends AnyFieldApi>({
 }: CustomFieldValueComboboxPropsDef<TField>) => {
   const [customFieldValueToDelete, setCustomFieldValueToDelete] = useState<{
     id: number;
-    value: string;
+    valueBoolean: null;
+    valueNumber: null;
+    valueText: string;
   }>();
 
   const { data, isFetching } = useGetCustomFieldValuesByCustomFieldId({
@@ -55,13 +57,6 @@ export const CustomFieldValueCombobox = <TField extends AnyFieldApi>({
   const invalidateGetCustomFieldValuesByCustomFieldId =
     useInvalidateGetCustomFieldValuesByCustomFieldId();
 
-  const items = useMemo(() => {
-    // TODO - REFACTOR USEQUERY TRANSFORM AND UPDATE  TO USE THAT. ONSUCCESS IS ALSO RETURNING NEVER[] FOR SOME REASON. INVESTIGATE.
-    return data.map(({ data, id }) => {
-      return { id, value: data.value as string };
-    });
-  }, [data]);
-
   const { onCreateCustomFieldValues, processing } = useCreateCustomFieldValues({
     onSuccess: () => {
       invalidateGetCustomFieldValuesByCustomFieldId({
@@ -70,7 +65,7 @@ export const CustomFieldValueCombobox = <TField extends AnyFieldApi>({
     },
   });
 
-  const customFieldValue = useSubscribeToCustomFieldValue<string, typeof form>({
+  const customFieldValue = useSubscribeToCustomFieldValue({
     customFieldId: customField.id,
     form,
     rowIndex,
@@ -100,32 +95,33 @@ export const CustomFieldValueCombobox = <TField extends AnyFieldApi>({
         return {
           // typing as number to resolve inferred type errors
           id: uuidv4() as unknown as number,
-          value: label,
+          valueBoolean: null,
+          valueNumber: null,
+          valueText: label,
         };
       }}
       disabled={isFetching || processing}
       idProperty="id"
-      inputValue={customFieldValue?.data?.value}
-      items={items}
-      labelProperty="value"
+      inputValue={customFieldValue?.valueText ?? undefined}
+      items={data}
+      labelProperty="valueText"
       name={field.name}
       onValueChange={async (selectedItem) => {
         if (selectedItem) {
           const customFieldValueExistsInDB =
             typeof selectedItem.id === 'number';
 
-          const matchesCurrentSelection =
-            customFieldValue?.id === selectedItem.id;
-          if (matchesCurrentSelection) {
+          const isAlreadySelected = customFieldValue?.id === selectedItem.id;
+          if (isAlreadySelected) {
             // ? deselect item
             field.handleChange(undefined);
           } else if (customFieldValueExistsInDB) {
             // ? use selected item
             field.handleChange({
-              data: {
-                value: selectedItem.value,
-              },
               id: selectedItem.id,
+              valueBoolean: null,
+              valueNumber: null,
+              valueText: selectedItem.valueText,
             });
           } else {
             // ? create selected item in DB
@@ -133,7 +129,7 @@ export const CustomFieldValueCombobox = <TField extends AnyFieldApi>({
               records: [
                 {
                   customFieldId: customField.id,
-                  value: selectedItem.value,
+                  value: selectedItem.valueText,
                 },
               ],
             });
@@ -146,7 +142,7 @@ export const CustomFieldValueCombobox = <TField extends AnyFieldApi>({
       RenderItem={({ item, SelectedIndicator }) => {
         return (
           <div className="flex gap-2 items-center w-full">
-            <span>{item.value}</span>
+            <span>{item.valueText}</span>
             <SelectedIndicator>
               <CheckIcon fontSize="inherit" />
             </SelectedIndicator>
@@ -172,7 +168,9 @@ export const CustomFieldValueCombobox = <TField extends AnyFieldApi>({
         customFieldValue
           ? {
               id: customFieldValue.id,
-              value: customFieldValue.data.value,
+              valueBoolean: null,
+              valueNumber: null,
+              valueText: customFieldValue.valueText || '',
             }
           : undefined
       }

@@ -86,9 +86,11 @@ export const CollectionDetailsCustomFieldCell = (
   ) : (
     <>
       {customField.type === 'boolean' ? (
-        <CheckboxField checked={!!customFieldValue?.data?.value} disabled />
+        <CheckboxField checked={!!customFieldValue?.valueBoolean} disabled />
       ) : (
-        <p>{customFieldValue?.data?.value || '-'}</p>
+        <p>
+          {customFieldValue?.valueText ?? customFieldValue?.valueNumber ?? '-'}
+        </p>
       )}
     </>
   );

@@ -13,8 +13,10 @@ export const getCustomFieldValuesByCustomFieldIdDbQuery = async ({
 
   return await db.query.customFieldValues.findMany({
     columns: {
-      data: true,
       id: true,
+      valueBoolean: true,
+      valueNumber: true,
+      valueText: true,
     },
     where: {
       customFieldId: id,

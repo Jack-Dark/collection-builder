@@ -1,15 +1,10 @@
-import type { AnyFormApi } from '@tanstack/react-form';
-
 import { useSelector } from '@tanstack/react-store';
 
-import type { CustomFieldValueDef } from '#/api/routes/custom-field-values/custom-field-values.types';
+import type { CreateOrUpdateCollectionItemFormTypeDef } from '#/pages/CollectionDetailsPage/CollectionDetailsPage.types';
 
-export const useSubscribeToCustomFieldValue = <
-  TValue extends CustomFieldValueDef,
-  TForm extends AnyFormApi,
->(props: {
+export const useSubscribeToCustomFieldValue = (props: {
   customFieldId: number;
-  form: TForm;
+  form: CreateOrUpdateCollectionItemFormTypeDef;
   rowIndex: number;
 }) => {
   const { customFieldId, form, rowIndex } = props;
@@ -19,14 +14,14 @@ export const useSubscribeToCustomFieldValue = <
   });
 
   if (customFieldValue) {
-    const { data, id } = customFieldValue;
+    const { id, valueBoolean, valueNumber, valueText } = customFieldValue;
 
     // ? force type as hook is used in components where each type is handled
     return {
-      data: {
-        value: data.value as TValue,
-      },
-      id: id as number,
+      id,
+      valueBoolean,
+      valueNumber,
+      valueText,
     };
   } else {
     return;

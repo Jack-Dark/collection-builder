@@ -15,7 +15,7 @@ type DeleteCustomFieldValueDialogPropsDef<
   collectionItemId: number | string;
   customFieldValueToDelete: {
     id: number;
-    value: string;
+    valueText: string;
   };
   handleFieldChange: THandleFieldChange;
   onClose: HideDialog;
@@ -103,7 +103,7 @@ export const DeleteCustomFieldValueDialog = <
           Are you sure you want to delete this custom field value?
         </p>
 
-        <h4 className="text-center">{customFieldValueToDelete.value}</h4>
+        <h4 className="text-center">{customFieldValueToDelete.valueText}</h4>
 
         {!!numAffectedCollectionItems && (
           <>

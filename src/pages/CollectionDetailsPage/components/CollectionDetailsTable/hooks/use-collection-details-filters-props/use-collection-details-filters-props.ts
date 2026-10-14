@@ -1,6 +1,7 @@
 import type { ReactFormType } from '@tanstack/react-form';
 
 import { formOptions, useForm } from '@tanstack/react-form';
+import _ from 'lodash';
 import z from 'zod';
 
 import type { FiltersButtonPropsDef } from '#/components/Table/components/FilterButton/FilterButton.types';
@@ -115,8 +116,25 @@ export const useCollectionDetailsFiltersProps = () => {
     ...collectionItemsFiltersFormOptions,
     defaultValues: { filters: defaultValues },
     onSubmit: ({ value }) => {
+      // ? Only include filters not matching the default values
+      const submissionValues = Object.entries(value.filters).reduce<
+        typeof value.filters
+      >((acc, [customFieldStringId, filterValues]) => {
+        const customFieldId = Number(customFieldStringId);
+        const matchesDefaultValues = _.isEqual(
+          filterValues,
+          defaultValues[customFieldId],
+        );
+
+        if (matchesDefaultValues) {
+          return acc;
+        } else {
+          return { ...acc, [customFieldId]: filterValues };
+        }
+      }, {});
+
       onUpdateCollectionItemsQueries({
-        filters: value.filters,
+        filters: submissionValues,
       });
     },
   });

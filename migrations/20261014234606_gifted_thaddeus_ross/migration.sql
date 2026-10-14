@@ -1,0 +1,1 @@
+ALTER TABLE "custom_field_values" DROP COLUMN "data";

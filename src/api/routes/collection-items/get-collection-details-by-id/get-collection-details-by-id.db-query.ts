@@ -7,12 +7,11 @@ import {
   ilike,
   inArray,
   sql,
-  gte,
-  lte,
   asc,
   desc,
   notExists,
   exists,
+  between,
 } from 'drizzle-orm';
 
 import type { DbQueryArgsDef } from '#/auth/auth-middleware.types';
@@ -138,10 +137,7 @@ export const getCollectionDetailsByIdDbQuery = async ({
                       collectionItemsToCustomFieldValuesTable.collectionItemId,
                     ),
                     eq(customFieldsTable.id, customFieldId),
-                    inArray(
-                      sql`${customFieldValuesTable.data}->>'value'`,
-                      items,
-                    ),
+                    inArray(customFieldValuesTable.valueText, items),
                   ),
                 ),
             ),
@@ -189,8 +185,7 @@ export const getCollectionDetailsByIdDbQuery = async ({
                     collectionItemsToCustomFieldValuesTable.collectionItemId,
                   ),
                   eq(customFieldsTable.id, customFieldId),
-                  gte(sql`${customFieldValuesTable.data}->>'value'`, min),
-                  lte(sql`${customFieldValuesTable.data}->>'value'`, max),
+                  between(customFieldValuesTable.valueNumber, min, max),
                 ),
               ),
           ),
@@ -238,13 +233,13 @@ export const getCollectionDetailsByIdDbQuery = async ({
                       collectionItemsToCustomFieldValuesTable.collectionItemId,
                     ),
                     eq(customFieldsTable.id, customFieldId),
-                    eq(sql`${customFieldValuesTable.data}->>'value'`, 'true'),
+                    eq(customFieldValuesTable.valueBoolean, true),
                   ),
                 ),
             ),
           ];
         } else if (value === false) {
-          // ? check if `true` does not exist
+          // ? check if `true` does not exist as `false` and `null` are presented the same way
 
           return [
             ...acc,
@@ -284,7 +279,7 @@ export const getCollectionDetailsByIdDbQuery = async ({
                       collectionItemsToCustomFieldValuesTable.collectionItemId,
                     ),
                     eq(customFieldsTable.id, customFieldId),
-                    eq(sql`${customFieldValuesTable.data}->>'value'`, 'true'),
+                    eq(customFieldValuesTable.valueBoolean, true),
                   ),
                 ),
             ),
@@ -371,8 +366,10 @@ export const getCollectionDetailsByIdDbQuery = async ({
             customFieldValue: {
               columns: {
                 customFieldId: true,
-                data: true,
                 id: true,
+                valueBoolean: true,
+                valueNumber: true,
+                valueText: true,
               },
             },
           },
@@ -411,9 +408,9 @@ export const getCollectionDetailsByIdDbQuery = async ({
                 ...acc,
                 [customFieldId]: rest,
               };
-            } else {
-              return acc;
             }
+
+            return acc;
           },
           {},
         );

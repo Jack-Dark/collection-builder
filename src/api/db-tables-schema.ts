@@ -1,6 +1,3 @@
-import type { SQL } from 'drizzle-orm';
-
-import { eq, gte, inArray, lte, sql } from 'drizzle-orm';
 import {
   text,
   timestamp,
@@ -13,7 +10,6 @@ import {
 } from 'drizzle-orm/pg-core';
 
 import type { CustomFieldTypeDef } from './db-tables-schema.types';
-import type { CustomFieldValueDef } from './routes/custom-field-values/custom-field-values.types';
 
 export const timestamps = {
   createdAt: timestamp('created_at').notNull().defaultNow(),
@@ -148,7 +144,6 @@ export const customFieldValuesTable = snakeCase.table('custom_field_values', {
       { onDelete: 'cascade' },
     )
     .notNull(),
-  data: json().$type<{ value: string | number | boolean }>().notNull(),
   id: serial().primaryKey(),
   userId: text()
     .notNull()
@@ -160,33 +155,10 @@ export const customFieldValuesTable = snakeCase.table('custom_field_values', {
     )
     .notNull(),
   valueBoolean: boolean(),
-  valueNumber: numeric(),
+  valueNumber: numeric({ mode: 'number' }),
   valueText: text(),
   ...timestamps,
 });
-
-export const equalsCustomFieldValue = (
-  value:
-    | (CustomFieldValueDef | null)
-    | (CustomFieldValueDef | null)[]
-    | { max: number; min: number },
-) => {
-  const queries: SQL[] = [];
-
-  const isArray = Array.isArray(value);
-  if (isArray) {
-    queries.push(inArray(sql`${customFieldValuesTable.data}->>'value'`, value));
-  } else if (value && typeof value === 'object') {
-    const { max, min } = value;
-
-    queries.push(gte(sql`${customFieldValuesTable.data}->>'value'`, min));
-    queries.push(lte(sql`${customFieldValuesTable.data}->>'value'`, max));
-  } else {
-    queries.push(eq(sql`${customFieldValuesTable.data}->>'value'`, value));
-  }
-
-  return queries;
-};
 
 export const collectionsToCustomFieldsTable = snakeCase.table(
   'collections_to_custom_fields',

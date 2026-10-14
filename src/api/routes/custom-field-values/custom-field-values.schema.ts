@@ -9,12 +9,10 @@ export const customFieldValuesFormSchema = z.union([
     z.number(),
     z
       .object({
-        data: z
-          .object({
-            value: customFieldValueSchema,
-          })
-          .describe('Custom Field Value ID'),
         id: z.number().min(1).describe('Custom Field Value ID'),
+        valueBoolean: z.boolean().nullable().describe('Custom Field Value'),
+        valueNumber: z.number().nullable().describe('Custom Field Value'),
+        valueText: z.string().nullable().describe('Custom Field Value'),
       })
       .optional(),
   ),

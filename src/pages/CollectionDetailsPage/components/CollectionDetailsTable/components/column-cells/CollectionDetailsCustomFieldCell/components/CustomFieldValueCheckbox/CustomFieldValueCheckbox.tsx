@@ -30,17 +30,15 @@ export const CustomFieldValueCheckbox = <TField extends AnyFieldApi>({
   const { onCreateCustomFieldValues, processing } =
     useCreateCustomFieldValues();
 
-  const customFieldValue = useSubscribeToCustomFieldValue<boolean, typeof form>(
-    {
-      customFieldId: customField.id,
-      form,
-      rowIndex,
-    },
-  );
+  const customFieldValue = useSubscribeToCustomFieldValue({
+    customFieldId: customField.id,
+    form,
+    rowIndex,
+  });
 
   return (
     <CheckboxField
-      checked={customFieldValue?.data?.value}
+      checked={!!customFieldValue?.valueBoolean}
       disabled={processing}
       onCheckedChange={async (value) => {
         const [newCustomFieldValue] = await onCreateCustomFieldValues({

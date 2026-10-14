@@ -32,7 +32,7 @@ export const CustomFieldValueNumberInput = <TField extends AnyFieldApi>({
 
   // TODO - FIGURE OUT HOW TO ADD SOME ADDITIONAL LOGIC TO CLEAR OUT UNUSED NUMBER CUSTOM FIELD VALUES SINCE THIS IS SAVED ON BLUR
 
-  const customFieldValue = useSubscribeToCustomFieldValue<number, typeof form>({
+  const customFieldValue = useSubscribeToCustomFieldValue({
     customFieldId: customField.id,
     form,
     rowIndex,
@@ -59,7 +59,7 @@ export const CustomFieldValueNumberInput = <TField extends AnyFieldApi>({
       }}
       placeholder={`Input ${customField.name}...`}
       type="number"
-      value={customFieldValue?.data?.value}
+      value={customFieldValue?.valueNumber ?? undefined}
     />
   );
 };
