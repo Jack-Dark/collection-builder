@@ -14,7 +14,7 @@ export const AddNewCollectionItemButton = ({
   insertAtIndex,
   text,
 }: {
-  disabled: boolean;
+  disabled?: boolean;
   form: CreateOrUpdateCollectionItemFormTypeDef;
   insertAtIndex: number;
   text: string;

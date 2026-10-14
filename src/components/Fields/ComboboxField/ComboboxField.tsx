@@ -267,7 +267,7 @@ export const ComboboxField = <
         }}
         value={value}
       >
-        <div className="grid gap-2">
+        <div className="max-w-full grid gap-2">
           {Array.isArray(value) && (
             <DragDropProvider
               onDragEnd={(event) => {
@@ -315,17 +315,20 @@ export const ComboboxField = <
 
           <Combobox.Value>
             {() => {
+              const classNames =
+                'min-w-20 max-w-full p-1.5 border rounded-xs border-theme-divider-1 dark:border-theme-divider-3 bg-theme-surface-1 dark:bg-theme-surface-2 dialog:dark:bg-theme-surface-1';
+
               return multiple ? (
                 <Combobox.Input
                   aria-label={ariaLabel}
-                  className="p-1.5 border rounded-xs border-theme-divider-1 dark:border-theme-divider-3 bg-theme-surface-1 dark:bg-theme-surface-2  dialog:dark:bg-theme-surface-1"
+                  className={classNames}
                   placeholder={placeholder}
                   value={query}
                 />
               ) : (
                 <Combobox.Input
                   aria-label={ariaLabel}
-                  className="p-1.5 border rounded-xs border-theme-divider-1 dark:border-theme-divider-3 bg-theme-surface-1 dark:bg-theme-surface-2  dialog:bg-theme-surface-1"
+                  className={classNames}
                   onBlur={() => {
                     setIsInputFocused(false);
                   }}

@@ -37,7 +37,7 @@ export const FieldWrapper = (props: PropsWithChildren<FieldWrapperProps>) => {
   return (
     <Field.Root
       aria-label={hideLabel ? label : undefined}
-      className={`grid gap-1 ${className || ''}`}
+      className={`max-w-full grid gap-1 ${className || ''}`}
       disabled={disabled}
       invalid={invalid}
       name={name}

@@ -50,8 +50,8 @@ export const CollectionDetailsFiltersContent = (
 ) => {
   const { collectionId, form } = props;
 
+  // TODO - WRAP IN SUSPENSE SO REQUEST IS MADE ON DEMAND
   const { data: filterOptions } = useGetFiltersForCollection({
-    // TODO - create global store for when the filters have been opened
     enabled: false,
     placeholderData: [],
     requestArgs: { id: collectionId },
