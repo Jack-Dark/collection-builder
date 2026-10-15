@@ -1,5 +1,6 @@
-import type { SQL } from 'drizzle-orm';
-import type { PgColumn } from 'drizzle-orm/pg-core';
+import type { AnyRelations, SQL } from 'drizzle-orm';
+import type { NeonQueryResultHKT } from 'drizzle-orm/neon-serverless';
+import type { PgAsyncTransaction, PgColumn } from 'drizzle-orm/pg-core';
 
 import {
   and,
@@ -99,35 +100,12 @@ export const getCollectionDetailsByIdDbQuery = async ({
         if (items.length) {
           return [
             ...acc,
-            exists(
-              tx
-                .select({ exists: sql<boolean>`1` })
-                .from(collectionItemsToCustomFieldValuesTable)
-                .innerJoin(
-                  customFieldValuesTable,
-                  eq(
-                    customFieldValuesTable.id,
-                    collectionItemsToCustomFieldValuesTable.customFieldValueId,
-                  ),
-                )
-                .innerJoin(
-                  customFieldsTable,
-                  eq(
-                    customFieldsTable.id,
-                    customFieldValuesTable.customFieldId,
-                  ),
-                )
-                .where(
-                  and(
-                    eq(
-                      collectionItemsTable.id,
-                      collectionItemsToCustomFieldValuesTable.collectionItemId,
-                    ),
-                    eq(customFieldsTable.id, customFieldId),
-                    inArray(customFieldValuesTable.valueText, items),
-                  ),
-                ),
-            ),
+            getWhereCustomFieldValuesMatch({
+              asExists: true,
+              customFieldId,
+              tx,
+              where: inArray(customFieldValuesTable.valueText, items),
+            }),
           ];
         }
       } else if (filter.type === 'number') {
@@ -136,32 +114,12 @@ export const getCollectionDetailsByIdDbQuery = async ({
 
         return [
           ...acc,
-          exists(
-            tx
-              .select({ exists: sql<boolean>`1` })
-              .from(collectionItemsToCustomFieldValuesTable)
-              .innerJoin(
-                customFieldValuesTable,
-                eq(
-                  customFieldValuesTable.id,
-                  collectionItemsToCustomFieldValuesTable.customFieldValueId,
-                ),
-              )
-              .innerJoin(
-                customFieldsTable,
-                eq(customFieldsTable.id, customFieldValuesTable.customFieldId),
-              )
-              .where(
-                and(
-                  eq(
-                    collectionItemsTable.id,
-                    collectionItemsToCustomFieldValuesTable.collectionItemId,
-                  ),
-                  eq(customFieldsTable.id, customFieldId),
-                  between(customFieldValuesTable.valueNumber, min, max),
-                ),
-              ),
-          ),
+          getWhereCustomFieldValuesMatch({
+            asExists: true,
+            customFieldId,
+            tx,
+            where: between(customFieldValuesTable.valueNumber, min, max),
+          }),
         ];
       } else if (filter.type === 'boolean') {
         const { value } = filter;
@@ -170,70 +128,24 @@ export const getCollectionDetailsByIdDbQuery = async ({
 
           return [
             ...acc,
-            exists(
-              tx
-                .select({ exists: sql<boolean>`1` })
-                .from(collectionItemsToCustomFieldValuesTable)
-                .innerJoin(
-                  customFieldValuesTable,
-                  eq(
-                    customFieldValuesTable.id,
-                    collectionItemsToCustomFieldValuesTable.customFieldValueId,
-                  ),
-                )
-                .innerJoin(
-                  customFieldsTable,
-                  eq(
-                    customFieldsTable.id,
-                    customFieldValuesTable.customFieldId,
-                  ),
-                )
-                .where(
-                  and(
-                    eq(
-                      collectionItemsTable.id,
-                      collectionItemsToCustomFieldValuesTable.collectionItemId,
-                    ),
-                    eq(customFieldsTable.id, customFieldId),
-                    eq(customFieldValuesTable.valueBoolean, true),
-                  ),
-                ),
-            ),
+            getWhereCustomFieldValuesMatch({
+              asExists: true,
+              customFieldId,
+              tx,
+              where: eq(customFieldValuesTable.valueBoolean, true),
+            }),
           ];
         } else if (value === false) {
-          // ? check if `true` does not exist as `false` and `null` are presented the same way
+          // ? check if `true` does not exist as `false` and `null` are presented the same way and `null` values do not have a linking table record
 
           return [
             ...acc,
-            notExists(
-              tx
-                .select({ exists: sql<boolean>`1` })
-                .from(collectionItemsToCustomFieldValuesTable)
-                .innerJoin(
-                  customFieldValuesTable,
-                  eq(
-                    customFieldValuesTable.id,
-                    collectionItemsToCustomFieldValuesTable.customFieldValueId,
-                  ),
-                )
-                .innerJoin(
-                  customFieldsTable,
-                  eq(
-                    customFieldsTable.id,
-                    customFieldValuesTable.customFieldId,
-                  ),
-                )
-                .where(
-                  and(
-                    eq(
-                      collectionItemsTable.id,
-                      collectionItemsToCustomFieldValuesTable.collectionItemId,
-                    ),
-                    eq(customFieldsTable.id, customFieldId),
-                    eq(customFieldValuesTable.valueBoolean, true),
-                  ),
-                ),
-            ),
+            getWhereCustomFieldValuesMatch({
+              asExists: false,
+              customFieldId,
+              tx,
+              where: eq(customFieldValuesTable.valueBoolean, true),
+            }),
           ];
         }
       }
@@ -358,4 +270,44 @@ export const getCollectionDetailsByIdDbQuery = async ({
       pagination,
     };
   });
+};
+
+const getWhereCustomFieldValuesMatch = <
+  TRelations extends AnyRelations,
+>(props: {
+  asExists: boolean;
+  customFieldId: number;
+  tx: PgAsyncTransaction<NeonQueryResultHKT, TRelations>;
+  where: SQL;
+}) => {
+  const { asExists, customFieldId, tx, where } = props;
+
+  const fn = asExists ? exists : notExists;
+
+  return fn(
+    tx
+      .select({ exists: sql<boolean>`1` })
+      .from(collectionItemsToCustomFieldValuesTable)
+      .innerJoin(
+        customFieldValuesTable,
+        eq(
+          customFieldValuesTable.id,
+          collectionItemsToCustomFieldValuesTable.customFieldValueId,
+        ),
+      )
+      .innerJoin(
+        customFieldsTable,
+        eq(customFieldsTable.id, customFieldValuesTable.customFieldId),
+      )
+      .where(
+        and(
+          eq(
+            collectionItemsTable.id,
+            collectionItemsToCustomFieldValuesTable.collectionItemId,
+          ),
+          eq(customFieldsTable.id, customFieldId),
+          where,
+        ),
+      ),
+  );
 };
