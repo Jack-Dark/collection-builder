@@ -26,7 +26,7 @@ export const SwitchField = (props: SwitchFieldPropsDef) => {
     return label ? (
       <Field.Label className="cursor-pointer">
         {label}
-        {required ? <span className="text-red-600">*</span> : undefined}
+        {required ? <span className="text-theme-alert">*</span> : undefined}
       </Field.Label>
     ) : null;
   }, [label, required]);
@@ -44,13 +44,19 @@ export const SwitchField = (props: SwitchFieldPropsDef) => {
       validationMode={validationMode}
     >
       <div
-        className={`grid gap-1 items-center ${label && 'grid-cols-[max-content_1fr]'}`}
+        className={`grid gap-2 items-center ${
+          label
+            ? labelPosition === 'left'
+              ? 'grid-cols-[max-content_1fr]'
+              : 'grid-cols-[1fr_max-content]'
+            : ''
+        }`}
       >
         {labelPosition === 'left' && <Label />}
 
         <SwitchMui.Root
           checked={checked}
-          className={`flex h-5 w-9 shrink-0 rounded-2xl p-0.5 transition-colors duration-150 ease-[ease] border data-checked:bg-primary-900 data-checked:border-primary-900 ${
+          className={`flex h-5 w-9 shrink-0 rounded-2xl p-0.5 transition-colors duration-150 ease-[ease] border data-checked:bg-theme-success data-checked:border-theme-success ${
             disabled
               ? 'cursor-not-allowed border-gray-300 bg-gray-300'
               : 'cursor-pointer border-gray-500 bg-gray-500'

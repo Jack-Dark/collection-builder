@@ -10,7 +10,13 @@ import { SwitchField } from '#/components/Fields/SwitchField';
 import type { SearchProps } from './Search.types';
 
 export const Search = (props: SearchProps) => {
-  const { onChange, onClickSearchNotes, searchNotes, value } = props;
+  const {
+    enableSearchNotes,
+    onChange,
+    onClickSearchNotes,
+    searchNotes,
+    value,
+  } = props;
 
   const [text, setText] = useState(value);
 
@@ -46,7 +52,7 @@ export const Search = (props: SearchProps) => {
         )}
       </div>
 
-      {searchNotes && (
+      {enableSearchNotes && (
         <SwitchField
           checked={searchNotes}
           className="absolute right-0 h-full py-1 pl-1 pr-2 flex items-stretch"

@@ -13,6 +13,7 @@ export const useCollectionDetailsSearchProps = () => {
   };
 
   return {
+    enableSearchNotes: true,
     onChange,
     onClickSearchNotes,
     searchNotes: searchQueries.searchNotes,

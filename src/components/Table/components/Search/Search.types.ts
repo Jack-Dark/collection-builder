@@ -3,10 +3,12 @@ export type SearchProps = {
   value: string;
 } & (
   | {
+      enableSearchNotes?: never;
       onClickSearchNotes?: never;
       searchNotes?: never;
     }
   | {
+      enableSearchNotes: boolean;
       onClickSearchNotes: (checked: boolean) => void;
       searchNotes: boolean;
     }
