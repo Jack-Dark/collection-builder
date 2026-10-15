@@ -154,6 +154,7 @@ export const getFiltersForCollectionDbQuery = async ({
         const matchingCustomFieldValues = uniqueCustomFieldValues[index];
 
         if (matchingCustomFieldValues) {
+          // ? using reduce to exclude null in types
           const allNumberValues = matchingCustomFieldValues.reduce<number[]>(
             (acc, { valueNumber }) => {
               if (typeof valueNumber === 'number') {
@@ -165,24 +166,27 @@ export const getFiltersForCollectionDbQuery = async ({
             [],
           );
 
-          const min = Math.floor(Math.min(...allNumberValues));
-          const max = Math.ceil(Math.max(...allNumberValues));
+          const uniqueCustomFieldValues = new Set(allNumberValues);
 
-          return [
-            ...acc,
-            {
-              ...customField,
-              range: {
-                max,
-                min,
+          // ? if there are at least 2 unique custom field values
+          if (uniqueCustomFieldValues.size > 1) {
+            const min = Math.floor(Math.min(...uniqueCustomFieldValues));
+            const max = Math.ceil(Math.max(...uniqueCustomFieldValues));
+
+            return [
+              ...acc,
+              {
+                ...customField,
+                range: {
+                  max,
+                  min,
+                },
+                type: customField.type,
               },
-              type: customField.type,
-            },
-          ];
+            ];
+          }
         }
-
-        return acc;
-      } else {
+      } else if (customField.type === 'boolean') {
         return [
           ...acc,
           {
@@ -191,6 +195,8 @@ export const getFiltersForCollectionDbQuery = async ({
           },
         ];
       }
+
+      return acc;
     }, []);
 
     return formattedResponse;
