@@ -534,7 +534,7 @@ export const AddOrEditCustomFieldDialog = (props: {
         });
       }
 
-      invalidateGetCustomFields();
+      await invalidateGetCustomFields();
       onClose();
     });
   };

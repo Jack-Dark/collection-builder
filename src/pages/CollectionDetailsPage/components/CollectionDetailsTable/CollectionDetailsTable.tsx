@@ -2,10 +2,8 @@ import { useSelector } from '@tanstack/react-store';
 import { useEffect, useMemo } from 'react';
 
 import { getPaginationMetadataDefaults } from '#/api/pagination/pagination.constants';
-import {
-  useGetCollectionDetailsById,
-  useInvalidateGetCollectionDetailsById,
-} from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.react-query';
+import { useGetCollectionDetailsById } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.react-query';
+import { useDeleteUnusedCustomFieldValues } from '#/api/routes/custom-field-values/delete-unused-custom-field-values/delete-unused-custom-field-values.react-query';
 import { Table } from '#/components/Table';
 import { Route as CollectionRoute } from '#/routes/_protected/collections/$id';
 
@@ -39,8 +37,8 @@ export const CollectionDetailsTable = ({
     requestArgs: { collectionId, params: search },
   });
 
-  const invalidateGetCollectionDetailsById =
-    useInvalidateGetCollectionDetailsById();
+  const { onDeleteUnusedCustomFieldValues } =
+    useDeleteUnusedCustomFieldValues();
 
   const { pagination } = data;
 
@@ -49,10 +47,9 @@ export const CollectionDetailsTable = ({
 
     form.reset();
 
-    await invalidateGetCollectionDetailsById();
-
-    // TODO - CONSIDER ADDING CALL TO ENDPOINT THAT CHECKS FOR ANY CUSTOM FIELDS UNDER USER WITH VALUES THAT DO NOT HAVE LINKS AND DELETE THEM
+    await onDeleteUnusedCustomFieldValues({ collectionId });
   };
+
   const { addToEditingRowIds, isEditing, resetEditingRowIds } =
     useEditingCollectionItemsRowIds();
 

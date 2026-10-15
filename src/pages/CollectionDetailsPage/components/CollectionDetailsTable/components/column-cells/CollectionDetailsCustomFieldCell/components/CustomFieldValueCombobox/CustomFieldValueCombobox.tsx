@@ -58,8 +58,8 @@ export const CustomFieldValueCombobox = <TField extends AnyFieldApi>({
     useInvalidateGetCustomFieldValuesByCustomFieldId();
 
   const { onCreateCustomFieldValues, processing } = useCreateCustomFieldValues({
-    onSuccess: () => {
-      invalidateGetCustomFieldValuesByCustomFieldId({
+    onSuccess: async () => {
+      await invalidateGetCustomFieldValuesByCustomFieldId({
         id: customField.id,
       });
     },
