@@ -29,6 +29,7 @@ export const Search = (props: SearchProps) => {
       <div className="absolute left-0 h-full p-1 flex items-center">
         {text ? (
           <Button
+            aria-label="Search"
             className="pointer text-inherit hover:text-primary-800"
             Icon={ClearIcon}
             onClick={() => {

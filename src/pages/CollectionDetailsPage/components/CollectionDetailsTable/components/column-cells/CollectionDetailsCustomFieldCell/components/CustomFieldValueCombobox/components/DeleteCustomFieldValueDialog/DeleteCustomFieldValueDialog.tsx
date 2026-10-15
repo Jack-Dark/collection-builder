@@ -86,12 +86,18 @@ export const DeleteCustomFieldValueDialog = <
       Footer={() => {
         return (
           <>
-            <Button disabled={processing} onClick={onClose} variant="mono">
-              Cancel
-            </Button>
-            <Button onClick={onDelete} processing={processing} variant="alert">
-              Delete
-            </Button>
+            <Button
+              disabled={processing}
+              onClick={onClose}
+              text="Cancel"
+              variant="mono"
+            />
+            <Button
+              onClick={onDelete}
+              processing={processing}
+              text="Delete"
+              variant="alert"
+            />
           </>
         );
       }}

@@ -1,5 +1,5 @@
 import type { ButtonProps as MuiButtonProps } from '@base-ui/react';
-import type { JSXElementConstructor } from 'react';
+import type { JSXElementConstructor, ReactElement } from 'react';
 
 import { Button as MuiButton } from '@base-ui/react';
 import { twMerge } from 'tailwind-merge';
@@ -19,16 +19,33 @@ export type ButtonVariant = (typeof buttonVariants)[number];
 type ButtonProps = MuiButtonProps & {
   className?: string;
   disabled?: boolean;
-  Icon?: JSXElementConstructor<{}>;
   iconPosition?: (typeof iconPositions)[keyof typeof iconPositions];
   processing?: boolean;
   /** Applies standardized padding, font-size, and line-height styling. `'custom'` does not apply any. */
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'custom';
-  text?: string;
   /** Set to `'submit'` for form submission. */
   type?: 'button' | 'submit';
   variant?: ButtonVariant;
-};
+} & (
+    | {
+        'aria-label'?: string;
+        children?: never;
+        Icon?: JSXElementConstructor<{}>;
+        text: string;
+      }
+    | {
+        'aria-label'?: string;
+        children: ReactElement;
+        Icon?: JSXElementConstructor<{}>;
+        text?: never;
+      }
+    | {
+        'aria-label': string;
+        children?: never;
+        Icon: JSXElementConstructor<{}>;
+        text?: never;
+      }
+  );
 
 const iconPositions = {
   left: 'left',

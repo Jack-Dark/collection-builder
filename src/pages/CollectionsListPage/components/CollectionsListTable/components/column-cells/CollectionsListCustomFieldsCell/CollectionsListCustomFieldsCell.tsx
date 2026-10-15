@@ -290,7 +290,11 @@ export const CollectionsListCustomFieldsCell = (props: {
                               )}
 
                               <Button
+                                aria-label="Delete"
                                 className="text-gray-600 hover:text-red-700 cursor-pointer ml-auto px-2 py-1"
+                                Icon={() => {
+                                  return <DeleteIcon fontSize="inherit" />;
+                                }}
                                 onClick={(e) => {
                                   e.preventDefault();
                                   e.stopPropagation();
@@ -319,9 +323,7 @@ export const CollectionsListCustomFieldsCell = (props: {
                                 }}
                                 size="custom"
                                 variant="ghost"
-                              >
-                                <DeleteIcon fontSize="inherit" />
-                              </Button>
+                              />
                             </div>
                           );
                         }}
@@ -404,18 +406,20 @@ export const DeleteCustomFieldDialog = (props: {
       Footer={() => {
         return (
           <>
-            <Button disabled={processing} onClick={onClose} variant="mono">
-              Cancel
-            </Button>
+            <Button
+              disabled={processing}
+              onClick={onClose}
+              text="Cancel"
+              variant="mono"
+            />
             <Button
               onClick={async () => {
                 await onDeleteCustomFields({ ids: [id] });
               }}
               processing={processing}
+              text="Delete"
               variant="alert"
-            >
-              Delete
-            </Button>
+            />
           </>
         );
       }}

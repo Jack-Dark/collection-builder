@@ -73,14 +73,18 @@ export const Notifications = () => {
             </div>
             {keepOpen && (
               <Button
+                aria-label="Close"
+                Icon={() => {
+                  return (
+                    <CloseIcon className={notificationClasses[type].text} />
+                  );
+                }}
                 onClick={() => {
                   return clearNotification(notification.id);
                 }}
                 size="xs"
                 variant="ghost"
-              >
-                <CloseIcon className={notificationClasses[type].text} />
-              </Button>
+              />
             )}
           </div>
         );

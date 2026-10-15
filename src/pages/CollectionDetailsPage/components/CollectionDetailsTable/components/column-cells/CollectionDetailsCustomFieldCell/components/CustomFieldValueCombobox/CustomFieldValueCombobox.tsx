@@ -148,7 +148,11 @@ export const CustomFieldValueCombobox = <TField extends AnyFieldApi>({
             </SelectedIndicator>
 
             <Button
+              aria-label="Delete"
               className="text-gray-600 hover:text-red-700 cursor-pointer ml-auto px-2 py-1"
+              Icon={() => {
+                return <DeleteIcon fontSize="inherit" />;
+              }}
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -158,9 +162,7 @@ export const CustomFieldValueCombobox = <TField extends AnyFieldApi>({
               }}
               size="custom"
               variant="ghost"
-            >
-              <DeleteIcon fontSize="inherit" />
-            </Button>
+            />
           </div>
         );
       }}
