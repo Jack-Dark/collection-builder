@@ -4,7 +4,7 @@ import type { CreateOrUpdateCollectionItemFormTypeDef } from '#/pages/Collection
 
 import { SwitchField } from '#/components/Fields/SwitchField';
 import { TextAreaField } from '#/components/Fields/TextAreaField';
-import { useEditingCollectionItemsRowIds } from '#/pages/CollectionsListPage/hooks/use-editing-collections-row-ids';
+import { useEditingCollectionItemsRowIds } from '#/pages/CollectionsListPage/hooks/use-editing-collection-items-row-ids';
 
 export const CollectionDetailsEditionCell = (props: {
   form: CreateOrUpdateCollectionItemFormTypeDef;

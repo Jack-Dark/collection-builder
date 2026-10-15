@@ -1,7 +1,7 @@
 import type { CreateOrUpdateCollectionItemFormTypeDef } from '#/pages/CollectionDetailsPage/CollectionDetailsPage.types';
 
 import { InputField } from '#/components/Fields/InputField';
-import { useEditingCollectionItemsRowIds } from '#/pages/CollectionsListPage/hooks/use-editing-collections-row-ids';
+import { useEditingCollectionItemsRowIds } from '#/pages/CollectionsListPage/hooks/use-editing-collection-items-row-ids';
 
 export const CollectionDetailsNameCell = ({
   form,

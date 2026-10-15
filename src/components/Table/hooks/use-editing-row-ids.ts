@@ -1,16 +1,10 @@
-import { createAtom, useAtom } from '@tanstack/react-store';
+import type { Atom } from '@tanstack/react-store';
+
+import { useAtom } from '@tanstack/react-store';
 import { useCallback } from 'react';
 
-import { createEditingTableRowIdsStore } from '../../../../helpers/create-editing-table-row-ids-store';
-
-export const useEditingCollectionsRowIds = createEditingTableRowIdsStore();
-
-const editingCollectionItemsRowsAtom = createAtom<string[]>([]);
-
-export const useEditingCollectionItemsRowIds = () => {
-  const [editingRowIds, setEditingRowIds] = useAtom(
-    editingCollectionItemsRowsAtom,
-  );
+export const useEditingRowIds = (atom: Atom<string[]>) => {
+  const [editingRowIds, setEditingRowIds] = useAtom(atom);
 
   const addToEditingRowIds = (...idsToAdd: string[]) => {
     setEditingRowIds((prevRowIds) => {
@@ -68,6 +62,7 @@ export const useEditingCollectionItemsRowIds = () => {
 
 const getIsNewRecord = (rowId: string) => {
   const rowIdNumber = Number(rowId);
+  // ? by default row IDs use the `id` value from the row data, which is expected to be a number
   const isRowIdString = Number.isNaN(rowIdNumber);
 
   return isRowIdString;

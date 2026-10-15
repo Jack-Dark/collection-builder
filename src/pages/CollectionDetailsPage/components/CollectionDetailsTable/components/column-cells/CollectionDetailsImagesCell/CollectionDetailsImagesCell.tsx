@@ -12,7 +12,7 @@ import type {
 
 import { thumbnailSize } from '#/api/routes/cloudinary/cloudinary-url';
 import { ZoomableThumbnail } from '#/components/ZoomableThumbnail';
-import { useEditingCollectionItemsRowIds } from '#/pages/CollectionsListPage/hooks/use-editing-collections-row-ids';
+import { useEditingCollectionItemsRowIds } from '#/pages/CollectionsListPage/hooks/use-editing-collection-items-row-ids';
 
 /** `children` should be the editing field view. */
 export const CollectionDetailsImagesCell = (
