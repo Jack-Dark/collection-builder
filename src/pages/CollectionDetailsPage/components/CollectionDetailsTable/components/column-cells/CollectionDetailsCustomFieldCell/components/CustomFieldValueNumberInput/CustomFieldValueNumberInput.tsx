@@ -41,22 +41,23 @@ export const CustomFieldValueNumberInput = <TField extends AnyFieldApi>({
   return (
     <InputField
       disabled={processing}
-      onBlur={async (event) => {
-        const value = event.target.value;
-
-        const formattedValue = Number(value);
-
-        const [newCustomFieldValue] = await onCreateCustomFieldValues({
-          records: [
-            {
-              customFieldId: customField.id,
-              value: formattedValue,
-            },
-          ],
-        });
-
-        field.handleChange(newCustomFieldValue);
+      onValueChange={async (value) => {
+        if (value) {
+          const formattedValue = Number(value);
+          const [newCustomFieldValue] = await onCreateCustomFieldValues({
+            records: [
+              {
+                customFieldId: customField.id,
+                value: formattedValue,
+              },
+            ],
+          });
+          field.handleChange(newCustomFieldValue);
+        } else {
+          field.handleChange(undefined);
+        }
       }}
+      onValueChangeDebounceMs={500}
       placeholder={`Input ${customField.name}...`}
       type="number"
       value={customFieldValue?.valueNumber ?? undefined}

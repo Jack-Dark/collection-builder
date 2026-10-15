@@ -1,4 +1,5 @@
 import { Input } from '@base-ui/react';
+import _ from 'lodash';
 import { twMerge } from 'tailwind-merge';
 
 import type { InputFieldProps } from './InputField.types';
@@ -21,6 +22,7 @@ export const InputField = (props: InputFieldProps) => {
     onBlur,
     onChange,
     onValueChange,
+    onValueChangeDebounceMs = 300,
     placeholder,
     ref,
     required,
@@ -55,7 +57,11 @@ export const InputField = (props: InputFieldProps) => {
         defaultValue={defaultValue}
         onBlur={onBlur}
         onChange={onChange}
-        onValueChange={onValueChange}
+        onValueChange={
+          onValueChange
+            ? _.debounce(onValueChange, onValueChangeDebounceMs)
+            : undefined
+        }
         placeholder={placeholder}
         ref={ref}
         required={required}
