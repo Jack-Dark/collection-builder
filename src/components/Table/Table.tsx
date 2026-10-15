@@ -20,9 +20,7 @@ import {
   useTable,
 } from '@tanstack/react-table';
 import _ from 'lodash';
-import { memo, useCallback, useMemo } from 'react';
-
-import { getCreateDefaultZustandStore } from '#/helpers/get-create-default-zustand-state';
+import { memo, useCallback, useMemo, useState } from 'react';
 
 import type { TableActionsPropsDef } from './components/TableActions/TableActions.types';
 import type { TablePaginationPropsDef } from './components/TablePagination/TablePagination.types';
@@ -52,24 +50,6 @@ export type TablePropsDef<
     pagination?: TablePaginationPropsDef;
     showRowSelection?: boolean;
   };
-
-const createLastSelectedRowIdStore = () => {
-  const createStore = getCreateDefaultZustandStore<string | undefined>(
-    undefined,
-  );
-
-  return () => {
-    const { resetValue, setValue, value } = createStore();
-
-    return {
-      lastSelectedRowId: value,
-      resetLastSelectedRowId: resetValue,
-      setLastSelectedRowId: setValue,
-    };
-  };
-};
-
-export const useLastSelectedTableRowsStore = createLastSelectedRowIdStore();
 
 export const defaultTableFeatures = tableFeatures({
   columnSizingFeature,
@@ -125,8 +105,10 @@ export const Table = <TData extends RowData>({
   });
 
   const isShiftHeld = useKeyHold('Shift');
-  const { lastSelectedRowId, resetLastSelectedRowId, setLastSelectedRowId } =
-    useLastSelectedTableRowsStore();
+
+  const [lastSelectedRowId, setLastSelectedRowId] = useState<
+    string | undefined
+  >(undefined);
 
   const showTableActions = !!filters || !!search || !!sort;
 
@@ -179,7 +161,7 @@ export const Table = <TData extends RowData>({
                                       const toggleAllRowsSelected =
                                         table.getToggleAllRowsSelectedHandler();
 
-                                      resetLastSelectedRowId();
+                                      setLastSelectedRowId(undefined);
                                       toggleAllRowsSelected(event);
                                     }}
                                   />
