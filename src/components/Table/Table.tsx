@@ -1,4 +1,5 @@
 import type {
+  Cell,
   Row,
   RowData,
   Table as TableDef,
@@ -18,7 +19,8 @@ import {
   tableFeatures,
   useTable,
 } from '@tanstack/react-table';
-import { useMemo } from 'react';
+import _ from 'lodash';
+import { memo, useCallback, useMemo } from 'react';
 
 import { getCreateDefaultZustandStore } from '#/helpers/get-create-default-zustand-state';
 
@@ -47,8 +49,8 @@ export type TablePropsDef<
   TableActionsPropsDef<TData> & {
     AboveTableComponent?: AboveTableComponentDef<TTableFeatures, TData>;
     disableRowSelection?: boolean;
-    enableRowSelection?: boolean;
     pagination?: TablePaginationPropsDef;
+    showRowSelection?: boolean;
   };
 
 const createLastSelectedRowIdStore = () => {
@@ -101,7 +103,6 @@ export const Table = <TData extends RowData>({
   columns,
   data,
   disableRowSelection,
-  enableRowSelection,
   features,
   filters,
   getRowId = (row, index) => {
@@ -110,6 +111,7 @@ export const Table = <TData extends RowData>({
   },
   pagination,
   search,
+  showRowSelection,
   sort,
   ...useTableProps
 }: TablePropsDef<TableFeaturesDef, TData>) => {
@@ -117,7 +119,7 @@ export const Table = <TData extends RowData>({
     ...useTableProps,
     columns,
     data,
-    enableRowSelection,
+    enableRowSelection: showRowSelection,
     features: { ...defaultTableFeatures, ...features },
     getRowId,
   });
@@ -168,7 +170,7 @@ export const Table = <TData extends RowData>({
                               style={{ width: `${header.getSize()}px` }}
                             >
                               <div className="flex items-center gap-2">
-                                {index === 0 && enableRowSelection && (
+                                {index === 0 && showRowSelection && (
                                   <CheckboxField
                                     checked={table.getIsAllRowsSelected()}
                                     disabled={disableRowSelection}
@@ -207,6 +209,57 @@ export const Table = <TData extends RowData>({
                         {row.getVisibleCells().map((cell, index) => {
                           const { column } = cell;
 
+                          const checked = row.getIsSelected();
+                          const disabled =
+                            disableRowSelection || !row.getCanSelect();
+
+                          const showSelectionCheckbox =
+                            index === 0 && showRowSelection;
+
+                          const onCheckedChange = useCallback(
+                            (checked: boolean) => {
+                              const { rows } = table.getRowModel();
+                              const rowId = row.id;
+
+                              if (isShiftHeld && lastSelectedRowId) {
+                                const currentIndex = row.index;
+                                const prevIndex = rows.findIndex(({ id }) => {
+                                  return id === lastSelectedRowId;
+                                });
+
+                                const rowsToToggle = getRowRange({
+                                  currentIndex,
+                                  prevIndex,
+                                  rows,
+                                });
+
+                                rowsToToggle.forEach((row) => {
+                                  row.toggleSelected(checked);
+                                });
+                              } else {
+                                row.toggleSelected();
+                              }
+
+                              table.setRowSelection((prevSelectedRows) => {
+                                const selectedRows = {
+                                  ...prevSelectedRows,
+                                };
+                                if (checked) {
+                                  selectedRows[rowId] = true;
+                                } else {
+                                  delete selectedRows[rowId];
+                                }
+
+                                return selectedRows;
+                              });
+                              setLastSelectedRowId(rowId);
+
+                              // ? clears any text highlighting
+                              document.getSelection()?.removeAllRanges();
+                            },
+                            [isShiftHeld, lastSelectedRowId],
+                          );
+
                           return (
                             <td
                               className={tableCellClasses}
@@ -214,66 +267,20 @@ export const Table = <TData extends RowData>({
                               key={cell.id}
                               style={{ width: `${column.getSize()}px` }}
                             >
-                              <div className="relative h-full flex items-center gap-2">
-                                {index === 0 && enableRowSelection && (
-                                  <CheckboxField
-                                    checked={row.getIsSelected()}
-                                    disabled={
-                                      disableRowSelection || !row.getCanSelect()
-                                    }
-                                    onCheckedChange={(checked) => {
-                                      const { rows } = table.getRowModel();
-                                      const rowId = row.id;
-
-                                      if (isShiftHeld && lastSelectedRowId) {
-                                        const currentIndex = row.index;
-                                        const prevIndex = rows.findIndex(
-                                          ({ id }) => {
-                                            return id === lastSelectedRowId;
-                                          },
-                                        );
-
-                                        const rowsToToggle = getRowRange({
-                                          currentIndex,
-                                          prevIndex,
-                                          rows,
-                                        });
-
-                                        rowsToToggle.forEach((row) => {
-                                          row.toggleSelected(checked);
-                                        });
-                                      } else {
-                                        row.toggleSelected();
-                                      }
-
-                                      table.setRowSelection(
-                                        (prevSelectedRows) => {
-                                          const selectedRows = {
-                                            ...prevSelectedRows,
-                                          };
-                                          if (checked) {
-                                            selectedRows[rowId] = true;
-                                          } else {
-                                            delete selectedRows[rowId];
-                                          }
-
-                                          return selectedRows;
-                                        },
-                                      );
-                                      setLastSelectedRowId(rowId);
-
-                                      // ? clears any text highlighting
-                                      document
-                                        .getSelection()
-                                        ?.removeAllRanges();
-                                    }}
+                              {showSelectionCheckbox ? (
+                                <div className="relative h-full flex items-center gap-2">
+                                  <TableCellCheckbox
+                                    checked={checked}
+                                    disabled={disabled}
+                                    onCheckedChange={onCheckedChange}
                                   />
-                                )}
-                                {flexRender(
-                                  cell.column.columnDef.cell,
-                                  cell.getContext(),
-                                )}
-                              </div>
+                                  {/* @ts-expect-error - 'TData' could be instantiated with a different subtype of constraint 'RowData' */}
+                                  <TableCellValue cell={cell} />
+                                </div>
+                              ) : (
+                                // @ts-expect-error  -'TData' could be instantiated with a different subtype of constraint 'RowData'
+                                <TableCellValue cell={cell} />
+                              )}
                             </td>
                           );
                         })}
@@ -295,3 +302,41 @@ export const Table = <TData extends RowData>({
     </div>
   );
 };
+
+const TableCellCheckbox = memo(
+  (props: {
+    checked: boolean;
+    disabled: boolean;
+    onCheckedChange: (checked: boolean) => void;
+  }) => {
+    const { checked, disabled, onCheckedChange } = props;
+
+    return (
+      <CheckboxField
+        checked={checked}
+        disabled={disabled}
+        onCheckedChange={onCheckedChange}
+      />
+    );
+  },
+);
+
+type TableCellValuePropsDef<TData extends RowData> = {
+  cell: Cell<TableFeaturesDef, TData, unknown>;
+};
+
+const TableCellValue = memo(
+  <TData extends RowData>(props: TableCellValuePropsDef<TData>) => {
+    const { cell } = props;
+
+    return flexRender(cell.column.columnDef.cell, cell.getContext());
+  },
+  (prev, next) => {
+    const isValueUnchanged = _.isEqual(
+      prev.cell.getValue(),
+      next.cell.getValue(),
+    );
+
+    return isValueUnchanged;
+  },
+);

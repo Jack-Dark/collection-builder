@@ -96,7 +96,7 @@ export const CollectionsListTable = ({
       // @ts-expect-error // TS type mismatch between new and old records
       data={tableData}
       disableRowSelection={isEditing}
-      enableRowSelection
+      showRowSelection
       pagination={paginationProps}
       search={searchProps}
       sort={sortProps}

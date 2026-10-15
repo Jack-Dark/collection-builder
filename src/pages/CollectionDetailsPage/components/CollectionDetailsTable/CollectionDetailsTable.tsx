@@ -115,7 +115,6 @@ export const CollectionDetailsTable = ({
       columns={columns}
       data={tableData}
       disableRowSelection={isEditing}
-      enableRowSelection
       filters={{
         ...filtersProps,
         FiltersContent: () => {
@@ -129,6 +128,7 @@ export const CollectionDetailsTable = ({
       }}
       pagination={paginationProps}
       search={searchProps}
+      showRowSelection
       sort={sortProps}
     />
   );
