@@ -160,7 +160,7 @@ export const updateCollectionItemsDbQuery = async ({
 
           if (customFieldValueRecords.toUpdate.length) {
             // ? update existing custom field value records
-            const updatedRecordIds = await Promise.all(
+            const updatedCustomFieldValueRecordIds = await Promise.all(
               customFieldValueRecords.toUpdate.map(async (customFieldValue) => {
                 const [updatedRecord] = await tx
                   .update(customFieldValuesTable)
@@ -180,7 +180,10 @@ export const updateCollectionItemsDbQuery = async ({
               }),
             );
 
-            customFieldValueIds = [...customFieldValueIds, ...updatedRecordIds];
+            customFieldValueIds = [
+              ...customFieldValueIds,
+              ...updatedCustomFieldValueRecordIds,
+            ];
           }
 
           await Promise.all([
