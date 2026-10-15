@@ -12,10 +12,6 @@ export interface GenericMutateQueryProps<
   >
 > {
   onError?: (error: string, requestArgs?: TRequestArgs) => void;
-  onSuccess?: (
-    response: TTransformedData,
-    requestArgs: TRequestArgs,
-  ) => Promise<void> | void;
   showLoading?: boolean;
   transform?: (response: TResponseDef) => TTransformedData;
 }
