@@ -43,13 +43,13 @@ export const CollectionDetailsCustomFieldCell = (
     return values.collectionItems[rowIndex].id;
   });
 
-  return isEditingRow ? (
+  return (
     <Suspense>
       <form.Field
         name={`collectionItems[${rowIndex}].customFieldValues.${customField.id}`}
       >
         {(field) => {
-          return (
+          return isEditingRow ? (
             <>
               {customField.type === 'boolean' && (
                 <CustomFieldValueCheckbox
@@ -79,19 +79,22 @@ export const CollectionDetailsCustomFieldCell = (
                 />
               )}
             </>
+          ) : (
+            <>
+              {customField.type === 'boolean' ? (
+                <CheckboxField
+                  checked={!!customFieldValue?.valueBoolean}
+                  disabled
+                />
+              ) : (
+                <p>
+                  {field.value?.valueText ?? field.value?.valueNumber ?? '-'}
+                </p>
+              )}
+            </>
           );
         }}
       </form.Field>
     </Suspense>
-  ) : (
-    <>
-      {customField.type === 'boolean' ? (
-        <CheckboxField checked={!!customFieldValue?.valueBoolean} disabled />
-      ) : (
-        <p>
-          {customFieldValue?.valueText ?? customFieldValue?.valueNumber ?? '-'}
-        </p>
-      )}
-    </>
   );
 };
