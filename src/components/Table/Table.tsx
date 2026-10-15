@@ -280,6 +280,7 @@ export const Table = <TData extends RowData>({
                       </tr>
                     );
                   })}
+                  <tr data-spacer-row="" />
                 </tbody>
               </table>
             </ScrollArea.Content>
