@@ -60,7 +60,7 @@ export const CustomFieldValueNumberInput = <TField extends AnyFieldApi>({
       onValueChangeDebounceMs={500}
       placeholder={`Input ${customField.name}...`}
       type="number"
-      value={customFieldValue?.valueNumber ?? undefined}
+      value={customFieldValue?.valueNumber ?? ''}
     />
   );
 };
