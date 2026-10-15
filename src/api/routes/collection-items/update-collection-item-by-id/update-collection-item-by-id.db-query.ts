@@ -147,25 +147,6 @@ export const updateCollectionItemsDbQuery = async ({
 
           let customFieldValueIds: { id: number }[] = [];
 
-          // const upsertRecords = [
-          //   ...customFieldValueRecords.toCreate,
-          //   ...customFieldValueRecords.toUpdate,
-          // ];
-
-          // if (upsertRecords.length) {
-          //   const newRecordIds = await tx
-          //     .insert(customFieldValuesTable)
-          //     .values(customFieldValueRecords.toCreate)
-          //     .onConflictDoUpdate({
-          //       set: {},
-          //       setWhere: eq(customFieldValuesTable.userId, userId),
-          //       target: customFieldValuesTable.id,
-          //     })
-          //     .returning({ id: customFieldValuesTable.id });
-
-          //   customFieldValueIds = [...newRecordIds];
-          // }
-
           if (customFieldValueRecords.toCreate.length) {
             // ? create new custom field value records
             // TODO -  I'M NOT SURE IF THIS STILL RUNS AT ALL. VERIFY AND REMOVE IF APPLICABLE
