@@ -44,4 +44,6 @@ export const reactMutationKeys = {
   updateCustomFields: 'update-custom-fields',
 } as const;
 
-type MutationKeyType = 'create' | 'delete' | 'update';
+type BaseMutationKeyType = 'create' | 'delete' | 'update';
+
+type MutationKeyType = BaseMutationKeyType | `${BaseMutationKeyType}-${string}`;
