@@ -1,30 +1,23 @@
-import { getCreateDefaultZustandStore } from '#/helpers/get-create-default-zustand-state';
+import { createAtom, useAtom } from '@tanstack/react-store';
 
 import type { NotificationDetails } from './Notifications.types';
 
-const createNotificationsStore = () => {
-  const createNotificationsStore = getCreateDefaultZustandStore<
-    NotificationDetails[]
-  >([]);
+const notificationsAtom = createAtom<NotificationDetails[]>([]);
 
-  return () => {
-    const { getValue, setValue, value } = createNotificationsStore();
+export const useNotificationsStore = () => {
+  const [notifications, setNotifications] = useAtom(notificationsAtom);
 
-    const clearNotification = (id: string) => {
-      setValue((prevNotifications) => {
-        return prevNotifications.filter((notification) => {
-          return notification.id !== id;
-        });
+  const clearNotification = (id: string) => {
+    setNotifications((prevNotifications) => {
+      return prevNotifications.filter((notification) => {
+        return notification.id !== id;
       });
-    };
+    });
+  };
 
-    return {
-      clearNotification,
-      getNotifications: getValue,
-      notifications: value,
-      setNotifications: setValue,
-    };
+  return {
+    clearNotification,
+    notifications,
+    setNotifications,
   };
 };
-
-export const useNotificationsStore = createNotificationsStore();
