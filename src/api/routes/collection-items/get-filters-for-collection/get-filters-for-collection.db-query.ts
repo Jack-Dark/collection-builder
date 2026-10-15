@@ -6,6 +6,7 @@ import type { DbQueryArgsDef } from '#/auth/auth-middleware.types';
 
 import { db } from '#/api/db';
 import {
+  collectionItemsToCustomFieldValuesTable,
   customFieldsTable,
   customFieldValuesTable,
 } from '#/api/db-tables-schema';
@@ -74,7 +75,14 @@ export const getFiltersForCollectionDbQuery = async ({
               valueNumber: customFieldValuesTable.valueNumber,
               valueText: customFieldValuesTable.valueText,
             })
-            .from(customFieldValuesTable)
+            .from(collectionItemsToCustomFieldValuesTable)
+            .innerJoin(
+              customFieldValuesTable,
+              eq(
+                customFieldValuesTable.id,
+                collectionItemsToCustomFieldValuesTable.customFieldValueId,
+              ),
+            )
             .innerJoin(
               customFieldsTable,
               eq(customFieldsTable.id, customField.id),
