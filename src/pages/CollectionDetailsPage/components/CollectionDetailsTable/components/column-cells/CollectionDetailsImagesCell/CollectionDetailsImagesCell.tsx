@@ -29,10 +29,11 @@ export const CollectionDetailsImagesCell = (
   const { children, form, row } = props;
 
   const name = useSelector(form.atom, ({ values }) => {
-    return values.collectionItems[row.index].name;
+    return values.collectionItems[row.index]?.name || '';
   });
+
   const images = useSelector(form.atom, ({ values }) => {
-    return values.collectionItems[row.index].images;
+    return values.collectionItems[row.index]?.images || [];
   });
 
   const { getIsEditingRowId } = useEditingCollectionItemsRowIds();

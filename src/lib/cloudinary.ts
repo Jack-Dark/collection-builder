@@ -85,13 +85,29 @@ export const deleteCloudinaryAssetsByPublicIds = (...publicIds: string[]) => {
   }
 };
 
-export const addCloudinaryTagsToPublicIds = (props: {
+export type CloudinaryTagsItem = {
+  collectionId: number;
+  collectionItemId: number;
   publicIds: string[];
-  tags: string[];
-}) => {
-  const { publicIds, tags } = props;
+  userId: string;
+};
 
-  if (tags.length && publicIds.length) {
-    return cloudinary.uploader.add_tag(tags.join(', '), publicIds);
-  }
+export const addCloudinaryTagsToPublicIds = async (
+  ...items: CloudinaryTagsItem[]
+) => {
+  await Promise.all(
+    items.map(async (item) => {
+      const { collectionId, collectionItemId, publicIds, userId } = item;
+
+      if (publicIds.length) {
+        const tags = [
+          `user-${userId}`,
+          `collection-${collectionId}`,
+          `collection-item-${collectionItemId}`,
+        ];
+
+        return cloudinary.uploader.add_tag(tags.join(', '), publicIds);
+      }
+    }),
+  );
 };

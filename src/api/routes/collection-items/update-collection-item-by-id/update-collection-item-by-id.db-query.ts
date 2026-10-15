@@ -2,12 +2,12 @@ import { and, eq, inArray, sql } from 'drizzle-orm';
 
 import type { InsertLinkCollectionItemsToCustomFieldValuesRecordDef } from '#/api/db-tables-schema.types';
 import type { DbQueryArgsDef } from '#/auth/auth-middleware.types';
+import type { CloudinaryTagsItem } from '#/lib/cloudinary';
 
 import { db } from '#/api/db';
 import {
   collectionItemsTable,
   collectionItemsToCustomFieldValuesTable,
-  customFieldValuesTable,
 } from '#/api/db-tables-schema';
 import {
   addCloudinaryTagsToPublicIds,
@@ -15,8 +15,6 @@ import {
 } from '#/lib/cloudinary';
 
 import type { UpdateCollectionItemsRequestArgsDef } from './update-collection-item-by-id.types';
-
-import { createCloudinaryTags } from '../../cloudinary/helpers/create-collection-item-cloudinary-tags';
 
 export const updateCollectionItemsDbQuery = async ({
   context,
@@ -35,6 +33,7 @@ export const updateCollectionItemsDbQuery = async ({
 
   await db.transaction(async (tx) => {
     // ? Get all old images to track which ones the user deleted
+    // ! Perform first, before records are altered
     const existingImagesRecords = await tx
       .select({ images: collectionItemsTable.images })
       .from(collectionItemsTable)
@@ -50,11 +49,8 @@ export const updateCollectionItemsDbQuery = async ({
     const userDeletedPublicIds = existingImagesRecords.reduce<string[]>(
       (acc, { images: existingImages }, index) => {
         const deletedPublicIds = existingImages.filter((existingPublicId) => {
-          const imageWasKept = uploadedPublicIds[index].some(
-            (uploadedPublicId) => {
-              return existingPublicId === uploadedPublicId;
-            },
-          );
+          const imageWasKept =
+            uploadedPublicIds[index].includes(existingPublicId);
 
           return !imageWasKept;
         });
@@ -66,159 +62,50 @@ export const updateCollectionItemsDbQuery = async ({
 
     await Promise.all(
       collectionItemRecords.map(
-        async ({ customFieldValues, ...record }, index) => {
-          const addCloudinaryTags = async () => {
-            const { collectionId, id: collectionItemId } = record;
-            const tags = createCloudinaryTags({
-              collectionId,
-              collectionItemId,
-              userId,
-            });
-
-            const publicIdsForRecord = uploadedPublicIds[index];
-
-            await addCloudinaryTagsToPublicIds({
-              publicIds: publicIdsForRecord,
-              tags,
-            });
-          };
-
-          // ? Create brand new links between this collection and custom fields
-          const customFieldValueRecords = Object.entries(
-            customFieldValues,
-          ).reduce<{
-            toCreate: {
-              customFieldId: number;
-              userId: string;
-              valueBoolean: boolean | null;
-              valueNumber: number | null;
-              valueText: string | null;
-            }[];
-            toUpdate: {
-              customFieldId: number;
-              id: number;
-              userId: string;
-              valueBoolean: boolean | null;
-              valueNumber: number | null;
-              valueText: string | null;
-            }[];
-          }>(
-            (acc, [customFieldIdAsString, customFieldValue]) => {
-              const customFieldId = Number(customFieldIdAsString);
-
-              if (!customFieldValue) {
-                return acc;
-              } else if (typeof customFieldValue.id === 'string') {
-                return {
-                  ...acc,
-                  toCreate: [
-                    ...acc.toCreate,
-                    {
-                      customFieldId,
-                      userId,
-                      valueBoolean: customFieldValue.valueBoolean,
-                      valueNumber: customFieldValue.valueNumber,
-                      valueText: customFieldValue.valueText,
-                    },
-                  ],
-                };
-              } else {
-                return {
-                  ...acc,
-                  toUpdate: [
-                    ...acc.toUpdate,
-                    {
-                      customFieldId,
-                      id: customFieldValue.id,
-                      userId,
-                      valueBoolean: customFieldValue.valueBoolean,
-                      valueNumber: customFieldValue.valueNumber,
-                      valueText: customFieldValue.valueText,
-                    },
-                  ],
-                };
-              }
-            },
-            {
-              toCreate: [],
-              toUpdate: [],
-            },
-          );
-
-          let customFieldValueIds: { id: number }[] = [];
-
-          if (customFieldValueRecords.toCreate.length) {
-            // ? create new custom field value records
-            // TODO -  I'M NOT SURE IF THIS STILL RUNS AT ALL. VERIFY AND REMOVE IF APPLICABLE
-            const newRecordIds = await tx
-              .insert(customFieldValuesTable)
-              .values(customFieldValueRecords.toCreate)
-              .returning({ id: customFieldValuesTable.id });
-
-            customFieldValueIds = [...newRecordIds];
-          }
-
-          if (customFieldValueRecords.toUpdate.length) {
-            // ? update existing custom field value records
-            const updatedCustomFieldValueRecordIds = await Promise.all(
-              customFieldValueRecords.toUpdate.map(async (customFieldValue) => {
-                const [updatedRecord] = await tx
-                  .update(customFieldValuesTable)
-                  .set(customFieldValue)
-                  .where(
-                    and(
-                      eq(customFieldValuesTable.id, customFieldValue.id),
-                      eq(
-                        customFieldValuesTable.userId,
-                        customFieldValue.userId,
-                      ),
-                    ),
-                  )
-                  .returning({ id: customFieldValuesTable.id });
-
-                return updatedRecord;
-              }),
-            );
-
-            customFieldValueIds = [
-              ...customFieldValueIds,
-              ...updatedCustomFieldValueRecordIds,
-            ];
-          }
-
+        async ({ customFieldValues, ...collectionItem }) => {
           await Promise.all([
             // ? Update collection item records
             await tx
               .update(collectionItemsTable)
-              .set(record)
+              .set(collectionItem)
               .where(
                 and(
-                  eq(collectionItemsTable.id, record.id),
+                  eq(collectionItemsTable.id, collectionItem.id),
                   eq(collectionItemsTable.userId, userId),
                 ),
               ),
+
             // ? Delete any existing links between this collection item and custom field values
             await tx
               .delete(collectionItemsToCustomFieldValuesTable)
               .where(
                 eq(
                   collectionItemsToCustomFieldValuesTable.collectionItemId,
-                  record.id,
+                  collectionItem.id,
                 ),
               ),
-            // ? add tags to the images on the collection item
-            await addCloudinaryTags(),
           ]);
 
-          // ? Create brand new links between this collection and custom fields
-          const newCollectionItemToCustomFieldValueRecords: InsertLinkCollectionItemsToCustomFieldValuesRecordDef[] =
-            customFieldValueIds.map(({ id }) => {
-              return {
-                collectionItemId: record.id,
-                customFieldValueId: id,
-                userId,
-              } satisfies InsertLinkCollectionItemsToCustomFieldValuesRecordDef;
-            });
+          // ? Create brand new links between the collection items and custom field values
+          const newCollectionItemToCustomFieldValueRecords = Object.values(
+            customFieldValues,
+          ).reduce<InsertLinkCollectionItemsToCustomFieldValuesRecordDef[]>(
+            (acc, customFieldValue) => {
+              if (customFieldValue) {
+                return [
+                  ...acc,
+                  {
+                    collectionItemId: collectionItem.id,
+                    customFieldValueId: customFieldValue.id,
+                    userId,
+                  } satisfies InsertLinkCollectionItemsToCustomFieldValuesRecordDef,
+                ];
+              } else {
+                return acc;
+              }
+            },
+            [],
+          );
 
           if (newCollectionItemToCustomFieldValueRecords.length) {
             await tx
@@ -229,7 +116,24 @@ export const updateCollectionItemsDbQuery = async ({
       ),
     );
 
-    // ? Remove user deleted images, if any
-    await deleteCloudinaryAssetsByPublicIds(...userDeletedPublicIds.flat());
+    const cloudinaryTagItems = collectionItemRecords.map(
+      ({ collectionId, id: collectionItemId }, index) => {
+        const publicIdsForRecord = uploadedPublicIds[index];
+
+        return {
+          collectionId,
+          collectionItemId,
+          publicIds: publicIdsForRecord,
+          userId,
+        } satisfies CloudinaryTagsItem;
+      },
+    );
+
+    // ? add tags to the new images on the collection item
+    await addCloudinaryTagsToPublicIds(...cloudinaryTagItems);
+
+    // ? Remove images deleted by the user, if any
+    // ! Perform last just in case there is an error earlier
+    await deleteCloudinaryAssetsByPublicIds(...userDeletedPublicIds);
   });
 };
