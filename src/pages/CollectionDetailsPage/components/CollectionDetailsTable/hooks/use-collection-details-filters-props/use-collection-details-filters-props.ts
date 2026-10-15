@@ -108,22 +108,25 @@ const useCreateCollectionFiltersFormValues = (
 export const useCollectionDetailsFiltersProps = () => {
   const { filters: searchQueryFilters } = CollectionDetailsRoute.useSearch();
 
-  const defaultValues = useCreateCollectionFiltersFormValues({
+  const emptyFilters = useCreateCollectionFiltersFormValues({
+    startingValues: {},
+  });
+  const currentlyAppliedFilters = useCreateCollectionFiltersFormValues({
     startingValues: searchQueryFilters,
   });
 
   const form = useForm({
     ...collectionItemsFiltersFormOptions,
-    defaultValues: { filters: defaultValues },
+    defaultValues: { filters: currentlyAppliedFilters },
     onSubmit: ({ value }) => {
-      // ? Only include filters not matching the default values
+      // ? Only include filters not matching the empty state
       const submissionValues = Object.entries(value.filters).reduce<
         typeof value.filters
       >((acc, [customFieldStringId, filterValues]) => {
         const customFieldId = Number(customFieldStringId);
         const matchesDefaultValues = _.isEqual(
           filterValues,
-          defaultValues[customFieldId],
+          emptyFilters[customFieldId],
         );
 
         if (matchesDefaultValues) {
@@ -148,7 +151,7 @@ export const useCollectionDetailsFiltersProps = () => {
     form,
     numApplied,
     onCancel: () => {
-      form.setFieldValue('filters', defaultValues);
+      form.setFieldValue('filters', currentlyAppliedFilters);
     },
     onReset: async () => {
       form.setFieldValue('filters', {});
