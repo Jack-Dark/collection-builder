@@ -9,7 +9,13 @@ export const Popover = (props: PopoverPropsDef) => {
     Description = '',
     side = 'top',
     Trigger = () => {
-      return <InfoIcon className="text-gray-400" fontSize="small" />;
+      return (
+        <InfoIcon
+          {...props}
+          className="cursor-pointer text-gray-400"
+          fontSize="inherit"
+        />
+      );
     },
   } = props;
 

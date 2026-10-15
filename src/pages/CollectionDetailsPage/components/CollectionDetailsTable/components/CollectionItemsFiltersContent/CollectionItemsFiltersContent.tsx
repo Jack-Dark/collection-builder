@@ -12,21 +12,26 @@ import { Button } from '#/components/Button';
 import { CheckboxField } from '#/components/Fields/CheckboxField';
 import { FieldWrapper } from '#/components/Fields/FieldWrapper';
 import { SelectField } from '#/components/Fields/SelectField';
+import { Popover } from '#/components/Popover';
 
 import type { CollectionItemsFiltersFormDef } from '../../hooks/use-collection-details-filters-props';
 
 type FiltersBlockPropsDef = PropsWithChildren<{
   label: string | null;
   onReset: () => void;
+  popoverMsg?: string;
 }>;
 
 const FiltersBlock = (props: FiltersBlockPropsDef) => {
-  const { children, label, onReset } = props;
+  const { children, label, onReset, popoverMsg } = props;
 
   return (
     <div className="grid gap-1">
       <div className="flex items-center gap-2">
-        <h5>{label}</h5>
+        <h5 className="grid grid-cols-[auto_1fr] gap-1">
+          {label}
+          {popoverMsg && <Popover Description={popoverMsg} />}
+        </h5>
 
         <Button
           className="font-normal"
@@ -185,9 +190,11 @@ const CustomFieldNumberFilter = (props: {
       {(field) => {
         // ? Comparison is really just for type safety
         if (customField.type === 'number' && fieldValue?.type === 'number') {
+          const isMinEqualToMax =
+            customField.range.min === customField.range.max;
           const { handleChange } = field;
 
-          return (
+          return isMinEqualToMax ? null : (
             <FiltersBlock
               key={customField.id}
               label={customField.name}
@@ -197,6 +204,7 @@ const CustomFieldNumberFilter = (props: {
                   range: customField.range,
                 });
               }}
+              popoverMsg={`If at the maximum range, items with undefined ${customField.name} will be returned.`}
             >
               <FieldWrapper
                 error={field.errors}
@@ -218,7 +226,7 @@ const CustomFieldNumberFilter = (props: {
                   }}
                   value={[fieldValue?.range.min, fieldValue?.range.max]}
                 >
-                  <Slider.Control className="py-2 data-dragging:cursor-grabbing">
+                  <Slider.Control className="py-2 cursor-pointer data-dragging:cursor-grabbing">
                     <Slider.Track className="bg-gray-500 h-1 w-full">
                       <Slider.Indicator className="bg-primary-700" />
                       <Slider.Thumb
