@@ -14,7 +14,6 @@ import {
   deleteCloudinaryAssetsByPublicIds,
 } from '#/lib/cloudinary';
 
-import type { CustomFieldValueDef } from '../../custom-field-values/custom-field-values.types';
 import type { UpdateCollectionItemsRequestArgsDef } from './update-collection-item-by-id.types';
 
 import { createCloudinaryTags } from '../../cloudinary/helpers/create-collection-item-cloudinary-tags';
@@ -90,14 +89,18 @@ export const updateCollectionItemsDbQuery = async ({
           ).reduce<{
             toCreate: {
               customFieldId: number;
-              data: { value: CustomFieldValueDef };
               userId: string;
+              valueBoolean: boolean | null;
+              valueNumber: number | null;
+              valueText: string | null;
             }[];
             toUpdate: {
               customFieldId: number;
-              data: { value: CustomFieldValueDef };
               id: number;
               userId: string;
+              valueBoolean: boolean | null;
+              valueNumber: number | null;
+              valueText: string | null;
             }[];
           }>(
             (acc, [customFieldIdAsString, customFieldValue]) => {
@@ -112,8 +115,10 @@ export const updateCollectionItemsDbQuery = async ({
                     ...acc.toCreate,
                     {
                       customFieldId,
-                      data: customFieldValue.data,
                       userId,
+                      valueBoolean: customFieldValue.valueBoolean,
+                      valueNumber: customFieldValue.valueNumber,
+                      valueText: customFieldValue.valueText,
                     },
                   ],
                 };
@@ -124,9 +129,11 @@ export const updateCollectionItemsDbQuery = async ({
                     ...acc.toUpdate,
                     {
                       customFieldId,
-                      data: customFieldValue.data,
                       id: customFieldValue.id,
                       userId,
+                      valueBoolean: customFieldValue.valueBoolean,
+                      valueNumber: customFieldValue.valueNumber,
+                      valueText: customFieldValue.valueText,
                     },
                   ],
                 };
@@ -139,6 +146,25 @@ export const updateCollectionItemsDbQuery = async ({
           );
 
           let customFieldValueIds: { id: number }[] = [];
+
+          // const upsertRecords = [
+          //   ...customFieldValueRecords.toCreate,
+          //   ...customFieldValueRecords.toUpdate,
+          // ];
+
+          // if (upsertRecords.length) {
+          //   const newRecordIds = await tx
+          //     .insert(customFieldValuesTable)
+          //     .values(customFieldValueRecords.toCreate)
+          //     .onConflictDoUpdate({
+          //       set: {},
+          //       setWhere: eq(customFieldValuesTable.userId, userId),
+          //       target: customFieldValuesTable.id,
+          //     })
+          //     .returning({ id: customFieldValuesTable.id });
+
+          //   customFieldValueIds = [...newRecordIds];
+          // }
 
           if (customFieldValueRecords.toCreate.length) {
             // ? create new custom field value records
