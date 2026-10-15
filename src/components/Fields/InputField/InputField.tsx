@@ -22,7 +22,7 @@ export const InputField = (props: InputFieldProps) => {
     onBlur,
     onChange,
     onValueChange,
-    onValueChangeDebounceMs = 300,
+    onValueChangeDebounceMs = 0,
     placeholder,
     ref,
     required,
@@ -59,7 +59,9 @@ export const InputField = (props: InputFieldProps) => {
         onChange={onChange}
         onValueChange={
           onValueChange
-            ? _.debounce(onValueChange, onValueChangeDebounceMs)
+            ? onValueChangeDebounceMs
+              ? _.debounce(onValueChange, onValueChangeDebounceMs)
+              : onValueChange
             : undefined
         }
         placeholder={placeholder}
