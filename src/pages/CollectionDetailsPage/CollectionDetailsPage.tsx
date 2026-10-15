@@ -14,6 +14,7 @@ import {
 } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.react-query';
 import { useInvalidateGetCollectionItemsWithCustomFieldValue } from '#/api/routes/collection-items/get-collection-items-with-custom-field-value/get-collection-items-with-custom-field-value.react-query';
 import { useUpdateCollectionItems } from '#/api/routes/collection-items/update-collection-item-by-id/update-collection-item-by-id.react-query';
+import { useDeleteUnusedCustomFieldValues } from '#/api/routes/custom-field-values/delete-unused-custom-field-values/delete-unused-custom-field-values.react-query';
 import { useSpinner } from '#/components/FullPageLoadingSpinner/useSpinner';
 import { PageWrapper } from '#/components/PageWrapper';
 import { Route as CollectionRoute } from '#/routes/_protected/collections/$id';
@@ -43,6 +44,9 @@ export const CollectionDetailsPage: RouteComponent = () => {
   const { onUpdateCollectionItems } = useUpdateCollectionItems({
     showLoading: true,
   });
+
+  const { onDeleteUnusedCustomFieldValues } =
+    useDeleteUnusedCustomFieldValues();
 
   const { data } = useGetCollectionDetailsById({
     onSuccess: () => {
@@ -96,6 +100,7 @@ export const CollectionDetailsPage: RouteComponent = () => {
         }
 
         resetEditingRowIds();
+        await onDeleteUnusedCustomFieldValues({ collectionId });
         await invalidateGetCollectionDetailsById({ id: collectionId });
         invalidateGetCollectionItemsWithCustomFieldValue();
       });
