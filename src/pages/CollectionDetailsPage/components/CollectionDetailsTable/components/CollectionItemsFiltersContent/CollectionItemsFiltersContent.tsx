@@ -218,10 +218,12 @@ const CustomFieldNumberFilter = (props: {
                   onValueChange={([min, max]) => {
                     handleChange({
                       ...fieldValue,
+                      items: undefined,
                       range: {
                         max,
                         min,
                       },
+                      value: undefined,
                     });
                   }}
                   value={[fieldValue?.range.min, fieldValue?.range.max]}
