@@ -20,7 +20,7 @@ import {
   useTable,
 } from '@tanstack/react-table';
 import _ from 'lodash';
-import { memo, useCallback, useMemo, useState } from 'react';
+import { memo, useMemo, useState } from 'react';
 
 import type { TableActionsPropsDef } from './components/TableActions/TableActions.types';
 import type { TablePaginationPropsDef } from './components/TablePagination/TablePagination.types';
@@ -182,6 +182,47 @@ export const Table = <TData extends RowData>({
                   {table.getRowModel().rows.map((row) => {
                     const trClassName = 'not-last:*:border-b';
 
+                    const onCheckedChange = (checked: boolean) => {
+                      const { rows } = table.getRowModel();
+                      const rowId = row.id;
+
+                      if (isShiftHeld && lastSelectedRowId) {
+                        const currentIndex = row.index;
+                        const prevIndex = rows.findIndex(({ id }) => {
+                          return id === lastSelectedRowId;
+                        });
+
+                        const rowsToToggle = getRowRange({
+                          currentIndex,
+                          prevIndex,
+                          rows,
+                        });
+
+                        rowsToToggle.forEach((row) => {
+                          row.toggleSelected(checked);
+                        });
+                      } else {
+                        row.toggleSelected();
+                      }
+
+                      table.setRowSelection((prevSelectedRows) => {
+                        const selectedRows = {
+                          ...prevSelectedRows,
+                        };
+                        if (checked) {
+                          selectedRows[rowId] = true;
+                        } else {
+                          delete selectedRows[rowId];
+                        }
+
+                        return selectedRows;
+                      });
+                      setLastSelectedRowId(rowId);
+
+                      // ? clears any text highlighting
+                      document.getSelection()?.removeAllRanges();
+                    };
+
                     return (
                       <tr
                         className={trClassName}
@@ -197,50 +238,6 @@ export const Table = <TData extends RowData>({
 
                           const showSelectionCheckbox =
                             index === 0 && showRowSelection;
-
-                          const onCheckedChange = useCallback(
-                            (checked: boolean) => {
-                              const { rows } = table.getRowModel();
-                              const rowId = row.id;
-
-                              if (isShiftHeld && lastSelectedRowId) {
-                                const currentIndex = row.index;
-                                const prevIndex = rows.findIndex(({ id }) => {
-                                  return id === lastSelectedRowId;
-                                });
-
-                                const rowsToToggle = getRowRange({
-                                  currentIndex,
-                                  prevIndex,
-                                  rows,
-                                });
-
-                                rowsToToggle.forEach((row) => {
-                                  row.toggleSelected(checked);
-                                });
-                              } else {
-                                row.toggleSelected();
-                              }
-
-                              table.setRowSelection((prevSelectedRows) => {
-                                const selectedRows = {
-                                  ...prevSelectedRows,
-                                };
-                                if (checked) {
-                                  selectedRows[rowId] = true;
-                                } else {
-                                  delete selectedRows[rowId];
-                                }
-
-                                return selectedRows;
-                              });
-                              setLastSelectedRowId(rowId);
-
-                              // ? clears any text highlighting
-                              document.getSelection()?.removeAllRanges();
-                            },
-                            [isShiftHeld, lastSelectedRowId],
-                          );
 
                           return (
                             <td
