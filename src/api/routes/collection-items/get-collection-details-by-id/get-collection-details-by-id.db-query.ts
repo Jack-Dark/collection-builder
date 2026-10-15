@@ -9,9 +9,9 @@ import {
   sql,
   asc,
   desc,
-  notExists,
   exists,
   between,
+  notExists,
 } from 'drizzle-orm';
 
 import type { DbQueryArgsDef } from '#/auth/auth-middleware.types';
@@ -20,8 +20,6 @@ import { db } from '#/api/db';
 import {
   collectionItemsTable,
   collectionItemsToCustomFieldValuesTable,
-  collectionsTable,
-  collectionsToCustomFieldsTable,
   customFieldsTable,
   customFieldValuesTable,
 } from '#/api/db-tables-schema';
@@ -105,29 +103,18 @@ export const getCollectionDetailsByIdDbQuery = async ({
               tx
                 .select({ exists: sql<boolean>`1` })
                 .from(collectionItemsToCustomFieldValuesTable)
-                .leftJoin(
+                .innerJoin(
                   customFieldValuesTable,
                   eq(
                     customFieldValuesTable.id,
                     collectionItemsToCustomFieldValuesTable.customFieldValueId,
                   ),
                 )
-                .leftJoin(
-                  collectionsTable,
-                  eq(collectionsTable.id, collectionItemsTable.collectionId),
-                )
-                .leftJoin(
-                  collectionsToCustomFieldsTable,
-                  eq(
-                    collectionsToCustomFieldsTable.collectionId,
-                    collectionsTable.id,
-                  ),
-                )
-                .leftJoin(
+                .innerJoin(
                   customFieldsTable,
                   eq(
                     customFieldsTable.id,
-                    collectionsToCustomFieldsTable.customFieldId,
+                    customFieldValuesTable.customFieldId,
                   ),
                 )
                 .where(
@@ -153,30 +140,16 @@ export const getCollectionDetailsByIdDbQuery = async ({
             tx
               .select({ exists: sql<boolean>`1` })
               .from(collectionItemsToCustomFieldValuesTable)
-              .leftJoin(
+              .innerJoin(
                 customFieldValuesTable,
                 eq(
                   customFieldValuesTable.id,
                   collectionItemsToCustomFieldValuesTable.customFieldValueId,
                 ),
               )
-              .leftJoin(
-                collectionsTable,
-                eq(collectionsTable.id, collectionItemsTable.collectionId),
-              )
-              .leftJoin(
-                collectionsToCustomFieldsTable,
-                eq(
-                  collectionsToCustomFieldsTable.collectionId,
-                  collectionsTable.id,
-                ),
-              )
-              .leftJoin(
+              .innerJoin(
                 customFieldsTable,
-                eq(
-                  customFieldsTable.id,
-                  collectionsToCustomFieldsTable.customFieldId,
-                ),
+                eq(customFieldsTable.id, customFieldValuesTable.customFieldId),
               )
               .where(
                 and(
@@ -201,29 +174,18 @@ export const getCollectionDetailsByIdDbQuery = async ({
               tx
                 .select({ exists: sql<boolean>`1` })
                 .from(collectionItemsToCustomFieldValuesTable)
-                .leftJoin(
+                .innerJoin(
                   customFieldValuesTable,
                   eq(
                     customFieldValuesTable.id,
                     collectionItemsToCustomFieldValuesTable.customFieldValueId,
                   ),
                 )
-                .leftJoin(
-                  collectionsTable,
-                  eq(collectionsTable.id, collectionItemsTable.collectionId),
-                )
-                .leftJoin(
-                  collectionsToCustomFieldsTable,
-                  eq(
-                    collectionsToCustomFieldsTable.collectionId,
-                    collectionsTable.id,
-                  ),
-                )
-                .leftJoin(
+                .innerJoin(
                   customFieldsTable,
                   eq(
                     customFieldsTable.id,
-                    collectionsToCustomFieldsTable.customFieldId,
+                    customFieldValuesTable.customFieldId,
                   ),
                 )
                 .where(
@@ -247,29 +209,18 @@ export const getCollectionDetailsByIdDbQuery = async ({
               tx
                 .select({ exists: sql<boolean>`1` })
                 .from(collectionItemsToCustomFieldValuesTable)
-                .leftJoin(
+                .innerJoin(
                   customFieldValuesTable,
                   eq(
                     customFieldValuesTable.id,
                     collectionItemsToCustomFieldValuesTable.customFieldValueId,
                   ),
                 )
-                .leftJoin(
-                  collectionsTable,
-                  eq(collectionsTable.id, collectionItemsTable.collectionId),
-                )
-                .leftJoin(
-                  collectionsToCustomFieldsTable,
-                  eq(
-                    collectionsToCustomFieldsTable.collectionId,
-                    collectionsTable.id,
-                  ),
-                )
-                .leftJoin(
+                .innerJoin(
                   customFieldsTable,
                   eq(
                     customFieldsTable.id,
-                    collectionsToCustomFieldsTable.customFieldId,
+                    customFieldValuesTable.customFieldId,
                   ),
                 )
                 .where(
@@ -374,26 +325,6 @@ export const getCollectionDetailsByIdDbQuery = async ({
             },
           },
         },
-        // exists: and(
-        //   tx
-        //     .select({ exists: sql<boolean>`1` })
-        //     .from(collectionItemsToCustomFieldValuesTable)
-        //     .leftJoin(
-        //       customFieldValuesTable,
-        //       eq(
-        //         collectionItemsToCustomFieldValuesTable.customFieldValueId,
-        //         customFieldValuesTable.id,
-        //       ),
-        //     )
-        //     .where(
-        //       and(
-        //         eq(
-        //           collectionItemsToCustomFieldValuesTable.customFieldValueId,
-        //           customFieldId,
-        //         ),
-        //       ),
-        //     ),
-        // ),
       },
     });
 
