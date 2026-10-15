@@ -18,17 +18,17 @@ type ThemeProviderPropsDef = PropsWithChildren<{
   theme: UserPreferencesThemeDef | undefined;
 }>;
 
-export function ThemeProvider({ children, theme }: ThemeProviderPropsDef) {
+export const ThemeProvider = ({ children, theme }: ThemeProviderPropsDef) => {
   const router = useRouter();
 
-  function setTheme(theme: UserPreferencesThemeDef) {
+  const setTheme = (theme: UserPreferencesThemeDef) => {
     setThemeServerFn({ data: theme }).then(() => {
       return router.invalidate();
     });
-  }
+  };
 
   return <ThemeContext value={{ setTheme, theme }}>{children}</ThemeContext>;
-}
+};
 
 export const useTheme = () => {
   const context = use(ThemeContext);
