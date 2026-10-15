@@ -19,9 +19,9 @@ import { useSpinner } from '#/components/FullPageLoadingSpinner/useSpinner';
 import { PageWrapper } from '#/components/PageWrapper';
 import { Route as CollectionRoute } from '#/routes/_protected/collections/$id';
 
-import { useEditingCollectionItemsRowIds } from '../CollectionsListPage/hooks/use-editing-collection-items-row-ids';
 import { createOrUpdateCollectionItemsFormOptions } from './CollectionDetailsPage.form';
 import { CollectionDetailsTable } from './components/CollectionDetailsTable';
+import { useEditingCollectionItemsRowIds } from './hooks/use-editing-collection-items-row-ids';
 
 export const CollectionDetailsPage: RouteComponent = () => {
   const { id } = CollectionRoute.useParams();

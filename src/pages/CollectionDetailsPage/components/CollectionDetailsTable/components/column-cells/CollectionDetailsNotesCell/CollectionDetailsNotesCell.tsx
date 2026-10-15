@@ -3,7 +3,7 @@ import { useSelector } from '@tanstack/react-store';
 import type { CreateOrUpdateCollectionItemFormTypeDef } from '#/pages/CollectionDetailsPage/CollectionDetailsPage.types';
 
 import { TextAreaField } from '#/components/Fields/TextAreaField';
-import { useEditingCollectionItemsRowIds } from '#/pages/CollectionsListPage/hooks/use-editing-collection-items-row-ids';
+import { useEditingCollectionItemsRowIds } from '#/pages/CollectionDetailsPage/hooks/use-editing-collection-items-row-ids';
 
 export const CollectionDetailsNotesCell = (props: {
   form: CreateOrUpdateCollectionItemFormTypeDef;

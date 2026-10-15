@@ -4,7 +4,7 @@ import { Suspense } from 'react';
 import type { CustomFieldTypeDef } from '#/api/db-tables-schema.types';
 
 import { CheckboxField } from '#/components/Fields/CheckboxField';
-import { useEditingCollectionItemsRowIds } from '#/pages/CollectionsListPage/hooks/use-editing-collection-items-row-ids';
+import { useEditingCollectionItemsRowIds } from '#/pages/CollectionDetailsPage/hooks/use-editing-collection-items-row-ids';
 
 import type { CreateOrUpdateCollectionItemFormTypeDef } from '../../../../../CollectionDetailsPage.types';
 

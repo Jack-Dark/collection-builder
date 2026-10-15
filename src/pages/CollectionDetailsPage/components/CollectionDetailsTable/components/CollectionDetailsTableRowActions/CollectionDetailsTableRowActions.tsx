@@ -9,7 +9,7 @@ import { useInvalidateGetCollectionDetailsById } from '#/api/routes/collection-i
 import { Button } from '#/components/Button';
 import { Route as CollectionRoute } from '#/routes/_protected/collections/$id';
 
-import { useEditingCollectionItemsRowIds } from '../../../../../CollectionsListPage/hooks/use-editing-collection-items-row-ids';
+import { useEditingCollectionItemsRowIds } from '../../../../hooks/use-editing-collection-items-row-ids';
 import { AddNewCollectionItemButton } from './components/AddNewCollectionItemButton';
 import { CollectionDetailsSubmitButton } from './components/CollectionDetailsSubmitButton';
 

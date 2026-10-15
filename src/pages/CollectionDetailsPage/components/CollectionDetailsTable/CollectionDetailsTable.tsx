@@ -11,7 +11,7 @@ import { Route as CollectionRoute } from '#/routes/_protected/collections/$id';
 
 import type { CreateOrUpdateCollectionItemFormTypeDef } from '../../CollectionDetailsPage.types';
 
-import { useEditingCollectionItemsRowIds } from '../../../CollectionsListPage/hooks/use-editing-collection-items-row-ids';
+import { useEditingCollectionItemsRowIds } from '../../hooks/use-editing-collection-items-row-ids';
 import { getCollectionItemsTableColumns } from './CollectionDetailsTable.columns';
 import { CollectionDetailsTableRowActions } from './components/CollectionDetailsTableRowActions';
 import { CollectionDetailsFiltersContent } from './components/CollectionItemsFiltersContent';

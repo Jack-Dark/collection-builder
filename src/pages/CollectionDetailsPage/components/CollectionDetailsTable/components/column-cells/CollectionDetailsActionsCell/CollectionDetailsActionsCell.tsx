@@ -3,7 +3,7 @@ import { useSelector } from '@tanstack/react-store';
 import { useDeleteCollectionItemsByIds } from '#/api/routes/collection-items/delete-collection-items-by-ids/delete-collection-items-by-ids.react-query';
 import { useInvalidateGetCollectionDetailsById } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.react-query';
 import { TableCellActionsMenu } from '#/components/TableCellActionsMenu';
-import { useEditingCollectionItemsRowIds } from '#/pages/CollectionsListPage/hooks/use-editing-collection-items-row-ids';
+import { useEditingCollectionItemsRowIds } from '#/pages/CollectionDetailsPage/hooks/use-editing-collection-items-row-ids';
 import { Route as CollectionRoute } from '#/routes/_protected/collections/$id';
 
 import type { CollectionDetailsActionsCellPropsDef } from './CollectionDetailsActionsCell.types';
