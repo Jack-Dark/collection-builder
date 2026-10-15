@@ -43,6 +43,42 @@ export const createCollectionItemsDbQuery = async ({
       .onConflictDoNothing()
       .returning();
 
+    // ? Create links between the collection items and custom field values
+    const collectionItemsToCustomFieldValues =
+      customFieldValuesIndexedToRecord.reduce<
+        InsertLinkCollectionItemsToCustomFieldValuesRecordDef[]
+      >((acc, customFieldValues, index) => {
+        const collectionItem = newCollectionItemRecords[index];
+
+        const customFieldValuesForCollectionItem = Object.values(
+          customFieldValues,
+        ).reduce<InsertLinkCollectionItemsToCustomFieldValuesRecordDef[]>(
+          (acc, customFieldValue) => {
+            if (customFieldValue) {
+              return [
+                ...acc,
+                {
+                  collectionItemId: collectionItem.id,
+                  customFieldValueId: customFieldValue.id,
+                  userId,
+                } satisfies InsertLinkCollectionItemsToCustomFieldValuesRecordDef,
+              ];
+            } else {
+              return acc;
+            }
+          },
+          [],
+        );
+
+        return [...acc, ...customFieldValuesForCollectionItem];
+      }, []);
+
+    if (collectionItemsToCustomFieldValues.length) {
+      await tx
+        .insert(collectionItemsToCustomFieldValuesTable)
+        .values(collectionItemsToCustomFieldValues);
+    }
+
     const cloudinaryTagItems = newCollectionItemRecords.map(
       ({ collectionId, id: collectionItemId, userId }, index) => {
         const publicIdsForRecord = publicIds[index];
