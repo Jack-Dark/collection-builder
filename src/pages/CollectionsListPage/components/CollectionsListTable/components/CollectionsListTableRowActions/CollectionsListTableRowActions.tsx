@@ -8,6 +8,9 @@ import type { CreateOrUpdateCollectionFormTypeDef } from '#/pages/CollectionsLis
 import { useInvalidateGetCollectionDetailsById } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.react-query';
 import { useDeleteCollectionById } from '#/api/routes/collections/delete-collection-by-id/delete-collection-by-id.react-query';
 import { Button } from '#/components/Button';
+import { ConfirmDeleteDialog } from '#/components/ConfirmDeleteDialog';
+import { useDialog } from '#/components/Dialog/hooks/useDialog';
+import { pluralize } from '#/helpers/pluralize';
 import { useEditingCollectionsRowIds } from '#/pages/CollectionsListPage/hooks/use-editing-collections-row-ids';
 
 import { AddNewCollectionButton } from './components/AddNewCollectionButton';
@@ -27,19 +30,18 @@ export const CollectionsListTableRowActions = (props: {
   const invalidateGetCollectionDetailsById =
     useInvalidateGetCollectionDetailsById();
 
-  const { isPending: isDeletePending, onDeleteCollectionById } =
-    useDeleteCollectionById({
-      onSuccess: async (_response, { ids }) => {
-        await Promise.all(
-          ids.map(async (id) => {
-            await invalidateGetCollectionDetailsById({
-              id,
-            });
-          }),
-        );
-        resetRowSelection();
-      },
-    });
+  const { onDeleteCollectionById } = useDeleteCollectionById({
+    onSuccess: async (_response, { ids }) => {
+      await Promise.all(
+        ids.map(async (id) => {
+          await invalidateGetCollectionDetailsById({
+            id,
+          });
+        }),
+      );
+      resetRowSelection();
+    },
+  });
 
   const rowsMarkedAsEditing = useSelector(form.atom, ({ values }) => {
     return values.records.map((record) => {
@@ -48,6 +50,33 @@ export const CollectionsListTableRowActions = (props: {
       return { ...record, isEditing };
     });
   });
+
+  const [showConfirmDeleteDialog, hideConfirmDeleteDialog] = useDialog(() => {
+    const numSelectedRows = selectedRowIds.length;
+
+    const onConfirm = async () => {
+      await onDeleteCollectionById({
+        ids: selectedRowIds.map((id) => {
+          return Number(id);
+        }),
+      });
+    };
+
+    return (
+      <ConfirmDeleteDialog
+        hideDialog={hideConfirmDeleteDialog}
+        onConfirm={onConfirm}
+      >
+        <p className="text-center">
+          Are you sure you want to delete{' '}
+          {selectedRowIds.length > 1
+            ? `${numSelectedRows} ${pluralize('collection', numSelectedRows)}`
+            : 'this collection'}
+          ?
+        </p>
+      </ConfirmDeleteDialog>
+    );
+  }, [selectedRowIds]);
 
   return (
     <form.ArrayField name="records">
@@ -72,14 +101,7 @@ export const CollectionsListTableRowActions = (props: {
                   <Button
                     disabled={isEditing}
                     Icon={DeleteIcon}
-                    onClick={async () => {
-                      await onDeleteCollectionById({
-                        ids: selectedRowIds.map((id) => {
-                          return Number(id);
-                        }),
-                      });
-                    }}
-                    processing={isDeletePending}
+                    onClick={showConfirmDeleteDialog}
                     text="Delete"
                     variant="alert"
                   />

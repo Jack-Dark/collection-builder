@@ -7,6 +7,9 @@ import type { CreateOrUpdateCollectionItemFormTypeDef } from '#/pages/Collection
 import { useDeleteCollectionItemsByIds } from '#/api/routes/collection-items/delete-collection-items-by-ids/delete-collection-items-by-ids.react-query';
 import { useInvalidateGetCollectionDetailsById } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.react-query';
 import { Button } from '#/components/Button';
+import { ConfirmDeleteDialog } from '#/components/ConfirmDeleteDialog';
+import { useDialog } from '#/components/Dialog/hooks/useDialog';
+import { pluralize } from '#/helpers/pluralize';
 import { Route as CollectionRoute } from '#/routes/_protected/collections/$id';
 
 import { useEditingCollectionItemsRowIds } from '../../../../hooks/use-editing-collection-items-row-ids';
@@ -32,15 +35,41 @@ export const CollectionDetailsTableRowActions = ({
   const invalidateGetCollectionDetailsById =
     useInvalidateGetCollectionDetailsById();
 
-  const { isPending: isDeletePending, onDeleteCollectionItemsByIds } =
-    useDeleteCollectionItemsByIds({
-      onSuccess: async () => {
-        await invalidateGetCollectionDetailsById({
-          id: collectionId,
-        });
-        resetRowSelection();
-      },
-    });
+  const { onDeleteCollectionItemsByIds } = useDeleteCollectionItemsByIds({
+    onSuccess: async () => {
+      await invalidateGetCollectionDetailsById({
+        id: collectionId,
+      });
+      resetRowSelection();
+    },
+  });
+
+  const [showConfirmDeleteDialog, hideConfirmDeleteDialog] = useDialog(() => {
+    const numSelectedRows = selectedRowIds.length;
+
+    const onConfirm = async () => {
+      await onDeleteCollectionItemsByIds({
+        collectionItemIds: selectedRowIds.map((id) => {
+          return Number(id);
+        }),
+      });
+    };
+
+    return (
+      <ConfirmDeleteDialog
+        hideDialog={hideConfirmDeleteDialog}
+        onConfirm={onConfirm}
+      >
+        <p className="text-center">
+          Are you sure you want to delete{' '}
+          {selectedRowIds.length > 1
+            ? `${numSelectedRows} ${pluralize('item', numSelectedRows)}`
+            : 'this item'}{' '}
+          from your collection?
+        </p>
+      </ConfirmDeleteDialog>
+    );
+  }, [selectedRowIds]);
 
   return (
     <form.ArrayField name="collectionItems">
@@ -73,14 +102,7 @@ export const CollectionDetailsTableRowActions = ({
                   <Button
                     disabled={isEditing}
                     Icon={DeleteIcon}
-                    onClick={async () => {
-                      await onDeleteCollectionItemsByIds({
-                        collectionItemIds: selectedRowIds.map((id) => {
-                          return Number(id);
-                        }),
-                      });
-                    }}
-                    processing={isDeletePending}
+                    onClick={showConfirmDeleteDialog}
                     text="Delete"
                     variant="alert"
                   />

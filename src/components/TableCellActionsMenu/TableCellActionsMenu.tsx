@@ -2,10 +2,8 @@ import { MoreMenu } from '#/components/MoreMenu';
 
 import type { TableCellActionsMenuPropsDef } from './types';
 
-import { Button } from '../Button';
-import { Dialog } from '../Dialog';
+import { ConfirmDeleteDialog } from '../ConfirmDeleteDialog';
 import { useDialog } from '../Dialog/hooks/useDialog';
-import { useSpinner } from '../FullPageLoadingSpinner/useSpinner';
 
 export const TableCellActionsMenu = <
   TData extends { id: number | string; name: string },
@@ -28,40 +26,18 @@ export const TableCellActionsMenu = <
   const [showConfirmDeleteDialog, hideConfirmDeleteDialog] = useDialog(() => {
     const recordName = rowData.name;
 
-    const { onInterceptProcessingRequest, processing } = useSpinner();
-
     return (
-      <Dialog
-        Footer={() => {
-          return (
-            <>
-              <Button
-                onClick={hideConfirmDeleteDialog}
-                text="Cancel"
-                variant="mono"
-              />
-              <Button
-                onClick={async () => {
-                  onInterceptProcessingRequest(async () => {
-                    await deleteOnClick(rowData);
-                    hideConfirmDeleteDialog();
-                  });
-                }}
-                processing={processing}
-                text="Delete"
-                variant="alert"
-              />
-            </>
-          );
+      <ConfirmDeleteDialog
+        hideDialog={hideConfirmDeleteDialog}
+        onConfirm={async () => {
+          deleteOnClick(rowData);
         }}
-        Header="Confirm Delete"
-        onClose={hideConfirmDeleteDialog}
       >
         <p className="text-center">
           Are you sure you want to delete{' '}
           {recordName ? `"${recordName}"` : 'this item'}?
         </p>
-      </Dialog>
+      </ConfirmDeleteDialog>
     );
   }, []);
 
