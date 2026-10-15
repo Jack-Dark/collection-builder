@@ -21,7 +21,7 @@ export const CollectionDetailsCreatedAtCell = ({
     useEditingCollectionItemsRowIds();
   const isEditingRow = getIsEditingRowId(rowId);
 
-  const { getLastNewRecordIndex, removeFromIsEditingRowIds } =
+  const { getLastNewRecordIndex, removeFromEditingRowIds } =
     useEditingCollectionItemsRowIds();
 
   const isLastNewRecordIndex = getLastNewRecordIndex() === rowIndex;
@@ -41,7 +41,7 @@ export const CollectionDetailsCreatedAtCell = ({
                       Icon={ClearIcon}
                       onClick={() => {
                         collectionItemsField.removeValue(rowIndex);
-                        removeFromIsEditingRowIds(String(value.id));
+                        removeFromEditingRowIds(String(value.id));
                       }}
                       text="Remove"
                       variant="mono"
