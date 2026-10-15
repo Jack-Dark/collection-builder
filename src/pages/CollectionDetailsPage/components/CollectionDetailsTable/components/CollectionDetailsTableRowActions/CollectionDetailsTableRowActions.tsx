@@ -104,7 +104,6 @@ export const CollectionDetailsTableRowActions = ({
                 </>
               ) : (
                 <AddNewCollectionItemButton
-                  disabled={false}
                   form={form}
                   insertAtIndex={0}
                   text="Add New"
