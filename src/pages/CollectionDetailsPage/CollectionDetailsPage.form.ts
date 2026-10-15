@@ -39,8 +39,7 @@ export const createOrUpdateCollectionItemsFormOptions = formOptions({
     {
       run: createOrUpdateCollectionItemsFormSchema,
       runOnSubmit: true,
-      triggerDebounceMs: 300,
-      triggers: ['blur'],
+      triggers: [],
     },
   ],
 });
