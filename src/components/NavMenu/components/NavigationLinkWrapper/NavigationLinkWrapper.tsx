@@ -12,7 +12,7 @@ export const NavigationLinkWrapper = (props: NavigationMenuLinkProps) => {
         const isExternal = /^https?:\/\//.test(href!);
 
         return isExternal ? (
-          <a {...rest} href={href} />
+          <NavigationMenu.Link {...rest} href={href} />
         ) : (
           <Link {...rest} to={href} />
         );

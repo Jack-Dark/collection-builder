@@ -49,21 +49,21 @@ export const TableCellActionsMenu = <
           isEditing
             ? {
                 disabled: editIsDisabled,
-                label: `Cancel ${editLabel}`,
+                Label: `Cancel ${editLabel}`,
                 onClick: async () => {
                   onCancelEdit?.(rowData);
                 },
               }
             : {
                 disabled: editIsDisabled,
-                label: editLabel,
+                Label: editLabel,
                 onClick: async () => {
                   await editOnClick(rowData);
                 },
               },
           {
             disabled: deleteIsDisabled,
-            label: deleteLabel,
+            Label: deleteLabel,
             onClick: showConfirmDeleteDialog,
           },
         ]}

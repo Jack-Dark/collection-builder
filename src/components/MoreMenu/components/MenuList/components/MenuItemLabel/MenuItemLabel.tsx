@@ -1,7 +1,7 @@
 import type { MenuItemLabelPropsDef } from './MenuItemLabel.types';
 
 export const MenuItemLabel = (props: MenuItemLabelPropsDef) => {
-  const { label } = props;
+  const { Label } = props;
 
-  return typeof label === 'string' ? label : <label />;
+  return typeof Label === 'string' ? Label : <Label />;
 };

@@ -27,7 +27,7 @@ export const MenuList = (props: MenuPropsDef) => {
         side={side}
         sideOffset={sideOffset}
       >
-        <Menu.Popup className="origin-(--transform-origin) rounded-md bg-[canvas] py-1 text-gray-900 shadow-lg shadow-gray-200 outline-1 outline-gray-200 transition-[transform,scale,opacity] data-ending-style:scale-90 data-[ending-style]:opacity-0 data-[starting-style]:scale-90 data-[starting-style]:opacity-0 dark:shadow-none dark:-outline-offset-1 dark:outline-gray-300">
+        <Menu.Popup className="relative bg-theme-surface-1 text-theme-t1 border border-theme-divider-1 dark:border-theme-divider-2 rounded-xs py-1 shadow-lg">
           <Menu.Arrow className="data-[side=bottom]:top-[-8px] data-[side=left]:right-[-13px] data-[side=left]:rotate-90 data-[side=right]:left-[-13px] data-[side=right]:-rotate-90 data-[side=top]:bottom-[-8px] data-[side=top]:rotate-180">
             <MenuArrowSvg />
           </Menu.Arrow>
@@ -39,21 +39,21 @@ export const MenuList = (props: MenuPropsDef) => {
               group,
               href,
               id,
-              label,
+              Label,
               onClick,
               subMenu,
               target,
             } = itemProps;
 
             return (
-              <Fragment key={typeof label === 'string' ? label : id}>
+              <Fragment key={typeof Label === 'string' ? Label : id}>
                 {group?.length ? (
                   <Menu.Group>
                     <Menu.GroupLabel
                       className={getMenuItemClasses(disabled)}
                       data-group-label=""
                     >
-                      <MenuItemLabel label={label} />
+                      <MenuItemLabel Label={Label} />
                     </Menu.GroupLabel>
 
                     {group.map((groupProps) => {
@@ -62,7 +62,7 @@ export const MenuList = (props: MenuPropsDef) => {
                         disabled,
                         href,
                         id,
-                        label,
+                        Label: label,
                         onClick,
                         target,
                       } = groupProps;
@@ -86,7 +86,7 @@ export const MenuList = (props: MenuPropsDef) => {
                                 );
                               }}
                             >
-                              <MenuItemLabel label={label} />
+                              <MenuItemLabel Label={label} />
                             </ConditionalWrapper>
                           </Menu.Item>
                           {addSeparator && (
@@ -115,7 +115,7 @@ export const MenuList = (props: MenuPropsDef) => {
                           );
                         }}
                       >
-                        <MenuItemLabel label={label} />
+                        <MenuItemLabel Label={Label} />
                       </ConditionalWrapper>
                     </Menu.SubmenuTrigger>
                     <MenuList
@@ -146,7 +146,7 @@ export const MenuList = (props: MenuPropsDef) => {
                         );
                       }}
                     >
-                      <MenuItemLabel label={label} />
+                      <MenuItemLabel Label={Label} />
                     </ConditionalWrapper>
                   </Menu.Item>
                 )}

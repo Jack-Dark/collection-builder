@@ -1,7 +1,7 @@
 import { Select } from '@base-ui/react';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Fragment } from 'react/jsx-runtime';
-import { twMerge } from 'tailwind-merge';
+import { twJoin, twMerge } from 'tailwind-merge';
 
 import type {
   DefaultSelectItemDef,
@@ -133,7 +133,13 @@ export const SelectField = <TItem extends DefaultSelectItemDef>(
                               : '',
                             item?.disabled
                               ? 'cursor-not-allowed'
-                              : 'data-selected:not-data-highlighted:bg-theme-surface-selected data-highlighted:bg-theme-surface-highlighted cursor-pointer',
+                              : twJoin(
+                                  'cursor-pointer',
+                                  // ? selected status styles
+                                  'data-selected:not-data-highlighted:bg-theme-surface-selected',
+                                  // ? highlighted status styles
+                                  'data-highlighted:bg-theme-surface-highlighted',
+                                ),
                           )}
                           disabled={item?.disabled}
                           key={itemToStringValue(item)}

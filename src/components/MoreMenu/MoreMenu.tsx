@@ -1,5 +1,6 @@
 import { Menu } from '@base-ui/react';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import { twJoin } from 'tailwind-merge';
 
 import { getCursorClassName } from '#/helpers';
 
@@ -13,7 +14,11 @@ export const MoreMenu = (props: MenuPropsDef) => {
   return (
     <Menu.Root disabled={disabled} open={open}>
       <Menu.Trigger
-        className={`flex items-center justify-center select-none ${getCursorClassName(disabled)} ${disabled ? 'text-disabled' : ''}`}
+        className={twJoin(
+          `flex items-center justify-center select-none`,
+          getCursorClassName(disabled),
+          disabled && 'text-disabled',
+        )}
         disabled={disabled}
       >
         <MoreHorizIcon />

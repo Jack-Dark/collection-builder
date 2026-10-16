@@ -9,10 +9,10 @@ const meta = {
     items: [
       {
         href: '/',
-        label: 'Link',
+        Label: 'Link',
       },
       {
-        label: 'On click',
+        Label: 'On click',
         onClick: () => {
           alert('You clicked on "Delete".');
         },
@@ -20,27 +20,27 @@ const meta = {
       {
         addSeparator: true,
         disabled: true,
-        label: 'Disabled',
+        Label: 'Disabled',
         onClick: () => {
           alert('You clicked on "Disabled".');
         },
       },
       {
         href: '/',
-        label: 'Sub-menu',
+        Label: 'Sub-menu',
         subMenu: {
           items: [
             {
               href: '/',
-              label: 'Sub-menu 1',
+              Label: 'Sub-menu 1',
             },
             {
               href: '/',
-              label: 'Sub-menu 2',
+              Label: 'Sub-menu 2',
             },
             {
               href: '/',
-              label: 'Sub-menu 3',
+              Label: 'Sub-menu 3',
             },
           ],
         },

@@ -36,11 +36,11 @@ export type MenuItemDef = {
 type MenuItemLabelPropsDef =
   | {
       id?: never;
-      label: string;
+      Label: string;
     }
   | {
       id: Key;
-      label: JSXElementConstructor<{}>;
+      Label: JSXElementConstructor<{}>;
     };
 
 type MenuItemBehaviorPropsDef =

@@ -1,5 +1,6 @@
 import { NavigationMenu } from '@base-ui/react';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { twJoin } from 'tailwind-merge';
 
 import type { NavMenuItem } from './NavMenu.types';
 
@@ -21,12 +22,15 @@ export const NavMenu = (props: { items: NavMenuItem[] }) => {
 
             return hidden ? null : (
               <NavigationMenu.Item
-                className={
-                  (hasSubMenu ? '' : 'px-3 py-2 ') +
-                  'rounded-xs no-underline text-theme-t1 ' +
-                  'hover:bg-primary-900 hover:text-white ' +
-                  'data-[status="active"]:bg-primary-950 hover:data-[status="active"]:bg-primary-950 data-[status="active"]:text-white'
-                }
+                className={twJoin(
+                  // ? standard styles
+                  'rounded-xs no-underline text-theme-t1',
+                  // ? active status styles
+                  'has-data-[status="active"]:bg-theme-surface-selected',
+                  // ? hover styles
+                  'hover:bg-theme-surface-highlighted',
+                  'hover:has-data-[status="active"]:bg-theme-surface-highlighted',
+                )}
                 key={href || label}
                 onClick={onClick}
               >
@@ -34,14 +38,7 @@ export const NavMenu = (props: { items: NavMenuItem[] }) => {
                   condition={hasSubMenu}
                   Wrapper={({ children }) => {
                     return (
-                      <NavigationMenu.Trigger
-                        className={
-                          'px-3 py-2 ' +
-                          'flex items-center justify-center gap-1.5 ' +
-                          'rounded-xs bg-inherit text-inherit font-medium ' +
-                          'text-[0.925rem] [@media(min-width:32rem)]:text-base leading-6 select-none no-underline '
-                        }
-                      >
+                      <NavigationMenu.Trigger className="px-3 py-2 flex items-center justify-center gap-1.5 rounded-xs bg-inherit text-inherit font-medium text-[0.925rem] [@media(min-width:32rem)]:text-base leading-6 select-none no-underline">
                         {children}
                         {items && (
                           <NavigationMenu.Icon className="transition-transform duration-200 ease-in-out data-[popup-open]:rotate-180">
@@ -78,15 +75,15 @@ export const NavMenu = (props: { items: NavMenuItem[] }) => {
 
                 {hasSubMenu && (
                   <NavigationMenu.Content
-                    className={
-                      'min-w-40 rounded-xs overflow-hidden ' +
-                      'transition-[opacity,transform,translate] duration-[var(--duration)] ease-[var(--easing)] ' +
-                      'data-[starting-style]:opacity-0 data-[ending-style]:opacity-0 ' +
-                      'data-[starting-style]:data-[activation-direction=left]:translate-x-[-50%] ' +
-                      'data-[starting-style]:data-[activation-direction=right]:translate-x-[50%] ' +
-                      'data-[ending-style]:data-[activation-direction=left]:translate-x-[50%] ' +
-                      'data-[ending-style]:data-[activation-direction=right]:translate-x-[-50%]'
-                    }
+                    className={twJoin(
+                      'py-1 min-w-40 rounded-xs',
+                      'transition-[opacity,transform,translate] duration-[var(--duration)] ease-[var(--easing)]',
+                      'data-[starting-style]:opacity-0 data-[ending-style]:opacity-0',
+                      'data-[starting-style]:data-[activation-direction=left]:translate-x-[-50%]',
+                      'data-[starting-style]:data-[activation-direction=right]:translate-x-[50%]',
+                      'data-[ending-style]:data-[activation-direction=left]:translate-x-[50%]',
+                      'data-[ending-style]:data-[activation-direction=right]:translate-x-[-50%]',
+                    )}
                     keepMounted
                   >
                     <ul className="list-none">
@@ -102,8 +99,15 @@ export const NavMenu = (props: { items: NavMenuItem[] }) => {
                                 <RenderItem />
                               ) : (
                                 <NavigationLinkWrapper
-                                  className="block px-3 py-2
-                                  text-theme-t1 hover:bg-primary-900 hover:text-white"
+                                  className={twJoin(
+                                    // ? standard styles
+                                    'block px-3 py-2 text-theme-t1',
+                                    // ? active status styles
+                                    'data-[status=active]:bg-theme-surface-selected',
+                                    // ? hover styles
+                                    'hover:bg-theme-surface-highlighted',
+                                    'hover:data-[status=active]:bg-theme-surface-highlighted',
+                                  )}
                                   href={href}
                                   onClick={onClick}
                                 >

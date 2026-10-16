@@ -1,3 +1,4 @@
+@custom-variant light (&:where([data-theme="light"], [data-theme="light"] *));
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
 @custom-variant dialog (&:where([data-dialog], [data-dialog] *));
@@ -105,8 +106,8 @@
   --theme-surface-1: var(--color-gray-950);
   --theme-surface-2: var(--color-gray-900);
   --theme-surface-3: var(--color-gray-800);
-  --theme-surface-selected: rgb(from var(--color-primary-500) r g b / 0.1);
-  --theme-surface-highlighted: rgb(from var(--color-primary-500) r g b / 0.2);
+  --theme-surface-selected: rgb(from var(--color-primary-500) r g b / 0.15);
+  --theme-surface-highlighted: rgb(from var(--color-primary-500) r g b / 0.25);
 
   --theme-t1: var(--color-gray-50);
   --theme-t2: var(--color-gray-400);
