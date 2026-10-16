@@ -6,6 +6,17 @@
 @import "./components/Table/Table.css";
 
 
+@layer base {
+
+  html,
+  body {
+    @apply scrollbar-thin scrollbar-thumb-theme-t3 scrollbar-track-theme-surface-2;
+
+    /* Dark mode variants */
+    @apply dark:scrollbar-thumb-theme-t3 dark:scrollbar-track-theme-surface-3;
+  }
+}
+
 @layer components {
   .text-disabled {
     color: var(--color-disabled);

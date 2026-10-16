@@ -3,7 +3,11 @@ import type {
   ComboboxItemIndicator,
   ComboboxRootProps,
 } from '@base-ui/react';
-import type { HTMLAttributes, JSXElementConstructor } from 'react';
+import type {
+  DependencyList,
+  HTMLAttributes,
+  JSXElementConstructor,
+} from 'react';
 
 import type { FieldWrapperProps } from '../FieldWrapper/FieldWrapper.types';
 
@@ -34,9 +38,10 @@ export type ComboboxFieldPropsDef<
     hideLabel?: boolean;
     idProperty?: keyof TValue;
     inputValue?: string;
+    itemsDependencies?: DependencyList;
     labelProperty?: keyof TValue;
     onChipSort?: (items: TValue[]) => void;
-    onRemoveChip?: (item: TValue) => void;
+    onRemoveChip?: (item: TValue, index: number) => void;
     RenderChip?: JSXElementConstructor<
       HTMLAttributes<HTMLElement> & { item: TValue }
     >;

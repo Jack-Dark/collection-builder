@@ -91,23 +91,21 @@ export const SelectField = <TItem extends DefaultSelectItemDef>(
         }}
         value={value}
       >
-        <Select.Trigger className="grid grid-cols-[1fr_auto] gap-1 md:gap-2 p-1.5 bg-theme-surface-1 dark:bg-theme-surface-2 dialog:bg-theme-surface-1 border rounded-xs  border-theme-divider-1 dark:border-theme-divider-3 cursor-pointer">
+        <Select.Trigger className="grid grid-cols-[1fr_auto] gap-1 md:gap-2 p-1.5 bg-theme-surface-1 dark:bg-theme-surface-2 dialog:bg-theme-surface-1 border rounded-xs border-theme-divider-1 dark:border-theme-divider-3 cursor-pointer">
           <Select.Value
             className="grid justify-start"
             placeholder={placeholder}
           >
             {(item: TItem | undefined) => {
-              return (
-                item && (
-                  <RenderValue
-                    className={`${
-                      item?.disabled || item?.placeholder
-                        ? 'text-gray-500 '
-                        : ''
-                    } ${item?.disabled ? 'cursor-not-allowed' : ''}`}
-                    item={item}
-                  />
-                )
+              return item ? (
+                <RenderValue
+                  className={`${
+                    item?.disabled || item?.placeholder ? 'text-gray-500 ' : ''
+                  } ${item?.disabled ? 'cursor-not-allowed' : ''}`}
+                  item={item}
+                />
+              ) : (
+                <span className="text-gray-500">{placeholder}</span>
               );
             }}
           </Select.Value>
@@ -117,8 +115,8 @@ export const SelectField = <TItem extends DefaultSelectItemDef>(
         </Select.Trigger>
         <Select.Portal>
           <Select.Positioner align="start" alignItemWithTrigger={false}>
-            <Select.Popup className="min-w-25 bg-theme-surface-1 border border-theme-divider-2 py-2 rounded-sm shadow-lg max-h-100 overflow-auto">
-              <Select.List>
+            <Select.Popup>
+              <Select.List className="min-w-25 bg-theme-surface-1 dark:bg-theme-surface-2 text-theme-t1 border border-theme-divider-1 dark:border-theme-divider-3 py-2 rounded-sm shadow-lg max-h-100 overflow-auto data-empty:hidden">
                 {items.map((item, index) => {
                   return (
                     <Fragment
@@ -131,15 +129,11 @@ export const SelectField = <TItem extends DefaultSelectItemDef>(
                           className={twMerge(
                             'p-2 flex align-items-center',
                             item.disabled || item.placeholder
-                              ? 'text-gray-400'
+                              ? 'text-theme-disabled'
                               : '',
                             item?.disabled
                               ? 'cursor-not-allowed'
-                              : 'hover:bg-theme-surface-2  cursor-pointer',
-                            'data-selected:not-data-highlighted:bg-primary-950',
-                            'data-selected:not-data-highlighted:text-white',
-                            'data-highlighted:bg-primary-900',
-                            'data-highlighted:text-white',
+                              : 'data-selected:not-data-highlighted:bg-theme-surface-selected data-highlighted:bg-theme-surface-highlighted cursor-pointer',
                           )}
                           disabled={item?.disabled}
                           key={itemToStringValue(item)}

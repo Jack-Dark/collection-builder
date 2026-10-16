@@ -43,10 +43,13 @@
   --color-theme-surface-1: var(--theme-surface-1);
   --color-theme-surface-2: var(--theme-surface-2);
   --color-theme-surface-3: var(--theme-surface-3);
+  --color-theme-surface-selected: var(--theme-surface-selected);
+  --color-theme-surface-highlighted: var(--theme-surface-highlighted);
 
   --color-theme-t1: var(--theme-t1);
   --color-theme-t2: var(--theme-t2);
   --color-theme-t3: var(--theme-t3);
+  --color-theme-t-alert: var(--theme-t-alert);
 
   --color-theme-disabled: var(--theme-disabled);
 
@@ -69,12 +72,15 @@
   --theme-divider-3: var(--color-gray-500);
 
   --theme-surface-1: var(--color-gray-50);
-  --theme-surface-2: var(--color-gray-200);
-  --theme-surface-3: var(--color-gray-300);
+  --theme-surface-2: var(--color-gray-100);
+  --theme-surface-3: var(--color-gray-200);
+  --theme-surface-selected: rgb(from var(--color-primary-500) r g b / 0.1);
+  --theme-surface-highlighted: rgb(from var(--color-primary-500) r g b / 0.2);
 
   --theme-t1: var(--color-black);
   --theme-t2: var(--color-gray-600);
   --theme-t3: var(--color-gray-400);
+  --theme-t-alert: var(--color-red-700);
 
   --theme-disabled: var(--color-gray-500);
 
@@ -89,21 +95,6 @@
 
   --theme-alert: var(--color-red-700);
   --theme-alert-hover: var(--color-red-800);
-
-  input:-webkit-autofill,
-  input:-webkit-autofill:hover,
-  input:-webkit-autofill:focus,
-  textarea:-webkit-autofill,
-  textarea:-webkit-autofill:hover,
-  textarea:-webkit-autofill:focus,
-  select:-webkit-autofill,
-  select:-webkit-autofill:hover,
-  select:-webkit-autofill:focus {
-    border-color: var(--color-theme-divider-1);
-    -webkit-text-fill-color: var(--color-theme-t1);
-    -webkit-box-shadow: 0 0 0px 1000px var(--color-theme-surface-1) inset;
-    transition: background-color 5000s ease-in-out 0s;
-  }
 }
 
 [data-theme="dark"] {
@@ -114,10 +105,13 @@
   --theme-surface-1: var(--color-gray-950);
   --theme-surface-2: var(--color-gray-900);
   --theme-surface-3: var(--color-gray-800);
+  --theme-surface-selected: rgb(from var(--color-primary-500) r g b / 0.1);
+  --theme-surface-highlighted: rgb(from var(--color-primary-500) r g b / 0.2);
 
   --theme-t1: var(--color-gray-50);
   --theme-t2: var(--color-gray-400);
   --theme-t3: var(--color-gray-500);
+  --theme-t-alert: var(--color-red-700);
 
   --theme-disabled: var(--color-gray-500);
 
@@ -134,21 +128,11 @@
   --theme-alert-hover: var(--color-red-800);
 
 
-  input:-webkit-autofill,
-  input:-webkit-autofill:hover,
-  input:-webkit-autofill:focus,
-  textarea:-webkit-autofill,
-  textarea:-webkit-autofill:hover,
-  textarea:-webkit-autofill:focus,
-  select:-webkit-autofill,
-  select:-webkit-autofill:hover,
-  select:-webkit-autofill:focus {
-    border-color: var(--color-theme-divider-3);
-    -webkit-box-shadow: 0 0 0px 1000px var(--color-theme-surface-2) inset;
-    transition: background-color 5000s ease-in-out 0s;
-  }
+}
 
-  [data-dialog] {
+@layer utilities {
+
+  [data-them="light"] {
 
     input:-webkit-autofill,
     input:-webkit-autofill:hover,
@@ -159,7 +143,41 @@
     select:-webkit-autofill,
     select:-webkit-autofill:hover,
     select:-webkit-autofill:focus {
+      border-color: var(--color-theme-divider-1);
+      -webkit-text-fill-color: var(--color-theme-t1);
       -webkit-box-shadow: 0 0 0px 1000px var(--color-theme-surface-1) inset;
+      transition: background-color 5000s ease-in-out 0s;
+    }
+  }
+
+  [data-them="dark"] {
+
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus,
+    textarea:-webkit-autofill,
+    textarea:-webkit-autofill:hover,
+    textarea:-webkit-autofill:focus,
+    select:-webkit-autofill,
+    select:-webkit-autofill:hover,
+    select:-webkit-autofill:focus {
+      border-color: var(--color-theme-divider-3);
+      -webkit-box-shadow: 0 0 0px 1000px var(--color-theme-surface-2) inset;
+    }
+
+    [data-dialog] {
+
+      input:-webkit-autofill,
+      input:-webkit-autofill:hover,
+      input:-webkit-autofill:focus,
+      textarea:-webkit-autofill,
+      textarea:-webkit-autofill:hover,
+      textarea:-webkit-autofill:focus,
+      select:-webkit-autofill,
+      select:-webkit-autofill:hover,
+      select:-webkit-autofill:focus {
+        -webkit-box-shadow: 0 0 0px 1000px var(--color-theme-surface-1) inset;
+      }
     }
   }
 }

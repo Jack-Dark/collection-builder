@@ -3,16 +3,12 @@ import type { PropsWithChildren } from 'react';
 import CheckIcon from '@mui/icons-material/Check';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import { useSelector } from '@tanstack/react-form';
-import { createStore } from '@tanstack/react-store';
+import { createAtom, useAtom } from '@tanstack/react-store';
 import { useMemo, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 import type { CustomFieldTypeDef } from '#/api/db-tables-schema.types';
-import type {
-  CustomFieldDataForCollectionDef,
-  OrderedCustomFieldForCollectionDef,
-} from '#/api/routes/collections/get-paginated-collections/get-paginated-collections.types';
+import type { CustomFieldDataForCollectionDef } from '#/api/routes/collections/get-paginated-collections/get-paginated-collections.types';
 import type { CustomFieldFormSchemaDef } from '#/api/routes/custom-fields/custom-fields.types';
 import type { HideDialog } from '#/components/Dialog/hooks/useDialog';
 import type { CreateOrUpdateCollectionFormTypeDef } from '#/pages/CollectionsListPage/CollectionsListPage.types';
@@ -80,14 +76,17 @@ export const CollectionsListCustomFieldsCell = (props: {
 
   // const editCustomFieldAtom = useEditCustomFieldAtom();
 
+  const lastEditedCustomField = useLastEditedCustomField();
+
+  const [updateItemsTimestamp, setUpdateItemsTimestamp] = useState<number>(0);
+
   // TODO - wrap inside conditional with Suspense so data is only fetched when editing a row
   const { data: customFieldsInDb = [] } = useGetCustomFields({
+    onSuccess: () => {
+      setUpdateItemsTimestamp(Date.now());
+    },
     placeholderData: [],
     requestArgs: {},
-  });
-
-  const customFieldsForRow = useSelector(form.atom, ({ values }) => {
-    return values.records[rowIndex].customFields;
   });
 
   const [showAddOrEditCustomFieldsDialog, hideAddOrEditCustomFieldsDialog] =
@@ -116,257 +115,218 @@ export const CollectionsListCustomFieldsCell = (props: {
           }}
         </form.ArrayField>
       );
-    }, [customFieldsForRow]);
+    }, []);
 
   const [
     showConfirmDeleteCustomFieldDialog,
     hideConfirmDeleteCustomFieldDialog,
   ] = useDialog(() => {
     return (
-      lastEditedCustomFieldStore.state.data && (
-        <DeleteCustomFieldDialog
-          customField={lastEditedCustomFieldStore.state.data?.customField}
-          form={form}
-          onClose={hideConfirmDeleteCustomFieldDialog}
-        />
-      )
+      <DeleteCustomFieldDialog
+        form={form}
+        onClose={hideConfirmDeleteCustomFieldDialog}
+      />
     );
-  }, [lastEditedCustomFieldStore.state.data?.customField?.id]);
+  }, []);
 
   return (
-    <div>
-      {isEditingRow ? (
-        <form.ArrayField name="records">
-          {() => {
-            return (
-              <form.ArrayField name={`records[${rowIndex}].customFields`}>
-                {({ handleChange, name, removeValue, value }) => {
-                  const comboboxValue = value.map(({ customField }) => {
-                    return {
-                      ...customField,
-                      id: customField.id,
-                    };
-                  });
+    <form.ArrayField name={`records[${rowIndex}].customFields`}>
+      {(field) => {
+        const comboboxValue = field.value.map(({ customField }) => {
+          return {
+            ...customField,
+            id: customField.id,
+          };
+        });
 
+        return isEditingRow ? (
+          <div className="w-full max-w-80">
+            <ComboboxField
+              allowCreatable
+              ariaLabel="Custom Field"
+              caseSensitiveCreation
+              createNewItem={(trimmedQuery) => {
+                const newRecord: CustomFieldDataForCollectionDef = {
+                  id: uuidv4() as unknown as number,
+                  name: trimmedQuery,
+                  type: null as unknown as CustomFieldTypeDef,
+                };
+
+                const index = field.value.length;
+
+                lastEditedCustomField.setIndex(index);
+                lastEditedCustomField.setData({
+                  customField: newRecord,
+                  order: index,
+                });
+
+                return newRecord;
+              }}
+              enableChipSort
+              error={field.errors}
+              idProperty="name"
+              isItemEqualToValue={(item, value) => {
+                return item?.id === value?.id;
+              }}
+              items={customFieldsInDb}
+              itemsDependencies={[updateItemsTimestamp]}
+              labelProperty="name"
+              multiple
+              name={field.name}
+              onChipSort={(items) => {
+                const itemsWithOrder = items.map((item, index) => {
+                  return { customField: item, order: index };
+                });
+                field.handleChange(itemsWithOrder);
+              }}
+              onRemoveChip={(chip) => {
+                const matchingIndex = field.value.findIndex((data) => {
+                  return data.customField.id === chip.id;
+                });
+                field.removeValue(matchingIndex);
+              }}
+              onValueChange={(customFields) => {
+                const lastAddedIndex = customFields.findIndex((customField) => {
                   return (
-                    <div className="w-full max-w-80">
-                      <ComboboxField
-                        allowCreatable
-                        ariaLabel="Custom Field"
-                        caseSensitiveCreation
-                        createNewItem={(trimmedQuery) => {
-                          const newRecord: CustomFieldDataForCollectionDef = {
-                            id: uuidv4() as unknown as number,
-                            name: trimmedQuery,
-                            type: null as unknown as CustomFieldTypeDef,
-                          };
-
-                          const index = customFieldsForRow.length;
-                          lastEditedCustomFieldStore.setState((prev) => {
-                            return {
-                              ...prev,
-                              data: {
-                                customField: newRecord,
-                                order: index,
-                              },
-                              index,
-                            };
-                          });
-
-                          return newRecord;
-                        }}
-                        enableChipSort
-                        idProperty="name"
-                        isItemEqualToValue={(item, value) => {
-                          return item?.id === value?.id;
-                        }}
-                        items={customFieldsInDb}
-                        labelProperty="name"
-                        multiple
-                        name={name}
-                        onChipSort={(items) => {
-                          const itemsWithOrder = items.map((item, index) => {
-                            return { customField: item, order: index };
-                          });
-                          handleChange(itemsWithOrder);
-                        }}
-                        onRemoveChip={(chip) => {
-                          const matchingIndex = customFieldsForRow.findIndex(
-                            (data) => {
-                              return data.customField.id === chip.id;
-                            },
-                          );
-                          removeValue(matchingIndex);
-                        }}
-                        onValueChange={(customFields) => {
-                          const lastAddedIndex = customFields.findIndex(
-                            (customField) => {
-                              return (
-                                customField.id ===
-                                lastEditedCustomFieldStore.state.data
-                                  ?.customField.id
-                              );
-                            },
-                          );
-
-                          if (lastAddedIndex >= 0) {
-                            lastEditedCustomFieldStore.setState((prev) => {
-                              return { ...prev, index: lastAddedIndex };
-                            });
-                            showAddOrEditCustomFieldsDialog();
-                          } else {
-                            lastEditedCustomFieldStore.setState((prev) => {
-                              return {
-                                ...prev,
-                                index: undefined as unknown as number,
-                              };
-                            });
-                          }
-
-                          form.setFieldValue(
-                            name,
-                            customFields.map((customField, index) => {
-                              return {
-                                customField,
-                                order: index,
-                              };
-                            }),
-                          );
-                        }}
-                        placeholder="Input custom fields..."
-                        RenderChip={({ item }) => {
-                          return (
-                            <RenderCustomField item={item}>
-                              <span className="text-gray-600 hover:text-primary-700 cursor-pointer leading-0">
-                                <EditIcon
-                                  fontSize="inherit"
-                                  onClick={(e) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-
-                                    const indexToEdit =
-                                      customFieldsForRow.findIndex(
-                                        ({ customField }) => {
-                                          return customField.id === item.id;
-                                        },
-                                      );
-                                    if (indexToEdit >= 0) {
-                                      lastEditedCustomFieldStore.setState(
-                                        (prev) => {
-                                          return {
-                                            ...prev,
-                                            index: indexToEdit,
-                                          };
-                                        },
-                                      );
-                                      lastEditedCustomFieldStore.setState(
-                                        (prev) => {
-                                          return {
-                                            ...prev,
-                                            data: {
-                                              customField: item,
-                                              order: indexToEdit,
-                                            },
-                                          };
-                                        },
-                                      );
-
-                                      showAddOrEditCustomFieldsDialog();
-                                    }
-                                  }}
-                                />
-                              </span>
-                            </RenderCustomField>
-                          );
-                        }}
-                        RenderItem={({ item, multiple, SelectedIndicator }) => {
-                          return (
-                            <div className="flex gap-2 items-center w-full">
-                              <RenderCustomField item={item} />
-                              {multiple && (
-                                <SelectedIndicator>
-                                  <CheckIcon fontSize="inherit" />
-                                </SelectedIndicator>
-                              )}
-
-                              <Button
-                                aria-label="Delete"
-                                className="text-gray-600 hover:text-red-700 cursor-pointer ml-auto px-2 py-1"
-                                Icon={() => {
-                                  return <DeleteIcon fontSize="inherit" />;
-                                }}
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  e.stopPropagation();
-
-                                  const itemIndex =
-                                    customFieldsForRow.findIndex(
-                                      ({ customField }) => {
-                                        return customField.id === item.id;
-                                      },
-                                    );
-
-                                  lastEditedCustomFieldStore.setState(
-                                    (prev) => {
-                                      return {
-                                        ...prev,
-                                        data: {
-                                          customField: item,
-                                          order: itemIndex,
-                                        },
-                                        index: itemIndex,
-                                      };
-                                    },
-                                  );
-
-                                  showConfirmDeleteCustomFieldDialog();
-                                }}
-                                size="custom"
-                                variant="ghost"
-                              />
-                            </div>
-                          );
-                        }}
-                        value={comboboxValue}
-                        verifyShowNewItem={({ itemMatchingQuery, newItem }) => {
-                          return newItem.type !== itemMatchingQuery?.type;
-                        }}
-                      />
-                    </div>
+                    customField.id ===
+                    lastEditedCustomField.data?.customField.id
                   );
-                }}
-              </form.ArrayField>
+                });
+
+                if (lastAddedIndex >= 0) {
+                  lastEditedCustomField.setIndex(lastAddedIndex);
+                  showAddOrEditCustomFieldsDialog();
+                } else {
+                  lastEditedCustomField.setIndex(undefined);
+                }
+
+                form.setFieldValue(
+                  field.name,
+                  customFields.map((customField, index) => {
+                    return {
+                      customField,
+                      order: index,
+                    };
+                  }),
+                );
+              }}
+              placeholder="Input custom fields..."
+              RenderChip={({ item }) => {
+                return (
+                  <div className="flex gap-3">
+                    <RenderCustomField item={item}>
+                      <Button
+                        aria-label="Edit"
+                        className="text-theme-t2 hover:text-theme-link-hover cursor-pointer ml-auto p-0.5"
+                        Icon={() => {
+                          return <EditIcon fontSize="inherit" />;
+                        }}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+
+                          const indexToEdit = field.value.findIndex(
+                            ({ customField }) => {
+                              return customField.id === item.id;
+                            },
+                          );
+                          if (indexToEdit >= 0) {
+                            lastEditedCustomField.setIndex(indexToEdit);
+                            lastEditedCustomField.setData({
+                              customField: item,
+                              order: indexToEdit,
+                            });
+
+                            showAddOrEditCustomFieldsDialog();
+                          }
+                        }}
+                        size="custom"
+                        variant="ghost"
+                      />
+                    </RenderCustomField>
+                  </div>
+                );
+              }}
+              RenderItem={({ item, multiple, SelectedIndicator }) => {
+                return (
+                  <div className="flex gap-2 items-center w-full">
+                    <RenderCustomField item={item} />
+                    {multiple && (
+                      <SelectedIndicator>
+                        <CheckIcon fontSize="inherit" />
+                      </SelectedIndicator>
+                    )}
+
+                    <Button
+                      aria-label="Delete"
+                      className="text-theme-t2 hover:text-theme-alert-hover cursor-pointer ml-auto px-2 py-1"
+                      Icon={() => {
+                        return <DeleteIcon fontSize="inherit" />;
+                      }}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        if (typeof item.id === 'string') {
+                          lastEditedCustomField.setIndex(undefined);
+                          lastEditedCustomField.setData(undefined);
+
+                          setUpdateItemsTimestamp(Date.now());
+                        } else {
+                          const itemIndex = field.value.findIndex(
+                            ({ customField }) => {
+                              return customField.id === item.id;
+                            },
+                          );
+
+                          lastEditedCustomField.setIndex(itemIndex);
+                          lastEditedCustomField.setData({
+                            customField: item,
+                            order: itemIndex,
+                          });
+                          showConfirmDeleteCustomFieldDialog();
+                        }
+                      }}
+                      size="custom"
+                      variant="ghost"
+                    />
+                  </div>
+                );
+              }}
+              value={comboboxValue}
+              verifyShowNewItem={({ itemMatchingQuery, newItem }) => {
+                return newItem.type !== itemMatchingQuery?.type;
+              }}
+            />
+          </div>
+        ) : field.value.length ? (
+          field.value.map(({ customField }) => {
+            return (
+              <span
+                className="group/controls flex items-center gap-2 flex-wrap"
+                key={customField.id}
+              >
+                <RenderCustomField item={customField} />
+              </span>
             );
-          }}
-        </form.ArrayField>
-      ) : customFieldsForRow.length ? (
-        customFieldsForRow.map(({ customField }) => {
-          return (
-            <span
-              className="group/controls flex items-center gap-2 flex-wrap"
-              key={customField.id}
-            >
-              <RenderCustomField item={customField} />
-            </span>
-          );
-        })
-      ) : (
-        '-'
-      )}
-    </div>
+          })
+        ) : (
+          '-'
+        );
+      }}
+    </form.ArrayField>
   );
 };
 
 export const DeleteCustomFieldDialog = (props: {
-  customField: OrderedCustomFieldForCollectionDef<
-    number | string
-  >['customField'];
   form: CreateOrUpdateCollectionFormTypeDef;
   onClose: HideDialog;
 }) => {
-  const { customField, form, onClose } = props;
+  const { form, onClose } = props;
 
-  const id = Number(customField.id);
+  const lastEditedCustomField = useLastEditedCustomField();
+
+  const id = Number(lastEditedCustomField.data?.customField.id);
 
   const { data: collectionsWithCustomField } =
     useGetCollectionsWithCustomFields({
@@ -432,9 +392,15 @@ export const DeleteCustomFieldDialog = (props: {
         </p>
 
         <h4 className="text-center">
-          {customField.name}{' '}
+          {lastEditedCustomField.data?.customField.name}{' '}
           <span className="text-gray-500 text-[.7em]">
-            ({customFieldTypeLabelsMap[customField.type]})
+            (
+            {lastEditedCustomField.data?.customField.type
+              ? customFieldTypeLabelsMap[
+                  lastEditedCustomField.data.customField.type
+                ]
+              : '-'}
+            )
           </span>
         </h4>
 
@@ -443,7 +409,8 @@ export const DeleteCustomFieldDialog = (props: {
             <p className="text-center text-sm text-gray-600">
               This will remove the field from {numAffectedCollections}{' '}
               {pluralize('collection', numAffectedCollections)} and{' '}
-              {customField.name} details from all items within.
+              {lastEditedCustomField.data?.customField.name} details from all
+              items within.
             </p>
             <p className="text-center text-sm text-gray-600">
               <em>This cannot be undone.</em>
@@ -471,24 +438,7 @@ export const AddOrEditCustomFieldDialog = (props: {
 
   const [fieldTypeError, setFieldTypeError] = useState<string | undefined>();
 
-  // const editCustomFieldAtom = useEditCustomFieldAtom();
-
-  const customFieldSnapshot = lastEditedCustomFieldStore.state.data;
-  const customFieldIndex = lastEditedCustomFieldStore.state.index;
-
-  const customFieldAtIndex = useSelector(form.atom, ({ values }) => {
-    return values.records[rowIndex]?.customFields?.[customFieldIndex];
-  });
-
-  const isValid = useMemo(() => {
-    return (
-      !fieldTypeError && customFieldFormSchema.validate(customFieldAtIndex)
-    );
-  }, [
-    customFieldAtIndex?.customField?.name,
-    customFieldAtIndex?.customField?.type,
-    fieldTypeError,
-  ]);
+  const lastEditedCustomField = useLastEditedCustomField();
 
   const { onInterceptProcessingRequest, processing } = useSpinner();
   const { onCreateCustomFields } = useCreateCustomFields();
@@ -496,48 +446,8 @@ export const AddOrEditCustomFieldDialog = (props: {
 
   const invalidateGetCustomFields = useInvalidateGetCustomFields();
 
-  const isNewRecord = useMemo(() => {
-    return typeof customFieldAtIndex.customField?.id === 'string';
-  }, []);
-
-  const onCancel = () => {
-    onClose();
-
-    if (isNewRecord) {
-      removeValue(customFieldIndex);
-    } else {
-      replaceValue(customFieldIndex, customFieldSnapshot);
-    }
-  };
-
-  const onSave = async () => {
-    await onInterceptProcessingRequest(async () => {
-      const { customField, order } = customFieldAtIndex;
-      const { id, name, type } = customField;
-
-      if (typeof id === 'string') {
-        const [newRecord] = await onCreateCustomFields({
-          records: [{ name, type }],
-        });
-
-        replaceValue(customFieldIndex, {
-          customField: {
-            id: newRecord.id,
-            name: newRecord.name,
-            type: newRecord.type,
-          },
-          order,
-        });
-      } else {
-        await onUpdateCustomFields({
-          records: [{ id, name, type }],
-        });
-      }
-
-      await invalidateGetCustomFields();
-      onClose();
-    });
-  };
+  const isNewRecord =
+    typeof lastEditedCustomField.data?.customField.id === 'string';
 
   // TODO - wrap inside conditional with Suspense so data is only fetched when editing a row
   const { data: customFieldsInDb = [] } = useGetCustomFields({
@@ -549,8 +459,8 @@ export const AddOrEditCustomFieldDialog = (props: {
     const customFieldsInDbWithSameName = customFieldsInDb.filter(
       ({ id, name }) => {
         return (
-          name === customFieldAtIndex.customField?.name &&
-          id !== customFieldAtIndex.customField?.id
+          name === lastEditedCustomField.data?.customField.name &&
+          id !== lastEditedCustomField.data?.customField.id
         );
       },
     );
@@ -565,7 +475,6 @@ export const AddOrEditCustomFieldDialog = (props: {
           return { ...fieldDataTypeItem, disabled: true };
         }
 
-        // TODO - CONSIDER ADDING VALIDATION TO DATA TYPE FIELD
         const disabled = customFieldsInDbWithSameName.some(({ type }) => {
           return type === fieldDataTypeItem.id;
         });
@@ -582,87 +491,155 @@ export const AddOrEditCustomFieldDialog = (props: {
 
     return typeItemsWithDisabledStates;
   }, [
-    customFieldAtIndex.customField?.name,
-    customFieldAtIndex.customField?.type,
+    lastEditedCustomField.data?.customField.name,
+    lastEditedCustomField.data?.customField.type,
   ]);
 
-  return (
-    <Dialog
-      disableOnClose={processing}
-      Footer={() => {
-        return (
-          <>
-            <Button
-              disabled={processing}
-              onClick={onCancel}
-              text="Cancel"
-              variant="mono"
-            />
-            <Button
-              disabled={!isValid}
-              onClick={onSave}
-              processing={processing}
-              text="Save"
-            />
-          </>
+  return lastEditedCustomField.index === undefined ? null : (
+    <form.Field
+      name={`records[${rowIndex}].customFields[${lastEditedCustomField.index}]`}
+    >
+      {(customFieldField) => {
+        const onCancel = () => {
+          if (
+            lastEditedCustomField.index !== undefined &&
+            lastEditedCustomField.data
+          ) {
+            onClose();
+
+            if (isNewRecord) {
+              removeValue(lastEditedCustomField.index);
+            } else {
+              replaceValue(
+                lastEditedCustomField.index,
+                lastEditedCustomField.data,
+              );
+            }
+          }
+        };
+
+        const onSave = async () => {
+          await onInterceptProcessingRequest(async () => {
+            if (lastEditedCustomField.index !== undefined) {
+              const { customField, order } = customFieldField.value;
+              const { id, name, type } = customField;
+
+              if (typeof id === 'string') {
+                const [newRecord] = await onCreateCustomFields({
+                  records: [{ name, type }],
+                });
+
+                replaceValue(lastEditedCustomField.index, {
+                  customField: {
+                    id: newRecord.id,
+                    name: newRecord.name,
+                    type: newRecord.type,
+                  },
+                  order,
+                });
+              } else {
+                await onUpdateCustomFields({
+                  records: [{ id, name, type }],
+                });
+              }
+
+              await invalidateGetCustomFields();
+              onClose();
+            }
+          });
+        };
+
+        const isValid =
+          !fieldTypeError &&
+          customFieldFormSchema.validate(customFieldField.value);
+
+        return lastEditedCustomField.index === undefined ? null : (
+          <Dialog
+            disableOnClose={processing}
+            Footer={() => {
+              return (
+                <>
+                  <Button
+                    disabled={processing}
+                    onClick={onCancel}
+                    text="Cancel"
+                    variant="mono"
+                  />
+                  <Button
+                    disabled={!isValid}
+                    onClick={onSave}
+                    processing={processing}
+                    text="Save"
+                  />
+                </>
+              );
+            }}
+            Header={`${isNewRecord ? 'Create' : 'Edit'} Custom Field`}
+            onClose={onCancel}
+          >
+            <div className="grid gap-4">
+              <form.Field
+                name={`records[${rowIndex}].customFields[${lastEditedCustomField.index}].customField.name`}
+              >
+                {(nameField) => {
+                  return (
+                    <InputField
+                      autoFocus
+                      error={nameField.errors}
+                      label="Field Name"
+                      name={nameField.name}
+                      onValueChange={(value) => {
+                        nameField.handleChange(value);
+                      }}
+                      placeholder="Input column name..."
+                      value={nameField.value}
+                    />
+                  );
+                }}
+              </form.Field>
+
+              <form.Field
+                name={`records[${rowIndex}].customFields[${lastEditedCustomField.index}].customField.type`}
+              >
+                {(typeField) => {
+                  const formattedValue:
+                    (typeof customFieldDataTypeItems)[number] | undefined =
+                    typeField.value
+                      ? {
+                          disabled: false,
+                          id: typeField.value,
+                          label: customFieldTypeLabelsMap[typeField.value],
+                        }
+                      : undefined;
+
+                  return (
+                    <SelectField
+                      error={fieldTypeError || typeField.errors}
+                      items={customFieldDataTypeItems}
+                      label="Data Type"
+                      name={typeField.name}
+                      onValueChange={(value) => {
+                        const type = value?.id;
+                        if (type) {
+                          typeField.handleChange(type);
+                        }
+                      }}
+                      placeholder="Select data type..."
+                      value={formattedValue}
+                    />
+                  );
+                }}
+              </form.Field>
+
+              <p className="max-w-100 text-gray-500 text-sm text-center">
+                Note: This will {isNewRecord ? 'create the' : 'update your'}{' '}
+                custom field, even if changes to your collection are dismissed.
+              </p>
+            </div>
+          </Dialog>
         );
       }}
-      Header={`${isNewRecord ? 'Create' : 'Edit'} Custom Field`}
-      onClose={onCancel}
-    >
-      <div className="grid gap-4">
-        <form.Field
-          name={`records[${rowIndex}].customFields[${customFieldIndex}].customField.name`}
-        >
-          {(nameField) => {
-            return (
-              <InputField
-                autoFocus
-                error={nameField.errors}
-                label="Field Name"
-                name={nameField.name}
-                onValueChange={(value) => {
-                  nameField.handleChange(value);
-                }}
-                placeholder="Input column name..."
-                value={customFieldAtIndex.customField?.name}
-              />
-            );
-          }}
-        </form.Field>
-
-        <form.Field
-          name={`records[${rowIndex}].customFields[${customFieldIndex}].customField.type`}
-        >
-          {(typeField) => {
-            const value = fieldDataTypeItems.find(({ id }) => {
-              return id === customFieldAtIndex.customField?.type;
-            });
-
-            return (
-              <SelectField
-                error={fieldTypeError || typeField.errors}
-                items={customFieldDataTypeItems}
-                label="Data Type"
-                name={typeField.name}
-                onValueChange={(value) => {
-                  const type = value?.id;
-                  if (type) {
-                    typeField.handleChange(type);
-                  }
-                }}
-                value={value}
-              />
-            );
-          }}
-        </form.Field>
-
-        <p className="max-w-100 text-gray-500 text-sm text-center">
-          Note: This will {isNewRecord ? 'create the' : 'update your'} custom
-          field, even if changes to your collection are dismissed.
-        </p>
-      </div>
-    </Dialog>
+    </form.Field>
   );
 };
 
@@ -679,7 +656,9 @@ const RenderCustomField = (
     <>
       <span className="whitespace-nowrap" key={id}>
         <span>{name}</span>{' '}
-        <span className="text-gray-500 text-xs leading-none">
+        <span
+          className={`${type ? 'text-theme-t2' : 'text-theme-t-alert'} text-xs leading-none`}
+        >
           ({getFieldItemLabel(type)})
         </span>
       </span>
@@ -688,10 +667,19 @@ const RenderCustomField = (
   );
 };
 
-const lastEditedCustomFieldStore = createStore<{
-  data: CustomFieldFormSchemaDef;
-  index: number;
-}>({
-  data: undefined as unknown as CustomFieldFormSchemaDef,
-  index: undefined as unknown as number,
-});
+const lastEditedCustomFieldIndex = createAtom<number | undefined>(undefined);
+const lastEditedCustomFieldData = createAtom<
+  CustomFieldFormSchemaDef | undefined
+>(undefined);
+
+const useLastEditedCustomField = () => {
+  const [index, setIndex] = useAtom(lastEditedCustomFieldIndex);
+  const [data, setData] = useAtom(lastEditedCustomFieldData);
+
+  return {
+    data,
+    index,
+    setData,
+    setIndex,
+  };
+};

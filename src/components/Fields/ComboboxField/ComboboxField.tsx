@@ -8,7 +8,7 @@ import CheckIcon from '@mui/icons-material/Check';
 import ClearIcon from '@mui/icons-material/Clear';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import _ from 'lodash';
-import { useLayoutEffect, useMemo, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 import type {
@@ -75,6 +75,7 @@ export const ComboboxField = <
       return item[idProperty] === value[idProperty];
     },
     items = [],
+    itemsDependencies = [],
     itemToStringLabel = (item) => {
       if (item) {
         const label = item[labelProperty];
@@ -133,48 +134,80 @@ export const ComboboxField = <
     verifyShowNewItem,
   } = props;
 
-  const [isInputFocused, setIsInputFocused] = useState<boolean>(false);
   const [displayItems, setDisplayItems] = useState<TValue[]>([]);
   const [query, setQuery] = useState(inputValue);
 
-  const trimmedQuery = useMemo(() => {
-    return query.trim();
-  }, [query]);
+  const debouncedOnInputValueChanged = useMemo(() => {
+    return _.debounce((query: string) => {
+      if (allowCreatable) {
+        const newDisplayItems = [...displayItems];
+        const creatableIndex = 0;
 
-  const normalizedQuery = useMemo(() => {
-    return getNormalizedValue(trimmedQuery, {
-      caseSensitive: caseSensitiveCreation,
-    });
-  }, [trimmedQuery]);
+        const hasCreatable = !!displayItems[creatableIndex]?.creatable;
+        // ? 1 or 0
+        const indexToDelete = Number(hasCreatable);
 
-  /** Item with label that matches query exactly */
-  const exactMatchItem = useMemo(() => {
-    if (!normalizedQuery) {
-      return;
-    }
+        // delete existing creatable item
+        newDisplayItems.splice(creatableIndex, indexToDelete);
 
-    return displayItems.find((item) => {
-      const label = itemToStringLabel(item);
+        const trimmedQuery = query.trim();
+        const normalizedQuery = getNormalizedValue(query);
 
-      const queryMatchesLabel =
-        getNormalizedValue(label, { caseSensitive: caseSensitiveCreation }) ===
-        normalizedQuery;
+        if (normalizedQuery) {
+          // @ts-expect-error
+          const creatableItem: TValue = createNewItem?.(trimmedQuery) || {
+            [idProperty]: uuidv4(),
+            [labelProperty]: trimmedQuery,
+          };
 
-      return queryMatchesLabel;
-    });
-  }, [normalizedQuery, items]);
+          creatableItem.creatable = true;
 
-  const getSelectedItemsArray = () => {
-    if (Array.isArray(value)) {
-      return value;
-    } else if (value) {
-      return [value];
-    } else {
-      return [];
-    }
-  };
+          /** Item with label that matches query exactly */
+          const exactMatchItem = displayItems.find((item) => {
+            const label = itemToStringLabel(item);
+
+            const queryMatchesLabel =
+              getNormalizedValue(label, {
+                caseSensitive: caseSensitiveCreation,
+              }) === normalizedQuery;
+
+            return queryMatchesLabel;
+          });
+
+          if (exactMatchItem) {
+            if (
+              verifyShowNewItem?.({
+                itemMatchingQuery: exactMatchItem,
+                newItem: creatableItem,
+                normalizedQuery,
+                query,
+              })
+            ) {
+              newDisplayItems.splice(creatableIndex, 0, creatableItem);
+            }
+          } else {
+            newDisplayItems.splice(creatableIndex, 0, creatableItem);
+          }
+        } else {
+          // ? remove creatable item
+          newDisplayItems.splice(creatableIndex, 0);
+        }
+
+        setDisplayItems(newDisplayItems);
+      }
+    }, 300);
+  }, [displayItems]);
 
   useLayoutEffect(() => {
+    const getSelectedItemsArray = () => {
+      if (Array.isArray(value)) {
+        return value;
+      } else if (value) {
+        return [value];
+      } else {
+        return [];
+      }
+    };
     // ? Merge items in list with selected items. This ensures new items are always available even if they don't exist outside of the component yet
     const includedItemsById = new Map<string, true>();
     const uniqueDisplayItems: TValue[] = [
@@ -193,39 +226,18 @@ export const ComboboxField = <
 
     const sortedDisplayItems = sortItems(uniqueDisplayItems);
 
-    if (allowCreatable && normalizedQuery) {
-      // @ts-expect-error
-      const creatableItem: TValue = createNewItem?.(trimmedQuery) || {
-        [idProperty]: uuidv4(),
-        [labelProperty]: trimmedQuery,
-      };
-
-      creatableItem.creatable = true;
-
-      if (normalizedQuery) {
-        if (exactMatchItem) {
-          if (
-            verifyShowNewItem?.({
-              itemMatchingQuery: exactMatchItem,
-              newItem: creatableItem,
-              normalizedQuery,
-              query,
-            })
-          ) {
-            sortedDisplayItems.splice(0, 0, creatableItem);
-          }
-        } else {
-          sortedDisplayItems.splice(0, 0, creatableItem);
-        }
-      }
-    }
-
     setDisplayItems(sortedDisplayItems);
-  }, [!exactMatchItem, value, items, query, isInputFocused]);
+  }, [items, ...itemsDependencies]);
 
   useLayoutEffect(() => {
     setQuery(inputValue || '');
   }, [inputValue]);
+
+  useEffect(() => {
+    return () => {
+      debouncedOnInputValueChanged?.cancel();
+    };
+  }, [debouncedOnInputValueChanged]);
 
   return (
     <FieldWrapper
@@ -249,7 +261,11 @@ export const ComboboxField = <
         itemToStringLabel={itemToStringLabel}
         itemToStringValue={itemToStringValue}
         multiple={multiple}
-        onInputValueChange={setQuery}
+        onInputValueChange={(query) => {
+          setQuery(query);
+
+          debouncedOnInputValueChanged(query);
+        }}
         onValueChange={(
           value:
             | (TMultiple extends true ? never : null)
@@ -329,12 +345,6 @@ export const ComboboxField = <
                 <Combobox.Input
                   aria-label={ariaLabel}
                   className={classNames}
-                  onBlur={() => {
-                    setIsInputFocused(false);
-                  }}
-                  onFocus={() => {
-                    setIsInputFocused(true);
-                  }}
                   placeholder={placeholder}
                 />
               );
@@ -348,20 +358,17 @@ export const ComboboxField = <
             className="styles.Positioner"
             sideOffset={4}
           >
-            <Combobox.Popup
-              className="bg-white text-black border border-gray-300 py-2 rounded-sm shadow-lg max-h-100 overflow-auto"
-              hidden={!displayItems.length && !query}
-            >
+            <Combobox.Popup>
               {!allowCreatable && (
-                <Combobox.Empty>
-                  <div className="p-2 text-gray-500">No matches</div>
+                <Combobox.Empty className="bg-theme-surface-1 dark:bg-theme-surface-2 text-theme-t1 border border-theme-divider-1 py-2 rounded-sm shadow-lg max-h-100 overflow-auto">
+                  <div className="p-2 text-theme-t2">No matches</div>
                 </Combobox.Empty>
               )}
-              <Combobox.List>
+              <Combobox.List className="bg-theme-surface-1 dark:bg-theme-surface-2 text-theme-t1 border border-theme-divider-1 dark:border-theme-divider-3 py-2 rounded-sm shadow-lg max-h-100 overflow-auto data-empty:hidden">
                 {(listItem: TValue) => {
-                  return (
+                  return listItem ? (
                     <Combobox.Item
-                      className="flex gap-2 items-center p-2 data-selected:bg-menu-primary-selected data-highlighted:bg-menu-primary-hover cursor-pointer"
+                      className="flex gap-2 items-center p-2 data-selected:not-data-highlighted:bg-theme-surface-selected data-highlighted:bg-theme-surface-highlighted cursor-pointer"
                       disabled={listItem.disabled}
                       key={itemToStringValue(listItem)}
                       value={listItem}
@@ -379,7 +386,7 @@ export const ComboboxField = <
                         />
                       )}
                     </Combobox.Item>
-                  );
+                  ) : null;
                 }}
               </Combobox.List>
             </Combobox.Popup>
@@ -396,7 +403,7 @@ const SortableChip = <TValue extends TValueRecordDef>(props: {
   index: number;
   item: TValue;
   label: string;
-  onRemoveChip: ((item: TValue) => void) | undefined;
+  onRemoveChip: ((item: TValue, index: number) => void) | undefined;
   RenderChip: JSXElementConstructor<
     HTMLAttributes<HTMLElement> & { item: TValue }
   >;
@@ -410,21 +417,21 @@ const SortableChip = <TValue extends TValueRecordDef>(props: {
     <Combobox.Chip
       aria-description="Press Backspace or Delete to remove"
       aria-label={label}
-      className="flex items-center gap-1 border rounded-xl px-2 py-.5"
+      className="bg-theme-surface-1 dark:bg-theme-surface-3 flex items-center gap-1 border border-theme-divider-2 rounded-4xl px-2 py-.5"
       ref={ref}
     >
       {enableChipSort && (
         <DragIndicatorIcon
-          className="text-gray-500 cursor-grab active:cursor-grabbing"
+          className="text-theme-t3 cursor-grab active:cursor-grabbing"
           fontSize="inherit"
         />
       )}
       <RenderChip item={item} />
       <Combobox.ChipRemove
         aria-label={`Remove ${label}`}
-        className="text-gray-600 hover:text-red-700 cursor-pointer leading-0"
+        className="text-theme-t2 hover:text-theme-alert-hover cursor-pointer ml-auto p-0.5 leading-0"
         onClick={() => {
-          onRemoveChip?.(item);
+          onRemoveChip?.(item, index);
         }}
       >
         <ClearIcon fontSize="inherit" />
