@@ -5,9 +5,10 @@ import type { FieldWrapperProps } from '../FieldWrapper/FieldWrapper.types';
 
 export type TextAreaFieldPropsDef = Pick<
   FieldControlProps,
-  'autoFocus' | 'onValueChange' | 'placeholder' | 'required' | 'type' | 'value'
+  'autoFocus' | 'placeholder' | 'required' | 'type' | 'value'
 > &
   FieldWrapperProps & {
+    onValueChange?: (value: string) => void;
     onValueChangeDebounceMs?: number;
     ref?: Ref<HTMLElement>;
   };

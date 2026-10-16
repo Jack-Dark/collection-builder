@@ -72,9 +72,9 @@ export const InputField = (props: InputFieldProps) => {
         defaultValue={defaultValue}
         onBlur={onBlur}
         onChange={onChange}
-        onValueChange={(value, eventDetails) => {
+        onValueChange={(value) => {
           setInputValue(value);
-          debouncedOnValueChange?.(value, eventDetails);
+          debouncedOnValueChange?.(value);
         }}
         placeholder={placeholder}
         ref={ref}
