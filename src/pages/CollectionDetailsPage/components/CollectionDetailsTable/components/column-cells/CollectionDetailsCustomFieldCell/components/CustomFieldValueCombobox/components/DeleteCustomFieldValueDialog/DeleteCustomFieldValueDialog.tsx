@@ -5,8 +5,7 @@ import type { HideDialog } from '#/components/Dialog/hooks/useDialog';
 import { useGetCollectionItemsWithCustomFieldValue } from '#/api/routes/collection-items/get-collection-items-with-custom-field-value/get-collection-items-with-custom-field-value.react-query';
 import { useDeleteCustomFieldValues } from '#/api/routes/custom-field-values/delete-custom-field-values/delete-custom-field-values.react-query';
 import { useInvalidateGetCustomFieldValuesByCustomFieldId } from '#/api/routes/custom-field-values/get-custom-field-values-by-collection-id/get-custom-field-values-by-collection-id.react-query';
-import { Button } from '#/components/Button';
-import { Dialog } from '#/components/Dialog';
+import { ConfirmDeleteDialog } from '#/components/ConfirmDeleteDialog';
 import { pluralize } from '#/helpers/pluralize';
 
 type DeleteCustomFieldValueDialogPropsDef<
@@ -59,12 +58,12 @@ export const DeleteCustomFieldValueDialog = <
   const invalidateGetCustomFieldValuesByCustomFieldId =
     useInvalidateGetCustomFieldValuesByCustomFieldId();
 
-  const { onDeleteCustomFieldValues, processing } = useDeleteCustomFieldValues({
+  const { onDeleteCustomFieldValues } = useDeleteCustomFieldValues({
     onSuccess: async () => {
       await invalidateGetCustomFieldValuesByCustomFieldId();
 
       if (selectedCustomFieldValueId === id) {
-        // TODO - BUG: FIELD IS NOT CORRECTLY CLEARED IF DELETING ITEM THAT IS CURRENTLY APPLIED AND THEN CANCELLING CHANGES
+        // TODO - BUG: FIELD IS NOT CORRECTLY CLEARED IF DELETING CUSTOM FIELD/VALUE THAT IS CURRENTLY APPLIED AND THEN CANCELLING CHANGES
         handleFieldChange(undefined);
       }
 
@@ -81,29 +80,7 @@ export const DeleteCustomFieldValueDialog = <
   };
 
   return !affectedCollections.length && !numAffectedCollectionItems ? null : (
-    <Dialog
-      disableOnClose={processing}
-      Footer={() => {
-        return (
-          <>
-            <Button
-              disabled={processing}
-              onClick={onClose}
-              text="Cancel"
-              variant="mono"
-            />
-            <Button
-              onClick={onDelete}
-              processing={processing}
-              text="Delete"
-              variant="alert"
-            />
-          </>
-        );
-      }}
-      Header="Delete Custom Field"
-      onClose={onClose}
-    >
+    <ConfirmDeleteDialog hideDialog={onClose} onConfirm={onDelete}>
       <div className="grid gap-4 content-center h-full">
         <p className="text-center">
           Are you sure you want to delete this custom field value?
@@ -114,7 +91,7 @@ export const DeleteCustomFieldValueDialog = <
         {!!numAffectedCollectionItems && (
           <>
             <div className="grid gap-1">
-              <p className="text-center text-sm text-gray-600">
+              <p className="text-center text-sm text-theme-t2">
                 This will remove the custom field value from{' '}
                 {numAffectedCollectionItems} collection{' '}
                 {pluralize('item', numAffectedCollectionItems)}{' '}
@@ -127,7 +104,7 @@ export const DeleteCustomFieldValueDialog = <
                   {affectedCollections.map(({ id, name }) => {
                     return (
                       <li key={id}>
-                        <span>{name}</span>
+                        <span className="text-sm">{name}</span>
                       </li>
                     );
                   })}
@@ -136,18 +113,18 @@ export const DeleteCustomFieldValueDialog = <
             </div>
 
             <div className="grid gap-1">
-              <p className="max-w-100 text-gray-600 text-sm text-center">
+              <p className="max-w-100 text-theme-t2 text-sm text-center">
                 Note: This will delete the custom field value, even if changes
                 to your collection are dismissed.
               </p>
 
-              <p className="text-center text-sm text-gray-600">
+              <p className="text-center text-sm text-theme-t2">
                 <em>This cannot be undone.</em>
               </p>
             </div>
           </>
         )}
       </div>
-    </Dialog>
+    </ConfirmDeleteDialog>
   );
 };

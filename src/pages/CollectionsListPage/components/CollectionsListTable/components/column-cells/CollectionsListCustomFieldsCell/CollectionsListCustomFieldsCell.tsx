@@ -23,6 +23,7 @@ import {
 } from '#/api/routes/custom-fields/get-custom-fields/get-custom-fields.react-query';
 import { useUpdateCustomFields } from '#/api/routes/custom-fields/update-custom-fields/update-custom-fields.react-query';
 import { Button } from '#/components/Button';
+import { ConfirmDeleteDialog } from '#/components/ConfirmDeleteDialog';
 import { Dialog } from '#/components/Dialog';
 import { useDialog } from '#/components/Dialog/hooks/useDialog';
 import { ComboboxField } from '#/components/Fields/ComboboxField';
@@ -338,7 +339,7 @@ export const DeleteCustomFieldDialog = (props: {
 
   const invalidateGetCustomFields = useInvalidateGetCustomFields();
 
-  const { onDeleteCustomFields, processing } = useDeleteCustomFields({
+  const { onDeleteCustomFields } = useDeleteCustomFields({
     onSuccess: async () => {
       await invalidateGetCustomFields();
 
@@ -361,30 +362,11 @@ export const DeleteCustomFieldDialog = (props: {
   const numAffectedCollections = collectionsWithCustomField.length;
 
   return (
-    <Dialog
-      disableOnClose={processing}
-      Footer={() => {
-        return (
-          <>
-            <Button
-              disabled={processing}
-              onClick={onClose}
-              text="Cancel"
-              variant="mono"
-            />
-            <Button
-              onClick={async () => {
-                await onDeleteCustomFields({ ids: [id] });
-              }}
-              processing={processing}
-              text="Delete"
-              variant="alert"
-            />
-          </>
-        );
+    <ConfirmDeleteDialog
+      hideDialog={onClose}
+      onConfirm={async () => {
+        await onDeleteCustomFields({ ids: [id] });
       }}
-      Header="Delete Custom Field"
-      onClose={onClose}
     >
       <div className="grid gap-4">
         <p className="text-center">
@@ -393,7 +375,7 @@ export const DeleteCustomFieldDialog = (props: {
 
         <h4 className="text-center">
           {lastEditedCustomField.data?.customField.name}{' '}
-          <span className="text-gray-500 text-[.7em]">
+          <span className="text-theme-t2 text-[.7em]">
             (
             {lastEditedCustomField.data?.customField.type
               ? customFieldTypeLabelsMap[
@@ -406,24 +388,24 @@ export const DeleteCustomFieldDialog = (props: {
 
         {!!numAffectedCollections && (
           <div className="grid gap-1">
-            <p className="text-center text-sm text-gray-600">
+            <p className="text-center text-sm text-theme-t2">
               This will remove the field from {numAffectedCollections}{' '}
               {pluralize('collection', numAffectedCollections)} and{' '}
               {lastEditedCustomField.data?.customField.name} details from all
               items within.
             </p>
-            <p className="text-center text-sm text-gray-600">
+            <p className="text-center text-sm text-theme-t2">
               <em>This cannot be undone.</em>
             </p>
           </div>
         )}
 
-        <p className="max-w-100 text-gray-600 text-sm text-center">
+        <p className="max-w-100 text-theme-t2 text-sm text-center">
           Note: This will delete the custom field, even if changes to your
           collection are dismissed.
         </p>
       </div>
-    </Dialog>
+    </ConfirmDeleteDialog>
   );
 };
 
