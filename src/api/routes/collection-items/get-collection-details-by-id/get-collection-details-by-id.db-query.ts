@@ -159,7 +159,7 @@ export const getCollectionDetailsByIdDbQuery = async ({
 
       return directionFn(
         column.dataType === 'string'
-          ? // TODO - ADD SEARCH SETTINGS DIALOG TO IGNORE ARTICLES AND SEARCH NOTES
+          ? // TODO - FEATURE: ADD SEARCH SETTINGS DIALOG TO IGNORE ARTICLES AND SEARCH NOTES
             sql`REGEXP_REPLACE(lower(${column}), '^(the|a|an)\\s+', '', 'i')`
           : sql`${column}`,
       );

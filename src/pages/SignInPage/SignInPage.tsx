@@ -19,5 +19,5 @@ export const SignInPage: RouteComponent = () => {
       </p>
     </PageWrapper>
   );
-  // TODO - ADD PASSWORD RESET
+  // TODO - FEATURE: ADD PASSWORD RESET
 };

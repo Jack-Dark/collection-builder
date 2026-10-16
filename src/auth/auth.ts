@@ -26,7 +26,7 @@ export const auth = betterAuth({
   },
   // emailVerification: {
   //   sendVerificationEmail: async ({ token, url, user }, request) => {
-  //     // TODO - UPDATE BACK TO void FROM await
+  //     // TODO - FEATURE: EMAIL VERIFICATION - UPDATE BACK TO void FROM await
   //     const { data, error } = await resend.emails.send({
   //       from: 'onboarding@resend.dev',
   //       html: `<p>Click the link to <a href="${configs.siteUrl}/account?token=${token}">verify your email</a></p>`,

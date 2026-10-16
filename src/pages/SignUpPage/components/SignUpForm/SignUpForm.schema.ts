@@ -9,7 +9,7 @@ export const defaultValues: SignUpFormSchemaDef = {
   password: '',
 };
 
-// TODO - ADD TOOLTIP WITH PASSWORD REQUIREMENTS TO FORM
+// TODO - FEATURE: ADD TOOLTIP WITH PASSWORD REQUIREMENTS TO FORM
 const minPasswordLength = 8;
 const maxPasswordLength = 20;
 const minLengthErrorMessage = `Must contain at least ${minPasswordLength} characters`;

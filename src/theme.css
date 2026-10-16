@@ -28,10 +28,10 @@
   --color-secondary-900: var(--color-emerald-900);
   --color-secondary-950: var(--color-emerald-950);
 
-  /* TODO - REPLACE EXISTING CLASSES */
+  /* TODO - IMPROVEMENT: REPLACE EXISTING CLASSES */
   --color-disabled: var(--color-gray-400);
 
-  /* TODO - REPLACE EXISTING CLASSES */
+  /* TODO - IMPROVEMENT: REPLACE EXISTING CLASSES */
   --color-divider: var(--color-gray-200);
 
   --color-anchor: var(--color-primary-700);

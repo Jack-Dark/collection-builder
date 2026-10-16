@@ -92,7 +92,7 @@ export const NavMenu = (props: { items: NavMenuItem[] }) => {
                           { hidden, href, label, onClick, RenderItem },
                           index,
                         ) => {
-                          // TODO - UPDATE TO SUPPORT NESTED SUBMENUS (items prop)
+                          // TODO - FEATURE: UPDATE TO SUPPORT NESTED SUBMENUS (items prop)
                           return hidden ? null : (
                             <li key={href || label || index}>
                               {RenderItem ? (

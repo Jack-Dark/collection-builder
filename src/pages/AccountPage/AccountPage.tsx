@@ -8,7 +8,7 @@ export const AccountPage = () => {
   const { data: session } = authClient.useSession();
   const user = session?.user;
 
-  // TODO - IMPLEMENT RESEND https://resend.com/docs/introduction
+  // TODO - FEATURE: IMPLEMENT RESEND https://resend.com/docs/introduction
 
   return !user ? null : (
     <PageWrapper title="Account">

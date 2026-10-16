@@ -80,7 +80,7 @@ export const CollectionsListCustomFieldsCell = (props: {
 
   const [updateItemsTimestamp, setUpdateItemsTimestamp] = useState<number>(0);
 
-  // TODO - wrap inside conditional with Suspense so data is only fetched when editing a row
+  // TODO - IMPROVEMENT: wrap inside conditional with Suspense so data is only fetched when editing a row
   const { data: customFieldsInDb = [] } = useGetCustomFields({
     onSuccess: () => {
       setUpdateItemsTimestamp(Date.now());
@@ -342,7 +342,7 @@ export const DeleteCustomFieldDialog = (props: {
     onSuccess: async () => {
       await invalidateGetCustomFields();
 
-      // TODO - PASS FIELD ONCHANGE FUNCTION TO MODAL TO UPDATE ONLY THAT FIELD
+      // TODO - IMPROVEMENT PASS FIELD ONCHANGE FUNCTION TO MODAL TO UPDATE ONLY THAT FIELD. IE, REMOVE FORM.STATE
       const cleanedRecords = form.state.values.records.map((record) => {
         const filteredCustomFields = record.customFields.filter(
           ({ customField }) => {
@@ -449,7 +449,7 @@ export const AddOrEditCustomFieldDialog = (props: {
   const isNewRecord =
     typeof lastEditedCustomField.data?.customField.id === 'string';
 
-  // TODO - wrap inside conditional with Suspense so data is only fetched when editing a row
+  // TODO - IMPROVEMENT: wrap inside conditional with Suspense so data is only fetched when editing a row
   const { data: customFieldsInDb = [] } = useGetCustomFields({
     placeholderData: [],
     requestArgs: {},

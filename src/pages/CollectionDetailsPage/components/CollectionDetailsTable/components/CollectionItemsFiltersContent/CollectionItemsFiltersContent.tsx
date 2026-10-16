@@ -56,7 +56,7 @@ export const CollectionDetailsFiltersContent = (
 ) => {
   const { collectionId, form } = props;
 
-  // TODO - WRAP IN SUSPENSE SO REQUEST IS MADE ON DEMAND
+  // TODO - IMPROVEMENT: WRAP IN SUSPENSE SO REQUEST IS MADE ON DEMAND
   const { data: filterOptions } = useGetFiltersForCollection({
     placeholderData: [],
     requestArgs: { id: collectionId },

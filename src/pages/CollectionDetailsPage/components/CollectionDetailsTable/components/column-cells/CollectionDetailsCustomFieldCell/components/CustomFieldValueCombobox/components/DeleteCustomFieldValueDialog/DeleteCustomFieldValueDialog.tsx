@@ -64,7 +64,7 @@ export const DeleteCustomFieldValueDialog = <
       await invalidateGetCustomFieldValuesByCustomFieldId();
 
       if (selectedCustomFieldValueId === id) {
-        // TODO - FIELD IS NOT CORRECTLY CLEARED IF DELETING ITEM THAT IS CURRENTLY APPLIED
+        // TODO - BUG: FIELD IS NOT CORRECTLY CLEARED IF DELETING ITEM THAT IS CURRENTLY APPLIED AND THEN CANCELLING CHANGES
         handleFieldChange(undefined);
       }
 

@@ -16,7 +16,7 @@ export const deleteCollectionDbQuery = async ({
   const userId = context.user.id;
 
   await db.transaction(async (tx) => {
-    // TODO - ADD LOGIC TO GET ALL IMAGES ON ITEMS IN COLLECTION
+    // TODO - FEATURE: ADD LOGIC TO GET ALL IMAGES ON ITEMS IN COLLECTION
 
     // ? Delete collections
     await tx
@@ -28,6 +28,6 @@ export const deleteCollectionDbQuery = async ({
         ),
       );
 
-    // TODO - DELETE IMAGES
+    // TODO - FEATURE: DELETE IMAGES
   });
 };

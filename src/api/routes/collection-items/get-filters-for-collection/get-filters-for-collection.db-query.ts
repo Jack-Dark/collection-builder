@@ -65,7 +65,6 @@ export const getFiltersForCollectionDbQuery = async ({
       }
     }, []);
 
-    // TODO - UPDATE LOGIC TO USE `selectDistinctOn([collectionItemsToCustomFieldValuesTable.id])` TO ENSURE ONLY **APPLIED** CUSTOM FIELD VALUES ARE CONSIDERED
     const uniqueCustomFieldValues = await Promise.all(
       customFieldsInCollection.map(async (customField) => {
         if (customField) {
