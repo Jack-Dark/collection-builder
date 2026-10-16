@@ -34,8 +34,8 @@ export const getCollectionsListTableColumns = (
         return (
           <CollectionsListNameCell
             form={form}
-            index={row.index}
             rowId={row.id}
+            rowIndex={row.index}
             value={getValue()}
           />
         );
@@ -59,13 +59,12 @@ export const getCollectionsListTableColumns = (
       minSize: 250,
     }),
     columnHelper.accessor('notes', {
-      cell: ({ getValue, row }) => {
+      cell: ({ row }) => {
         return (
           <CollectionsListNotesCell
             form={form}
-            index={row.index}
             rowId={row.id}
-            value={getValue()}
+            rowIndex={row.index}
           />
         );
       },
