@@ -1,4 +1,3 @@
-import { useSelector } from '@tanstack/react-store';
 import { useEffect, useMemo } from 'react';
 
 import { getPaginationMetadataDefaults } from '#/api/pagination/pagination.constants';
@@ -82,51 +81,53 @@ export const CollectionDetailsTable = ({
   const paginationProps = useCollectionDetailsPaginationProps({ pagination });
   const sortProps = useCollectionDetailsSortProps();
 
-  const tableData = useSelector(form.atom, ({ values }) => {
-    return values.collectionItems;
-  });
-
   useEffect(() => {
     // ? clear edit state on unmount
     return resetEditingRowIds;
   }, []);
 
   return (
-    <Table
-      AboveTableComponent={({ table }) => {
-        const selectedRowIds = table
-          .getSelectedRowModel()
-          .rows.map(({ id }) => {
-            return id;
-          });
-
+    <form.Field name="collectionItems">
+      {(field) => {
         return (
-          <CollectionDetailsTableRowActions
-            form={form}
-            onCancel={onCancel}
-            resetRowSelection={table.resetRowSelection}
-            selectedRowIds={selectedRowIds}
+          <Table
+            AboveTableComponent={({ table }) => {
+              const selectedRowIds = table
+                .getSelectedRowModel()
+                .rows.map(({ id }) => {
+                  return id;
+                });
+
+              return (
+                <CollectionDetailsTableRowActions
+                  form={form}
+                  onCancel={onCancel}
+                  resetRowSelection={table.resetRowSelection}
+                  selectedRowIds={selectedRowIds}
+                />
+              );
+            }}
+            columns={columns}
+            data={field.value}
+            disableRowSelection={isEditing}
+            filters={{
+              ...filtersProps,
+              FiltersContent: () => {
+                return (
+                  <CollectionDetailsFiltersContent
+                    collectionId={collectionId}
+                    form={filtersForm}
+                  />
+                );
+              },
+            }}
+            pagination={paginationProps}
+            search={searchProps}
+            showRowSelection
+            sort={sortProps}
           />
         );
       }}
-      columns={columns}
-      data={tableData}
-      disableRowSelection={isEditing}
-      filters={{
-        ...filtersProps,
-        FiltersContent: () => {
-          return (
-            <CollectionDetailsFiltersContent
-              collectionId={collectionId}
-              form={filtersForm}
-            />
-          );
-        },
-      }}
-      pagination={paginationProps}
-      search={searchProps}
-      showRowSelection
-      sort={sortProps}
-    />
+    </form.Field>
   );
 };

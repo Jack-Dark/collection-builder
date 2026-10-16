@@ -1,7 +1,6 @@
 import type { PropsWithChildren } from 'react';
 
 import { Slider } from '@base-ui/react';
-import { useSelector } from '@tanstack/react-store';
 import { useLayoutEffect, useMemo } from 'react';
 
 import type { GetFiltersForCollectionResponseDef } from '#/api/routes/collection-items/get-filters-for-collection/get-filters-for-collection.types';
@@ -88,23 +87,29 @@ const CustomFieldTypeFilter = (props: {
 }) => {
   const { customField, form } = props;
 
-  const fieldValue = useSelector(form.atom, ({ values }) => {
-    return values.filters[customField.id];
-  });
+  return (
+    <form.Field key={customField.id} name={`filters.${customField.id}`}>
+      {(field) => {
+        if (customField.type === 'string' && field.value?.type === 'string') {
+          return (
+            <CustomFieldStringFilter customField={customField} form={form} />
+          );
+        }
 
-  if (customField.type === 'string' && fieldValue?.type === 'string') {
-    return <CustomFieldStringFilter customField={customField} form={form} />;
-  }
+        if (customField.type === 'number' && field.value?.type === 'number') {
+          return (
+            <CustomFieldNumberFilter customField={customField} form={form} />
+          );
+        }
 
-  if (customField.type === 'number' && fieldValue?.type === 'number') {
-    return <CustomFieldNumberFilter customField={customField} form={form} />;
-  }
-
-  if (customField.type === 'boolean' && fieldValue?.type === 'boolean') {
-    return <CustomFieldBooleanFilter customField={customField} form={form} />;
-  }
-
-  return null;
+        if (customField.type === 'boolean' && field.value?.type === 'boolean') {
+          return (
+            <CustomFieldBooleanFilter customField={customField} form={form} />
+          );
+        }
+      }}
+    </form.Field>
+  );
 };
 
 const CustomFieldBooleanFilter = (props: {
@@ -125,20 +130,15 @@ const CustomFieldBooleanFilter = (props: {
     ] satisfies DefaultSelectItemDef[];
   }, []);
 
-  const fieldValue = useSelector(form.atom, ({ values }) => {
-    return values.filters[customField.id];
-  });
-
   return (
     <form.Field key={customField.id} name={`filters.${customField.id}`}>
       {(field) => {
         // ? Comparison is really just for type safety
-        if (customField.type === 'boolean' && fieldValue?.type === 'boolean') {
-          const { handleChange } = field;
-          const { value } = fieldValue;
+        if (customField.type === 'boolean' && field.value?.type === 'boolean') {
+          const { value } = field;
 
           const selectedItem = booleanSelectItems.find((item) => {
-            return item.value === value;
+            return item.value === value.value;
           });
 
           return (
@@ -146,8 +146,8 @@ const CustomFieldBooleanFilter = (props: {
               key={customField.id}
               label={customField.name}
               onReset={() => {
-                handleChange({
-                  ...fieldValue,
+                field.handleChange({
+                  ...value,
                   value: null,
                 });
               }}
@@ -159,8 +159,8 @@ const CustomFieldBooleanFilter = (props: {
                 name={field.name}
                 onValueChange={(item) => {
                   if (item) {
-                    handleChange({
-                      ...fieldValue,
+                    field.handleChange({
+                      ...value,
                       value: item.value,
                     });
                   }
@@ -181,18 +181,16 @@ const CustomFieldNumberFilter = (props: {
 }) => {
   const { customField, form } = props;
 
-  const fieldValue = useSelector(form.atom, ({ values }) => {
-    return values.filters[customField.id];
-  });
-
   return (
     <form.Field key={customField.id} name={`filters.${customField.id}`}>
       {(field) => {
         // ? Comparison is really just for type safety
-        if (customField.type === 'number' && fieldValue?.type === 'number') {
+        if (customField.type === 'number' && field.value?.type === 'number') {
+          // ? deconstructed to solve type errors
+          const { value } = field;
+
           const isMinEqualToMax =
             customField.range.min === customField.range.max;
-          const { handleChange } = field;
 
           return isMinEqualToMax ? null : (
             <FiltersBlock
@@ -200,7 +198,7 @@ const CustomFieldNumberFilter = (props: {
               label={customField.name}
               onReset={() => {
                 field.handleChange({
-                  ...fieldValue,
+                  ...value,
                   range: customField.range,
                 });
               }}
@@ -216,8 +214,8 @@ const CustomFieldNumberFilter = (props: {
                   max={customField.range.max}
                   min={customField.range.min}
                   onValueChange={([min, max]) => {
-                    handleChange({
-                      ...fieldValue,
+                    field.handleChange({
+                      ...value,
                       items: undefined,
                       range: {
                         max,
@@ -226,7 +224,7 @@ const CustomFieldNumberFilter = (props: {
                       value: undefined,
                     });
                   }}
-                  value={[fieldValue?.range.min, fieldValue?.range.max]}
+                  value={[value.range.min, value.range.max]}
                 >
                   <Slider.Control className="py-2 cursor-pointer data-dragging:cursor-grabbing">
                     <Slider.Track className="bg-gray-500 h-1 w-full">
@@ -245,7 +243,7 @@ const CustomFieldNumberFilter = (props: {
                   </Slider.Control>
                 </Slider.Root>
               </FieldWrapper>
-              {fieldValue?.range.min} - {fieldValue?.range.max}
+              {value.range.min} - {value.range.max}
             </FiltersBlock>
           );
         }
@@ -260,25 +258,21 @@ const CustomFieldStringFilter = (props: {
 }) => {
   const { customField, form } = props;
 
-  const fieldValue = useSelector(form.atom, ({ values }) => {
-    return values.filters[customField.id];
-  });
-
   return (
     <form.Field key={customField.id} name={`filters.${customField.id}`}>
       {(field) => {
         // ? Comparison is really just for type safety
-        if (customField.type === 'string' && fieldValue?.type === 'string') {
-          const { handleChange } = field;
-          const { items } = fieldValue;
+        if (customField.type === 'string' && field.value?.type === 'string') {
+          // ? deconstructed to solve type errors
+          const { value } = field;
 
           return (
             <FiltersBlock
               key={customField.id}
               label={customField.name}
               onReset={() => {
-                handleChange({
-                  ...fieldValue,
+                field.handleChange({
+                  ...value,
                   items: [],
                 });
               }}
@@ -286,14 +280,14 @@ const CustomFieldStringFilter = (props: {
               {customField.items.map((item) => {
                 const onCheckedChange = (checked: boolean) => {
                   if (checked) {
-                    handleChange({
-                      ...fieldValue,
-                      items: [...fieldValue.items, item.value],
+                    field.handleChange({
+                      ...value,
+                      items: [...value.items, item.value],
                     });
                   } else {
-                    handleChange({
-                      ...fieldValue,
-                      items: fieldValue.items.filter((value) => {
+                    field.handleChange({
+                      ...value,
+                      items: value.items.filter((value) => {
                         return value !== item.value;
                       }),
                     });
@@ -302,8 +296,8 @@ const CustomFieldStringFilter = (props: {
 
                 return (
                   <CheckboxField
-                    checked={items.some((fieldValue) => {
-                      return fieldValue === item.value;
+                    checked={value.items.some((value) => {
+                      return value === item.value;
                     })}
                     key={item.value}
                     label={item.label}

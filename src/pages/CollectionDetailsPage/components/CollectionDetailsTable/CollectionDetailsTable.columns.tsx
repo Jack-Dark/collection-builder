@@ -11,7 +11,6 @@ import { CollectionDetailsCreatedAtCell } from './components/column-cells/Collec
 import { CollectionDetailsCustomFieldCell } from './components/column-cells/CollectionDetailsCustomFieldCell';
 import { CollectionDetailsEditionCell } from './components/column-cells/CollectionDetailsEditionCell';
 import { CollectionDetailsImagesCell } from './components/column-cells/CollectionDetailsImagesCell';
-import { CollectionDetailsImagesField } from './components/column-cells/CollectionDetailsImagesCell/components/CollectionDetailsImagesField';
 import { CollectionDetailsNameCell } from './components/column-cells/CollectionDetailsNameCell';
 import { CollectionDetailsNotesCell } from './components/column-cells/CollectionDetailsNotesCell';
 
@@ -27,9 +26,7 @@ export const getCollectionItemsTableColumns = (
 
   return [
     columnHelper.accessor('name', {
-      cell: (props) => {
-        const { row } = props;
-
+      cell: ({ row }) => {
         return (
           <CollectionDetailsNameCell
             form={form}
@@ -42,13 +39,13 @@ export const getCollectionItemsTableColumns = (
       size: 250,
     }),
     columnHelper.accessor('images', {
-      cell: (cellContext) => {
-        const { row } = cellContext;
-
+      cell: ({ row }) => {
         return (
-          <CollectionDetailsImagesCell {...cellContext} form={form}>
-            <CollectionDetailsImagesField form={form} index={row.index} />
-          </CollectionDetailsImagesCell>
+          <CollectionDetailsImagesCell
+            form={form}
+            rowId={row.id}
+            rowIndex={row.index}
+          />
         );
       },
       header: 'Images',
@@ -113,13 +110,14 @@ export const getCollectionItemsTableColumns = (
       size: 200,
     }),
     columnHelper.accessor('id', {
-      cell: (cellContext) => {
+      cell: ({ row }) => {
         return (
           <CollectionDetailsActionsCell
-            {...cellContext}
             form={form}
             onCancel={onCancel}
             onEditClick={onEditClick}
+            rowId={row.id}
+            rowIndex={row.index}
           />
         );
       },

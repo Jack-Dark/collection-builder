@@ -1,4 +1,3 @@
-import { useSelector } from '@tanstack/react-store';
 import { Suspense } from 'react';
 
 import type { CustomFieldTypeDef } from '#/api/db-tables-schema.types';
@@ -11,7 +10,6 @@ import type { CreateOrUpdateCollectionItemFormTypeDef } from '../../../../../Col
 import { CustomFieldValueCheckbox } from './components/CustomFieldValueCheckbox';
 import { CustomFieldValueCombobox } from './components/CustomFieldValueCombobox';
 import { CustomFieldValueNumberInput } from './components/CustomFieldValueNumberInput';
-import { useSubscribeToCustomFieldValue } from './hooks/subscribe-to-custom-field-value';
 
 type CollectionDetailsCustomFieldCellPropsDef = {
   customField: {
@@ -33,15 +31,10 @@ export const CollectionDetailsCustomFieldCell = (
 
   const isEditingRow = getIsEditingRowId(rowId);
 
-  const customFieldValue = useSubscribeToCustomFieldValue({
-    customFieldId: customField.id,
-    form,
-    rowIndex,
-  });
-
-  const collectionItemId = useSelector(form.atom, ({ values }) => {
-    return values.collectionItems[rowIndex].id;
-  });
+  const collectionItemIdNumber = Number(rowId);
+  const collectionItemId = Number.isNaN(collectionItemIdNumber)
+    ? rowId
+    : collectionItemIdNumber;
 
   return (
     <Suspense>
@@ -55,8 +48,6 @@ export const CollectionDetailsCustomFieldCell = (
                 <CustomFieldValueCheckbox
                   customField={customField}
                   field={field}
-                  form={form}
-                  rowIndex={rowIndex}
                 />
               )}
 
@@ -64,8 +55,6 @@ export const CollectionDetailsCustomFieldCell = (
                 <CustomFieldValueNumberInput
                   customField={customField}
                   field={field}
-                  form={form}
-                  rowIndex={rowIndex}
                 />
               )}
 
@@ -74,18 +63,13 @@ export const CollectionDetailsCustomFieldCell = (
                   collectionItemId={collectionItemId}
                   customField={customField}
                   field={field}
-                  form={form}
-                  rowIndex={rowIndex}
                 />
               )}
             </>
           ) : (
             <>
               {customField.type === 'boolean' ? (
-                <CheckboxField
-                  checked={!!customFieldValue?.valueBoolean}
-                  disabled
-                />
+                <CheckboxField checked={!!field.value?.valueBoolean} disabled />
               ) : (
                 <p>
                   {field.value?.valueText ?? field.value?.valueNumber ?? '-'}

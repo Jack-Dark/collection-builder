@@ -1,5 +1,3 @@
-import { useSelector } from '@tanstack/react-store';
-
 import { useDeleteCollectionItemsByIds } from '#/api/routes/collection-items/delete-collection-items-by-ids/delete-collection-items-by-ids.react-query';
 import { useInvalidateGetCollectionDetailsById } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.react-query';
 import { TableCellActionsMenu } from '#/components/TableCellActionsMenu';
@@ -11,7 +9,7 @@ import type { CollectionDetailsActionsCellPropsDef } from './CollectionDetailsAc
 export const CollectionDetailsActionsCell = (
   props: CollectionDetailsActionsCellPropsDef,
 ) => {
-  const { form, onCancel, onEditClick, row } = props;
+  const { form, onCancel, onEditClick, rowId, rowIndex } = props;
 
   const invalidateGetCollectionDetailsById =
     useInvalidateGetCollectionDetailsById();
@@ -28,34 +26,38 @@ export const CollectionDetailsActionsCell = (
       },
     });
 
-  const collectionItem = useSelector(form.atom, ({ values }) => {
-    return values.collectionItems[row.index];
-  });
-
   const { getHasNewRecord, getIsEditingRowId, isEditing } =
     useEditingCollectionItemsRowIds();
 
-  const isEditingRow = getIsEditingRowId(row.id);
+  const isEditingRow = getIsEditingRowId(rowId);
 
   const isCreatingRecord = getHasNewRecord();
 
   return (
-    <TableCellActionsMenu
-      deleteIsDisabled={isEditing || isDeletePending}
-      deleteOnClick={async () => {
-        if (typeof collectionItem.id === 'number') {
-          await onDeleteCollectionItemsByIds({
-            collectionItemIds: [collectionItem.id],
-          });
-        }
+    <form.Field name={`collectionItems[${rowIndex}]`}>
+      {(field) => {
+        const rowData = field.value;
+
+        return (
+          <TableCellActionsMenu
+            deleteIsDisabled={isEditing || isDeletePending}
+            deleteOnClick={async () => {
+              if (typeof rowData.id === 'number') {
+                await onDeleteCollectionItemsByIds({
+                  collectionItemIds: [rowData.id],
+                });
+              }
+            }}
+            editIsDisabled={isCreatingRecord || isDeletePending}
+            editOnClick={({ id }) => {
+              onEditClick(String(id));
+            }}
+            isEditing={isEditingRow}
+            onCancelEdit={onCancel}
+            rowData={rowData}
+          />
+        );
       }}
-      editIsDisabled={isCreatingRecord || isDeletePending}
-      editOnClick={({ id }) => {
-        onEditClick(String(id));
-      }}
-      isEditing={isEditingRow}
-      onCancelEdit={onCancel}
-      rowData={collectionItem}
-    />
+    </form.Field>
   );
 };

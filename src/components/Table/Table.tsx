@@ -19,7 +19,6 @@ import {
   tableFeatures,
   useTable,
 } from '@tanstack/react-table';
-import _ from 'lodash';
 import { memo, useMemo, useState } from 'react';
 
 import type { TableActionsPropsDef } from './components/TableActions/TableActions.types';
@@ -309,13 +308,5 @@ const TableCellValue = memo(
     const { cell } = props;
 
     return flexRender(cell.column.columnDef.cell, cell.getContext());
-  },
-  (prev, next) => {
-    const isValueUnchanged = _.isEqual(
-      prev.cell.getValue(),
-      next.cell.getValue(),
-    );
-
-    return isValueUnchanged;
   },
 );

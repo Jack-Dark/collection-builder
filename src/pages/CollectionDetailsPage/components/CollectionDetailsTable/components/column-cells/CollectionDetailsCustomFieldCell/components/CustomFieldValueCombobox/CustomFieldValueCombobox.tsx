@@ -16,9 +16,6 @@ import { Button } from '#/components/Button';
 import { useDialog } from '#/components/Dialog/hooks/useDialog';
 import { ComboboxField } from '#/components/Fields/ComboboxField';
 
-import type { CreateOrUpdateCollectionItemFormTypeDef } from '../../../../../../../CollectionDetailsPage.types';
-
-import { useSubscribeToCustomFieldValue } from '../../hooks/subscribe-to-custom-field-value';
 import { DeleteCustomFieldValueDialog } from './components/DeleteCustomFieldValueDialog';
 
 type CustomFieldValueComboboxPropsDef<TField extends AnyFieldApi> = {
@@ -30,16 +27,12 @@ type CustomFieldValueComboboxPropsDef<TField extends AnyFieldApi> = {
   };
   /** The specific custom field value form field where this component renders */
   field: TField;
-  form: CreateOrUpdateCollectionItemFormTypeDef;
-  rowIndex: number;
 };
 
 export const CustomFieldValueCombobox = <TField extends AnyFieldApi>({
   collectionItemId,
   customField,
   field,
-  form,
-  rowIndex,
 }: CustomFieldValueComboboxPropsDef<TField>) => {
   const [customFieldValueToDelete, setCustomFieldValueToDelete] = useState<{
     id: number;
@@ -65,12 +58,6 @@ export const CustomFieldValueCombobox = <TField extends AnyFieldApi>({
     },
   });
 
-  const customFieldValue = useSubscribeToCustomFieldValue({
-    customFieldId: customField.id,
-    form,
-    rowIndex,
-  });
-
   const [showDeleteCustomFieldValueDialog, hideCustomFieldValueDialog] =
     useDialog(() => {
       return (
@@ -80,11 +67,11 @@ export const CustomFieldValueCombobox = <TField extends AnyFieldApi>({
             customFieldValueToDelete={customFieldValueToDelete}
             handleFieldChange={field.handleChange}
             onClose={hideCustomFieldValueDialog}
-            selectedCustomFieldValueId={customFieldValue?.id}
+            selectedCustomFieldValueId={field.value?.id}
           />
         )
       );
-    }, [customFieldValueToDelete, customFieldValue?.id]);
+    }, [customFieldValueToDelete, field.value?.id]);
 
   return (
     <ComboboxField
@@ -102,7 +89,7 @@ export const CustomFieldValueCombobox = <TField extends AnyFieldApi>({
       }}
       disabled={isFetching || processing}
       idProperty="id"
-      inputValue={customFieldValue?.valueText ?? undefined}
+      inputValue={field.value?.valueText ?? undefined}
       items={data}
       labelProperty="valueText"
       name={field.name}
@@ -111,7 +98,7 @@ export const CustomFieldValueCombobox = <TField extends AnyFieldApi>({
           const customFieldValueExistsInDB =
             typeof selectedItem.id === 'number';
 
-          const isAlreadySelected = customFieldValue?.id === selectedItem.id;
+          const isAlreadySelected = field.value?.id === selectedItem.id;
           if (isAlreadySelected) {
             // ? deselect item
             field.handleChange(undefined);
@@ -167,12 +154,12 @@ export const CustomFieldValueCombobox = <TField extends AnyFieldApi>({
         );
       }}
       value={
-        customFieldValue
+        field.value
           ? {
-              id: customFieldValue.id,
+              id: field.value.id,
               valueBoolean: null,
               valueNumber: null,
-              valueText: customFieldValue.valueText || '',
+              valueText: field.value.valueText || '',
             }
           : undefined
       }

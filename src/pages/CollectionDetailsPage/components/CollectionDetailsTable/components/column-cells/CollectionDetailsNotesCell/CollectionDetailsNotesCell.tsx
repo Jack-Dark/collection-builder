@@ -1,5 +1,3 @@
-import { useSelector } from '@tanstack/react-store';
-
 import type { CreateOrUpdateCollectionItemFormTypeDef } from '#/pages/CollectionDetailsPage/CollectionDetailsPage.types';
 
 import { TextAreaField } from '#/components/Fields/TextAreaField';
@@ -15,27 +13,23 @@ export const CollectionDetailsNotesCell = (props: {
   const { getIsEditingRowId } = useEditingCollectionItemsRowIds();
   const isEditingRow = getIsEditingRowId(rowId);
 
-  const notes = useSelector(form.atom, ({ values }) => {
-    return values.collectionItems[rowIndex].notes;
-  });
-
-  return isEditingRow ? (
+  return (
     <form.Field name={`collectionItems[${rowIndex}].notes`}>
-      {({ errors, handleChange, name }) => {
-        return (
+      {(field) => {
+        return isEditingRow ? (
           <TextAreaField
-            error={errors}
-            name={name}
+            error={field.errors}
+            name={field.name}
             onValueChange={(value) => {
-              handleChange(value);
+              field.handleChange(value);
             }}
             placeholder="Input notes..."
-            value={notes}
+            value={field.value}
           />
+        ) : (
+          <p>{field.value || '-'}</p>
         );
       }}
     </form.Field>
-  ) : (
-    <p>{notes || '-'}</p>
   );
 };

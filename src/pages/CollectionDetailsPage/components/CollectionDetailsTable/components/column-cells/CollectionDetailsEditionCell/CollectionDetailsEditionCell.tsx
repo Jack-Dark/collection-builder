@@ -1,5 +1,3 @@
-import { useSelector } from '@tanstack/react-store';
-
 import type { CreateOrUpdateCollectionItemFormTypeDef } from '#/pages/CollectionDetailsPage/CollectionDetailsPage.types';
 
 import { SwitchField } from '#/components/Fields/SwitchField';
@@ -16,54 +14,56 @@ export const CollectionDetailsEditionCell = (props: {
   const { getIsEditingRowId } = useEditingCollectionItemsRowIds();
   const isEditingRow = getIsEditingRowId(rowId);
 
-  const isSpecialEdition = useSelector(form.atom, ({ values }) => {
-    return values.collectionItems[rowIndex].isSpecialEdition;
-  });
-
   return (
     <form.ArrayField name="collectionItems">
       {() => {
         return (
           <div className="grid gap-2">
-            {isEditingRow && (
-              <form.Field
-                name={`collectionItems[${rowIndex}].isSpecialEdition`}
-              >
-                {({ errors, handleChange, value }) => {
-                  return (
-                    <SwitchField
-                      checked={value}
-                      error={errors}
-                      label="Special edition"
-                      onCheckedChange={(checked) => {
-                        handleChange(checked);
-                        form.setFieldValue(
-                          `collectionItems[${rowIndex}].editionDetails`,
-                          checked ? "Collector's Edition" : '',
+            <form.Field name={`collectionItems[${rowIndex}].isSpecialEdition`}>
+              {(isSpecialEditionField) => {
+                return (
+                  <>
+                    {isEditingRow && (
+                      <SwitchField
+                        checked={isSpecialEditionField.value}
+                        error={isSpecialEditionField.errors}
+                        label="Special edition"
+                        onCheckedChange={(checked) => {
+                          isSpecialEditionField.handleChange(checked);
+
+                          const editionDetails = checked
+                            ? "Collector's Edition"
+                            : '';
+                          form.setFieldValue(
+                            `collectionItems[${rowIndex}].editionDetails`,
+                            editionDetails,
+                          );
+                        }}
+                      />
+                    )}
+
+                    <form.Field
+                      name={`collectionItems[${rowIndex}].editionDetails`}
+                    >
+                      {(editionDetailsField) => {
+                        return isEditingRow ? (
+                          isSpecialEditionField.value && (
+                            <TextAreaField
+                              error={editionDetailsField.errors}
+                              name={editionDetailsField.name}
+                              onValueChange={(value) => {
+                                return editionDetailsField.handleChange(value);
+                              }}
+                              required
+                              value={editionDetailsField.value}
+                            />
+                          )
+                        ) : (
+                          <p>{editionDetailsField.value || '-'}</p>
                         );
                       }}
-                    />
-                  );
-                }}
-              </form.Field>
-            )}
-
-            <form.Field name={`collectionItems[${rowIndex}].editionDetails`}>
-              {({ errors, handleChange, name, value }) => {
-                return isEditingRow ? (
-                  isSpecialEdition && (
-                    <TextAreaField
-                      error={errors}
-                      name={name}
-                      onValueChange={(value) => {
-                        return handleChange(value);
-                      }}
-                      required
-                      value={value}
-                    />
-                  )
-                ) : (
-                  <p>{value || '-'}</p>
+                    </form.Field>
+                  </>
                 );
               }}
             </form.Field>

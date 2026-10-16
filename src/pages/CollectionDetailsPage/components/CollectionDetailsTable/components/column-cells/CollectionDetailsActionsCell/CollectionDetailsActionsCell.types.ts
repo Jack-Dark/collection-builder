@@ -1,17 +1,9 @@
-import type { CellContext } from '@tanstack/react-table';
+import type { CreateOrUpdateCollectionItemFormTypeDef } from '#/pages/CollectionDetailsPage/CollectionDetailsPage.types';
 
-import type { TableFeaturesDef } from '#/components/Table';
-import type {
-  CreateOrUpdateCollectionItemFormRowDataDef,
-  CreateOrUpdateCollectionItemFormTypeDef,
-} from '#/pages/CollectionDetailsPage/CollectionDetailsPage.types';
-
-export type CollectionDetailsActionsCellPropsDef = CellContext<
-  TableFeaturesDef,
-  CreateOrUpdateCollectionItemFormRowDataDef,
-  CreateOrUpdateCollectionItemFormRowDataDef['id']
-> & {
+export type CollectionDetailsActionsCellPropsDef = {
   form: CreateOrUpdateCollectionItemFormTypeDef;
   onCancel: () => void;
   onEditClick: (...rowIdsToAdd: string[]) => void;
+  rowId: string;
+  rowIndex: number;
 };
