@@ -43,15 +43,7 @@ export const SwitchField = (props: SwitchFieldPropsDef) => {
       validationDebounceTime={validationDebounceTime}
       validationMode={validationMode}
     >
-      <div
-        className={`grid gap-2 items-center ${
-          label
-            ? labelPosition === 'left'
-              ? 'grid-cols-[max-content_1fr]'
-              : 'grid-cols-[1fr_max-content]'
-            : ''
-        }`}
-      >
+      <div className="flex gap-2 items-center">
         {labelPosition === 'left' && <Label />}
 
         <SwitchMui.Root
