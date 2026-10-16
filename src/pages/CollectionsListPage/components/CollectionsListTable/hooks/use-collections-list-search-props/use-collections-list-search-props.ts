@@ -5,7 +5,7 @@ export const useCollectionsListSearchProps = () => {
     useOnUpdateCollectionsListQueries();
 
   const onChange = async (search: string) => {
-    onUpdateCollectionsListQueries({ search });
+    onUpdateCollectionsListQueries({ search: search.trim() });
   };
 
   const onClickSearchNotes = (checked: boolean) => {
