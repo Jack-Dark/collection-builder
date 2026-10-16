@@ -33,11 +33,11 @@ export const useDeleteCollectionById = <
     },
     mutationKey: [reactMutationKeys.collections('delete')],
     ...props,
-    onSuccess: async (data, requestArgs) => {
+    onSuccess: async (...args) => {
       await invalidateGetNavMenuCollections();
       await invalidateGetPaginatedCollections();
 
-      await props?.onSuccess?.(data, requestArgs);
+      await props?.onSuccess?.(...args);
     },
   });
 

@@ -29,9 +29,6 @@ export const useGetCollectionsWithCustomFields = <
       JSON.stringify(props.requestArgs),
     ],
     ...props,
-    onSuccess: async (data, requestArgs) => {
-      await props?.onSuccess?.(data, requestArgs);
-    },
   });
 };
 
