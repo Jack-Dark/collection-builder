@@ -4,5 +4,5 @@ export type CollectionsListActionsCellPropsDef = {
   onCancel: () => void;
   onEditClick: (...rowIdsToAdd: string[]) => void;
   rowData: CreateOrUpdateCollectionFormRecordDef;
-  rowId: CreateOrUpdateCollectionFormRecordDef['id'];
+  rowId: string;
 };

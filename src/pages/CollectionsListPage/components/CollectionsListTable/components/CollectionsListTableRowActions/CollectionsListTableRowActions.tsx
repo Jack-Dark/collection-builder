@@ -1,7 +1,6 @@
 import ClearIcon from '@mui/icons-material/Clear';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import { useSelector } from '@tanstack/react-form';
 
 import type { CreateOrUpdateCollectionFormTypeDef } from '#/pages/CollectionsListPage/CollectionsListPage.types';
 
@@ -41,14 +40,6 @@ export const CollectionsListTableRowActions = (props: {
       );
       resetRowSelection();
     },
-  });
-
-  const rowsMarkedAsEditing = useSelector(form.atom, ({ values }) => {
-    return values.records.map((record) => {
-      const isEditing = selectedRowIds.includes(String(record.id));
-
-      return { ...record, isEditing };
-    });
   });
 
   const [showConfirmDeleteDialog, hideConfirmDeleteDialog] = useDialog(() => {
@@ -91,8 +82,6 @@ export const CollectionsListTableRowActions = (props: {
                     Icon={EditIcon}
                     onClick={() => {
                       addToEditingRowIds(...selectedRowIds);
-
-                      form.setFieldValue('records', rowsMarkedAsEditing);
                     }}
                     text="Edit"
                     variant="secondary"

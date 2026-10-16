@@ -13,7 +13,6 @@ export const createNewCollection = (): CreateCollectionFormDataSchemaDef => {
   return {
     customFields: [],
     id,
-    isEditing: true,
     name: '',
     notes: '',
   };

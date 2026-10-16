@@ -41,23 +41,11 @@ export const CollectionsListTable = ({
   const { addToEditingRowIds, editingRowIds, isEditing, resetEditingRowIds } =
     useEditingCollectionsRowIds();
 
-  const onEditClick = (...rowIdsToAdd: string[]) => {
-    addToEditingRowIds(...rowIdsToAdd);
-
-    const recordsWithEditStatus = form.state.values.records.map((rowRecord) => {
-      const isEditing = rowIdsToAdd.includes(String(rowRecord.id));
-
-      return { ...rowRecord, isEditing };
-    });
-
-    form.setFieldValue('records', recordsWithEditStatus);
-  };
-
   const columns = useMemo(() => {
     return getCollectionsListTableColumns({
       form,
       onCancel,
-      onEditClick,
+      onEditClick: addToEditingRowIds,
     });
   }, [editingRowIds]);
 
@@ -96,9 +84,9 @@ export const CollectionsListTable = ({
       // @ts-expect-error // TS type mismatch between new and old records
       data={tableData}
       disableRowSelection={isEditing}
-      showRowSelection
       pagination={paginationProps}
       search={searchProps}
+      showRowSelection
       sort={sortProps}
     />
   );

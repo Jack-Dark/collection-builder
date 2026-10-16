@@ -48,15 +48,16 @@ export const CollectionsListPage: RouteComponent = () => {
 
   const { onUpdateCollectionById } = useUpdateCollectionById();
 
-  const { isEditing, resetEditingRowIds } = useEditingCollectionsRowIds();
+  const { getIsEditingRowId, isEditing, resetEditingRowIds } =
+    useEditingCollectionsRowIds();
 
   const form = useForm({
     ...createOrUpdateCollectionFormOptions,
     defaultValues: { records: data.collections },
     onSubmit: async ({ value: { records } }) => {
       await onInterceptRequest(async () => {
-        const editedRecords = records.filter(({ isEditing }) => {
-          return isEditing;
+        const editedRecords = records.filter(({ id }) => {
+          return getIsEditingRowId(String(id));
         });
 
         const isUpdatedRecords = editedRecords.some(({ createdAt }) => {
@@ -78,7 +79,6 @@ export const CollectionsListPage: RouteComponent = () => {
             const {
               createdAt: _createdAt,
               id: _id,
-              isEditing: _isEditing,
               updatedAt: _updatedAt,
               ...newCollectionData
             } = record;
