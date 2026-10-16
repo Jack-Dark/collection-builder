@@ -1,5 +1,6 @@
 import AddIcon from '@mui/icons-material/Add';
 
+import type { ButtonPropsDef } from '#/components/Button';
 import type { CreateOrUpdateCollectionItemFormTypeDef } from '#/pages/CollectionDetailsPage/CollectionDetailsPage.types';
 
 import { Button } from '#/components/Button';
@@ -9,15 +10,12 @@ import { Route } from '#/routes/_protected/collections/$id';
 import { createNewCollectionItem } from '../../../../../../CollectionDetailsPage.form';
 
 export const AddNewCollectionItemButton = ({
-  disabled,
   form,
   insertAtIndex,
-  text,
-}: {
-  disabled?: boolean;
+  ...buttonProps
+}: ButtonPropsDef & {
   form: CreateOrUpdateCollectionItemFormTypeDef;
   insertAtIndex: number;
-  text: string;
 }) => {
   const { id } = Route.useParams();
 
@@ -28,7 +26,6 @@ export const AddNewCollectionItemButton = ({
       {(collectionItemsField) => {
         return (
           <Button
-            disabled={disabled}
             Icon={AddIcon}
             onClick={() => {
               const newCollectionItem = createNewCollectionItem({
@@ -42,8 +39,8 @@ export const AddNewCollectionItemButton = ({
 
               addToEditingRowIds(newCollectionItem.id);
             }}
-            text={text}
             variant="primary"
+            {...buttonProps}
           />
         );
       }}

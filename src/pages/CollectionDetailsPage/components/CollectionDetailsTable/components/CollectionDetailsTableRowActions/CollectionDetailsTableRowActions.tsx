@@ -95,17 +95,19 @@ export const CollectionDetailsTableRowActions = ({
 
                       handleChange(rowsMarkedForEditing);
                     }}
-                    text="Edit"
                     variant="secondary"
-                  />
+                  >
+                    <span className="sr-only md:not-sr-only">Edit</span>
+                  </Button>
 
                   <Button
                     disabled={isEditing}
                     Icon={DeleteIcon}
                     onClick={showConfirmDeleteDialog}
-                    text="Delete"
                     variant="alert"
-                  />
+                  >
+                    <span className="sr-only md:not-sr-only">Delete</span>
+                  </Button>
                 </>
               )}
             </div>
@@ -125,11 +127,11 @@ export const CollectionDetailsTableRowActions = ({
                   />
                 </>
               ) : (
-                <AddNewCollectionItemButton
-                  form={form}
-                  insertAtIndex={0}
-                  text="Add New"
-                />
+                <AddNewCollectionItemButton form={form} insertAtIndex={0}>
+                  <span>
+                    Add <span className="sr-only md:not-sr-only">New</span>
+                  </span>
+                </AddNewCollectionItemButton>
               )}
             </div>
           </div>

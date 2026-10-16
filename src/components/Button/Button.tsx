@@ -16,7 +16,7 @@ export const buttonVariants = [
 
 export type ButtonVariant = (typeof buttonVariants)[number];
 
-type ButtonProps = MuiButtonProps & {
+export type ButtonPropsDef = Omit<MuiButtonProps, 'form'> & {
   className?: string;
   disabled?: boolean;
   iconPosition?: (typeof iconPositions)[keyof typeof iconPositions];
@@ -64,7 +64,7 @@ export const Button = ({
   type = 'button',
   variant = 'primary',
   ...rest
-}: ButtonProps) => {
+}: ButtonPropsDef) => {
   return (
     <MuiButton
       disabled={disabled || processing}
