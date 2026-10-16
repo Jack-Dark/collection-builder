@@ -1,5 +1,6 @@
 import { Input } from '@base-ui/react';
 import _ from 'lodash';
+import { useEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import type { InputFieldProps } from './InputField.types';
@@ -22,7 +23,7 @@ export const InputField = (props: InputFieldProps) => {
     onBlur,
     onChange,
     onValueChange,
-    onValueChangeDebounceMs = 0,
+    onValueChangeDebounceMs = 300,
     placeholder,
     ref,
     required,
@@ -31,6 +32,20 @@ export const InputField = (props: InputFieldProps) => {
     validationMode,
     value,
   } = props;
+
+  const [inputValue, setInputValue] = useState<string>(String(value));
+
+  const debouncedOnValueChange = useMemo(() => {
+    return onValueChange
+      ? _.debounce(onValueChange, onValueChangeDebounceMs)
+      : undefined;
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      debouncedOnValueChange?.cancel();
+    };
+  }, [debouncedOnValueChange]);
 
   return (
     <FieldWrapper
@@ -57,18 +72,15 @@ export const InputField = (props: InputFieldProps) => {
         defaultValue={defaultValue}
         onBlur={onBlur}
         onChange={onChange}
-        onValueChange={
-          onValueChange
-            ? onValueChangeDebounceMs
-              ? _.debounce(onValueChange, onValueChangeDebounceMs)
-              : onValueChange
-            : undefined
-        }
+        onValueChange={(value, eventDetails) => {
+          setInputValue(value);
+          debouncedOnValueChange?.(value, eventDetails);
+        }}
         placeholder={placeholder}
         ref={ref}
         required={required}
         type={type}
-        value={value}
+        value={inputValue}
       />
     </FieldWrapper>
   );

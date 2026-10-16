@@ -8,5 +8,6 @@ export type TextAreaFieldPropsDef = Pick<
   'autoFocus' | 'onValueChange' | 'placeholder' | 'required' | 'type' | 'value'
 > &
   FieldWrapperProps & {
+    onValueChangeDebounceMs?: number;
     ref?: Ref<HTMLElement>;
   };

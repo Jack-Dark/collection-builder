@@ -9,16 +9,16 @@ export type InputFieldProps = Pick<
   | 'capture'
   | 'defaultValue'
   | 'multiple'
+  | 'onBlur'
+  | 'onChange'
+  | 'onValueChange'
   | 'placeholder'
   | 'ref'
   | 'required'
   | 'type'
   | 'value'
-  | 'onBlur'
-  | 'onChange'
 > &
   FieldWrapperProps & {
     inputClassName?: string;
-    onValueChange?: (value: string) => void;
     onValueChangeDebounceMs?: number;
   };

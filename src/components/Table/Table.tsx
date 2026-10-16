@@ -1,5 +1,4 @@
 import type {
-  Cell,
   Row,
   RowData,
   Table as TableDef,
@@ -19,7 +18,7 @@ import {
   tableFeatures,
   useTable,
 } from '@tanstack/react-table';
-import { memo, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import type { TableActionsPropsDef } from './components/TableActions/TableActions.types';
 import type { TablePaginationPropsDef } from './components/TablePagination/TablePagination.types';
@@ -247,17 +246,21 @@ export const Table = <TData extends RowData>({
                             >
                               {showSelectionCheckbox ? (
                                 <div className="relative h-full flex items-center gap-2">
-                                  <TableCellCheckbox
+                                  <CheckboxField
                                     checked={checked}
                                     disabled={disabled}
                                     onCheckedChange={onCheckedChange}
                                   />
-                                  {/* @ts-expect-error - 'TData' could be instantiated with a different subtype of constraint 'RowData' */}
-                                  <TableCellValue cell={cell} />
+                                  {flexRender(
+                                    cell.column.columnDef.cell,
+                                    cell.getContext(),
+                                  )}
                                 </div>
                               ) : (
-                                // @ts-expect-error  -'TData' could be instantiated with a different subtype of constraint 'RowData'
-                                <TableCellValue cell={cell} />
+                                flexRender(
+                                  cell.column.columnDef.cell,
+                                  cell.getContext(),
+                                )
                               )}
                             </td>
                           );
@@ -280,33 +283,3 @@ export const Table = <TData extends RowData>({
     </div>
   );
 };
-
-const TableCellCheckbox = memo(
-  (props: {
-    checked: boolean;
-    disabled: boolean;
-    onCheckedChange: (checked: boolean) => void;
-  }) => {
-    const { checked, disabled, onCheckedChange } = props;
-
-    return (
-      <CheckboxField
-        checked={checked}
-        disabled={disabled}
-        onCheckedChange={onCheckedChange}
-      />
-    );
-  },
-);
-
-type TableCellValuePropsDef<TData extends RowData> = {
-  cell: Cell<TableFeaturesDef, TData, unknown>;
-};
-
-const TableCellValue = memo(
-  <TData extends RowData>(props: TableCellValuePropsDef<TData>) => {
-    const { cell } = props;
-
-    return flexRender(cell.column.columnDef.cell, cell.getContext());
-  },
-);
