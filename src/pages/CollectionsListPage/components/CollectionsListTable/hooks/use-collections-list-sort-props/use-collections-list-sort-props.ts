@@ -2,7 +2,7 @@ import type { CollectionTableColumnsDef } from '#/api/routes/collections/collect
 
 import { sortDirectionOptions } from '#/api/pagination/pagination.constants';
 import { useFormatSortProps } from '#/hooks/use-format-sort-props';
-import { useOnUpdateCollectionsListQueries } from '#/pages/CollectionsListPage/hooks/use-on-update-collection-items-queries';
+import { useOnUpdateCollectionsListQueries } from '#/pages/CollectionsListPage/hooks/use-on-update-collection-list-queries';
 
 export const useCollectionsListSortProps = () => {
   const { onUpdateCollectionsListQueries, searchQueries } =

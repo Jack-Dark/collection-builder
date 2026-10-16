@@ -1,7 +1,7 @@
 import type { PaginationMetadata } from '#/api/pagination/pagination.types';
 
 import { getPaginationMetadataDefaults } from '#/api/pagination/pagination.constants';
-import { useOnUpdateCollectionsListQueries } from '#/pages/CollectionsListPage/hooks/use-on-update-collection-items-queries';
+import { useOnUpdateCollectionsListQueries } from '#/pages/CollectionsListPage/hooks/use-on-update-collection-list-queries';
 import { Route as CollectionRoute } from '#/routes/_protected/collections';
 
 export const useCollectionsListPaginationProps = (props: {

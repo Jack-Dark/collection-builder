@@ -1,4 +1,4 @@
-import { useOnUpdateCollectionsListQueries } from '#/pages/CollectionsListPage/hooks/use-on-update-collection-items-queries';
+import { useOnUpdateCollectionsListQueries } from '#/pages/CollectionsListPage/hooks/use-on-update-collection-list-queries';
 
 export const useCollectionsListSearchProps = () => {
   const { onUpdateCollectionsListQueries, searchQueries } =
