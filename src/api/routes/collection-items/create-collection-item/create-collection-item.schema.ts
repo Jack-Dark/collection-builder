@@ -8,7 +8,6 @@ import {
 export const createCollectionItemsFormSchema = baseCollectionItemSchema.extend({
   id: z.string().describe('ID'),
   images: imagesSchema.filesList,
-  isEditing: z.boolean().describe('Is Editing'),
 });
 
 // ? Separate schema in order to upload images client-side

@@ -14,7 +14,6 @@ const updateCollectionItemsBaseSchema = baseCollectionItemSchema.extend({
 export const updateCollectionItemsFormSchema =
   updateCollectionItemsBaseSchema.extend({
     images: imagesSchema.filesOrPublicIdsList,
-    isEditing: z.boolean().optional().describe('Is Editing'),
   });
 
 export const onUpdateCollectionItemsArgsSchema =

@@ -72,71 +72,55 @@ export const CollectionDetailsTableRowActions = ({
   }, [selectedRowIds]);
 
   return (
-    <form.ArrayField name="collectionItems">
-      {({ handleChange, value }) => {
-        return (
-          <div className="flex justify-between">
-            <div className="flex gap-2">
-              {!!selectedRowIds.length && (
-                <>
-                  <Button
-                    disabled={isEditing}
-                    Icon={EditIcon}
-                    onClick={() => {
-                      addToEditingRowIds(...selectedRowIds);
+    <div className="flex justify-between">
+      <div className="flex gap-2">
+        {!!selectedRowIds.length && (
+          <>
+            <Button
+              disabled={isEditing}
+              Icon={EditIcon}
+              onClick={() => {
+                addToEditingRowIds(...selectedRowIds);
+              }}
+              variant="secondary"
+            >
+              <span className="sr-only md:not-sr-only">Edit</span>
+            </Button>
 
-                      const rowsMarkedForEditing = value.map((rowRecord) => {
-                        const isEditing = selectedRowIds.includes(
-                          String(rowRecord.id),
-                        );
+            <Button
+              disabled={isEditing}
+              Icon={DeleteIcon}
+              onClick={showConfirmDeleteDialog}
+              variant="alert"
+            >
+              <span className="sr-only md:not-sr-only">Delete</span>
+            </Button>
+          </>
+        )}
+      </div>
 
-                        return { ...rowRecord, isEditing };
-                      });
-
-                      handleChange(rowsMarkedForEditing);
-                    }}
-                    variant="secondary"
-                  >
-                    <span className="sr-only md:not-sr-only">Edit</span>
-                  </Button>
-
-                  <Button
-                    disabled={isEditing}
-                    Icon={DeleteIcon}
-                    onClick={showConfirmDeleteDialog}
-                    variant="alert"
-                  >
-                    <span className="sr-only md:not-sr-only">Delete</span>
-                  </Button>
-                </>
-              )}
-            </div>
-
-            <div className="flex gap-2">
-              {isEditing ? (
-                <>
-                  <Button
-                    Icon={ClearIcon}
-                    onClick={onCancel}
-                    text="Cancel"
-                    variant="mono"
-                  />
-                  <CollectionDetailsSubmitButton
-                    form={form}
-                    resetRowSelection={resetRowSelection}
-                  />
-                </>
-              ) : (
-                <AddNewCollectionItemButton form={form} insertAtIndex={0}>
-                  <span>
-                    Add <span className="sr-only md:not-sr-only">New</span>
-                  </span>
-                </AddNewCollectionItemButton>
-              )}
-            </div>
-          </div>
-        );
-      }}
-    </form.ArrayField>
+      <div className="flex gap-2">
+        {isEditing ? (
+          <>
+            <Button
+              Icon={ClearIcon}
+              onClick={onCancel}
+              text="Cancel"
+              variant="mono"
+            />
+            <CollectionDetailsSubmitButton
+              form={form}
+              resetRowSelection={resetRowSelection}
+            />
+          </>
+        ) : (
+          <AddNewCollectionItemButton form={form} insertAtIndex={0}>
+            <span>
+              Add <span className="sr-only md:not-sr-only">New</span>
+            </span>
+          </AddNewCollectionItemButton>
+        )}
+      </div>
+    </div>
   );
 };

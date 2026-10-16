@@ -52,26 +52,12 @@ export const CollectionDetailsTable = ({
   const { addToEditingRowIds, isEditing, resetEditingRowIds } =
     useEditingCollectionItemsRowIds();
 
-  const onEditClick = (...rowIdsToAdd: string[]) => {
-    addToEditingRowIds(...rowIdsToAdd);
-
-    const selectedRowsInEditMode = form.state.values.collectionItems.map(
-      (rowRecord) => {
-        const isEditing = rowIdsToAdd.includes(String(rowRecord.id));
-
-        return { ...rowRecord, isEditing };
-      },
-    );
-
-    form.setFieldValue('collectionItems', selectedRowsInEditMode);
-  };
-
   const columns = useMemo(() => {
     return getCollectionItemsTableColumns({
       customFields: data?.collection?.customFields || [],
       form,
       onCancel,
-      onEditClick,
+      onEditClick: addToEditingRowIds,
     });
   }, [data?.collection?.customFields]);
 

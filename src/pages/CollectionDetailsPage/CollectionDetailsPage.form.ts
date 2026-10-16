@@ -20,7 +20,6 @@ export const createNewCollectionItem = ({
     editionDetails: '',
     id,
     images: [],
-    isEditing: true,
     isSpecialEdition: Boolean(),
     name: '',
     notes: '',
