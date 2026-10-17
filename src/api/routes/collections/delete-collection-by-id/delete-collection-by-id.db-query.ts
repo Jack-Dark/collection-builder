@@ -28,6 +28,6 @@ export const deleteCollectionDbQuery = async ({
         ),
       );
 
-    // TODO - FEATURE: DELETE IMAGES
+    // TODO - FEATURE: DELETE FOUND IMAGES
   });
 };
