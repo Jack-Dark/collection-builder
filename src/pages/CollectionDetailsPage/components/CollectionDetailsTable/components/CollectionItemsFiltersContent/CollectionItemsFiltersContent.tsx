@@ -26,7 +26,7 @@ const FiltersBlock = (props: FiltersBlockPropsDef) => {
 
   return (
     <div className="grid gap-1">
-      <div className="flex items-center gap-2">
+      <div className="flex items-baseline gap-1">
         <h5 className="grid grid-cols-[auto_1fr] gap-1">
           {label}
           {popoverMsg && <Popover Description={popoverMsg} />}
