@@ -296,6 +296,7 @@ export const getCollectionDetailsByIdDbQuery = async ({
           with: {
             customFieldValue: {
               columns: {
+                id: true,
                 customFieldId: true,
                 valueBoolean: true,
                 valueNumber: true,
@@ -308,23 +309,21 @@ export const getCollectionDetailsByIdDbQuery = async ({
     );
 
     const lastAddedCustomFieldValuesByCustomFieldId =
-      lastAddedCustomFieldValues.reduce<
-        Record<number, number | boolean | string | undefined>
-      >((acc, customField) => {
-        if (customField?.customFieldValue) {
-          const { customFieldId, valueBoolean, valueNumber, valueText } =
-            customField.customFieldValue;
+      lastAddedCustomFieldValues.reduce<CustomFieldValuesByFieldId>(
+        (acc, customField) => {
+          if (customField?.customFieldValue) {
+            const { customFieldId, ...rest } = customField.customFieldValue;
 
-          const value = valueBoolean ?? valueNumber ?? valueText ?? undefined;
+            return {
+              ...acc,
+              [customFieldId]: rest,
+            };
+          }
 
-          return {
-            ...acc,
-            [customFieldId]: value,
-          };
-        }
-
-        return acc;
-      }, {});
+          return acc;
+        },
+        {},
+      );
 
     return {
       collection,

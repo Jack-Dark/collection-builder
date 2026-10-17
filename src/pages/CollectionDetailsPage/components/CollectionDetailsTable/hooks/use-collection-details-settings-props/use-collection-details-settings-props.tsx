@@ -29,6 +29,10 @@ export const useCollectionDetailsSettingsProps = () => {
     return IgnoreSortArticlesLabel;
   }, []);
 
+  const MemoizedAutoPopulateCustomFieldValues = useMemo(() => {
+    return AutoPopulateCustomFieldValues;
+  }, []);
+
   const { autoPopulateCustomFieldValues } =
     CollectionDetailsRoute.useLoaderData();
 
@@ -49,10 +53,7 @@ export const useCollectionDetailsSettingsProps = () => {
         active: autoPopulateCustomFieldValues,
         closeOnClick: false,
         key: 'auto-populate',
-        Label: (
-          // TODO - FEATURE: ADD AUTO-POPULATE CUSTOM FIELD VALUES SUPPORT
-          <AutoPopulateCustomFieldValues />
-        ),
+        Label: <MemoizedAutoPopulateCustomFieldValues />,
 
         onClick: async () => {
           await setAutoPopulateCustomFieldValuesServerFn({

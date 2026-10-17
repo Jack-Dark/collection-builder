@@ -18,15 +18,15 @@ import { useUpdateCollectionItems } from '#/api/routes/collection-items/update-c
 import { useDeleteUnusedCustomFieldValues } from '#/api/routes/custom-field-values/delete-unused-custom-field-values/delete-unused-custom-field-values.react-query';
 import { useSpinner } from '#/components/FullPageLoadingSpinner/useSpinner';
 import { PageWrapper } from '#/components/PageWrapper';
-import { Route as CollectionRoute } from '#/routes/_protected/collections/$id';
+import { Route as CollectionDetailsRoute } from '#/routes/_protected/collections/$id';
 
 import { createOrUpdateCollectionItemsFormOptions } from './CollectionDetailsPage.form';
 import { CollectionDetailsTable } from './components/CollectionDetailsTable';
 import { useEditingCollectionItemsRowIds } from './hooks/use-editing-collection-items-row-ids';
 
 export const CollectionDetailsPage: RouteComponent = () => {
-  const { id } = CollectionRoute.useParams();
-  const searchQueries = CollectionRoute.useSearch();
+  const { id } = CollectionDetailsRoute.useParams();
+  const searchQueries = CollectionDetailsRoute.useSearch();
 
   const collectionId = Number(id);
 

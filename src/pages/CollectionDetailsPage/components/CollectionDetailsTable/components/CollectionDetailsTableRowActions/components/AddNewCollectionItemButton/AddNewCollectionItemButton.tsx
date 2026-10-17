@@ -5,9 +5,8 @@ import type { CreateOrUpdateCollectionItemFormTypeDef } from '#/pages/Collection
 
 import { Button } from '#/components/Button';
 import { useEditingCollectionItemsRowIds } from '#/pages/CollectionDetailsPage/hooks/use-editing-collection-items-row-ids';
-import { Route } from '#/routes/_protected/collections/$id';
 
-import { createNewCollectionItem } from '../../../../../../CollectionDetailsPage.form';
+import { useCreateNewCollectionItem } from '../../../../../../CollectionDetailsPage.form';
 
 export const AddNewCollectionItemButton = ({
   form,
@@ -17,9 +16,9 @@ export const AddNewCollectionItemButton = ({
   form: CreateOrUpdateCollectionItemFormTypeDef;
   insertAtIndex: number;
 }) => {
-  const { id } = Route.useParams();
-
   const { addToEditingRowIds } = useEditingCollectionItemsRowIds();
+
+  const createNewCollectionItem = useCreateNewCollectionItem();
 
   return (
     <form.ArrayField name="collectionItems">
@@ -27,10 +26,8 @@ export const AddNewCollectionItemButton = ({
         return (
           <Button
             Icon={AddIcon}
-            onClick={() => {
-              const newCollectionItem = createNewCollectionItem({
-                collectionId: Number(id),
-              });
+            onClick={async () => {
+              const newCollectionItem = await createNewCollectionItem();
 
               collectionItemsField.insertValue(
                 insertAtIndex,

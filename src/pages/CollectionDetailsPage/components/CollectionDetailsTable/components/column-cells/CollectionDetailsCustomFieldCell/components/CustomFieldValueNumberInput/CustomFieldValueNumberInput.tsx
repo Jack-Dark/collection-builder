@@ -4,6 +4,7 @@ import type { CustomFieldTypeDef } from '#/api/db-tables-schema.types';
 
 import { useCreateCustomFieldValues } from '#/api/routes/custom-field-values/create-custom-field-value/create-custom-field-value.react-query';
 import { InputField } from '#/components/Fields/InputField';
+import { useLastAddedCustomFieldValues } from '#/pages/CollectionDetailsPage/CollectionDetailsPage.form';
 
 type CustomFieldValueNumberInputPropsDef<TField extends AnyFieldApi> = {
   customField: {
@@ -22,6 +23,8 @@ export const CustomFieldValueNumberInput = <TField extends AnyFieldApi>({
   const { onCreateCustomFieldValues, processing } =
     useCreateCustomFieldValues();
 
+  const { setLastAddedCustomFieldValues } = useLastAddedCustomFieldValues();
+
   return (
     <InputField
       disabled={processing}
@@ -36,8 +39,14 @@ export const CustomFieldValueNumberInput = <TField extends AnyFieldApi>({
               },
             ],
           });
+          setLastAddedCustomFieldValues({
+            [customField.id]: newCustomFieldValue,
+          });
           field.handleChange(newCustomFieldValue);
         } else {
+          setLastAddedCustomFieldValues({
+            [customField.id]: undefined,
+          });
           field.handleChange(undefined);
         }
       }}

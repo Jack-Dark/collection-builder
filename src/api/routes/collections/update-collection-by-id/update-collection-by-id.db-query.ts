@@ -43,8 +43,6 @@ export const updateCollectionByIdDbQuery = async ({
           .where(eq(collectionsToCustomFieldsTable.collectionId, record.id)),
       ]);
 
-      console.clear();
-
       // ? Create brand new links between this collection and custom fields
       const newCollectionToCustomFieldRecords: InsertLinkCollectionsToCustomFieldsRecordDef[] =
         customFields.map(({ customField, order }) => {

@@ -15,6 +15,7 @@ import {
 import { Button } from '#/components/Button';
 import { useDialog } from '#/components/Dialog/hooks/useDialog';
 import { ComboboxField } from '#/components/Fields/ComboboxField';
+import { useLastAddedCustomFieldValues } from '#/pages/CollectionDetailsPage/CollectionDetailsPage.form';
 
 import { DeleteCustomFieldValueDialog } from './components/DeleteCustomFieldValueDialog';
 
@@ -47,6 +48,7 @@ export const CustomFieldValueCombobox = <TField extends AnyFieldApi>({
       id: customField.id,
     },
   });
+
   const invalidateGetCustomFieldValuesByCustomFieldId =
     useInvalidateGetCustomFieldValuesByCustomFieldId();
 
@@ -57,6 +59,8 @@ export const CustomFieldValueCombobox = <TField extends AnyFieldApi>({
       });
     },
   });
+
+  const { setLastAddedCustomFieldValues } = useLastAddedCustomFieldValues();
 
   const [showDeleteCustomFieldValueDialog, hideCustomFieldValueDialog] =
     useDialog(() => {
@@ -101,15 +105,22 @@ export const CustomFieldValueCombobox = <TField extends AnyFieldApi>({
           const isAlreadySelected = field.value?.id === selectedItem.id;
           if (isAlreadySelected) {
             // ? deselect item
+            setLastAddedCustomFieldValues({
+              [customField.id]: undefined,
+            });
             field.handleChange(undefined);
           } else if (customFieldValueExistsInDB) {
             // ? use selected item
-            field.handleChange({
+            const customFieldValue = {
               id: selectedItem.id,
               valueBoolean: null,
               valueNumber: null,
               valueText: selectedItem.valueText,
+            };
+            setLastAddedCustomFieldValues({
+              [customField.id]: customFieldValue,
             });
+            field.handleChange(customFieldValue);
           } else {
             // ? create selected item in DB
             const [newCustomFieldValue] = await onCreateCustomFieldValues({
@@ -119,6 +130,10 @@ export const CustomFieldValueCombobox = <TField extends AnyFieldApi>({
                   value: selectedItem.valueText,
                 },
               ],
+            });
+
+            setLastAddedCustomFieldValues({
+              [customField.id]: newCustomFieldValue,
             });
 
             field.handleChange(newCustomFieldValue);

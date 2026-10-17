@@ -4,6 +4,7 @@ import type { CustomFieldTypeDef } from '#/api/db-tables-schema.types';
 
 import { useCreateCustomFieldValues } from '#/api/routes/custom-field-values/create-custom-field-value/create-custom-field-value.react-query';
 import { CheckboxField } from '#/components/Fields/CheckboxField';
+import { useLastAddedCustomFieldValues } from '#/pages/CollectionDetailsPage/CollectionDetailsPage.form';
 
 type CustomFieldValueCheckboxPropsDef<TField extends AnyFieldApi> = {
   customField: {
@@ -22,6 +23,8 @@ export const CustomFieldValueCheckbox = <TField extends AnyFieldApi>({
   const { onCreateCustomFieldValues, processing } =
     useCreateCustomFieldValues();
 
+  const { setLastAddedCustomFieldValues } = useLastAddedCustomFieldValues();
+
   return (
     <CheckboxField
       checked={!!field.value?.valueBoolean}
@@ -29,6 +32,10 @@ export const CustomFieldValueCheckbox = <TField extends AnyFieldApi>({
       onCheckedChange={async (value) => {
         const [newCustomFieldValue] = await onCreateCustomFieldValues({
           records: [{ customFieldId: customField.id, value }],
+        });
+
+        setLastAddedCustomFieldValues({
+          [customField.id]: newCustomFieldValue,
         });
 
         field.handleChange(newCustomFieldValue);
