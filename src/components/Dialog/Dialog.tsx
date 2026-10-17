@@ -70,7 +70,7 @@ export const Dialog = (props: DialogPropsDef) => {
             </div>
           )}
 
-          <div className="overflow-y-auto py-4 px-4 md:content-center">
+          <div className="overflow-y-auto py-6 px-4 md:content-center">
             {children}
           </div>
 
