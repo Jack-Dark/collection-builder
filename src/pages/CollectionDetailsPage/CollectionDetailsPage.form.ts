@@ -55,11 +55,6 @@ export const useLastAddedCustomFieldValues = () => {
   const handleSetLastAddedCustomFieldValues = (
     customFieldValuesByCustomFieldId: CustomFieldValuesByFieldId,
   ) => {
-    console.clear();
-    console.log(
-      '🚀 ~ handleSetLastAddedCustomFieldValues ~ customFieldValuesByCustomFieldId:',
-      customFieldValuesByCustomFieldId,
-    );
     if (autoPopulateCustomFieldValues) {
       setLastAddedCustomFieldValues((prev) => {
         return { ...prev, ...customFieldValuesByCustomFieldId };
