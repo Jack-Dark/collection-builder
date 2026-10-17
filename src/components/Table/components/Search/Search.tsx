@@ -1,7 +1,7 @@
 import ClearIcon from '@mui/icons-material/Clear';
 import NotesIcon from '@mui/icons-material/Notes';
 import SearchIcon from '@mui/icons-material/Search';
-import { useState } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 import { twJoin } from 'tailwind-merge';
 
 import { Button } from '#/components/Button';
@@ -21,37 +21,42 @@ export const Search = (props: SearchPropsDef) => {
 
   const [query, setQuery] = useState(value);
 
+  const inputRef = useRef<HTMLInputElement>(null);
+
   const handleChange = (value: string) => {
     setQuery(value);
     onChange(value);
   };
 
+  useLayoutEffect(() => {
+    setQuery(value);
+  }, [value]);
+
   return (
     <div className="relative">
-      <div className="absolute left-0 h-full p-1 flex items-center">
+      <div className="absolute w-10 left-0 h-full flex justify-center items-center">
         {query ? (
           <Button
             aria-label="Search"
-            className="pointer text-inherit hover:text-primary-800"
+            className="size-full text-inherit hover:text-theme-link-hover"
             Icon={ClearIcon}
             onClick={() => {
-              setQuery('');
-              onChange('');
+              inputRef.current?.focus();
+
+              handleChange('');
             }}
             size="xs"
             variant="ghost"
           />
         ) : (
-          <div className="pl-1.5">
-            <SearchIcon />
-          </div>
+          <SearchIcon />
         )}
       </div>
 
       {enableSearchNotes && (
         <div className="absolute right-0 h-full flex items-stretch">
           <Popover
-            Description='Search "Notes" field'
+            Description='Search "Notes"'
             Trigger={() => {
               return (
                 <div
@@ -75,9 +80,9 @@ export const Search = (props: SearchPropsDef) => {
       <InputField
         className="size-full"
         inputClassName="size-full pl-10 pr-12"
-        name="_search"
         onValueChange={handleChange}
         placeholder="Search..."
+        ref={inputRef}
         type="text"
         value={query}
       />

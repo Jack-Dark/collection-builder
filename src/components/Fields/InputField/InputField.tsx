@@ -1,6 +1,6 @@
 import { Input } from '@base-ui/react';
 import _ from 'lodash';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 
 import type { InputFieldProps } from './InputField.types';
@@ -46,6 +46,10 @@ export const InputField = (props: InputFieldProps) => {
       debouncedOnValueChange?.cancel();
     };
   }, [debouncedOnValueChange]);
+
+  useLayoutEffect(() => {
+    setInputValue(String(value));
+  }, [value]);
 
   return (
     <FieldWrapper
