@@ -7,26 +7,15 @@ import { getGenericFetchQueryOptions } from '#/api/react-query-hooks/use-generic
 import { collectionDetailsSearchQueriesSchema } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.schema';
 import { getCollectionDetailsByIdServerFn } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.serverFn';
 import { CollectionDetailsPage } from '#/pages/CollectionDetailsPage';
+import { getAutoPopulateCustomFieldValuesServerFn } from '#/pages/CollectionDetailsPage/components/CollectionDetailsTable/hooks/use-collection-details-settings-props';
 
 export const Route = createFileRoute('/_protected/collections/$id')({
   component: CollectionDetailsPage,
-  head: ({ loaderData }) => {
-    const data = loaderData as unknown as GetCollectionDetailsByIdResponseDef;
-
-    const title = data?.collection
-      ? `Collection: ${data?.collection?.name} (${data?.pagination?.totalRecords})`
-      : undefined;
-    const content = data?.items
-      ?.slice(0, 3)
-      ?.map((item) => {
-        return item?.name;
-      })
-      .join(', ');
-
-    return {
-      meta: [{ title }, { content, name: 'description' }],
-    };
+  validateSearch: collectionDetailsSearchQueriesSchema,
+  loaderDeps: ({ search }) => {
+    return search;
   },
+  ssr: false,
   loader: async ({ context, deps: searchQueries, params }) => {
     const collectionId = Number(params.id);
 
@@ -42,11 +31,29 @@ export const Route = createFileRoute('/_protected/collections/$id')({
       requestArgs,
     });
 
-    return await context.queryClient.ensureQueryData(queryOptions);
+    await context.queryClient.ensureQueryData(queryOptions);
+
+    const autoPopulateCustomFieldValues =
+      await getAutoPopulateCustomFieldValuesServerFn();
+
+    return { autoPopulateCustomFieldValues };
   },
-  loaderDeps: ({ search }) => {
-    return search;
+  head: ({ loaderData }) => {
+    const data = loaderData as unknown as GetCollectionDetailsByIdResponseDef;
+
+    const title = data?.collection
+      ? `Collection: ${data?.collection?.name} (${data?.pagination?.totalRecords})`
+      : undefined;
+
+    const content = data?.items
+      ?.slice(0, 3)
+      ?.map((item) => {
+        return item?.name;
+      })
+      .join(', ');
+
+    return {
+      meta: [{ title }, { content, name: 'description' }],
+    };
   },
-  ssr: false,
-  validateSearch: collectionDetailsSearchQueriesSchema,
 });

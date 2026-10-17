@@ -28,6 +28,11 @@ export const Route = createRootRouteWithContext<{
 }>()({
   component: RootComponent,
   errorComponent: SimpleErrorBoundaryContent,
+  loader: async () => {
+    const theme = await getThemeServerFn();
+
+    return { theme };
+  },
   head: () => {
     return {
       links: [
@@ -49,9 +54,6 @@ export const Route = createRootRouteWithContext<{
         },
       ],
     };
-  },
-  loader: () => {
-    return getThemeServerFn();
   },
   notFoundComponent: () => {
     return (
@@ -92,7 +94,7 @@ function RootComponent() {
 export const RootDocument = ({
   children,
 }: Readonly<{ children: ReactNode }>) => {
-  const theme = Route.useLoaderData();
+  const { theme } = Route.useLoaderData();
 
   return (
     <html data-theme={theme} suppressHydrationWarning>

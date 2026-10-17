@@ -21,8 +21,8 @@ type ThemeProviderPropsDef = PropsWithChildren<{
 export const ThemeProvider = ({ children, theme }: ThemeProviderPropsDef) => {
   const router = useRouter();
 
-  const setTheme = (theme: UserPreferencesThemeDef) => {
-    setThemeServerFn({ data: theme }).then(() => {
+  const setTheme = async (theme: UserPreferencesThemeDef) => {
+    await setThemeServerFn({ data: theme }).then(() => {
       return router.invalidate();
     });
   };

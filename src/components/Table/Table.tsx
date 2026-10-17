@@ -20,14 +20,14 @@ import {
 } from '@tanstack/react-table';
 import { useMemo, useState } from 'react';
 
-import type { TableSettingsMenuPropsDef } from './components/TableSettingsMenu/TableSettingsMenu.types';
 import type { TableActionsPropsDef } from './components/TableActions/TableActions.types';
 import type { TablePaginationPropsDef } from './components/TablePagination/TablePagination.types';
+import type { TableSettingsMenuPropsDef } from './components/TableSettingsMenu/TableSettingsMenu.types';
 
 import { CheckboxField } from '../Fields/CheckboxField';
-import { TableSettingsMenu } from './components/TableSettingsMenu';
 import { TableActions } from './components/TableActions';
 import { TablePagination } from './components/TablePagination';
+import { TableSettingsMenu } from './components/TableSettingsMenu';
 
 export const tableCellClasses =
   'text-left px-2 py-1 border-b z-0 first:sticky first:left-0 first:z-1 first:group-data-overflow-x-start:border-r last:sticky last:right-0 last:z-1 last:group-data-overflow-x-end:border-l h-9';

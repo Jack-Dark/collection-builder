@@ -10,6 +10,10 @@ export const Route = createFileRoute('/_protected/collections/')({
   component: (props) => {
     return <CollectionsListPage {...props} />;
   },
+  validateSearch: collectionsListSearchQueriesSchema,
+  loaderDeps: ({ search }) => {
+    return search;
+  },
   loader: async ({ context, deps: searchQueries }) => {
     const requestArgs = { params: searchQueries };
 
@@ -24,8 +28,4 @@ export const Route = createFileRoute('/_protected/collections/')({
 
     return await context.queryClient.ensureQueryData(queryOptions);
   },
-  loaderDeps: ({ search }) => {
-    return search;
-  },
-  validateSearch: collectionsListSearchQueriesSchema,
 });

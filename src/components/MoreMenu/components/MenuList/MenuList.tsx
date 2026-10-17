@@ -40,6 +40,7 @@ export const MenuList = (props: MenuPropsDef) => {
               const {
                 active,
                 addSeparator,
+                closeOnClick = true,
                 disabled,
                 group,
                 href,
@@ -64,6 +65,7 @@ export const MenuList = (props: MenuPropsDef) => {
                       {group.map((groupProps) => {
                         const {
                           addSeparator,
+                          closeOnClick = true,
                           disabled,
                           href,
                           id,
@@ -81,6 +83,7 @@ export const MenuList = (props: MenuPropsDef) => {
                                 active,
                                 disabled,
                               })}
+                              closeOnClick={closeOnClick}
                               data-clickable={href || onClick ? '' : undefined}
                               data-disabled={disabled ? '' : undefined}
                               disabled={disabled}
@@ -141,6 +144,7 @@ export const MenuList = (props: MenuPropsDef) => {
                   ) : (
                     <Menu.Item
                       className={getMenuItemClasses({ active, disabled })}
+                      closeOnClick={closeOnClick}
                       data-clickable={href || onClick ? '' : undefined}
                       data-disabled={disabled ? '' : undefined}
                       disabled={disabled}

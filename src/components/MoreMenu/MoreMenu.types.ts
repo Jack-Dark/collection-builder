@@ -1,6 +1,6 @@
 import type { MenuPositionerProps } from '@base-ui/react';
 import type { LinkProps } from '@tanstack/react-router';
-import type { JSXElementConstructor, Key } from 'react';
+import type { JSXElementConstructor, Key, JSX } from 'react';
 
 export type MenuPropsDef = Pick<
   MenuPositionerProps,
@@ -15,6 +15,7 @@ export type MenuPropsDef = Pick<
 export type MenuItemDef = {
   active?: boolean;
   addSeparator?: boolean;
+  closeOnClick?: boolean;
   disabled?: boolean;
   hidden?: boolean;
 } & MenuItemLabelPropsDef &
@@ -43,7 +44,7 @@ type MenuItemLabelPropsDef =
     }
   | {
       id: Key;
-      Label: JSXElementConstructor<{}>;
+      Label: JSX.Element | JSXElementConstructor<{}>;
     };
 
 type MenuItemBehaviorPropsDef =
