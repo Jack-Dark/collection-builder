@@ -1,8 +1,54 @@
+@utility btn-xs {
+  @apply px-1 py-0.5 text-sm;
+
+  .icon {
+    @apply !text-base
+  }
+}
+
+@utility btn-sm {
+  @apply px-3 py-1 text-sm;
+
+  .icon {
+    @apply !text-lg
+  }
+}
+
+@utility btn-md {
+  @apply px-4 py-1.5 text-base;
+
+  .icon {
+    @apply !text-xl
+  }
+}
+
+@utility btn-lg {
+  @apply px-5 py-2 text-lg;
+
+  .icon {
+    @apply !text-2xl
+  }
+}
+
+@utility btn-xl {
+  @apply px-5 py-2.5 text-xl;
+
+  .icon {
+    @apply !text-3xl
+  }
+}
+
+@utility btn-2xl {
+  @apply px-6 py-3 text-2xl;
+
+  .icon {
+    @apply !text-4xl
+  }
+}
+
 @layer components {
   .btn {
     border-radius: var(--radius-xs);
-    padding-inline: --spacing(5);
-    padding-block: --spacing(2);
     font-weight: var(--font-weight-semibold);
     box-shadow: var(--shadow-md);
     cursor: pointer;
@@ -18,44 +64,6 @@
   .btn:disabled * {
     pointer-events: none;
   }
-
-  .btn-xs {
-    padding: --spacing(.5) --spacing(1);
-    font-size: var(--text-sm);
-    line-height: var(--text-sm--line-height);
-  }
-
-  .btn-sm {
-    padding: --spacing(1) --spacing(3);
-    font-size: var(--text-sm);
-    line-height: var(--text-sm--line-height);
-  }
-
-  .btn-md {
-    padding: --spacing(1.5) --spacing(4);
-    font-size: var(--text-base);
-    line-height: var(--text-base--line-height);
-  }
-
-  .btn-lg {
-    padding: --spacing(2) --spacing(5);
-    font-size: var(--text-lg);
-    line-height: var(--text-lg--line-height);
-  }
-
-  .btn-xl {
-    padding: --spacing(3) --spacing(6);
-    font-size: var(--text-xl);
-    line-height: var(--text-xl--line-height);
-  }
-
-  .btn-2xl {
-    padding: --spacing(4) --spacing(8);
-    font-size: var(--text-2xl);
-    line-height: var(--text-2xl--line-height);
-  }
-
-
 
   .btn-primary {
     background-color: var(--color-primary-900);

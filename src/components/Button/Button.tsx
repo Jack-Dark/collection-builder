@@ -1,5 +1,5 @@
 import type { ButtonProps as MuiButtonProps } from '@base-ui/react';
-import type { JSXElementConstructor, ReactElement } from 'react';
+import type { JSXElementConstructor, PropsWithChildren } from 'react';
 
 import { Button as MuiButton } from '@base-ui/react';
 import { twMerge } from 'tailwind-merge';
@@ -14,7 +14,9 @@ export const buttonVariants = [
   'alert',
 ] as const;
 
-export type ButtonVariant = (typeof buttonVariants)[number];
+export type ButtonVariantDef = (typeof buttonVariants)[number];
+
+type ButtonSizeDef = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'custom';
 
 export type ButtonPropsDef = Omit<MuiButtonProps, 'form'> & {
   className?: string;
@@ -22,27 +24,26 @@ export type ButtonPropsDef = Omit<MuiButtonProps, 'form'> & {
   iconPosition?: (typeof iconPositions)[keyof typeof iconPositions];
   processing?: boolean;
   /** Applies standardized padding, font-size, and line-height styling. `'custom'` does not apply any. */
-  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'custom';
+  size?: ButtonSizeDef;
   /** Set to `'submit'` for form submission. */
   type?: 'button' | 'submit';
-  variant?: ButtonVariant;
+  variant?: ButtonVariantDef;
 } & (
     | {
         'aria-label'?: string;
         children?: never;
-        Icon?: JSXElementConstructor<{}>;
+        Icon?: JSXElementConstructor<{ className?: string }>;
         text: string;
       }
-    | {
+    | PropsWithChildren<{
         'aria-label'?: string;
-        children: ReactElement;
-        Icon?: JSXElementConstructor<{}>;
+        Icon?: JSXElementConstructor<{ className?: string }>;
         text?: never;
-      }
+      }>
     | {
         'aria-label': string;
         children?: never;
-        Icon: JSXElementConstructor<{}>;
+        Icon: JSXElementConstructor<{ className?: string }>;
         text?: never;
       }
   );
@@ -70,18 +71,65 @@ export const Button = ({
       disabled={disabled || processing}
       {...rest}
       className={twMerge(
-        `btn btn-${size} btn-${variant} flex items-center justify-center gap-2`,
+        'btn',
+        getBtnSizeClass(size),
+        getBtnVariantClass(variant),
+        'flex items-center justify-center gap-2',
         className,
       )}
       type={type}
     >
       {iconPosition === iconPositions.left &&
-        (processing ? <LoadingSpinner /> : Icon && <Icon />)}
+        (processing ? <LoadingSpinner /> : Icon && <Icon className="icon" />)}
 
       {children || text}
 
       {iconPosition === iconPositions.right &&
-        (processing ? <LoadingSpinner /> : Icon && <Icon />)}
+        (processing ? <LoadingSpinner /> : Icon && <Icon className="icon" />)}
     </MuiButton>
   );
+};
+
+const getBtnSizeClass = (size: ButtonSizeDef) => {
+  switch (size) {
+    case 'xs':
+      return 'btn-xs';
+
+    case 'sm':
+      return 'btn-sm';
+
+    case 'lg':
+      return 'btn-lg';
+
+    case 'xl':
+      return 'btn-xl';
+
+    case '2xl':
+      return 'btn-2xl';
+
+    case 'custom':
+      return 'btn-custom';
+
+    default:
+      return 'btn-md';
+  }
+};
+
+const getBtnVariantClass = (variant: ButtonVariantDef) => {
+  switch (variant) {
+    case 'secondary':
+      return 'btn-secondary';
+
+    case 'mono':
+      return 'btn-mono';
+
+    case 'ghost':
+      return 'btn-ghost';
+
+    case 'alert':
+      return 'btn-alert';
+
+    default:
+      return 'btn-primary';
+  }
 };

@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/tanstack-react';
 
+import SettingsIcon from '@mui/icons-material/Settings';
 import { fn } from 'storybook/test';
 
 import { Button, buttonVariants } from '#/components/Button';
@@ -59,14 +60,14 @@ export const Alert: Story = {
 export const Variants: Story = {
   args: {},
   decorators: [
-    (_Story, { args: props }) => {
+    (_Story, { args: { children: _children, ...props } }) => {
       return (
         <div className="flex gap-2 items-center">
           {buttonVariants.map((variant) => {
             return (
               <Button
-                key={variant}
                 {...props}
+                key={variant}
                 text={variant}
                 variant={variant}
               />
@@ -79,9 +80,11 @@ export const Variants: Story = {
 };
 
 export const Sizes: Story = {
-  args: {},
+  args: {
+    Icon: SettingsIcon,
+  },
   decorators: [
-    (_Story, { args: props }) => {
+    (_Story, { args: { children: _children, ...props } }) => {
       return (
         <div className="flex gap-2 items-center">
           <Button {...props} size="xs" text="xs size" />
