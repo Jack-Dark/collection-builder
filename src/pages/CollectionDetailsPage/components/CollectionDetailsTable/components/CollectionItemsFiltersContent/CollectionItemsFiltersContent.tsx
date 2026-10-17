@@ -277,6 +277,7 @@ const CustomFieldStringFilter = (props: {
                       }}
                     >
                       <CheckboxGroupField
+                        columns={customField.items.length >= 10 ? 2 : 1}
                         items={customField.items}
                         name={field.name}
                         onValueChange={(selectedItems) => {

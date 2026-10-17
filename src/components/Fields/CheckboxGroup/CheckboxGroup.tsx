@@ -1,7 +1,9 @@
+import type { CSSProperties } from 'react';
+
 import { Field } from '@base-ui/react';
 import { CheckboxGroup } from '@base-ui/react/checkbox-group';
 import { useKeyHold } from '@tanstack/react-hotkeys';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { getItemsInRange } from '#/components/Table';
 
@@ -10,7 +12,14 @@ import type { CheckboxGroupFieldPropsDef } from './CheckboxGroup.types';
 import { CheckboxBase } from '../CheckboxField';
 
 export const CheckboxGroupField = (props: CheckboxGroupFieldPropsDef) => {
-  const { items, name, onValueChange, value: selectedValues, ...rest } = props;
+  const {
+    columns = 1,
+    items,
+    name,
+    onValueChange,
+    value: selectedValues,
+    ...rest
+  } = props;
 
   const [lastSelectedIndex, setLastSelectedIndex] = useState<number>(-1);
 
@@ -46,14 +55,26 @@ export const CheckboxGroupField = (props: CheckboxGroupFieldPropsDef) => {
     }
   };
 
+  // ? create styles as tailwind does not support dynamically created class names
+  const gridStyles = useMemo(() => {
+    const rows = Math.ceil(items.length / columns);
+
+    return {
+      gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`,
+      gridTemplateRows: `repeat(${rows}, minmax(0, 1fr))`,
+    } satisfies CSSProperties;
+  }, [columns]);
+
   return (
     <CheckboxGroup
       {...rest}
+      className="grid grid-flow-col"
       onValueChange={(selectedItems) => {
         if (!isBulkSelecting) {
           onValueChange(selectedItems);
         }
       }}
+      style={gridStyles}
       value={selectedValues}
     >
       {items.map((item, index) => {

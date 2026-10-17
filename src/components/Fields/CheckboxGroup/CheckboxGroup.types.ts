@@ -5,7 +5,9 @@ type CheckboxGroupItem = {
   label: string;
   value: string;
 };
+
 export type CheckboxGroupFieldPropsDef = CheckboxGroupProps & {
+  columns?: number;
   items: CheckboxGroupItem[];
   name: string;
   onValueChange: (selectedItems: string[]) => void;
