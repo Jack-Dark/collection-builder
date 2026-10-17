@@ -261,52 +261,60 @@ const CustomFieldStringFilter = (props: {
   return (
     <form.Field key={customField.id} name={`filters.${customField.id}`}>
       {(field) => {
-        // ? Comparison is really just for type safety
+        // ? if statement is really just for type inference
         if (customField.type === 'string' && field.value?.type === 'string') {
-          // ? deconstructed to solve type errors
-          const { value } = field;
-
           return (
-            <FiltersBlock
-              key={customField.id}
-              label={customField.name}
-              onReset={() => {
-                field.handleChange({
-                  ...value,
-                  items: [],
-                });
-              }}
-            >
-              {customField.items.map((item) => {
-                const onCheckedChange = (checked: boolean) => {
-                  if (checked) {
-                    field.handleChange({
-                      ...value,
-                      items: [...value.items, item.value],
-                    });
-                  } else {
-                    field.handleChange({
-                      ...value,
-                      items: value.items.filter((value) => {
-                        return value !== item.value;
-                      }),
-                    });
-                  }
-                };
+            <form.ArrayField name={`filters.${customField.id}.items`}>
+              {(field) => {
+                // ? if statement is really just for type inference
+                if (Array.isArray(field.value)) {
+                  // ? deconstructed for type inference
+                  const { value } = field;
 
-                return (
-                  <CheckboxField
-                    checked={value.items.some((value) => {
-                      return value === item.value;
-                    })}
-                    key={item.value}
-                    Label={item.label}
-                    name={field.name}
-                    onCheckedChange={onCheckedChange}
-                  />
-                );
-              })}
-            </FiltersBlock>
+                  return (
+                    <FiltersBlock
+                      key={customField.id}
+                      label={customField.name}
+                      onReset={() => {
+                        field.handleChange([]);
+                      }}
+                    >
+                      {customField.items.map((item) => {
+                        const itemValue = item.value;
+
+                        const checked = value.some((v) => {
+                          return v === itemValue;
+                        });
+
+                        // TODO - IMPROVEMENT - UPDATE TO CHECKBOX GROUP WITH HOTKEY SUPPORT FOR BULK SELECTION
+                        const onCheckedChange = (checked: boolean) => {
+                          if (checked) {
+                            field.pushValue(itemValue);
+                          } else {
+                            const indexOfValue = value.findIndex(
+                              (selectedValue) => {
+                                return selectedValue === itemValue;
+                              },
+                            );
+                            field.removeValue(indexOfValue);
+                          }
+                        };
+
+                        return (
+                          <CheckboxField
+                            checked={checked}
+                            key={item.value}
+                            Label={item.label}
+                            name={field.name}
+                            onCheckedChange={onCheckedChange}
+                          />
+                        );
+                      })}
+                    </FiltersBlock>
+                  );
+                }
+              }}
+            </form.ArrayField>
           );
         }
       }}
