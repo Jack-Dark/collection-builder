@@ -32,78 +32,119 @@ export const MenuList = (props: MenuPropsDef) => {
             <MenuArrowSvg />
           </Menu.Arrow>
 
-          {items.map((itemProps) => {
-            const {
-              addSeparator,
-              disabled,
-              group,
-              href,
-              id,
-              Label,
-              onClick,
-              subMenu,
-              target,
-            } = itemProps;
+          {items
+            .filter(({ hidden }) => {
+              return !hidden;
+            })
+            .map((itemProps) => {
+              const {
+                active,
+                addSeparator,
+                disabled,
+                group,
+                href,
+                id,
+                Label,
+                onClick,
+                subMenu,
+                target,
+              } = itemProps;
 
-            return (
-              <Fragment key={typeof Label === 'string' ? Label : id}>
-                {group?.length ? (
-                  <Menu.Group>
-                    <Menu.GroupLabel
-                      className={getMenuItemClasses(disabled)}
-                      data-group-label=""
-                    >
-                      <MenuItemLabel Label={Label} />
-                    </Menu.GroupLabel>
+              return (
+                <Fragment key={typeof Label === 'string' ? Label : id}>
+                  {group?.length ? (
+                    <Menu.Group>
+                      <Menu.GroupLabel
+                        className={getMenuItemClasses({ active, disabled })}
+                        data-group-label=""
+                      >
+                        <MenuItemLabel Label={Label} />
+                      </Menu.GroupLabel>
 
-                    {group.map((groupProps) => {
-                      const {
-                        addSeparator,
-                        disabled,
-                        href,
-                        id,
-                        Label: label,
-                        onClick,
-                        target,
-                      } = groupProps;
+                      {group.map((groupProps) => {
+                        const {
+                          addSeparator,
+                          disabled,
+                          href,
+                          id,
+                          Label,
+                          onClick,
+                          target,
+                        } = groupProps;
 
-                      return (
-                        <Fragment key={typeof label === 'string' ? label : id}>
-                          <Menu.Item
-                            className={getMenuItemClasses(disabled)}
-                            data-clickable={href || onClick ? '' : undefined}
-                            data-disabled={disabled ? '' : undefined}
-                            disabled={disabled}
-                            onClick={disabled ? undefined : onClick}
+                        return (
+                          <Fragment
+                            key={typeof Label === 'string' ? Label : id}
                           >
-                            <ConditionalWrapper
-                              condition={!!href && !disabled}
-                              Wrapper={({ children }) => {
-                                return (
-                                  <Link target={target} to={href}>
-                                    {children}
-                                  </Link>
-                                );
-                              }}
+                            <Menu.Item
+                              className={getMenuItemClasses({
+                                active,
+                                disabled,
+                              })}
+                              data-clickable={href || onClick ? '' : undefined}
+                              data-disabled={disabled ? '' : undefined}
+                              disabled={disabled}
+                              onClick={disabled ? undefined : onClick}
                             >
-                              <MenuItemLabel Label={label} />
-                            </ConditionalWrapper>
-                          </Menu.Item>
-                          {addSeparator && (
-                            <Menu.Separator className="mx-4 my-1.5 h-px bg-divider" />
-                          )}
-                        </Fragment>
-                      );
-                    })}
-                  </Menu.Group>
-                ) : subMenu?.items?.length ? (
-                  <Menu.SubmenuRoot
-                    disabled={subMenu?.disabled}
-                    open={subMenu?.open && !subMenu?.disabled}
-                  >
-                    <Menu.SubmenuTrigger
-                      className={getMenuItemClasses(disabled)}
+                              <ConditionalWrapper
+                                condition={!!href && !disabled}
+                                Wrapper={({ children }) => {
+                                  return (
+                                    <Link target={target} to={href}>
+                                      {children}
+                                    </Link>
+                                  );
+                                }}
+                              >
+                                <MenuItemLabel Label={Label} />
+                              </ConditionalWrapper>
+                            </Menu.Item>
+                            {addSeparator && (
+                              <Menu.Separator className="mx-4 my-1.5 h-px bg-divider" />
+                            )}
+                          </Fragment>
+                        );
+                      })}
+                    </Menu.Group>
+                  ) : subMenu?.items?.length ? (
+                    <Menu.SubmenuRoot
+                      disabled={subMenu?.disabled}
+                      open={subMenu?.open && !subMenu?.disabled}
+                    >
+                      <Menu.SubmenuTrigger
+                        className={getMenuItemClasses({ active, disabled })}
+                        disabled={disabled}
+                      >
+                        <ConditionalWrapper
+                          condition={!!href && !disabled}
+                          Wrapper={({ children }) => {
+                            return (
+                              <Link target={target} to={href}>
+                                {children}
+                              </Link>
+                            );
+                          }}
+                        >
+                          <MenuItemLabel Label={Label} />
+                        </ConditionalWrapper>
+                      </Menu.SubmenuTrigger>
+                      <MenuList
+                        {...subMenu}
+                        align={
+                          !subMenu.align && subMenu?.items?.length > 1
+                            ? 'start'
+                            : subMenu.align
+                        }
+                        side={subMenu.side || 'left'}
+                      />
+                    </Menu.SubmenuRoot>
+                  ) : (
+                    <Menu.Item
+                      className={getMenuItemClasses({ active, disabled })}
+                      data-clickable={href || onClick ? '' : undefined}
+                      data-disabled={disabled ? '' : undefined}
                       disabled={disabled}
+                      onClick={disabled ? undefined : onClick}
                     >
                       <ConditionalWrapper
                         condition={!!href && !disabled}
@@ -117,45 +158,14 @@ export const MenuList = (props: MenuPropsDef) => {
                       >
                         <MenuItemLabel Label={Label} />
                       </ConditionalWrapper>
-                    </Menu.SubmenuTrigger>
-                    <MenuList
-                      {...subMenu}
-                      align={
-                        !subMenu.align && subMenu?.items?.length > 1
-                          ? 'start'
-                          : subMenu.align
-                      }
-                      side={subMenu.side || 'left'}
-                    />
-                  </Menu.SubmenuRoot>
-                ) : (
-                  <Menu.Item
-                    className={getMenuItemClasses(disabled)}
-                    data-clickable={href || onClick ? '' : undefined}
-                    data-disabled={disabled ? '' : undefined}
-                    disabled={disabled}
-                    onClick={disabled ? undefined : onClick}
-                  >
-                    <ConditionalWrapper
-                      condition={!!href && !disabled}
-                      Wrapper={({ children }) => {
-                        return (
-                          <Link target={target} to={href}>
-                            {children}
-                          </Link>
-                        );
-                      }}
-                    >
-                      <MenuItemLabel Label={Label} />
-                    </ConditionalWrapper>
-                  </Menu.Item>
-                )}
-                {addSeparator && (
-                  <Menu.Separator className="mx-4 my-1.5 h-px bg-divider" />
-                )}
-              </Fragment>
-            );
-          })}
+                    </Menu.Item>
+                  )}
+                  {addSeparator && (
+                    <Menu.Separator className="mx-4 my-1.5 h-px bg-divider" />
+                  )}
+                </Fragment>
+              );
+            })}
         </Menu.Popup>
       </Menu.Positioner>
     </Menu.Portal>

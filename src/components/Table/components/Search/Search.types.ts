@@ -1,7 +1,9 @@
-export type SearchProps = {
+export type SearchPropsDef = {
   onChange: (search: string) => void | Promise<void>;
   value: string;
-} & (
+} & SearchNotesSettingsDef;
+
+type SearchNotesSettingsDef =
   | {
       enableSearchNotes?: never;
       onClickSearchNotes?: never;
@@ -11,5 +13,4 @@ export type SearchProps = {
       enableSearchNotes: boolean;
       onClickSearchNotes: (checked: boolean) => void;
       searchNotes: boolean;
-    }
-);
+    };

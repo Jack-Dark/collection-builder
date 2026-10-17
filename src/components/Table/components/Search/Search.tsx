@@ -1,14 +1,16 @@
 import ClearIcon from '@mui/icons-material/Clear';
+import NotesIcon from '@mui/icons-material/Notes';
 import SearchIcon from '@mui/icons-material/Search';
 import { useState } from 'react';
+import { twJoin } from 'tailwind-merge';
 
 import { Button } from '#/components/Button';
 import { InputField } from '#/components/Fields/InputField';
-import { SwitchField } from '#/components/Fields/SwitchField';
+import { Popover } from '#/components/Popover';
 
-import type { SearchProps } from './Search.types';
+import type { SearchPropsDef } from './Search.types';
 
-export const Search = (props: SearchProps) => {
+export const Search = (props: SearchPropsDef) => {
   const {
     enableSearchNotes,
     onChange,
@@ -17,23 +19,23 @@ export const Search = (props: SearchProps) => {
     value,
   } = props;
 
-  const [text, setText] = useState(value);
+  const [query, setQuery] = useState(value);
 
   const handleChange = (value: string) => {
-    setText(value);
+    setQuery(value);
     onChange(value);
   };
 
   return (
     <div className="relative">
       <div className="absolute left-0 h-full p-1 flex items-center">
-        {text ? (
+        {query ? (
           <Button
             aria-label="Search"
             className="pointer text-inherit hover:text-primary-800"
             Icon={ClearIcon}
             onClick={() => {
-              setText('');
+              setQuery('');
               onChange('');
             }}
             size="xs"
@@ -47,22 +49,37 @@ export const Search = (props: SearchProps) => {
       </div>
 
       {enableSearchNotes && (
-        <SwitchField
-          checked={searchNotes}
-          className="absolute right-0 h-full py-1 pl-1 pr-2 flex items-stretch"
-          label="Search Notes"
-          onCheckedChange={onClickSearchNotes}
-        />
+        <div className="absolute right-0 h-full flex items-stretch">
+          <Popover
+            Description='Search "Notes" field'
+            Trigger={() => {
+              return (
+                <div
+                  className={twJoin(
+                    'px-2 h-full flex items-center cursor-pointer',
+                    searchNotes ? 'text-theme-link' : 'text-theme-t1',
+                    'hover:text-theme-link-hover',
+                  )}
+                  onClick={() => {
+                    onClickSearchNotes(!searchNotes);
+                  }}
+                >
+                  <NotesIcon />
+                </div>
+              );
+            }}
+          />
+        </div>
       )}
 
       <InputField
         className="size-full"
-        inputClassName="size-full pl-10 pr-38"
+        inputClassName="size-full pl-10 pr-12"
         name="_search"
         onValueChange={handleChange}
         placeholder="Search..."
         type="text"
-        value={text}
+        value={query}
       />
     </div>
   );

@@ -207,7 +207,7 @@ const CustomFieldNumberFilter = (props: {
               <FieldWrapper
                 error={field.errors}
                 hideLabel
-                label={customField.name}
+                Label={customField.name}
                 name={field.name}
               >
                 <Slider.Root
@@ -300,7 +300,7 @@ const CustomFieldStringFilter = (props: {
                       return value === item.value;
                     })}
                     key={item.value}
-                    label={item.label}
+                    Label={item.label}
                     name={field.name}
                     onCheckedChange={onCheckedChange}
                   />

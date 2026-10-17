@@ -79,7 +79,7 @@ export const SignUpForm: RouteComponent = () => {
                   return (
                     <InputField
                       error={field.errors}
-                      label="Name"
+                      Label="Name"
                       name={field.name}
                       onValueChange={(value) => {
                         field.handleChange(value);
@@ -108,7 +108,7 @@ export const SignUpForm: RouteComponent = () => {
                   return (
                     <InputField
                       error={field.errors}
-                      label="Email"
+                      Label="Email"
                       name={field.name}
                       onValueChange={(value) => {
                         field.handleChange(value);
@@ -138,7 +138,7 @@ export const SignUpForm: RouteComponent = () => {
                   return (
                     <InputField
                       error={field.errors}
-                      label="Password"
+                      Label="Password"
                       name={field.name}
                       onValueChange={(value) => {
                         field.handleChange(value);
@@ -168,7 +168,7 @@ export const SignUpForm: RouteComponent = () => {
                   return (
                     <InputField
                       error={field.errors}
-                      label="Confirm password"
+                      Label="Confirm password"
                       name={field.name}
                       onValueChange={(value) => {
                         field.handleChange(value);

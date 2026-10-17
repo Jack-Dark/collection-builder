@@ -15,7 +15,7 @@ export const FieldWrapper = (props: PropsWithChildren<FieldWrapperProps>) => {
     error,
     hideLabel,
     invalid,
-    label,
+    Label,
     name,
     required,
     validationDebounceTime,
@@ -34,9 +34,11 @@ export const FieldWrapper = (props: PropsWithChildren<FieldWrapperProps>) => {
     }
   }, [error]);
 
+  const isLabelString = typeof Label === 'string';
+
   return (
     <Field.Root
-      aria-label={hideLabel ? label : undefined}
+      aria-label={hideLabel && isLabelString ? Label : undefined}
       className={`max-w-full grid gap-1 ${className || ''}`}
       disabled={disabled}
       invalid={invalid}
@@ -44,9 +46,9 @@ export const FieldWrapper = (props: PropsWithChildren<FieldWrapperProps>) => {
       validationDebounceTime={validationDebounceTime}
       validationMode={validationMode}
     >
-      {label && !hideLabel && (
+      {Label && !hideLabel && (
         <Field.Label className="cursor-pointer">
-          {label}
+          {isLabelString ? Label : <Label />}
           {required ? <span className="text-red-600">*</span> : undefined}
         </Field.Label>
       )}

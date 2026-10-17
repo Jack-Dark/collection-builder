@@ -49,7 +49,7 @@ export const getCollectionItemsTableColumns = (
         );
       },
       header: 'Images',
-      minSize: 200,
+      size: 200,
     }),
     ..._.sortBy(customFields, ({ order }) => {
       return order;
@@ -67,7 +67,12 @@ export const getCollectionItemsTableColumns = (
         },
         header: customField.name,
         id: String(customField.id),
-        minSize: 200,
+        minSize:
+          customField.type === 'boolean'
+            ? 50
+            : customField.type === 'number'
+              ? 150
+              : 250,
       });
     }),
     columnHelper.accessor('editionDetails', {
@@ -81,7 +86,7 @@ export const getCollectionItemsTableColumns = (
         );
       },
       header: 'Edition',
-      minSize: 200,
+      size: 200,
     }),
     columnHelper.accessor('notes', {
       cell: ({ row }) => {
@@ -94,7 +99,7 @@ export const getCollectionItemsTableColumns = (
         );
       },
       header: 'Notes',
-      minSize: 210,
+      size: 250,
     }),
     columnHelper.accessor('createdAt', {
       cell: ({ row }) => {
@@ -107,7 +112,7 @@ export const getCollectionItemsTableColumns = (
         );
       },
       header: 'Added',
-      size: 200,
+      // size: 200,
     }),
     columnHelper.accessor('id', {
       cell: ({ row }) => {
@@ -123,7 +128,7 @@ export const getCollectionItemsTableColumns = (
       },
       header: '',
       id: 'actions',
-      size: 40,
+      maxSize: 40,
     }),
   ];
 };

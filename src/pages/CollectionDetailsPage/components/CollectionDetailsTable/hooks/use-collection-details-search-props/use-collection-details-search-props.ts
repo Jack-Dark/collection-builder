@@ -1,3 +1,5 @@
+import type { SearchPropsDef } from '#/components/Table/components/Search/Search.types';
+
 import { useOnUpdateCollectionItemsQueries } from '../../../../hooks/use-on-update-collection-items-queries';
 
 export const useCollectionDetailsSearchProps = () => {
@@ -18,5 +20,5 @@ export const useCollectionDetailsSearchProps = () => {
     onClickSearchNotes,
     searchNotes: searchQueries.searchNotes,
     value: searchQueries.search,
-  };
+  } satisfies SearchPropsDef;
 };

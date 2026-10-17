@@ -77,6 +77,7 @@ export const CollectionDetailsTableRowActions = ({
         {!!selectedRowIds.length && (
           <>
             <Button
+              className="btn-sm md:btn-md"
               disabled={isEditing}
               Icon={EditIcon}
               onClick={() => {
@@ -88,6 +89,7 @@ export const CollectionDetailsTableRowActions = ({
             </Button>
 
             <Button
+              className="btn-sm md:btn-md"
               disabled={isEditing}
               Icon={DeleteIcon}
               onClick={showConfirmDeleteDialog}
@@ -103,6 +105,7 @@ export const CollectionDetailsTableRowActions = ({
         {isEditing ? (
           <>
             <Button
+              className="btn-sm md:btn-md"
               Icon={ClearIcon}
               onClick={onCancel}
               text="Cancel"
@@ -114,7 +117,11 @@ export const CollectionDetailsTableRowActions = ({
             />
           </>
         ) : (
-          <AddNewCollectionItemButton form={form} insertAtIndex={0}>
+          <AddNewCollectionItemButton
+            className="btn-sm md:btn-md"
+            form={form}
+            insertAtIndex={0}
+          >
             <span>
               Add <span className="sr-only md:not-sr-only">New</span>
             </span>

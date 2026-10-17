@@ -14,7 +14,7 @@ export const TextAreaField = (props: TextAreaFieldPropsDef) => {
     disabled,
     error,
     invalid,
-    label,
+    Label: label,
     name,
     onValueChange,
     onValueChangeDebounceMs = 300,
@@ -48,7 +48,7 @@ export const TextAreaField = (props: TextAreaFieldPropsDef) => {
       disabled={disabled}
       error={error}
       invalid={invalid}
-      label={label}
+      Label={label}
       name={name}
       required={required}
       validationDebounceTime={validationDebounceTime}

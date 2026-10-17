@@ -1,5 +1,6 @@
 import type { FieldRootProps } from '@base-ui/react';
 import type { FieldErrors, ValidationIssue } from '@tanstack/react-form';
+import type { JSXElementConstructor } from 'react';
 
 export type FieldWrapperProps = Pick<
   FieldRootProps,
@@ -13,6 +14,6 @@ export type FieldWrapperProps = Pick<
   description?: string;
   error?: string | FieldErrors<ValidationIssue>;
   hideLabel?: boolean;
-  label?: string;
+  Label?: string | JSXElementConstructor<{}>;
   required?: boolean;
 };

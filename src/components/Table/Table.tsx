@@ -20,10 +20,12 @@ import {
 } from '@tanstack/react-table';
 import { useMemo, useState } from 'react';
 
+import type { TableSettingsMenuPropsDef } from './components/SettingsMenu/SettingsMenu.types';
 import type { TableActionsPropsDef } from './components/TableActions/TableActions.types';
 import type { TablePaginationPropsDef } from './components/TablePagination/TablePagination.types';
 
 import { CheckboxField } from '../Fields/CheckboxField';
+import { TableSettingsMenu } from './components/SettingsMenu';
 import { TableActions } from './components/TableActions';
 import { TablePagination } from './components/TablePagination';
 
@@ -46,6 +48,7 @@ export type TablePropsDef<
     AboveTableComponent?: AboveTableComponentDef<TTableFeatures, TData>;
     disableRowSelection?: boolean;
     pagination?: TablePaginationPropsDef;
+    settings?: TableSettingsMenuPropsDef;
     showRowSelection?: boolean;
   };
 
@@ -89,6 +92,7 @@ export const Table = <TData extends RowData>({
   },
   pagination,
   search,
+  settings,
   showRowSelection,
   sort,
   ...useTableProps
@@ -136,12 +140,20 @@ export const Table = <TData extends RowData>({
         <ScrollArea.Root className="group h-full">
           <ScrollArea.Viewport className="h-full">
             <ScrollArea.Content className="h-full">
-              <table className="table table-fixed size-full overflow-auto border-spacing-0 border-separate">
+              <table className="table md:table-fixed size-full overflow-auto border-spacing-0 border-separate">
                 <thead className="sticky top-0 z-2 group-data-overflow-y-start:shadow-[0_0_2rem_rgba(0,0,0,.25)]">
                   {table.getHeaderGroups().map((hg) => {
                     return (
                       <tr key={hg.id}>
                         {hg.headers.map((header, index) => {
+                          const showSelectionCheckbox =
+                            index === 0 && showRowSelection;
+
+                          const headerContent = flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          );
+
                           return (
                             <th
                               className={`text-left px-2 py-1 ${tableCellClasses}`}
@@ -149,8 +161,8 @@ export const Table = <TData extends RowData>({
                               key={header.id}
                               style={{ width: `${header.getSize()}px` }}
                             >
-                              <div className="flex items-center gap-2">
-                                {index === 0 && showRowSelection && (
+                              {showSelectionCheckbox ? (
+                                <div className="flex items-center gap-2">
                                   <CheckboxField
                                     checked={table.getIsAllRowsSelected()}
                                     disabled={disableRowSelection}
@@ -163,12 +175,15 @@ export const Table = <TData extends RowData>({
                                       toggleAllRowsSelected(event);
                                     }}
                                   />
-                                )}
-                                {flexRender(
-                                  header.column.columnDef.header,
-                                  header.getContext(),
-                                )}
-                              </div>
+                                  {headerContent}
+                                </div>
+                              ) : (
+                                headerContent
+                              )}
+
+                              {index === hg.headers.length - 1 && settings && (
+                                <TableSettingsMenu {...settings} />
+                              )}
                             </th>
                           );
                         })}
@@ -237,6 +252,11 @@ export const Table = <TData extends RowData>({
                           const showSelectionCheckbox =
                             index === 0 && showRowSelection;
 
+                          const cellContent = flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext(),
+                          );
+
                           return (
                             <td
                               className={tableCellClasses}
@@ -251,16 +271,10 @@ export const Table = <TData extends RowData>({
                                     disabled={disabled}
                                     onCheckedChange={onCheckedChange}
                                   />
-                                  {flexRender(
-                                    cell.column.columnDef.cell,
-                                    cell.getContext(),
-                                  )}
+                                  {cellContent}
                                 </div>
                               ) : (
-                                flexRender(
-                                  cell.column.columnDef.cell,
-                                  cell.getContext(),
-                                )
+                                cellContent
                               )}
                             </td>
                           );

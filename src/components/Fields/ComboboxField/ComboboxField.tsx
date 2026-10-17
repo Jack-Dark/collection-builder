@@ -39,7 +39,7 @@ export const ComboboxField = <
 ) => {
   const {
     allowCreatable,
-    label,
+    Label: label,
     ariaLabel = label,
     caseSensitiveCreation,
     caseSensitiveFilter,
@@ -247,7 +247,7 @@ export const ComboboxField = <
       error={error}
       hideLabel={hideLabel}
       invalid={invalid}
-      label={label}
+      Label={label}
       name={name}
       required={required}
       validationDebounceTime={validationDebounceTime}

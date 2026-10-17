@@ -1,11 +1,11 @@
 import type { RowData, SortDirection } from '@tanstack/react-table';
 
 import type { FiltersButtonPropsDef } from '../FilterButton/FilterButton.types';
-import type { SearchProps } from '../Search/Search.types';
+import type { SearchPropsDef } from '../Search/Search.types';
 
 export type TableActionsPropsDef<TData extends RowData> = {
   filters?: FiltersButtonPropsDef;
-  search?: SearchProps;
+  search?: SearchPropsDef;
   sort?: {
     items: SortItemDef<keyof TData>[];
     onChange: (sort: SortItemDef<keyof TData> | null) => void | Promise<void>;

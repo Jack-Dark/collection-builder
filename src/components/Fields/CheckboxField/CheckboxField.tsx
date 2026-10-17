@@ -18,7 +18,7 @@ export const CheckboxField = (props: CheckboxFieldProps) => {
     error,
     indeterminate,
     invalid,
-    label,
+    Label: label,
     labelPosition = 'right',
     name,
     onCheckedChange,
@@ -30,7 +30,7 @@ export const CheckboxField = (props: CheckboxFieldProps) => {
   const Label = useCallback(() => {
     return label ? (
       <Field.Label className="cursor-pointer">
-        {label}
+        {typeof Label === 'string' ? Label : <Label />}
         {required ? <span className="text-theme-alert">*</span> : undefined}
       </Field.Label>
     ) : null;

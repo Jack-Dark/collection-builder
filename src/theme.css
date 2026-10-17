@@ -34,6 +34,7 @@
   /* TODO - IMPROVEMENT: REPLACE EXISTING CLASSES */
   --color-divider: var(--color-gray-200);
 
+  /* TODO - IMPROVEMENT: REPLACE EXISTING CLASSES */
   --color-anchor: var(--color-primary-700);
   --color-anchor-hover: var(--color-primary-900);
 
@@ -116,8 +117,8 @@
 
   --theme-disabled: var(--color-gray-500);
 
-  --theme-link: var(--color-primary-500);
-  --theme-link-hover: var(--color-primary-600);
+  --theme-link: var(--color-primary-600);
+  --theme-link-hover: var(--color-primary-500);
 
   --theme-success: var(--color-blue-800);
   --theme-success-hover: var(--color-blue-800);

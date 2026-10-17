@@ -27,7 +27,7 @@ export const CollectionDetailsEditionCell = (props: {
                       <SwitchField
                         checked={isSpecialEditionField.value}
                         error={isSpecialEditionField.errors}
-                        label="Special edition"
+                        Label="Special edition"
                         onCheckedChange={(checked) => {
                           isSpecialEditionField.handleChange(checked);
 

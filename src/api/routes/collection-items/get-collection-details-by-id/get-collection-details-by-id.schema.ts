@@ -53,6 +53,10 @@ export const collectionDetailsSearchQueriesSchema =
   getRequiredPaginationQueriesSchema<CollectionItemsTableColumn>('name').and(
     z.object({
       filters: collectionDetailsFiltersSchema.optional().default({}),
+      ignoreSortArticles: z
+        .boolean()
+        .describe('Include "Notes" in search')
+        .default(true),
       searchNotes: z
         .boolean()
         .describe('Include "Notes" in search')

@@ -568,7 +568,7 @@ export const AddOrEditCustomFieldDialog = (props: {
                     <InputField
                       autoFocus
                       error={nameField.errors}
-                      label="Field Name"
+                      Label="Field Name"
                       name={nameField.name}
                       onValueChange={(value) => {
                         nameField.handleChange(value);
@@ -598,7 +598,7 @@ export const AddOrEditCustomFieldDialog = (props: {
                     <SelectField
                       error={fieldTypeError || typeField.errors}
                       items={customFieldDataTypeItems}
-                      label="Data Type"
+                      Label="Data Type"
                       name={typeField.name}
                       onValueChange={(value) => {
                         const type = value?.id;

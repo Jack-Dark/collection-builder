@@ -9,7 +9,7 @@ import type { MenuPropsDef } from './MoreMenu.types';
 import { MenuList } from './components/MenuList';
 
 export const MoreMenu = (props: MenuPropsDef) => {
-  const { disabled, open, ...rest } = props;
+  const { disabled, Icon = MoreHorizIcon, open, ...menuListProps } = props;
 
   return (
     <Menu.Root disabled={disabled} open={open}>
@@ -21,9 +21,9 @@ export const MoreMenu = (props: MenuPropsDef) => {
         )}
         disabled={disabled}
       >
-        <MoreHorizIcon />
+        <Icon />
       </Menu.Trigger>
-      <MenuList {...rest} />
+      <MenuList {...menuListProps} />
     </Menu.Root>
   );
 };

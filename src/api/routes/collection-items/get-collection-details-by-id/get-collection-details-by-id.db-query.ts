@@ -36,7 +36,15 @@ export const getCollectionDetailsByIdDbQuery = async ({
   data,
 }: DbQueryArgsDef<GetCollectionDetailsByIdRequestArgsDef>) => {
   const { collectionId, params } = data;
-  const { filters, limit, page, search, searchNotes, sort } = params;
+  const {
+    filters,
+    ignoreSortArticles,
+    limit,
+    page,
+    search,
+    searchNotes,
+    sort,
+  } = params;
 
   const userId = context.user.id;
 
@@ -159,8 +167,9 @@ export const getCollectionDetailsByIdDbQuery = async ({
 
       return directionFn(
         column.dataType === 'string'
-          ? // TODO - FEATURE: ADD SEARCH SETTINGS DIALOG TO IGNORE ARTICLES AND SEARCH NOTES
-            sql`REGEXP_REPLACE(lower(${column}), '^(the|a|an)\\s+', '', 'i')`
+          ? ignoreSortArticles
+            ? sql`REGEXP_REPLACE(lower(${column}), '^(the|a|an)\\s+', '', 'i')`
+            : sql`lower(${column})`
           : sql`${column}`,
       );
     };

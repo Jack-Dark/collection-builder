@@ -1,5 +1,6 @@
 import { Field, Switch as SwitchMui } from '@base-ui/react';
 import { useCallback } from 'react';
+import { twJoin } from 'tailwind-merge';
 
 import type { SwitchFieldPropsDef } from './SwitchField.types';
 
@@ -13,7 +14,7 @@ export const SwitchField = (props: SwitchFieldPropsDef) => {
     disabled,
     error,
     invalid,
-    label,
+    Label,
     labelPosition = 'right',
     name,
     onCheckedChange,
@@ -22,14 +23,14 @@ export const SwitchField = (props: SwitchFieldPropsDef) => {
     validationMode,
   } = props;
 
-  const Label = useCallback(() => {
-    return label ? (
+  const LabelComponent = useCallback(() => {
+    return Label ? (
       <Field.Label className="cursor-pointer">
-        {label}
+        {typeof Label === 'string' ? Label : <Label />}
         {required ? <span className="text-theme-alert">*</span> : undefined}
       </Field.Label>
     ) : null;
-  }, [label, required]);
+  }, [Label, required]);
 
   return (
     <FieldWrapper
@@ -44,21 +45,22 @@ export const SwitchField = (props: SwitchFieldPropsDef) => {
       validationMode={validationMode}
     >
       <div className="flex gap-2 items-center">
-        {labelPosition === 'left' && <Label />}
+        {labelPosition === 'left' && <LabelComponent />}
 
         <SwitchMui.Root
           checked={checked}
-          className={`flex h-5 w-9 shrink-0 rounded-2xl p-0.5 transition-colors duration-150 ease-[ease] border data-checked:bg-theme-success data-checked:border-theme-success ${
+          className={twJoin(
+            `flex h-5 w-9 shrink-0 rounded-2xl p-0.5 transition-colors duration-150 ease-[ease] border data-checked:bg-theme-link data-checked:border-theme-link`,
             disabled
               ? 'cursor-not-allowed border-gray-300 bg-gray-300'
-              : 'cursor-pointer border-gray-500 bg-gray-500'
-          }`}
+              : 'cursor-pointer border-gray-500 bg-gray-500',
+          )}
           onCheckedChange={onCheckedChange}
         >
           <SwitchMui.Thumb className="size-3.5 rounded-2xl bg-white transition-[translate,background-color] duration-150 ease-[ease] data-checked:translate-x-4" />
         </SwitchMui.Root>
 
-        {labelPosition === 'right' && <Label />}
+        {labelPosition === 'right' && <LabelComponent />}
       </div>
     </FieldWrapper>
   );

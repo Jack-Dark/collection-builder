@@ -76,7 +76,7 @@ export const SignInForm = () => {
                   return (
                     <InputField
                       error={field.errors}
-                      label="Email"
+                      Label="Email"
                       name={field.name}
                       onValueChange={(value) => {
                         field.handleChange(value);
@@ -105,7 +105,7 @@ export const SignInForm = () => {
                   return (
                     <InputField
                       error={field.errors}
-                      label="Password"
+                      Label="Password"
                       name={field.name}
                       onValueChange={(value) => {
                         field.handleChange(value);

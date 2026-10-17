@@ -15,6 +15,7 @@ import { CollectionDetailsFiltersContent } from './components/CollectionItemsFil
 import { useCollectionDetailsFiltersProps } from './hooks/use-collection-details-filters-props';
 import { useCollectionDetailsPaginationProps } from './hooks/use-collection-details-pagination-props';
 import { useCollectionDetailsSearchProps } from './hooks/use-collection-details-search-props';
+import { useCollectionDetailsSettingsProps } from './hooks/use-collection-details-settings-props';
 import { useCollectionDetailsSortProps } from './hooks/use-collection-details-sort-props';
 
 export const CollectionDetailsTable = ({
@@ -66,6 +67,7 @@ export const CollectionDetailsTable = ({
   const searchProps = useCollectionDetailsSearchProps();
   const paginationProps = useCollectionDetailsPaginationProps({ pagination });
   const sortProps = useCollectionDetailsSortProps();
+  const settingsProps = useCollectionDetailsSettingsProps();
 
   useEffect(() => {
     // ? clear edit state on unmount
@@ -109,6 +111,7 @@ export const CollectionDetailsTable = ({
             }}
             pagination={paginationProps}
             search={searchProps}
+            settings={settingsProps}
             showRowSelection
             sort={sortProps}
           />

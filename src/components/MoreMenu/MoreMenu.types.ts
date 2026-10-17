@@ -7,13 +7,16 @@ export type MenuPropsDef = Pick<
   'align' | 'alignOffset' | 'side' | 'sideOffset'
 > & {
   disabled?: boolean;
+  Icon?: JSXElementConstructor<{}>;
   items: MenuItemDef[];
   open?: boolean;
 };
 
 export type MenuItemDef = {
+  active?: boolean;
   addSeparator?: boolean;
   disabled?: boolean;
+  hidden?: boolean;
 } & MenuItemLabelPropsDef &
   (
     | (MenuItemBehaviorPropsDef & {
