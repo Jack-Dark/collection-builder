@@ -1,3 +1,5 @@
+import type { PropsWithChildren } from 'react';
+
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import { useMemo } from 'react';
@@ -30,6 +32,24 @@ export const useCollectionDetailsSettingsProps = () => {
         onClickIgnoreSortArticles?.(!searchQueries.ignoreSortArticles);
       },
     },
+    {
+      disabled: true,
+      id: 'download',
+      Label: () => {
+        return (
+          <WrapLabelWithStatus>Download data (coming soon)</WrapLabelWithStatus>
+        );
+      },
+    },
+    {
+      disabled: true,
+      id: 'upload',
+      Label: () => {
+        return (
+          <WrapLabelWithStatus>Upload data (coming soon)</WrapLabelWithStatus>
+        );
+      },
+    },
   ];
 
   return {
@@ -37,30 +57,42 @@ export const useCollectionDetailsSettingsProps = () => {
   } satisfies TableSettingsMenuPropsDef;
 };
 
-const IgnoreSortArticlesLabel = () => {
+const WrapLabelWithStatus = (
+  props: PropsWithChildren<{ active?: boolean }>,
+) => {
+  const { active, children } = props;
   const { searchQueries } = useOnUpdateCollectionItemsQueries();
 
   return (
     <div className="grid gap-3 grid-cols-[max-content_1fr]">
       <div className="h-full w-6 flex items-center">
-        {searchQueries.ignoreSortArticles ? <CheckIcon /> : <CloseIcon />}
+        {active !== undefined &&
+          (searchQueries.ignoreSortArticles ? <CheckIcon /> : <CloseIcon />)}
       </div>
-      <div>
-        <p>Ignore articles when sorting</p>
-        <span className="text-theme-t2 text-sm">
-          (Values that start with{' '}
-          {articlesToIgnore.reduce((acc, value, index) => {
-            const isLastIndex = index === articlesToIgnore.length - 1;
-            const formattedValue = `"${value}"`;
-            if (isLastIndex) {
-              return `${acc} or ${formattedValue}`;
-            } else {
-              return `${acc}${formattedValue}, `;
-            }
-          }, '')}
-          )
-        </span>
-      </div>
+      <div>{children}</div>
     </div>
+  );
+};
+
+const IgnoreSortArticlesLabel = () => {
+  const { searchQueries } = useOnUpdateCollectionItemsQueries();
+
+  return (
+    <WrapLabelWithStatus active={searchQueries.ignoreSortArticles}>
+      <p>Ignore articles when sorting</p>
+      <span className="text-theme-t2 text-sm">
+        (Values that start with{' '}
+        {articlesToIgnore.reduce((acc, value, index) => {
+          const isLastIndex = index === articlesToIgnore.length - 1;
+          const formattedValue = `"${value}"`;
+          if (isLastIndex) {
+            return `${acc} or ${formattedValue}`;
+          } else {
+            return `${acc}${formattedValue}, `;
+          }
+        }, '')}
+        )
+      </span>
+    </WrapLabelWithStatus>
   );
 };
