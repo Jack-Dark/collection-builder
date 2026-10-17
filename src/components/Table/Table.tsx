@@ -1,5 +1,4 @@
 import type {
-  Row,
   RowData,
   Table as TableDef,
   TableFeatures,
@@ -62,21 +61,21 @@ export const defaultTableFeatures = tableFeatures({
 export type TableFeaturesDef = typeof defaultTableFeatures &
   Partial<TableFeatures>;
 
-export interface GetRowRangeProps<TData extends RowData> {
+export interface GetItemsInRangePropsDef<TValue extends any> {
   currentIndex: number;
+  items: TValue[];
   prevIndex: number;
-  rows: Row<TableFeaturesDef, TData>[];
 }
 
-export const getRowRange = <TData extends RowData>(
-  props: GetRowRangeProps<TData>,
-): Row<TableFeaturesDef, TData>[] => {
-  const { currentIndex, prevIndex, rows } = props;
+export const getItemsInRange = <TValue extends any>(
+  props: GetItemsInRangePropsDef<TValue>,
+): TValue[] => {
+  const { currentIndex, items, prevIndex } = props;
 
-  const rangeStart = prevIndex > currentIndex ? currentIndex : prevIndex;
-  const rangeEnd = rangeStart === currentIndex ? prevIndex : currentIndex;
+  const rangeStart = Math.min(prevIndex, currentIndex);
+  const rangeEnd = Math.max(prevIndex, currentIndex);
 
-  return rows.slice(rangeStart, rangeEnd + 1);
+  return items.slice(rangeStart, rangeEnd + 1);
 };
 
 export const Table = <TData extends RowData>({
@@ -205,10 +204,10 @@ export const Table = <TData extends RowData>({
                           return id === lastSelectedRowId;
                         });
 
-                        const rowsToToggle = getRowRange({
+                        const rowsToToggle = getItemsInRange({
                           currentIndex,
+                          items: rows,
                           prevIndex,
-                          rows,
                         });
 
                         rowsToToggle.forEach((row) => {

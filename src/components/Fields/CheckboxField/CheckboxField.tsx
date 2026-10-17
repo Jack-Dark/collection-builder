@@ -5,26 +5,24 @@ import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import IndeterminateCheckBoxIcon from '@mui/icons-material/IndeterminateCheckBox';
 import { useCallback } from 'react';
 
-import type { CheckboxFieldProps } from './CheckboxField.types';
+import type {
+  CheckboxBasePropsDef,
+  CheckboxFieldProps,
+} from './CheckboxField.types';
 
 import { FieldWrapper } from '../FieldWrapper';
 
 export const CheckboxField = (props: CheckboxFieldProps) => {
   const {
     checked,
-    className,
-    description,
     disabled,
-    error,
     indeterminate,
-    invalid,
     Label,
     labelPosition = 'right',
-    name,
     onCheckedChange,
     required,
-    validationDebounceTime,
-    validationMode,
+    value,
+    ...fieldWrapperProps
   } = props;
 
   const LabelComponent = useCallback(() => {
@@ -38,53 +36,68 @@ export const CheckboxField = (props: CheckboxFieldProps) => {
 
   return (
     <FieldWrapper
-      className={className}
-      description={description}
       disabled={disabled}
-      error={error}
-      invalid={invalid}
-      name={name}
       required={required}
-      validationDebounceTime={validationDebounceTime}
-      validationMode={validationMode}
+      {...fieldWrapperProps}
     >
       <div
         className={`grid gap-1 items-center ${Label && 'grid-cols-[max-content_1fr]'} ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
       >
         {labelPosition === 'left' && <LabelComponent />}
 
-        <Checkbox.Root checked={checked} onCheckedChange={onCheckedChange}>
-          <Checkbox.Indicator keepMounted>
-            {checked ? (
-              <CheckBoxIcon
-                className={
-                  disabled
-                    ? 'text-theme-disabled'
-                    : 'text-theme-link hover:text-theme-link-hover'
-                }
-              />
-            ) : indeterminate ? (
-              <IndeterminateCheckBoxIcon
-                className={
-                  disabled
-                    ? 'text-theme-disabled'
-                    : 'text-theme-link hover:text-theme-link-hover'
-                }
-              />
-            ) : (
-              <CheckBoxOutlineBlankIcon
-                className={
-                  disabled
-                    ? 'text-theme-disabled'
-                    : 'text-theme-t1 dark:text-theme-t2 hover:text-theme-link-hover'
-                }
-              />
-            )}
-          </Checkbox.Indicator>
-        </Checkbox.Root>
+        <CheckboxBase
+          checked={checked}
+          disabled={disabled}
+          indeterminate={indeterminate}
+          onCheckedChange={onCheckedChange}
+          value={value}
+        />
 
         {labelPosition === 'right' && <LabelComponent />}
       </div>
     </FieldWrapper>
+  );
+};
+
+export const CheckboxBase = (props: CheckboxBasePropsDef) => {
+  const { disabled, indeterminate, ...rootProps } = props;
+
+  return (
+    <Checkbox.Root {...rootProps}>
+      <Checkbox.Indicator
+        keepMounted
+        render={(_props, { checked }) => {
+          return (
+            <>
+              {checked ? (
+                <CheckBoxIcon
+                  className={
+                    disabled
+                      ? 'text-theme-disabled'
+                      : 'text-theme-link hover:text-theme-link-hover'
+                  }
+                />
+              ) : indeterminate ? (
+                <IndeterminateCheckBoxIcon
+                  className={
+                    disabled
+                      ? 'text-theme-disabled'
+                      : 'text-theme-link/50 hover:text-theme-link-hover'
+                  }
+                />
+              ) : (
+                <CheckBoxOutlineBlankIcon
+                  className={
+                    disabled
+                      ? 'text-theme-disabled'
+                      : 'text-theme-t1 dark:text-theme-t2 hover:text-theme-link-hover'
+                  }
+                />
+              )}
+            </>
+          );
+        }}
+      />
+    </Checkbox.Root>
   );
 };

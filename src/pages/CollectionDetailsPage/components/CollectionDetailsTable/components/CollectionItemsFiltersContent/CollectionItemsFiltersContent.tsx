@@ -8,7 +8,7 @@ import type { DefaultSelectItemDef } from '#/components/Fields/SelectField/Selec
 
 import { useGetFiltersForCollection } from '#/api/routes/collection-items/get-filters-for-collection/get-filters-for-collection.react-query';
 import { Button } from '#/components/Button';
-import { CheckboxField } from '#/components/Fields/CheckboxField';
+import { CheckboxGroupField } from '#/components/Fields/CheckboxGroup';
 import { FieldWrapper } from '#/components/Fields/FieldWrapper';
 import { SelectField } from '#/components/Fields/SelectField';
 import { Popover } from '#/components/Popover';
@@ -268,48 +268,22 @@ const CustomFieldStringFilter = (props: {
               {(field) => {
                 // ? if statement is really just for type inference
                 if (Array.isArray(field.value)) {
-                  // ? deconstructed for type inference
-                  const { value } = field;
-
                   return (
                     <FiltersBlock
                       key={customField.id}
                       label={customField.name}
                       onReset={() => {
-                        field.handleChange([]);
+                        field.clearValues();
                       }}
                     >
-                      {customField.items.map((item) => {
-                        const itemValue = item.value;
-
-                        const checked = value.some((v) => {
-                          return v === itemValue;
-                        });
-
-                        // TODO - IMPROVEMENT - UPDATE TO CHECKBOX GROUP WITH HOTKEY SUPPORT FOR BULK SELECTION
-                        const onCheckedChange = (checked: boolean) => {
-                          if (checked) {
-                            field.pushValue(itemValue);
-                          } else {
-                            const indexOfValue = value.findIndex(
-                              (selectedValue) => {
-                                return selectedValue === itemValue;
-                              },
-                            );
-                            field.removeValue(indexOfValue);
-                          }
-                        };
-
-                        return (
-                          <CheckboxField
-                            checked={checked}
-                            key={item.value}
-                            Label={item.label}
-                            name={field.name}
-                            onCheckedChange={onCheckedChange}
-                          />
-                        );
-                      })}
+                      <CheckboxGroupField
+                        items={customField.items}
+                        name={field.name}
+                        onValueChange={(selectedItems) => {
+                          field.handleChange(selectedItems);
+                        }}
+                        value={field.value}
+                      />
                     </FiltersBlock>
                   );
                 }
