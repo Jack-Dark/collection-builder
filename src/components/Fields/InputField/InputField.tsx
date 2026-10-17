@@ -18,7 +18,7 @@ export const InputField = (props: InputFieldProps) => {
     hideLabel,
     inputClassName,
     invalid,
-    Label: label,
+    Label,
     name,
     onBlur,
     onChange,
@@ -59,7 +59,7 @@ export const InputField = (props: InputFieldProps) => {
       error={error}
       hideLabel={hideLabel}
       invalid={invalid}
-      Label={label}
+      Label={Label}
       name={name}
       required={required}
       validationDebounceTime={validationDebounceTime}

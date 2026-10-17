@@ -18,7 +18,7 @@ export const CheckboxField = (props: CheckboxFieldProps) => {
     error,
     indeterminate,
     invalid,
-    Label: label,
+    Label,
     labelPosition = 'right',
     name,
     onCheckedChange,
@@ -27,14 +27,14 @@ export const CheckboxField = (props: CheckboxFieldProps) => {
     validationMode,
   } = props;
 
-  const Label = useCallback(() => {
-    return label ? (
+  const LabelComponent = useCallback(() => {
+    return Label ? (
       <Field.Label className="cursor-pointer">
         {typeof Label === 'string' ? Label : <Label />}
         {required ? <span className="text-theme-alert">*</span> : undefined}
       </Field.Label>
     ) : null;
-  }, [label, required]);
+  }, [Label, required]);
 
   return (
     <FieldWrapper
@@ -49,9 +49,9 @@ export const CheckboxField = (props: CheckboxFieldProps) => {
       validationMode={validationMode}
     >
       <div
-        className={`grid gap-1 items-center ${label && 'grid-cols-[max-content_1fr]'} ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+        className={`grid gap-1 items-center ${Label && 'grid-cols-[max-content_1fr]'} ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
       >
-        {labelPosition === 'left' && <Label />}
+        {labelPosition === 'left' && <LabelComponent />}
 
         <Checkbox.Root checked={checked} onCheckedChange={onCheckedChange}>
           <Checkbox.Indicator keepMounted>
@@ -83,7 +83,7 @@ export const CheckboxField = (props: CheckboxFieldProps) => {
           </Checkbox.Indicator>
         </Checkbox.Root>
 
-        {labelPosition === 'right' && <Label />}
+        {labelPosition === 'right' && <LabelComponent />}
       </div>
     </FieldWrapper>
   );

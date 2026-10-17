@@ -39,8 +39,8 @@ export const ComboboxField = <
 ) => {
   const {
     allowCreatable,
-    Label: label,
-    ariaLabel = label,
+    Label,
+    ariaLabel = typeof Label === 'string' ? Label : undefined,
     caseSensitiveCreation,
     caseSensitiveFilter,
     className,
@@ -247,7 +247,7 @@ export const ComboboxField = <
       error={error}
       hideLabel={hideLabel}
       invalid={invalid}
-      Label={label}
+      Label={Label}
       name={name}
       required={required}
       validationDebounceTime={validationDebounceTime}

@@ -49,7 +49,7 @@ export const SelectField = <TItem extends DefaultSelectItemDef>(
       return '';
     },
     keyPrefix = 'key',
-    Label: label,
+    Label,
     labelProperty = 'label',
     name,
     onValueChange,
@@ -75,7 +75,7 @@ export const SelectField = <TItem extends DefaultSelectItemDef>(
       error={error}
       hideLabel={hideLabel}
       invalid={invalid}
-      Label={label}
+      Label={Label}
       name={name}
       required={required}
       validationDebounceTime={validationDebounceTime}
