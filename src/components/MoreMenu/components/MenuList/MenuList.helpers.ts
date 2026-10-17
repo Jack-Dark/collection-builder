@@ -11,10 +11,12 @@ export const getMenuItemClasses = (props: {
   return twJoin(
     `py-2 px-4`,
     getCursorClassName(disabled),
-    disabled && 'text-theme-disabled',
+    disabled
+      ? 'text-theme-disabled'
+      : // ? hover styles
+        'data-highlighted:bg-theme-surface-highlighted',
+
     // ? active styles
     active && 'bg-theme-surface-selected',
-    // ? hover styles
-    'data-highlighted:bg-theme-surface-highlighted',
   );
 };
