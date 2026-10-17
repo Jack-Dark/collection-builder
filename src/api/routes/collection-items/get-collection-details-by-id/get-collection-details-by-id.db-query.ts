@@ -174,7 +174,7 @@ export const getCollectionDetailsByIdDbQuery = async ({
       );
     };
 
-    const unformattedCollectionItemIds = tx
+    const unformattedCollectionItemIds = await tx
       .select({
         id: collectionItemsTable.id,
       })
@@ -186,7 +186,6 @@ export const getCollectionDetailsByIdDbQuery = async ({
           searchNotes
             ? ilike(collectionItemsTable.notes, `%${search.trim()}%`)
             : ilike(collectionItemsTable.name, `%${search.trim()}%`),
-
           ...formattedFiltersSql,
         ),
       )
@@ -194,7 +193,7 @@ export const getCollectionDetailsByIdDbQuery = async ({
       .offset((page - 1) * limit)
       .orderBy(getOrderBy(collectionItemsTable[sortingField || 'name']));
 
-    const formattedCollectionItemIds = (await unformattedCollectionItemIds).map(
+    const formattedCollectionItemIds = unformattedCollectionItemIds.map(
       ({ id }) => {
         return id;
       },
@@ -273,9 +272,64 @@ export const getCollectionDetailsByIdDbQuery = async ({
       };
     });
 
+    const customFieldIds =
+      collection?.customFields.reduce<number[]>((acc, { customField }) => {
+        if (customField?.id) {
+          return [...acc, customField.id];
+        } else {
+          return acc;
+        }
+      }, []) || [];
+
+    const lastAddedCustomFieldValues = await Promise.all(
+      customFieldIds.map(async (customFieldId) => {
+        return tx.query.collectionItemsToCustomFieldValues.findFirst({
+          columns: {},
+          orderBy: {
+            updatedAt: 'desc',
+          },
+          where: {
+            customFieldValue: {
+              customFieldId,
+            },
+          },
+          with: {
+            customFieldValue: {
+              columns: {
+                customFieldId: true,
+                valueBoolean: true,
+                valueNumber: true,
+                valueText: true,
+              },
+            },
+          },
+        });
+      }),
+    );
+
+    const lastAddedCustomFieldValuesByCustomFieldId =
+      lastAddedCustomFieldValues.reduce<
+        Record<number, number | boolean | string | undefined>
+      >((acc, customField) => {
+        if (customField?.customFieldValue) {
+          const { customFieldId, valueBoolean, valueNumber, valueText } =
+            customField.customFieldValue;
+
+          const value = valueBoolean ?? valueNumber ?? valueText ?? undefined;
+
+          return {
+            ...acc,
+            [customFieldId]: value,
+          };
+        }
+
+        return acc;
+      }, {});
+
     return {
       collection,
       items: formattedItems,
+      lastAddedCustomFieldValues: lastAddedCustomFieldValuesByCustomFieldId,
       pagination,
     };
   });

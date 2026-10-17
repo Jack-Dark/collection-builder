@@ -189,6 +189,7 @@ export const collectionsToCustomFieldsTable = snakeCase.table(
         },
         { onDelete: 'cascade' },
       ),
+    ...timestamps,
   },
 );
 
@@ -220,5 +221,6 @@ export const collectionItemsToCustomFieldValuesTable = snakeCase.table(
         },
         { onDelete: 'cascade' },
       ),
+    ...timestamps,
   },
 );

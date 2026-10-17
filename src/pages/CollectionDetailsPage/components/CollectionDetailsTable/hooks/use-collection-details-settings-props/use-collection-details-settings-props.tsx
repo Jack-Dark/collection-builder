@@ -33,11 +33,22 @@ export const useCollectionDetailsSettingsProps = () => {
       },
     },
     {
+      id: 'auto-populate',
+      Label: () => {
+        return (
+          // TODO - FEATURE: ADD AUTO-POPULATE CUSTOM FIELD VALUES SUPPORT
+          <WrapLabelWithStatus>
+            Auto-populate new items with the last entered custom field values.
+          </WrapLabelWithStatus>
+        );
+      },
+    },
+    {
       disabled: true,
       id: 'download',
       Label: () => {
         return (
-          // TODO - ADD DOWNLOAD DATA SUPPORT
+          // TODO - FEATURE: ADD DOWNLOAD DATA SUPPORT
           <WrapLabelWithStatus>Download data (coming soon)</WrapLabelWithStatus>
         );
       },
@@ -47,7 +58,7 @@ export const useCollectionDetailsSettingsProps = () => {
       id: 'upload',
       Label: () => {
         return (
-          // TODO - ADD UPLOAD DATA SUPPORT
+          // TODO - FEATURE: ADD UPLOAD DATA SUPPORT
           <WrapLabelWithStatus>Upload data (coming soon)</WrapLabelWithStatus>
         );
       },
@@ -66,7 +77,7 @@ const WrapLabelWithStatus = (
   const { searchQueries } = useOnUpdateCollectionItemsQueries();
 
   return (
-    <div className="grid gap-3 grid-cols-[max-content_1fr]">
+    <div className="grid gap-3 grid-cols-[max-content_1fr] max-w-75">
       <div className="h-full w-6 flex items-center">
         {active !== undefined &&
           (searchQueries.ignoreSortArticles ? <CheckIcon /> : <CloseIcon />)}
