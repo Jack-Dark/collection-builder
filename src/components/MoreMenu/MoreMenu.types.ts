@@ -39,11 +39,11 @@ export type MenuItemDef = {
 
 type MenuItemLabelPropsDef =
   | {
-      id?: never;
+      key?: never;
       Label: string;
     }
   | {
-      id: Key;
+      key: Key;
       Label: JSX.Element | JSXElementConstructor<{}>;
     };
 

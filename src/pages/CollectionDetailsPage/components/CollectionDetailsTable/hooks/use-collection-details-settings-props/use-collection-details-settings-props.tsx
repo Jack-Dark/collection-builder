@@ -34,12 +34,12 @@ export const useCollectionDetailsSettingsProps = () => {
 
   const router = useRouter();
 
-  const items: MenuItemDef[] = useMemo(() => {
+  const items = useMemo(() => {
     return [
       {
         active: searchQueries.ignoreSortArticles,
         closeOnClick: false,
-        id: 'ignore-sort-articles',
+        key: 'ignore-sort-articles',
         Label: <MemoizedIgnoreSortArticlesLabel />,
         onClick: () => {
           onClickIgnoreSortArticles?.(!searchQueries.ignoreSortArticles);
@@ -48,7 +48,7 @@ export const useCollectionDetailsSettingsProps = () => {
       {
         active: autoPopulateCustomFieldValues,
         closeOnClick: false,
-        id: 'auto-populate',
+        key: 'auto-populate',
         Label: (
           // TODO - FEATURE: ADD AUTO-POPULATE CUSTOM FIELD VALUES SUPPORT
           <AutoPopulateCustomFieldValues />
@@ -63,7 +63,7 @@ export const useCollectionDetailsSettingsProps = () => {
       },
       {
         disabled: true,
-        id: 'download',
+        key: 'download-data',
         Label: (
           // TODO - FEATURE: ADD DOWNLOAD DATA SUPPORT
           <WrapLabelWithStatus>Download data (coming soon)</WrapLabelWithStatus>
@@ -71,13 +71,13 @@ export const useCollectionDetailsSettingsProps = () => {
       },
       {
         disabled: true,
-        id: 'upload',
+        key: 'upload-data',
         Label: (
           // TODO - FEATURE: ADD UPLOAD DATA SUPPORT
           <WrapLabelWithStatus>Upload data (coming soon)</WrapLabelWithStatus>
         ),
       },
-    ];
+    ] satisfies MenuItemDef[];
   }, [autoPopulateCustomFieldValues, searchQueries.ignoreSortArticles]);
 
   return {

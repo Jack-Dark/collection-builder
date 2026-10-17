@@ -44,7 +44,7 @@ export const MenuList = (props: MenuPropsDef) => {
                 disabled,
                 group,
                 href,
-                id,
+                key,
                 Label,
                 onClick,
                 subMenu,
@@ -52,7 +52,7 @@ export const MenuList = (props: MenuPropsDef) => {
               } = itemProps;
 
               return (
-                <Fragment key={typeof Label === 'string' ? Label : id}>
+                <Fragment key={typeof Label === 'string' ? Label : key}>
                   {group?.length ? (
                     <Menu.Group>
                       <Menu.GroupLabel
@@ -68,7 +68,7 @@ export const MenuList = (props: MenuPropsDef) => {
                           closeOnClick = true,
                           disabled,
                           href,
-                          id,
+                          key,
                           Label,
                           onClick,
                           target,
@@ -76,7 +76,7 @@ export const MenuList = (props: MenuPropsDef) => {
 
                         return (
                           <Fragment
-                            key={typeof Label === 'string' ? Label : id}
+                            key={typeof Label === 'string' ? Label : key}
                           >
                             <Menu.Item
                               className={getMenuItemClasses({
