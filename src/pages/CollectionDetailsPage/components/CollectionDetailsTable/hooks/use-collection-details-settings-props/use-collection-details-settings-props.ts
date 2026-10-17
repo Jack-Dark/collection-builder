@@ -1,4 +1,4 @@
-import type { TableSettingsMenuPropsDef } from '#/components/Table/components/SettingsMenu/SettingsMenu.types';
+import type { TableSettingsMenuPropsDef } from '#/components/Table/components/TableSettingsMenu/TableSettingsMenu.types';
 
 import { useOnUpdateCollectionItemsQueries } from '../../../../hooks/use-on-update-collection-items-queries';
 

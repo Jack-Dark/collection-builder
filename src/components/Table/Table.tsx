@@ -20,12 +20,12 @@ import {
 } from '@tanstack/react-table';
 import { useMemo, useState } from 'react';
 
-import type { TableSettingsMenuPropsDef } from './components/SettingsMenu/SettingsMenu.types';
+import type { TableSettingsMenuPropsDef } from './components/TableSettingsMenu/TableSettingsMenu.types';
 import type { TableActionsPropsDef } from './components/TableActions/TableActions.types';
 import type { TablePaginationPropsDef } from './components/TablePagination/TablePagination.types';
 
 import { CheckboxField } from '../Fields/CheckboxField';
-import { TableSettingsMenu } from './components/SettingsMenu';
+import { TableSettingsMenu } from './components/TableSettingsMenu';
 import { TableActions } from './components/TableActions';
 import { TablePagination } from './components/TablePagination';
 

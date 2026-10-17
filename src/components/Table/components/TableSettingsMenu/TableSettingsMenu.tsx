@@ -2,7 +2,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 
 import { MoreMenu } from '#/components/MoreMenu';
 
-import type { TableSettingsMenuPropsDef } from './SettingsMenu.types';
+import type { TableSettingsMenuPropsDef } from './TableSettingsMenu.types';
 
 const articlesToIgnore = ['the', 'a', 'an'];
 
