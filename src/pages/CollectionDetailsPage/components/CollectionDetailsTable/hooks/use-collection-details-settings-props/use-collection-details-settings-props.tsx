@@ -37,6 +37,7 @@ export const useCollectionDetailsSettingsProps = () => {
       id: 'download',
       Label: () => {
         return (
+          // TODO - ADD DOWNLOAD DATA SUPPORT
           <WrapLabelWithStatus>Download data (coming soon)</WrapLabelWithStatus>
         );
       },
@@ -46,6 +47,7 @@ export const useCollectionDetailsSettingsProps = () => {
       id: 'upload',
       Label: () => {
         return (
+          // TODO - ADD UPLOAD DATA SUPPORT
           <WrapLabelWithStatus>Upload data (coming soon)</WrapLabelWithStatus>
         );
       },
