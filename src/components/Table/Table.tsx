@@ -8,6 +8,7 @@ import type { JSXElementConstructor } from 'react';
 
 import { ScrollArea } from '@base-ui/react';
 import { useKeyHold } from '@tanstack/react-hotkeys';
+import { useLocation } from '@tanstack/react-router';
 import {
   columnSizingFeature,
   columnVisibilityFeature,
@@ -17,7 +18,7 @@ import {
   tableFeatures,
   useTable,
 } from '@tanstack/react-table';
-import { useMemo, useState } from 'react';
+import { useLayoutEffect, useMemo, useState } from 'react';
 
 import type { TableActionsPropsDef } from './components/TableActions/TableActions.types';
 import type { TablePaginationPropsDef } from './components/TablePagination/TablePagination.types';
@@ -126,6 +127,14 @@ export const Table = <TData extends RowData>({
 
     return '';
   }, [showTableActions, !!pagination]);
+
+  const { pathname } = useLocation();
+
+  useLayoutEffect(() => {
+    if (table.getIsSomeRowsSelected()) {
+      table.resetRowSelection();
+    }
+  }, [pathname]);
 
   return (
     <div

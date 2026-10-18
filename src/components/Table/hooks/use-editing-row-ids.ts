@@ -1,7 +1,8 @@
 import type { Atom } from '@tanstack/react-store';
 
+import { useLocation } from '@tanstack/react-router';
 import { useAtom } from '@tanstack/react-store';
-import { useCallback } from 'react';
+import { useCallback, useLayoutEffect } from 'react';
 
 export const useEditingRowIds = (atom: Atom<string[]>) => {
   const [editingRowIds, setEditingRowIds] = useAtom(atom);
@@ -47,13 +48,23 @@ export const useEditingRowIds = (atom: Atom<string[]>) => {
     setEditingRowIds([]);
   };
 
+  const isEditing = !!editingRowIds.length;
+
+  const { pathname } = useLocation();
+
+  useLayoutEffect(() => {
+    if (isEditing) {
+      resetEditingRowIds();
+    }
+  }, [pathname]);
+
   return {
     addToEditingRowIds,
     editingRowIds,
     getHasNewRecord,
     getIsEditingRowId,
     getLastNewRecordIndex,
-    isEditing: !!editingRowIds.length,
+    isEditing,
     removeFromEditingRowIds,
     resetEditingRowIds,
     setEditingRowIds,
