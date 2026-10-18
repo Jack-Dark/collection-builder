@@ -174,24 +174,37 @@ export const getCollectionDetailsByIdDbQuery = async ({
       );
     };
 
+    const trimmedQuery = search.trim();
+    const ilikeQuery = `%${trimmedQuery}%`;
+    const searchSql = trimmedQuery
+      ? searchNotes
+        ? ilike(collectionItemsTable.notes, ilikeQuery)
+        : ilike(collectionItemsTable.name, ilikeQuery)
+      : undefined;
+
+    const orderBySql = getOrderBy(
+      collectionItemsTable[sortingField] || collectionItemsTable.name,
+    );
+
     const unformattedCollectionItemIds = await tx
-      .select({
+      .selectDistinct({
+        createdAt: collectionItemsTable.createdAt,
         id: collectionItemsTable.id,
+        name: collectionItemsTable.name,
+        orderBySql,
       })
       .from(collectionItemsTable)
       .where(
         and(
           eq(collectionItemsTable.collectionId, collectionId),
           eq(collectionItemsTable.userId, userId),
-          searchNotes
-            ? ilike(collectionItemsTable.notes, `%${search.trim()}%`)
-            : ilike(collectionItemsTable.name, `%${search.trim()}%`),
+          searchSql,
           ...formattedFiltersSql,
         ),
       )
       .limit(limit)
       .offset((page - 1) * limit)
-      .orderBy(getOrderBy(collectionItemsTable[sortingField || 'name']));
+      .orderBy(orderBySql);
 
     const formattedCollectionItemIds = unformattedCollectionItemIds.map(
       ({ id }) => {
@@ -217,17 +230,19 @@ export const getCollectionDetailsByIdDbQuery = async ({
             },
             userId,
           },
-          searchNotes
-            ? {
-                notes: {
-                  ilike: `%${search.trim()}%`,
-                },
-              }
-            : {
-                name: {
-                  ilike: `%${search.trim()}%`,
-                },
-              },
+          trimmedQuery
+            ? searchNotes
+              ? {
+                  notes: {
+                    ilike: ilikeQuery,
+                  },
+                }
+              : {
+                  name: {
+                    ilike: ilikeQuery,
+                  },
+                }
+            : {},
         ],
       },
       with: {
