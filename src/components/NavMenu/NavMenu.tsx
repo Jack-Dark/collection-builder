@@ -12,7 +12,10 @@ export const NavMenu = (props: { items: NavMenuItem[] }) => {
   const { items } = props;
 
   return (
-    <NavigationMenu.Root className="min-w-max rounded-xs p-1 bg-theme-surface-1 text-theme-t1">
+    <NavigationMenu.Root
+      className="min-w-max rounded-xs p-1 bg-theme-surface-1 text-theme-t1"
+      // closeDelay={99999999}
+    >
       <NavigationMenu.List className="relative flex items-center gap-2">
         {items.map(
           ({ hidden, href, Icon, items, label, onClick, RenderItem }) => {
@@ -24,7 +27,7 @@ export const NavMenu = (props: { items: NavMenuItem[] }) => {
               <NavigationMenu.Item
                 className={twJoin(
                   // ? standard styles
-                  'px-3 py-2 rounded-xs no-underline text-theme-t1',
+                  'rounded-xs no-underline text-theme-t1',
                   // ? active status styles
                   'has-data-[status="active"]:bg-theme-surface-selected',
                   // ? hover styles
@@ -38,12 +41,14 @@ export const NavMenu = (props: { items: NavMenuItem[] }) => {
                   condition={hasSubMenu}
                   Wrapper={({ children }) => {
                     return (
-                      <NavigationMenu.Trigger className="flex items-center justify-center gap-1.5 rounded-xs bg-inherit text-inherit font-medium text-[0.925rem] [@media(min-width:32rem)]:text-base leading-6 select-none no-underline">
+                      <NavigationMenu.Trigger className="flex items-center justify-center rounded-xs text-inherit font-medium text-[0.925rem] [@media(min-width:32rem)]:text-base leading-6 select-none no-underline">
                         {children}
                         {items && (
-                          <NavigationMenu.Icon className="transition-transform duration-200 ease-in-out data-[popup-open]:rotate-180">
-                            <ExpandMoreIcon />
-                          </NavigationMenu.Icon>
+                          <div className="py-2 pr-2 ">
+                            <NavigationMenu.Icon className="inline-block transition-transform duration-200 ease-in-out data-[popup-open]:rotate-180">
+                              <ExpandMoreIcon />
+                            </NavigationMenu.Icon>
+                          </div>
                         )}
                       </NavigationMenu.Trigger>
                     );
@@ -62,14 +67,16 @@ export const NavMenu = (props: { items: NavMenuItem[] }) => {
                       );
                     }}
                   >
-                    {RenderItem ? (
-                      <RenderItem />
-                    ) : (
-                      <div className="flex items-center justify-center  gap-1.5">
-                        {Icon && <Icon />}
-                        {label}
-                      </div>
-                    )}
+                    <div className={twJoin(!href && 'px-3 py-2')}>
+                      {RenderItem ? (
+                        <RenderItem />
+                      ) : (
+                        <div className="flex items-center justify-center">
+                          {Icon && <Icon />}
+                          {label}
+                        </div>
+                      )}
+                    </div>
                   </ConditionalWrapper>
                 </ConditionalWrapper>
 
@@ -96,17 +103,19 @@ export const NavMenu = (props: { items: NavMenuItem[] }) => {
                           return hidden ? null : (
                             <li key={href || label || index}>
                               {RenderItem ? (
-                                <RenderItem />
+                                <div className={twJoin(!href && 'px-3 py-2')}>
+                                  <RenderItem />
+                                </div>
                               ) : (
                                 <NavigationLinkWrapper
                                   className={twJoin(
                                     // ? standard styles
-                                    'block px-3 py-2 text-theme-t1',
+                                    'block text-theme-t1',
                                     // ? active status styles
-                                    'data-[status=active]:bg-theme-surface-selected',
+                                    'data-[status="active"]:bg-theme-surface-selected',
                                     // ? hover styles
                                     'hover:bg-theme-surface-highlighted',
-                                    'hover:data-[status=active]:bg-theme-surface-highlighted',
+                                    'hover:data-[status="active"]:bg-theme-surface-highlighted',
                                   )}
                                   href={href}
                                   onClick={onClick}

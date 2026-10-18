@@ -3,8 +3,11 @@ import type { AnchorHTMLAttributes } from 'react';
 
 import { NavigationMenu } from '@base-ui/react';
 import { Link } from '@tanstack/react-router';
+import { twJoin } from 'tailwind-merge';
 
 export const NavigationLinkWrapper = (props: NavigationMenuLinkProps) => {
+  const { className } = props;
+
   return (
     <NavigationMenu.Link
       closeOnClick
@@ -18,6 +21,7 @@ export const NavigationLinkWrapper = (props: NavigationMenuLinkProps) => {
         );
       }}
       {...props}
+      className={twJoin(className, 'flex px-3 py-2')}
     />
   );
 };

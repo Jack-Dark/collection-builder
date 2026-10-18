@@ -39,14 +39,11 @@ export const SiteNavMenu = () => {
       label: 'Collections',
     },
     {
+      hidden: isLoggedOut,
       href: '/account' satisfies RouterPath,
       Icon: AccountCircleIcon,
       items: [
         {
-          RenderItem: ThemeToggles,
-        },
-        {
-          hidden: isLoggedOut,
           href: '/sign-out',
           label: 'Sign out',
           onClick: async (e) => {
@@ -61,5 +58,13 @@ export const SiteNavMenu = () => {
     },
   ];
 
-  return <NavMenu items={navItems} />;
+  return (
+    <div className="flex justify-between items-center bg-theme-surface-1 text-theme-t1">
+      <NavMenu items={navItems} />
+
+      <div className="py-2 px-3 flex justify-center w-30">
+        <ThemeToggles />
+      </div>
+    </div>
+  );
 };
