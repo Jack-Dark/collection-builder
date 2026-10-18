@@ -4,7 +4,7 @@ import { Cloudinary } from '@cloudinary/url-gen';
 
 const cloudinaryUrl = new Cloudinary({
   cloud: {
-    cloudName: 'collection-builder',
+    cloudName: 'collection-tracker',
   },
 });
 
