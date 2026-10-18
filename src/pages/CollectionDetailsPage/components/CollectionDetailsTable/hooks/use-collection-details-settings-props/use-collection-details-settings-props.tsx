@@ -1,7 +1,9 @@
-import type { PropsWithChildren } from 'react';
+import type { JSXElementConstructor, PropsWithChildren } from 'react';
 
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
+import DownloadIcon from '@mui/icons-material/Download';
+import UploadIcon from '@mui/icons-material/Upload';
 import { useRouter } from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
 import { getCookie, setCookie } from '@tanstack/react-start/server';
@@ -67,7 +69,10 @@ export const useCollectionDetailsSettingsProps = () => {
         key: 'download-data',
         Label: (
           // TODO - FEATURE: ADD DOWNLOAD DATA SUPPORT
-          <WrapLabelWithStatus>Download data (coming soon)</WrapLabelWithStatus>
+          <FormatLabelWithIcon Icon={DownloadIcon}>
+            <p>Download collection into CSV</p>
+            <p>(coming soon)</p>
+          </FormatLabelWithIcon>
         ),
       },
       {
@@ -75,7 +80,10 @@ export const useCollectionDetailsSettingsProps = () => {
         key: 'upload-data',
         Label: (
           // TODO - FEATURE: ADD UPLOAD DATA SUPPORT
-          <WrapLabelWithStatus>Upload data (coming soon)</WrapLabelWithStatus>
+          <FormatLabelWithIcon Icon={UploadIcon}>
+            <p>Upload CSV into collection</p>
+            <p>(coming soon)</p>
+          </FormatLabelWithIcon>
         ),
       },
     ] satisfies MenuItemDef[];
@@ -86,15 +94,40 @@ export const useCollectionDetailsSettingsProps = () => {
   } satisfies TableSettingsMenuPropsDef;
 };
 
-const WrapLabelWithStatus = (
+const FormatLabelWithStatusIcon = (
   props: PropsWithChildren<{ active?: boolean }>,
 ) => {
   const { active, children } = props;
 
   return (
+    <FormatLabelWithIcon
+      Icon={() => {
+        switch (active) {
+          case true:
+            return <CheckIcon />;
+
+          case false:
+            return <CloseIcon />;
+
+          default:
+            return null;
+        }
+      }}
+    >
+      {children}
+    </FormatLabelWithIcon>
+  );
+};
+
+const FormatLabelWithIcon = (
+  props: PropsWithChildren<{ Icon: JSXElementConstructor<{}> }>,
+) => {
+  const { children, Icon } = props;
+
+  return (
     <div className="grid gap-3 grid-cols-[max-content_1fr] max-w-75">
       <div className="h-full w-6 flex items-center">
-        {active !== undefined && (active ? <CheckIcon /> : <CloseIcon />)}
+        <Icon />
       </div>
       <div className="text-sm">{children}</div>
     </div>
@@ -105,7 +138,7 @@ const IgnoreSortArticlesLabel = () => {
   const { searchQueries } = useOnUpdateCollectionItemsQueries();
 
   return (
-    <WrapLabelWithStatus active={searchQueries.ignoreSortArticles}>
+    <FormatLabelWithStatusIcon active={searchQueries.ignoreSortArticles}>
       <p>Ignore articles when sorting</p>
       <span className="text-theme-t2 text-sm">
         (Values that start with{' '}
@@ -120,7 +153,7 @@ const IgnoreSortArticlesLabel = () => {
         }, '')}
         )
       </span>
-    </WrapLabelWithStatus>
+    </FormatLabelWithStatusIcon>
   );
 };
 
@@ -129,12 +162,12 @@ const AutoPopulateCustomFieldValues = () => {
     CollectionDetailsRoute.useLoaderData();
 
   return (
-    <WrapLabelWithStatus active={autoPopulateCustomFieldValues}>
+    <FormatLabelWithStatusIcon active={autoPopulateCustomFieldValues}>
       <p>
         Auto-populate new items with the last entered custom field values for
         this collection.
       </p>
-    </WrapLabelWithStatus>
+    </FormatLabelWithStatusIcon>
   );
 };
 
