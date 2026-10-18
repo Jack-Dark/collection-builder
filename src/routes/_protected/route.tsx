@@ -37,12 +37,14 @@ export const Route = createFileRoute('/_protected')({
   component: Layout,
   errorComponent: SimpleErrorBoundaryContent,
   loader: async ({ context }) => {
-    const queryOptions = getGenericFetchQueryOptions({
-      queryFn: getNavMenuCollectionsServerFn,
-      queryKey: [reactQueryKeys.getNavMenuCollections],
-      requestArgs: {},
-    });
+    if (context?.user?.id) {
+      const queryOptions = getGenericFetchQueryOptions({
+        queryFn: getNavMenuCollectionsServerFn,
+        queryKey: [reactQueryKeys.getNavMenuCollections],
+        requestArgs: {},
+      });
 
-    return await context.queryClient.ensureQueryData(queryOptions);
+      return await context.queryClient.ensureQueryData(queryOptions);
+    }
   },
 });

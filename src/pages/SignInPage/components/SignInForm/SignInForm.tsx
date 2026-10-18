@@ -3,6 +3,7 @@ import { useRouter, useSearch } from '@tanstack/react-router';
 
 import type { RouterPath } from '#/types';
 
+import { useInvalidateGetNavMenuCollections } from '#/api/routes/collections/get-nav-menu-collections/get-nav-menu-collections.react-query';
 import { authClient } from '#/auth/auth-client';
 import { Button } from '#/components/Button';
 import { InputField } from '#/components/Fields/InputField';
@@ -14,6 +15,8 @@ export const SignInForm = () => {
   const search: { redirect?: RouterPath } = useSearch({
     strict: false,
   });
+
+  const invalidateGetNavMenuCollections = useInvalidateGetNavMenuCollections();
 
   const form = useForm({
     defaultValues,
@@ -39,7 +42,7 @@ export const SignInForm = () => {
       );
 
       if (data) {
-        // invalidate
+        invalidateGetNavMenuCollections();
       } else {
         // throw new Error(error.message);
       }

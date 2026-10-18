@@ -13,6 +13,10 @@ export const getNavMenuCollectionsDbQuery = async ({
 }: DbQueryArgsDef<GetNavMenuCollectionsRequestArgsDef>) => {
   const userId = context.user.id;
 
+  if (!userId) {
+    return { collections: [] };
+  }
+
   const collections = await db
     .select({ id: collectionsTable.id, name: collectionsTable.name })
     .from(collectionsTable)
