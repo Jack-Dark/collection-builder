@@ -23,7 +23,7 @@ export const CustomFieldValueNumberInput = <TField extends AnyFieldApi>({
   const { onCreateCustomFieldValues, processing } =
     useCreateCustomFieldValues();
 
-  const { setLastAddedCustomFieldValues } = useLastAddedCustomFieldValues();
+  const { updateLastAddedCustomFieldValues } = useLastAddedCustomFieldValues();
 
   return (
     <InputField
@@ -39,12 +39,12 @@ export const CustomFieldValueNumberInput = <TField extends AnyFieldApi>({
               },
             ],
           });
-          setLastAddedCustomFieldValues({
+          updateLastAddedCustomFieldValues({
             [customField.id]: newCustomFieldValue,
           });
           field.handleChange(newCustomFieldValue);
         } else {
-          setLastAddedCustomFieldValues({
+          updateLastAddedCustomFieldValues({
             [customField.id]: undefined,
           });
           field.handleChange(undefined);

@@ -60,7 +60,7 @@ export const CustomFieldValueCombobox = <TField extends AnyFieldApi>({
     },
   });
 
-  const { setLastAddedCustomFieldValues } = useLastAddedCustomFieldValues();
+  const { updateLastAddedCustomFieldValues } = useLastAddedCustomFieldValues();
 
   const [showDeleteCustomFieldValueDialog, hideCustomFieldValueDialog] =
     useDialog(() => {
@@ -105,7 +105,7 @@ export const CustomFieldValueCombobox = <TField extends AnyFieldApi>({
           const isAlreadySelected = field.value?.id === selectedItem.id;
           if (isAlreadySelected) {
             // ? deselect item
-            setLastAddedCustomFieldValues({
+            updateLastAddedCustomFieldValues({
               [customField.id]: undefined,
             });
             field.handleChange(undefined);
@@ -117,7 +117,7 @@ export const CustomFieldValueCombobox = <TField extends AnyFieldApi>({
               valueNumber: null,
               valueText: selectedItem.valueText,
             };
-            setLastAddedCustomFieldValues({
+            updateLastAddedCustomFieldValues({
               [customField.id]: customFieldValue,
             });
             field.handleChange(customFieldValue);
@@ -132,7 +132,7 @@ export const CustomFieldValueCombobox = <TField extends AnyFieldApi>({
               ],
             });
 
-            setLastAddedCustomFieldValues({
+            updateLastAddedCustomFieldValues({
               [customField.id]: newCustomFieldValue,
             });
 

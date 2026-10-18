@@ -23,7 +23,7 @@ export const CustomFieldValueCheckbox = <TField extends AnyFieldApi>({
   const { onCreateCustomFieldValues, processing } =
     useCreateCustomFieldValues();
 
-  const { setLastAddedCustomFieldValues } = useLastAddedCustomFieldValues();
+  const { updateLastAddedCustomFieldValues } = useLastAddedCustomFieldValues();
 
   return (
     <CheckboxField
@@ -34,7 +34,7 @@ export const CustomFieldValueCheckbox = <TField extends AnyFieldApi>({
           records: [{ customFieldId: customField.id, value }],
         });
 
-        setLastAddedCustomFieldValues({
+        updateLastAddedCustomFieldValues({
           [customField.id]: newCustomFieldValue,
         });
 

@@ -52,12 +52,12 @@ export const useLastAddedCustomFieldValues = () => {
 
   const collectionId = Number(id);
 
-  const handleSetLastAddedCustomFieldValues = (
-    customFieldValuesByCustomFieldId: CustomFieldValuesByFieldId,
+  const updateLastAddedCustomFieldValues = (
+    partialCustomFieldValuesByCustomFieldId: CustomFieldValuesByFieldId,
   ) => {
     if (autoPopulateCustomFieldValues) {
       setLastAddedCustomFieldValues((prev) => {
-        return { ...prev, ...customFieldValuesByCustomFieldId };
+        return { ...prev, ...partialCustomFieldValuesByCustomFieldId };
       });
     }
   };
@@ -65,7 +65,7 @@ export const useLastAddedCustomFieldValues = () => {
   useGetCollectionDetailsById({
     onSuccess: (data) => {
       if (autoPopulateCustomFieldValues) {
-        handleSetLastAddedCustomFieldValues(data.lastAddedCustomFieldValues);
+        setLastAddedCustomFieldValues(data.lastAddedCustomFieldValues);
       }
     },
     requestArgs: { collectionId, params: searchQueries },
@@ -74,7 +74,8 @@ export const useLastAddedCustomFieldValues = () => {
   return {
     autoPopulateCustomFieldValues,
     lastAddedCustomFieldValues,
-    setLastAddedCustomFieldValues: handleSetLastAddedCustomFieldValues,
+    setLastAddedCustomFieldValues,
+    updateLastAddedCustomFieldValues,
   };
 };
 
