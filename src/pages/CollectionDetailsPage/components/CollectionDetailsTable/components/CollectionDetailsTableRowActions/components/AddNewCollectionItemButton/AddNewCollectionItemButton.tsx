@@ -36,7 +36,7 @@ export const AddNewCollectionItemButton = ({
 
               addToEditingRowIds(newCollectionItem.id);
             }}
-            variant="primary"
+            variant="secondary"
             {...buttonProps}
           />
         );

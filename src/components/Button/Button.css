@@ -93,6 +93,7 @@
       &:not(:disabled):hover {
         @media (hover: hover) {
           background-color: var(--color-primary-800);
+          border-color: var(--color-primary-800);
           color: var(--color-white);
         }
       }
@@ -107,13 +108,13 @@
 
 
   .btn-secondary {
-    background-color: var(--color-white);
+    background-color: var(--color-primary-100);
     border-color: var(--color-primary-900);
     color: var(--color-primary-900);
 
     &:not(:disabled):hover {
       @media (hover: hover) {
-        background-color: var(--color-primary-800);
+        background-color: var(--color-primary-700);
         color: var(--color-white);
       }
     }
@@ -127,14 +128,14 @@
 
   [data-theme="dark"] {
     .btn-secondary {
-      background-color: var(--color-gray-900);
+      background-color: var(--color-primary-950);
       border-color: var(--color-primary-900);
       color: var(--color-white);
 
       &:not(:disabled):hover {
         @media (hover: hover) {
-          background-color: var(--color-primary-950);
-          border-color: var(--color-primary-950);
+          background-color: var(--color-primary-800);
+          border-color: var(--color-primary-800);
           color: var(--color-white);
         }
       }
