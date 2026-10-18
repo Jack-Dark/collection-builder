@@ -37,7 +37,7 @@ export const ThemeToggles = () => {
   return (
     <ToggleGroup
       aria-label="User Theme"
-      className="grid gap-1 grid-cols-2 border border-theme-divider-2 rounded-4xl bg-theme-surface-2 p-1 w-full"
+      className="grid gap-1 grid-cols-2 border border-theme-divider-2 rounded-4xl p-1 w-full"
       defaultValue={[userPreferenceThemes.dark]}
     >
       {themeToggleItems.map(({ label, theme, ThemeIcon }) => {
@@ -51,12 +51,12 @@ export const ThemeToggles = () => {
               theme === userPreferenceThemes.light
                 ? // ? light mode toggle
                   isActive
-                  ? 'light:bg-primary-900 light:text-white light:shadow'
+                  ? 'light:bg-amber-50 light:text-gray-500 light:border-amber-300'
                   : 'dark:bg-transparent dark:text-theme-t2 dark:hover:text-amber-300'
                 : // ? dark mode toggle
                   isActive
-                  ? 'dark:bg-primary-900 dark:text-white dark:shadow'
-                  : 'light:bg-transparent light:text-theme-t2 light:hover:text-theme-link-hover',
+                  ? 'dark:bg-gray-800 dark:text-white dark:border-gray-600'
+                  : 'light:bg-transparent light:text-gray-500 light:hover:text-theme-link-hover',
             )}
             key={theme}
             onClick={() => {

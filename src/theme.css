@@ -76,8 +76,8 @@
   --theme-surface-1: var(--color-gray-50);
   --theme-surface-2: var(--color-gray-100);
   --theme-surface-3: var(--color-gray-200);
-  --theme-surface-selected: rgb(from var(--color-primary-500) r g b / 0.1);
-  --theme-surface-highlighted: rgb(from var(--color-primary-500) r g b / 0.2);
+  --theme-surface-selected: rgb(from var(--color-primary-500) r g b / 0.2);
+  --theme-surface-highlighted: rgb(from var(--color-primary-500) r g b / 0.3);
 
   --theme-t1: var(--color-black);
   --theme-t2: var(--color-gray-600);
