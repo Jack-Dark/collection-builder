@@ -24,7 +24,7 @@ export const NavMenu = (props: { items: NavMenuItem[] }) => {
               <NavigationMenu.Item
                 className={twJoin(
                   // ? standard styles
-                  'rounded-xs no-underline text-theme-t1',
+                  'px-3 py-2 rounded-xs no-underline text-theme-t1',
                   // ? active status styles
                   'has-data-[status="active"]:bg-theme-surface-selected',
                   // ? hover styles
@@ -38,7 +38,7 @@ export const NavMenu = (props: { items: NavMenuItem[] }) => {
                   condition={hasSubMenu}
                   Wrapper={({ children }) => {
                     return (
-                      <NavigationMenu.Trigger className="px-3 py-2 flex items-center justify-center gap-1.5 rounded-xs bg-inherit text-inherit font-medium text-[0.925rem] [@media(min-width:32rem)]:text-base leading-6 select-none no-underline">
+                      <NavigationMenu.Trigger className="flex items-center justify-center gap-1.5 rounded-xs bg-inherit text-inherit font-medium text-[0.925rem] [@media(min-width:32rem)]:text-base leading-6 select-none no-underline">
                         {children}
                         {items && (
                           <NavigationMenu.Icon className="transition-transform duration-200 ease-in-out data-[popup-open]:rotate-180">

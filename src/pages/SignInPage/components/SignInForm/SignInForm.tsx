@@ -5,8 +5,10 @@ import type { RouterPath } from '#/types';
 
 import { useInvalidateGetNavMenuCollections } from '#/api/routes/collections/get-nav-menu-collections/get-nav-menu-collections.react-query';
 import { authClient } from '#/auth/auth-client';
-import { Button } from '#/components/Button';
 import { InputField } from '#/components/Fields/InputField';
+import { FormSubmitButton } from '#/components/FormSubmitButton';
+import { useNotifications } from '#/components/Notifications';
+import { useValidationFormOptions } from '#/hooks/use-validation-form-options';
 
 import { defaultValues, signInFormSchema } from './SignInForm.schema';
 
@@ -18,41 +20,26 @@ export const SignInForm = () => {
 
   const invalidateGetNavMenuCollections = useInvalidateGetNavMenuCollections();
 
-  const form = useForm({
+  const validationFormOptions = useValidationFormOptions({
     defaultValues,
-    onSubmit: async ({ value }) => {
-      const { email, password } = value;
-      const { data } = await authClient.signIn.email(
-        {
-          email,
-          password,
-        },
-        {
-          onError: (context) => {
-            // display the error message
-            alert(context.error.message);
-          },
-          onRequest: () => {
-            // show loading
-          },
-          onSuccess: () => {
-            router.navigate({ to: search.redirect || '/' });
-          },
-        },
-      );
+    schema: signInFormSchema,
+  });
 
-      if (data) {
-        invalidateGetNavMenuCollections();
-      } else {
-        // throw new Error(error.message);
-      }
+  const { notifyError } = useNotifications();
+
+  const form = useForm({
+    ...validationFormOptions,
+    onSubmit: async ({ value }) => {
+      await authClient.signIn.email(value, {
+        onError: (context) => {
+          notifyError(context.error.message);
+        },
+        onSuccess: () => {
+          invalidateGetNavMenuCollections();
+          router.navigate({ to: search.redirect || '/collections' });
+        },
+      });
     },
-    validators: [
-      {
-        run: signInFormSchema,
-        triggers: ['change'],
-      },
-    ],
   });
 
   return (
@@ -64,84 +51,44 @@ export const SignInForm = () => {
       }}
     >
       <div className="grid gap-4 max-w-100">
-        <form.Subscribe
-          selector={(state) => {
-            return {
-              errors: state.errors,
-              value: state.values.email,
-            };
-          }}
-        >
-          {({ value }) => {
+        <form.Field name="email">
+          {(field) => {
             return (
-              <form.Field name="email">
-                {(field) => {
-                  return (
-                    <InputField
-                      error={field.errors}
-                      Label="Email"
-                      name={field.name}
-                      onValueChange={(value) => {
-                        field.handleChange(value);
-                      }}
-                      required
-                      value={value}
-                    />
-                  );
+              <InputField
+                error={field.errors}
+                Label="Email"
+                name={field.name}
+                onValueChange={(value) => {
+                  field.handleChange(value);
                 }}
-              </form.Field>
+                required
+                value={field.value}
+              />
             );
           }}
-        </form.Subscribe>
+        </form.Field>
 
-        <form.Subscribe
-          selector={(state) => {
-            return {
-              value: state.values.password,
-            };
-          }}
-        >
-          {({ value }) => {
+        <form.Field name="password">
+          {(field) => {
             return (
-              <form.Field name="password">
-                {(field) => {
-                  return (
-                    <InputField
-                      error={field.errors}
-                      Label="Password"
-                      name={field.name}
-                      onValueChange={(value) => {
-                        field.handleChange(value);
-                      }}
-                      required
-                      type="password"
-                      value={value}
-                    />
-                  );
+              <InputField
+                error={field.errors}
+                Label="Password"
+                name={field.name}
+                onValueChange={(value) => {
+                  field.handleChange(value);
                 }}
-              </form.Field>
+                required
+                type="password"
+                value={field.value}
+              />
             );
           }}
-        </form.Subscribe>
+        </form.Field>
 
-        <form.Subscribe
-          selector={(state) => {
-            return {
-              isValid: state.isValid,
-              values: state.values,
-            };
-          }}
-        >
-          {(state) => {
-            const { isValid } = state;
-
-            return (
-              <div className="justify-start">
-                <Button disabled={!isValid} text="Submit" type="submit" />
-              </div>
-            );
-          }}
-        </form.Subscribe>
+        <div className="flex gap-10 justify-between items-center pt-4">
+          <FormSubmitButton form={form} text="Sign In" />
+        </div>
       </div>
     </form>
   );

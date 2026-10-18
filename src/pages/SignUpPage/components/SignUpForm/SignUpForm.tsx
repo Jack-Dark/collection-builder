@@ -5,9 +5,11 @@ import { useRouter, useSearch } from '@tanstack/react-router';
 
 import type { RouterPath } from '#/types';
 
+import { useInvalidateGetNavMenuCollections } from '#/api/routes/collections/get-nav-menu-collections/get-nav-menu-collections.react-query';
 import { authClient } from '#/auth/auth-client';
-import { Button } from '#/components/Button';
 import { InputField } from '#/components/Fields/InputField';
+import { FormSubmitButton } from '#/components/FormSubmitButton';
+import { useValidationFormOptions } from '#/hooks/use-validation-form-options';
 
 import { signUpFormSchema, defaultValues } from './SignUpForm.schema';
 
@@ -18,42 +20,26 @@ export const SignUpForm: RouteComponent = () => {
     strict: false,
   });
 
-  const form = useForm({
+  const validationFormOptions = useValidationFormOptions({
     defaultValues,
-    onSubmit: async ({ value }) => {
-      const { email, name, password } = value;
-      const { data, error } = await authClient.signUp.email(
-        {
-          email, // user email address
-          name, // user display name
-          password, // user password -> min 8 characters by default
-        },
-        {
-          onError: (context) => {
-            // display the error message
-            alert(context.error.message);
-          },
-          onRequest: () => {
-            // show loading
-          },
-          onSuccess: () => {
-            router.navigate({ to: search.redirect || '/' });
-          },
-        },
-      );
+    schema: signUpFormSchema,
+  });
 
-      if (data) {
-        // invalidate
-      } else {
-        throw new Error(error.message);
-      }
+  const invalidateGetNavMenuCollections = useInvalidateGetNavMenuCollections();
+
+  const form = useForm({
+    ...validationFormOptions,
+    onSubmit: async ({ value }) => {
+      await authClient.signUp.email(value, {
+        onError: (context) => {
+          alert(context.error.message);
+        },
+        onSuccess: () => {
+          invalidateGetNavMenuCollections();
+          router.navigate({ to: search.redirect || '/collections' });
+        },
+      });
     },
-    validators: [
-      {
-        run: signUpFormSchema,
-        triggers: ['change'],
-      },
-    ],
   });
 
   return (
@@ -184,24 +170,7 @@ export const SignUpForm: RouteComponent = () => {
           }}
         </form.Subscribe>
 
-        <form.Subscribe
-          selector={(state) => {
-            return {
-              isValid: state.isValid,
-              values: state.values,
-            };
-          }}
-        >
-          {(state) => {
-            const { isValid } = state;
-
-            return (
-              <div className="justify-start">
-                <Button disabled={!isValid} text="Submit" type="submit" />
-              </div>
-            );
-          }}
-        </form.Subscribe>
+        <FormSubmitButton form={form} text="Sign Up" />
       </div>
     </form>
   );

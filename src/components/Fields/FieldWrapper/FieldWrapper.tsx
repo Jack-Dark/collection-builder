@@ -26,11 +26,14 @@ export const FieldWrapper = (props: PropsWithChildren<FieldWrapperProps>) => {
     if (error) {
       return typeof error === 'string'
         ? error
-        : error
-            .map(({ message }) => {
-              return message;
-            })
-            .join('\n');
+        : error.map(({ message }, index) => {
+            return (
+              <>
+                {!!index && <br />}
+                {message}
+              </>
+            );
+          });
     }
   }, [error]);
 

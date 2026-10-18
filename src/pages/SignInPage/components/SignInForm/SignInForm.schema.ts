@@ -10,7 +10,7 @@ export const defaultValues: SignUpFormSchemaDef = {
 };
 
 export const signInFormSchema = zod.object({
-  email: zod.email().describe('Email').min(1),
+  email: zod.email(),
   password: passwordSchema,
 });
 
