@@ -62,7 +62,7 @@ export const SiteNavMenu = () => {
     <div className="flex justify-between items-center bg-theme-surface-1 text-theme-t1">
       <NavMenu items={navItems} />
 
-      <div className="py-2 px-3 flex justify-center w-30">
+      <div className="py-1 px-3 flex justify-center w-30">
         <ThemeToggles />
       </div>
     </div>

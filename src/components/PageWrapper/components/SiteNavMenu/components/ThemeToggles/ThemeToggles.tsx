@@ -2,7 +2,7 @@ import { Toggle, ToggleGroup } from '@base-ui/react';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import { useEffect } from 'react';
-import { twJoin, twMerge } from 'tailwind-merge';
+import { twJoin } from 'tailwind-merge';
 
 import {
   getSystemTheme,
@@ -41,30 +41,22 @@ export const ThemeToggles = () => {
       defaultValue={[userPreferenceThemes.dark]}
     >
       {themeToggleItems.map(({ label, theme, ThemeIcon }) => {
+        const isActive = userTheme === theme;
+
         return (
           <Toggle
             aria-label={label}
             className={twJoin(
-              `p-0.5 flex items-center justify-center rounded-4xl cursor-pointer`,
+              `p-0.5 flex items-center justify-center rounded-4xl cursor-pointer border border-transparent`,
               theme === userPreferenceThemes.light
                 ? // ? light mode toggle
-                  twMerge(
-                    // ? viewed in light mode (selected)
-                    'light:bg-amber-300 light:text-amber-600',
-
-                    // ? viewed in dark mode
-                    'dark:bg-amber-200/10 dark:text-amber-300',
-                    'dark:hover:bg-amber-300 dark:hover:text-amber-600',
-                  )
+                  isActive
+                  ? 'light:bg-primary-900 light:text-white light:shadow'
+                  : 'dark:bg-transparent dark:text-theme-t2 dark:hover:text-amber-300'
                 : // ? dark mode toggle
-                  twMerge(
-                    // ? viewed in light mode
-                    'light:bg-primary-800/20',
-                    'light:hover:bg-primary-800 light:hover:text-white',
-
-                    // ? viewed in dark mode (selected)
-                    'dark:bg-primary-800 dark:hover:text-white',
-                  ),
+                  isActive
+                  ? 'dark:bg-primary-900 dark:text-white dark:shadow'
+                  : 'light:bg-transparent light:text-theme-t2 light:hover:text-theme-link-hover',
             )}
             key={theme}
             onClick={() => {
