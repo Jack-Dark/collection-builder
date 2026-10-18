@@ -29,7 +29,7 @@ export const useSpinner = () => {
       });
   };
 
-  const [processing, setProcessing] = useState<boolean>();
+  const [processing, setProcessing] = useState<boolean>(false);
 
   /**
    * Handles showing/hiding the full-page loading indicator.
@@ -43,10 +43,7 @@ export const useSpinner = () => {
    *     try {
    *        await yourRequestedAxiosEndpoint();
    *      } catch (error: unknown) {
-   *        notifyAxiosError({
-   *         error,
-   *         fallbackMessage: 'Unable to complete task.',
-   *        });
+   *        // ...
    *      }
    *   })
    * };
@@ -74,10 +71,7 @@ export const useSpinner = () => {
    *     try {
    *        await yourRequestedAxiosEndpoint();
    *      } catch (error: unknown) {
-   *        notifyAxiosError({
-   *         error,
-   *         fallbackMessage: 'Unable to complete task.',
-   *        });
+   *        // ...
    *      }
    *   })
    * };
