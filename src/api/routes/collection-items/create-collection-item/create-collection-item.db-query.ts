@@ -28,10 +28,14 @@ export const createCollectionItemsDbQuery = async ({
   const customFieldValuesIndexedToRecord: CustomFieldValuesByFieldId[] = [];
 
   const formattedCollectionItemRecords = records.map(
-    ({ customFieldValues, ...record }) => {
+    ({ customFieldValues, ...record }, index) => {
       customFieldValuesIndexedToRecord.push(customFieldValues);
 
-      return { ...record, userId } satisfies InsertCollectionItemRecordDef;
+      return {
+        ...record,
+        images: publicIds[index],
+        userId,
+      } satisfies InsertCollectionItemRecordDef;
     },
   );
 
