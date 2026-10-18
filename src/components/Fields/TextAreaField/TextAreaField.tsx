@@ -57,7 +57,7 @@ export const TextAreaField = (props: TextAreaFieldPropsDef) => {
       <Field.Control
         autoComplete={type === 'password' ? 'off' : undefined}
         autoFocus={autoFocus}
-        className="p-1.5 border rounded-xs border-theme-divider-1 dark:border-theme-divider-3 bg-theme-surface-1 dark:bg-theme-surface-2"
+        className="p-1.5 border rounded-xs border-theme-divider-2 dark:border-theme-divider-3 bg-theme-surface-1 dark:bg-theme-surface-2"
         onValueChange={(value) => {
           setInputValue(value);
           debouncedOnValueChange?.(value);
