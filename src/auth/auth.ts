@@ -8,8 +8,7 @@ import { configs } from '#/configs';
 
 import * as schema from '../api/db-tables-schema';
 
-// @ts-expect-error
-const _resend = new Resend(configs.resendApiKey);
+const resend = new Resend(configs.resendApiKey);
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -24,20 +23,22 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
   },
-  // emailVerification: {
-  //   sendVerificationEmail: async ({ token, url, user }, request) => {
-  //     // TODO - FEATURE: EMAIL VERIFICATION - UPDATE BACK TO void FROM await
-  //     const { data, error } = await resend.emails.send({
-  //       from: 'onboarding@resend.dev',
-  //       html: `<p>Click the link to <a href="${configs.siteUrl}/account?token=${token}">verify your email</a></p>`,
-  //       subject: 'Hello World',
-  //       to: 'decker3d@gmail.com',
-  //     });
-  //     if (error) {
-  //       console.log('🚀 ~ error:', error);
-  //     }
-  //   },
-  // },
+  emailVerification: {
+    sendOnSignIn: true,
+    sendVerificationEmail: async ({ url, user }) => {
+      const { data, error } = await resend.emails.send({
+        from: 'Acme <onboarding@resend.dev>',
+        html: `Click the link to verify your email: ${url}`,
+        subject: 'Verify your email address',
+        to: [user.email],
+      });
+
+      if (error) {
+        throw new Error(error.message);
+      }
+    },
+  },
+
   plugins: [
     // make sure this is the last plugin in the array
     tanstackStartCookies(),

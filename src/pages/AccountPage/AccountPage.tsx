@@ -19,9 +19,10 @@ export const AccountPage = () => {
         <Button className="justify-self-start" disabled size="sm" text="Edit" />
 
         <p>
-          {user.email}
-
-          {user.emailVerified && <VerifiedIcon />}
+          {user.email}{' '}
+          {user.emailVerified && (
+            <VerifiedIcon className="text-primary-500" fontSize="small" />
+          )}
         </p>
         <div className="flex items-center gap-2">
           <Button
@@ -34,7 +35,12 @@ export const AccountPage = () => {
           {!user.emailVerified && (
             <Button
               className="justify-self-start"
-              disabled
+              onClick={async () => {
+                await authClient.sendVerificationEmail({
+                  callbackURL: '/account',
+                  email: user.email,
+                });
+              }}
               size="sm"
               text="Resend verification email"
               variant="secondary"
