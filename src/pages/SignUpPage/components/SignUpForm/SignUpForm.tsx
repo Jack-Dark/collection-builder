@@ -170,7 +170,9 @@ export const SignUpForm: RouteComponent = () => {
           }}
         </form.Subscribe>
 
-        <FormSubmitButton form={form} text="Sign Up" />
+        <div className="flex">
+          <FormSubmitButton form={form} text="Sign Up" />
+        </div>
       </div>
     </form>
   );
