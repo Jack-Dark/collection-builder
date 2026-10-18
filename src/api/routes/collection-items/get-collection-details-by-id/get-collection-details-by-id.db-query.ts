@@ -307,6 +307,9 @@ export const getCollectionDetailsByIdDbQuery = async ({
             customFieldValue: {
               customFieldId,
             },
+            collectionItem: {
+              collectionId,
+            },
           },
           with: {
             customFieldValue: {
