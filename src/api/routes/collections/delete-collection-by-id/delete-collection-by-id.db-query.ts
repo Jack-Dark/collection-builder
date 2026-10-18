@@ -4,6 +4,7 @@ import type { DbQueryArgsDef } from '#/auth/auth-middleware.types';
 
 import { db } from '#/api/db';
 import { collectionsTable } from '#/api/db-tables-schema';
+import { deleteCloudinaryAssetsByPublicIds } from '#/lib/cloudinary';
 
 import type { DeleteCollectionByIdRequestArgsDef } from './delete-collection-by-id.types';
 
@@ -16,7 +17,23 @@ export const deleteCollectionDbQuery = async ({
   const userId = context.user.id;
 
   await db.transaction(async (tx) => {
-    // TODO - FEATURE: ADD LOGIC TO GET ALL IMAGES ON ITEMS IN COLLECTION
+    const collectionItemsImages = await tx.query.collectionItems.findMany({
+      columns: {
+        images: true,
+      },
+      where: {
+        collectionId: {
+          in: ids,
+        },
+      },
+    });
+
+    const publicIds = collectionItemsImages.reduce<string[]>(
+      (acc, { images }) => {
+        return [...acc, ...images];
+      },
+      [],
+    );
 
     // ? Delete collections
     await tx
@@ -28,6 +45,6 @@ export const deleteCollectionDbQuery = async ({
         ),
       );
 
-    // TODO - FEATURE: DELETE FOUND IMAGES
+    await deleteCloudinaryAssetsByPublicIds(...publicIds);
   });
 };
