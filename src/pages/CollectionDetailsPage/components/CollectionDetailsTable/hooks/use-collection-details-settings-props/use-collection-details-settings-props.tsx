@@ -96,7 +96,7 @@ const WrapLabelWithStatus = (
       <div className="h-full w-6 flex items-center">
         {active !== undefined && (active ? <CheckIcon /> : <CloseIcon />)}
       </div>
-      <div>{children}</div>
+      <div className="text-sm">{children}</div>
     </div>
   );
 };
@@ -130,7 +130,10 @@ const AutoPopulateCustomFieldValues = () => {
 
   return (
     <WrapLabelWithStatus active={autoPopulateCustomFieldValues}>
-      Auto-populate new items with the last entered custom field values.
+      <p>
+        Auto-populate new items with the last entered custom field values for
+        this collection.
+      </p>
     </WrapLabelWithStatus>
   );
 };
