@@ -19,7 +19,7 @@ export const CollectionsListCreatedAtCell = (props: {
   const { getHasNewRecord, getIsEditingRowId } = useEditingCollectionsRowIds();
   const isEditingRow = getIsEditingRowId(rowId);
 
-  const { getLastNewRecordIndex, removeFromIsEditingRowIds } =
+  const { getLastNewRecordIndex, removeFromEditingRowIds } =
     useEditingCollectionsRowIds();
 
   const isLastNewRecordIndex = getLastNewRecordIndex() === index;
@@ -37,7 +37,7 @@ export const CollectionsListCreatedAtCell = (props: {
                       Icon={ClearIcon}
                       onClick={() => {
                         recordsField.removeValue(index);
-                        removeFromIsEditingRowIds(rowId);
+                        removeFromEditingRowIds(rowId);
                       }}
                       text="Remove"
                       variant="mono"
