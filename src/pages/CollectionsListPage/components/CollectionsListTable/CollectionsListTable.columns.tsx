@@ -1,7 +1,10 @@
+import InfoIcon from '@mui/icons-material/Info';
 import { createColumnHelper } from '@tanstack/react-table';
 
 import type { GetPaginatedCollectionsResponseDef } from '#/api/routes/collections/get-paginated-collections/get-paginated-collections.types';
 import type { TableFeaturesDef } from '#/components/Table';
+
+import { Popover } from '#/components/Popover';
 
 import type { CreateOrUpdateCollectionFormTypeDef } from '../../CollectionsListPage.types';
 
@@ -54,7 +57,24 @@ export const getCollectionsListTableColumns = (
         );
       },
       header: () => {
-        return <span>Custom Fields</span>;
+        return (
+          <div className="flex gap-2 items-center">
+            <span>Custom Fields</span>
+            <Popover
+              Description="
+              Each custom field will be a unique column on that
+              collection's table."
+              Trigger={() => {
+                return (
+                  <InfoIcon
+                    className="text-theme-t3 dark:text-theme-t2"
+                    fontSize="inherit"
+                  />
+                );
+              }}
+            />
+          </div>
+        );
       },
       minSize: 250,
     }),
