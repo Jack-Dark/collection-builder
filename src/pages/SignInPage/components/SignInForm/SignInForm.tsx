@@ -4,13 +4,15 @@ import { useRouter, useSearch } from '@tanstack/react-router';
 import type { RouterPath } from '#/types';
 
 import { useInvalidateGetNavMenuCollections } from '#/api/routes/collections/get-nav-menu-collections/get-nav-menu-collections.react-query';
-import { authClient } from '#/auth/auth-client';
+import { useSignIn } from '#/api/routes/users/sign-in/sign-in.react-query';
+import { signInRequestSchema } from '#/api/routes/users/sign-in/sign-in.schema';
+import { Button } from '#/components/Button';
+import { useDialog } from '#/components/Dialog/hooks/useDialog';
 import { InputField } from '#/components/Fields/InputField';
 import { FormSubmitButton } from '#/components/FormSubmitButton';
-import { useNotifications } from '#/components/Notifications';
 import { useValidationFormOptions } from '#/hooks/use-validation-form-options';
 
-import { defaultValues, signInFormSchema } from './SignInForm.schema';
+import { ResetPasswordDialog } from './components/PasswordResetDialog';
 
 export const SignInForm = () => {
   const router = useRouter();
@@ -21,26 +23,41 @@ export const SignInForm = () => {
   const invalidateGetNavMenuCollections = useInvalidateGetNavMenuCollections();
 
   const validationFormOptions = useValidationFormOptions({
-    defaultValues,
-    schema: signInFormSchema,
+    defaultValues: {
+      email: '',
+      password: '',
+    },
+    schema: signInRequestSchema,
   });
 
-  const { notifyError } = useNotifications();
+  const { onSignIn } = useSignIn({
+    onSuccess: () => {
+      invalidateGetNavMenuCollections();
+      router.navigate({ to: search.redirect || '/collections' });
+    },
+  });
 
   const form = useForm({
     ...validationFormOptions,
     onSubmit: async ({ value }) => {
-      await authClient.signIn.email(value, {
-        onError: (context) => {
-          notifyError(context.error.message);
-        },
-        onSuccess: () => {
-          invalidateGetNavMenuCollections();
-          router.navigate({ to: search.redirect || '/collections' });
-        },
-      });
+      await onSignIn(value);
     },
   });
+
+  const [showResetPasswordDialog, hideResetPasswordDialog] = useDialog(() => {
+    return (
+      <form.Field name="email">
+        {(field) => {
+          return (
+            <ResetPasswordDialog
+              defaultEmail={field.value}
+              hideDialog={hideResetPasswordDialog}
+            />
+          );
+        }}
+      </form.Field>
+    );
+  }, []);
 
   return (
     <form
@@ -88,6 +105,14 @@ export const SignInForm = () => {
 
         <div className="flex gap-10 justify-between items-center pt-4">
           <FormSubmitButton form={form} text="Sign In" />
+
+          <div className="flex items-center gap-1 text-sm">
+            <p>Having trouble?</p>
+            <Button onClick={showResetPasswordDialog} size="xs" variant="ghost">
+              {/* TODO - FEATURE: CREATE PASSWORD RESET PAGE */}
+              <span className="font-normal">Reset Password</span>
+            </Button>
+          </div>
         </div>
       </div>
     </form>

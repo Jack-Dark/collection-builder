@@ -88,7 +88,6 @@ export const CheckboxGroupField = (props: CheckboxGroupFieldPropsDef) => {
               disabled={item.disabled}
               name={name}
               onCheckedChange={() => {
-                console.log('CHECKBOX index:', index);
                 handleOnValueChange(index);
                 setLastSelectedIndex(index);
               }}

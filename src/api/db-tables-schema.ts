@@ -53,7 +53,6 @@ export const accountsTable = snakeCase.table('accounts', {
   accountId: text('account_id').notNull(),
   id: text('id').primaryKey(),
   idToken: text('id_token'),
-  issuer: text('issuer').notNull(),
   password: text('password'),
   providerId: text('provider_id').notNull(),
   refreshToken: text('refresh_token'),

@@ -2,7 +2,7 @@ import { useMutation } from '@tanstack/react-query';
 import { useLayoutEffect } from 'react';
 
 import { useSpinner } from '#/components/FullPageLoadingSpinner/useSpinner';
-import { useNotifications } from '#/components/Notifications';
+import { useNotifications } from '#/components/Notifications/useNotifications';
 
 import type { UseGenericMutateQueryProps } from './use-generic-mutate-query.types';
 

@@ -1,6 +1,7 @@
 import ClearIcon from '@mui/icons-material/Clear';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import { useLayoutEffect } from 'react';
 
 import type { CreateOrUpdateCollectionFormTypeDef } from '#/pages/CollectionsListPage/CollectionsListPage.types';
 
@@ -9,7 +10,10 @@ import { useDeleteCollectionById } from '#/api/routes/collections/delete-collect
 import { Button } from '#/components/Button';
 import { ConfirmDeleteDialog } from '#/components/ConfirmDeleteDialog';
 import { useDialog } from '#/components/Dialog/hooks/useDialog';
+import { useNotifications } from '#/components/Notifications/useNotifications';
+import { Popover } from '#/components/Popover';
 import { pluralize } from '#/helpers/pluralize';
+import { useUserContext } from '#/hooks/use-user-context';
 import { useEditingCollectionsRowIds } from '#/pages/CollectionsListPage/hooks/use-editing-collections-row-ids';
 
 import { AddNewCollectionButton } from './components/AddNewCollectionButton';
@@ -23,6 +27,10 @@ export const CollectionsListTableRowActions = (props: {
   selectedRowIds: string[];
 }) => {
   const { form, onCancel, resetRowSelection, selectedRowIds } = props;
+
+  const user = useUserContext();
+
+  const { notifyWarning } = useNotifications();
 
   const { addToEditingRowIds, isEditing } = useEditingCollectionsRowIds();
 
@@ -69,6 +77,20 @@ export const CollectionsListTableRowActions = (props: {
     );
   }, [selectedRowIds]);
 
+  const verifyEmailMessage =
+    'You must verify your email address before you can create new collections. Remember to check your spam folder!';
+
+  useLayoutEffect(() => {
+    if (user?.id && !user?.emailVerified) {
+      // debugger;
+      notifyWarning(`Welcome! ${verifyEmailMessage}`, {
+        // TODO - BUG: EFFECT RENDERING MULTIPLE TIMES ON FIRST PAGE LOAD
+        closeOthersOfType: true,
+        keepOpen: true,
+      });
+    }
+  }, [user?.emailVerified]);
+
   return (
     <form.ArrayField name="records">
       {() => {
@@ -113,11 +135,18 @@ export const CollectionsListTableRowActions = (props: {
                   />
                 </>
               ) : (
-                <AddNewCollectionButton
-                  disabled={false}
-                  form={form}
-                  insertAtIndex={0}
-                  text="Add New"
+                <Popover
+                  Description={verifyEmailMessage}
+                  Trigger={() => {
+                    return (
+                      <AddNewCollectionButton
+                        disabled={!user?.emailVerified}
+                        form={form}
+                        insertAtIndex={0}
+                        text="Add New"
+                      />
+                    );
+                  }}
                 />
               )}
             </div>

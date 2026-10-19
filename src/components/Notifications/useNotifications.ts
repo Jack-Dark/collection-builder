@@ -1,13 +1,13 @@
+import { createStore } from '@tanstack/react-store';
 import { v4 as uuidv4 } from 'uuid';
 
 import type { NotificationDetails, Notify } from './Notifications.types';
 
 import { notificationTypes } from './Notifications.constants';
-import { useNotificationsStore } from './Notifications.store';
+
+export const notificationsStore = createStore<NotificationDetails[]>([]);
 
 export const useNotifications = () => {
-  const { setNotifications } = useNotificationsStore();
-
   const showNotification = (
     newNotification: Omit<NotificationDetails, 'id'>,
   ) => {
@@ -20,7 +20,7 @@ export const useNotifications = () => {
     } = newNotification;
 
     if (message) {
-      setNotifications((prevNotifications) => {
+      notificationsStore.setState((prevNotifications) => {
         const purifiedNotificationsList = prevNotifications.filter(
           (prevNotification) => {
             if (closeOthersOfType && type === prevNotification.type) {

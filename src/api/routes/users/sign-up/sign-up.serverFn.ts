@@ -1,0 +1,17 @@
+import { createServerFn } from '@tanstack/react-start';
+
+import { auth } from '#/auth/auth';
+import { errorHandlingMiddleware } from '#/auth/auth-middleware';
+
+import { signUpRequestSchema } from './sign-up.schema';
+
+export const signUpServerFn = createServerFn({
+  method: 'POST',
+})
+  .middleware([errorHandlingMiddleware])
+  .validator(signUpRequestSchema)
+  .handler(async ({ data }) => {
+    await auth.api.signUpEmail({
+      body: data,
+    });
+  });

@@ -5,13 +5,11 @@ import { useRouter, useSearch } from '@tanstack/react-router';
 
 import type { RouterPath } from '#/types';
 
-import { useInvalidateGetNavMenuCollections } from '#/api/routes/collections/get-nav-menu-collections/get-nav-menu-collections.react-query';
-import { authClient } from '#/auth/auth-client';
+import { useSignUp } from '#/api/routes/users/sign-up/sign-up.react-query';
+import { signUpFormSchema } from '#/api/routes/users/sign-up/sign-up.schema';
 import { InputField } from '#/components/Fields/InputField';
 import { FormSubmitButton } from '#/components/FormSubmitButton';
 import { useValidationFormOptions } from '#/hooks/use-validation-form-options';
-
-import { signUpFormSchema, defaultValues } from './SignUpForm.schema';
 
 export const SignUpForm: RouteComponent = () => {
   const router = useRouter();
@@ -21,24 +19,25 @@ export const SignUpForm: RouteComponent = () => {
   });
 
   const validationFormOptions = useValidationFormOptions({
-    defaultValues,
+    defaultValues: {
+      confirmPassword: '',
+      email: '',
+      name: '',
+      password: '',
+    },
     schema: signUpFormSchema,
   });
 
-  const invalidateGetNavMenuCollections = useInvalidateGetNavMenuCollections();
+  const { onSignUp } = useSignUp({
+    onSuccess: () => {
+      router.navigate({ to: search.redirect || '/collections' });
+    },
+  });
 
   const form = useForm({
     ...validationFormOptions,
     onSubmit: async ({ value }) => {
-      await authClient.signUp.email(value, {
-        onError: (context) => {
-          alert(context.error.message);
-        },
-        onSuccess: () => {
-          invalidateGetNavMenuCollections();
-          router.navigate({ to: search.redirect || '/collections' });
-        },
-      });
+      onSignUp({ ...value, callbackURL: '/collections' });
     },
   });
 

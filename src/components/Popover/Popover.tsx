@@ -7,6 +7,7 @@ export const Popover = (props: PopoverPropsDef) => {
   const {
     delay = 100,
     Description = '',
+    disabled,
     side = 'top',
     Trigger = () => {
       return (
@@ -19,7 +20,9 @@ export const Popover = (props: PopoverPropsDef) => {
     },
   } = props;
 
-  return (
+  return disabled ? (
+    <Trigger />
+  ) : (
     <MuiPopover.Root>
       <MuiPopover.Trigger delay={delay} openOnHover>
         <Trigger />

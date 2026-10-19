@@ -42,6 +42,20 @@ export const reactMutationKeys = {
   updateCollections: 'update-collections',
   /** @deprecated */
   updateCustomFields: 'update-custom-fields',
+  users: {
+    password: {
+      requestReset: 'request-password-reset',
+      update: 'update-password',
+    },
+    requestVerificationEmail: 'request-verification-email',
+    signIn: {
+      viaEmail: 'sign-in-via-email',
+    },
+    signOut: 'sign-out',
+    signUp: {
+      viaEmail: 'sign-up-via-email',
+    },
+  },
 } as const;
 
 type BaseMutationKeyType = 'create' | 'delete' | 'update';

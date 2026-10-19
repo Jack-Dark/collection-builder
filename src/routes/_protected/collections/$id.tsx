@@ -31,7 +31,7 @@ export const Route = createFileRoute('/_protected/collections/$id')({
       requestArgs,
     });
 
-    await context.queryClient.ensureQueryData(queryOptions);
+    await context.queryClient.query(queryOptions);
 
     const autoPopulateCustomFieldValues =
       await getAutoPopulateCustomFieldValuesServerFn();

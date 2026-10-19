@@ -1,35 +1,25 @@
 import CloseIcon from '@mui/icons-material/Close';
+import { useSelector } from '@tanstack/react-store';
 import { useLayoutEffect } from 'react';
-import { v4 as uuidv4 } from 'uuid';
-
-import type {
-  NotificationDetails,
-  NotificationType,
-  Notify,
-} from './Notifications.types';
+import { twJoin } from 'tailwind-merge';
 
 import { Button } from '../Button';
 import { SimpleErrorBoundary } from '../SimpleErrorBoundary';
 import { notificationTypes } from './Notifications.constants';
-import { useNotificationsStore } from './Notifications.store';
-
-const notificationClasses = {
-  error: {
-    bg: 'bg-red-800',
-    text: 'text-white',
-  },
-  success: {
-    bg: 'bg-blue-800',
-    text: 'text-white',
-  },
-  warning: {
-    bg: 'bg-amber-400',
-    text: 'text-black',
-  },
-} satisfies Record<NotificationType, Record<'bg' | 'text', string>>;
+import { notificationsStore } from './useNotifications';
 
 export const Notifications = () => {
-  const { clearNotification, notifications } = useNotificationsStore();
+  const notifications = useSelector(notificationsStore, (state) => {
+    return state;
+  });
+
+  const clearNotification = (id: string) => {
+    notificationsStore.setState((prevNotifications) => {
+      return prevNotifications.filter((notification) => {
+        return notification.id !== id;
+      });
+    });
+  };
 
   useLayoutEffect(() => {
     notifications.forEach((notification) => {
@@ -50,18 +40,21 @@ export const Notifications = () => {
 
         return (
           <div
-            className={`grid grid-cols-[1fr_auto] items-center gap-4 py-1 px-4 ${notificationClasses[type].bg}`}
+            className={twJoin(
+              `grid grid-cols-[1fr_auto] items-center gap-4 py-1 px-4`,
+              type === notificationTypes.success && 'bg-blue-800 text-white',
+              type === notificationTypes.warning && 'bg-amber-400 text-black',
+              type === notificationTypes.error && 'bg-red-800 text-white',
+            )}
             key={id}
           >
-            <div className="justify-self-center overflow whitespace-nowrap text-ellipsis **:overflow **:whitespace-nowrap **:text-ellipsis">
+            <div className="justify-self-center text-center">
               {typeof message === 'string' ? (
-                <p className={notificationClasses[type].text}>{message}</p>
+                <p className="text-inherit">{message}</p>
               ) : (
                 <SimpleErrorBoundary
                   fallback={
-                    <p className={notificationClasses[type].text}>
-                      An unknown error occurred.
-                    </p>
+                    <p className="text-inherit">An unknown error occurred.</p>
                   }
                 >
                   {/* Error boundary intentionally doubled up to ensure it is caught appropriately */}
@@ -74,10 +67,9 @@ export const Notifications = () => {
             {keepOpen && (
               <Button
                 aria-label="Close"
+                className="text-inherit"
                 Icon={() => {
-                  return (
-                    <CloseIcon className={notificationClasses[type].text} />
-                  );
+                  return <CloseIcon />;
                 }}
                 onClick={() => {
                   return clearNotification(notification.id);
@@ -91,71 +83,4 @@ export const Notifications = () => {
       })}
     </div>
   );
-};
-
-export const useNotifications = () => {
-  const { setNotifications } = useNotificationsStore();
-
-  const showNotification = (
-    newNotification: Omit<NotificationDetails, 'id'>,
-  ) => {
-    const {
-      closeOthersOfType,
-      keepOpen = false,
-      message = '',
-      time = 2500,
-      type = 'success',
-    } = newNotification;
-
-    if (message) {
-      setNotifications((prevNotifications) => {
-        const purifiedNotificationsList = prevNotifications.filter(
-          (prevNotification) => {
-            if (closeOthersOfType && type === prevNotification.type) {
-              return false;
-            }
-
-            return true;
-          },
-        );
-
-        const newNotification: NotificationDetails = {
-          id: uuidv4(),
-          keepOpen,
-          message,
-          time,
-          type,
-        };
-
-        return [...purifiedNotificationsList, newNotification];
-      });
-    }
-  };
-
-  const notify: Notify = (message, options = {}) => {
-    showNotification({
-      closeOthersOfType: true,
-      message,
-      type: notificationTypes.success,
-      ...options,
-    });
-  };
-
-  const notifyWarning: Notify = (message, options = {}) => {
-    showNotification({
-      message,
-      type: notificationTypes.warning,
-      ...options,
-    });
-  };
-
-  const notifyError: Notify = (message, options = {}) => {
-    showNotification({
-      message,
-      type: notificationTypes.error,
-      ...options,
-    });
-  };
-
-  return { notify, notifyError, notifyWarning };
 };

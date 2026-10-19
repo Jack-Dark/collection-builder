@@ -26,6 +26,6 @@ export const Route = createFileRoute('/_protected/collections/')({
       requestArgs,
     });
 
-    return await context.queryClient.ensureQueryData(queryOptions);
+    return await context.queryClient.query(queryOptions);
   },
 });

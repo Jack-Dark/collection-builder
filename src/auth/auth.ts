@@ -1,14 +1,16 @@
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { tanstackStartCookies } from 'better-auth/tanstack-start';
-import { Resend } from 'resend';
 
 import { db } from '#/api/db';
-import { configs } from '#/configs';
+import { sendResetPasswordEmailServerFn } from '#/api/routes/emails/send-reset-password-email/send-reset-password-email.serverFn';
+import { sendVerificationEmailServerFn } from '#/api/routes/emails/send-verification-email/send-verification-email.serverFn';
 
 import * as schema from '../api/db-tables-schema';
 
-const resend = new Resend(configs.resendApiKey);
+export const resetPasswordTokenExpiresInMinutes = 20;
+const resetPasswordTokenExpiresInSeconds =
+  resetPasswordTokenExpiresInMinutes * 60;
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -22,25 +24,28 @@ export const auth = betterAuth({
   }),
   emailAndPassword: {
     enabled: true,
+    resetPasswordTokenExpiresIn: resetPasswordTokenExpiresInSeconds,
+    sendResetPassword: async ({ url, user }) => {
+      await sendResetPasswordEmailServerFn({
+        data: {
+          email: user.email,
+          name: user.name,
+          url,
+        },
+      });
+    },
   },
   emailVerification: {
+    autoSignInAfterVerification: true,
     sendOnSignIn: true,
+    sendOnSignUp: true,
     sendVerificationEmail: async ({ url, user }) => {
-      const { data, error } = await resend.emails.send({
-        from: 'Acme <onboarding@resend.dev>',
-        html: `Click the link to verify your email: ${url}`,
-        subject: 'Verify your email address',
-        to: [user.email],
-      });
-
-      if (error) {
-        throw new Error(error.message);
-      }
+      await sendVerificationEmailServerFn({ data: { email: user.email, url } });
     },
   },
 
   plugins: [
-    // make sure this is the last plugin in the array
+    // ! make sure this is the last plugin in the array
     tanstackStartCookies(),
   ],
   // socialProviders: {

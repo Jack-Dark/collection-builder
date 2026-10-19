@@ -3,7 +3,7 @@ import { createFileRoute, isRedirect } from '@tanstack/react-router';
 import { reactQueryKeys } from '#/api/react-query-hooks/react-query.constants';
 import { getGenericFetchQueryOptions } from '#/api/react-query-hooks/use-generic-fetch-query/get-generic-fetch-query-options';
 import { getNavMenuCollectionsServerFn } from '#/api/routes/collections/get-nav-menu-collections/get-nav-menu-collections.serverFn';
-import { getUserContext } from '#/auth/auth.functions';
+import { ensureSession } from '#/auth/auth-middleware';
 import { SimpleErrorBoundaryContent } from '#/components/SimpleErrorBoundary';
 import { Layout } from '#/layout';
 
@@ -17,13 +17,13 @@ export const Route = createFileRoute('/_protected')({
     };
 
     try {
-      const user = await getUserContext();
+      const session = await ensureSession();
 
-      if (!user) {
+      if (!session) {
         throw redirectToSignIn();
       }
 
-      return { user };
+      return { user: session.user };
     } catch (error) {
       // Re-throw redirects (they're intentional, not errors)
       if (isRedirect(error)) {
@@ -44,7 +44,7 @@ export const Route = createFileRoute('/_protected')({
         requestArgs: {},
       });
 
-      return await context.queryClient.ensureQueryData(queryOptions);
+      return await context.queryClient.query(queryOptions);
     }
   },
 });

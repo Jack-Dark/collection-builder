@@ -1,16 +1,19 @@
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { useRouter } from '@tanstack/react-router';
 
+import { useSignOut } from '#/api/routes/users/sign-out/sign-out.react-query';
+import { useUserContext } from '#/hooks/use-user-context';
+
 import type { RouterPath } from '../../../../types';
 import type { NavMenuItem } from '../../../NavMenu/NavMenu.types';
 
 import { useGetNavMenuCollections } from '../../../../api/routes/collections/get-nav-menu-collections/get-nav-menu-collections.react-query';
-import { authClient } from '../../../../auth/auth-client';
 import { Route as CollectionsRoute } from '../../../../routes/_protected/collections';
 import { Route as CollectionRoute } from '../../../../routes/_protected/collections/$id';
 import { NavMenu } from '../../../NavMenu';
 import { ThemeToggles } from './components/ThemeToggles';
 
+// TODO - FEATURE: BUILD MOBILE NAV SUPPORT
 export const SiteNavMenu = () => {
   const { data } = useGetNavMenuCollections({
     placeholderData: {
@@ -23,9 +26,15 @@ export const SiteNavMenu = () => {
 
   const router = useRouter();
 
-  const { data: session } = authClient.useSession();
+  const user = useUserContext();
 
-  const isLoggedOut = !session?.user.id;
+  const { onSignOut } = useSignOut({
+    onSuccess: () => {
+      router.navigate({ to: '/sign-in' });
+    },
+  });
+
+  const isLoggedOut = !user?.id;
 
   const navItems: NavMenuItem[] = [
     {
@@ -49,8 +58,7 @@ export const SiteNavMenu = () => {
           onClick: async (e) => {
             e.preventDefault();
 
-            await authClient.signOut();
-            router.navigate({ to: '/sign-in' });
+            await onSignOut({});
           },
         },
       ],

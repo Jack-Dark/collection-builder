@@ -16,6 +16,7 @@ import {
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
 import { StrictMode } from 'react';
 
+import { getSession } from '#/auth/auth-middleware';
 import { DialogProvider } from '#/components/Dialog/Dialog.Provider';
 import { SimpleErrorBoundaryContent } from '#/components/SimpleErrorBoundary';
 import { ThemeProvider } from '#/components/ThemeProvider';
@@ -26,6 +27,11 @@ import appCss from '../styles.css?url';
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
 }>()({
+  beforeLoad: async () => {
+    const session = await getSession();
+
+    return { user: session?.user };
+  },
   component: RootComponent,
   errorComponent: SimpleErrorBoundaryContent,
   loader: async () => {
@@ -104,7 +110,7 @@ export const RootDocument = ({
 
       <ThemeProvider theme={theme}>
         <DialogProvider>
-          <body className="bg-linear-to-b from-primary-900 to-secondary-900 dark:from-primary-950 dark:to-secondary-950 root grid min-h-dvh grid-rows-[max-content_1fr_max-content] text-theme-t1">
+          <body className="bg-linear-to-br from-primary-900 to-secondary-900 dark:from-primary-950 dark:to-secondary-950 root grid min-h-dvh grid-rows-[max-content_1fr_max-content] text-theme-t1">
             {children}
             <Scripts />
           </body>
