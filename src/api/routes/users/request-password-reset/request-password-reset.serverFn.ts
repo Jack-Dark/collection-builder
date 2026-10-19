@@ -15,7 +15,10 @@ export const requestPasswordResetServerFn = createServerFn({
     const headers = getRequestHeaders();
 
     const { message, status } = await auth.api.requestPasswordReset({
-      body: data,
+      body: {
+        ...data,
+        redirectTo: `/reset-password?email=${encodeURI(data.email).replace(/\+/g, '%2B')}`,
+      },
       headers,
     });
 

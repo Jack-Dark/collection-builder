@@ -1,7 +1,6 @@
 import { useForm } from '@tanstack/react-form';
-import { useRouter, useSearch } from '@tanstack/react-router';
-
-import type { RouterPath } from '#/types';
+import { useRouter } from '@tanstack/react-router';
+import { useLayoutEffect } from 'react';
 
 import { useInvalidateGetNavMenuCollections } from '#/api/routes/collections/get-nav-menu-collections/get-nav-menu-collections.react-query';
 import { useSignIn } from '#/api/routes/users/sign-in/sign-in.react-query';
@@ -11,14 +10,13 @@ import { useDialog } from '#/components/Dialog/hooks/useDialog';
 import { InputField } from '#/components/Fields/InputField';
 import { FormSubmitButton } from '#/components/FormSubmitButton';
 import { useValidationFormOptions } from '#/hooks/use-validation-form-options';
+import { Route } from '#/routes/_unprotected/sign-in';
 
 import { ResetPasswordDialog } from './components/PasswordResetDialog';
 
 export const SignInForm = () => {
   const router = useRouter();
-  const search: { redirect?: RouterPath } = useSearch({
-    strict: false,
-  });
+  const search = Route.useSearch();
 
   const invalidateGetNavMenuCollections = useInvalidateGetNavMenuCollections();
 
@@ -58,6 +56,12 @@ export const SignInForm = () => {
       </form.Field>
     );
   }, []);
+
+  useLayoutEffect(() => {
+    if (search.resetPassword) {
+      showResetPasswordDialog();
+    }
+  }, [search.resetPassword]);
 
   return (
     <form
@@ -109,7 +113,6 @@ export const SignInForm = () => {
           <div className="flex items-center gap-1 text-sm">
             <p>Having trouble?</p>
             <Button onClick={showResetPasswordDialog} size="xs" variant="ghost">
-              {/* TODO - REQUIRED FEATURE: CREATE PASSWORD RESET PAGE */}
               <span className="font-normal">Reset Password</span>
             </Button>
           </div>

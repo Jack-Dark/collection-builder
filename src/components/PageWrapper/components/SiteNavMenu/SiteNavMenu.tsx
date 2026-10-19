@@ -13,7 +13,7 @@ import { Route as CollectionRoute } from '../../../../routes/_protected/collecti
 import { NavMenu } from '../../../NavMenu';
 import { ThemeToggles } from './components/ThemeToggles';
 
-// TODO - REQUIRED REQUIRED REQUIRED REQUIRED FEATURE: BUILD MOBILE NAV SUPPORT
+// TODO - REQUIRED FEATURE: BUILD MOBILE NAV SUPPORT
 export const SiteNavMenu = () => {
   const { data } = useGetNavMenuCollections({
     placeholderData: {

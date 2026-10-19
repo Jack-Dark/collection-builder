@@ -45,6 +45,7 @@ export const reactMutationKeys = {
   users: {
     password: {
       requestReset: 'request-password-reset',
+      reset: 'reset-password',
       update: 'update-password',
     },
     requestVerificationEmail: 'request-verification-email',
