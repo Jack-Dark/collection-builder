@@ -1,9 +1,11 @@
 import type { PropsWithChildren } from 'react';
 
+import GitHubIcon from '@mui/icons-material/GitHub';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import { QueryErrorResetBoundary } from '@tanstack/react-query';
 import { Suspense } from 'react';
 
+import { Popover } from '../Popover';
 import { SimpleErrorBoundary } from '../SimpleErrorBoundary';
 import { SiteNavMenu } from './components/SiteNavMenu';
 
@@ -17,9 +19,26 @@ export const PageWrapper = (props: PageWrapperPropsDef) => {
   return (
     <>
       <header className="grid gap-4">
-        <div className="flex items-center gap-2 text-white">
-          <ListAltIcon className="text-inherit text-4xl" fontSize="large" />
-          <h1 className="text-inherit">{title}</h1>
+        <div className="flex items-center gap-2 justify-between text-white">
+          <div className="flex items-center gap-2">
+            <ListAltIcon className="text-4xl" fontSize="large" />
+            <h1 className="text-inherit">{title}</h1>
+          </div>
+
+          <Popover
+            Description="This project is open source!"
+            Trigger={() => {
+              return (
+                <a
+                  className="text-white hover:text-primary-300 dark:hover:text-theme-link-hover"
+                  href="https://github.com/Jack-Dark/collection-tracker"
+                  target="_blank"
+                >
+                  <GitHubIcon />
+                </a>
+              );
+            }}
+          />
         </div>
 
         <QueryErrorResetBoundary>
