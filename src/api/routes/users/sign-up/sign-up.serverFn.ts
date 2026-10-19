@@ -14,4 +14,6 @@ export const signUpServerFn = createServerFn({
     await auth.api.signUpEmail({
       body: data,
     });
+
+    // TODO - ADD QUERY TO CREATE FIRST COLLECTION, CUSTOM FIELD, ITEM, AND CUSTOM FIELD VALUE
   });

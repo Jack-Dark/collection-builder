@@ -109,7 +109,7 @@ export const SignInForm = () => {
           <div className="flex items-center gap-1 text-sm">
             <p>Having trouble?</p>
             <Button onClick={showResetPasswordDialog} size="xs" variant="ghost">
-              {/* TODO - FEATURE: CREATE PASSWORD RESET PAGE */}
+              {/* TODO - REQUIRED FEATURE: CREATE PASSWORD RESET PAGE */}
               <span className="font-normal">Reset Password</span>
             </Button>
           </div>

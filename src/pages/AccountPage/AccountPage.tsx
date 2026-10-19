@@ -36,7 +36,7 @@ export const AccountPage = () => {
             className="justify-self-start"
             disabled
             onClick={() => {
-              // TODO - FEATURE: ADD USER NAME EDIT SUPPORT
+              // TODO - REQUIRED REQUIRED FEATURE: ADD USER NAME EDIT SUPPORT
             }}
             size="sm"
             text="Edit"
@@ -66,7 +66,7 @@ export const AccountPage = () => {
               className="justify-self-start"
               disabled
               onClick={() => {
-                // TODO - FEATURE: ADD USER EMAIL EDIT SUPPORT
+                // TODO - REQUIRED FEATURE: ADD USER EMAIL EDIT SUPPORT
               }}
               size="sm"
               text="Edit"
@@ -101,7 +101,7 @@ export const AccountPage = () => {
             className="justify-self-start"
             disabled
             onClick={() => {
-              // TODO - FEATURE: ADD USER ACCOUNT DELETION SUPPORT
+              // TODO - REQUIRED FEATURE: ADD USER ACCOUNT DELETION SUPPORT
             }}
             size="sm"
             text="Delete account"
