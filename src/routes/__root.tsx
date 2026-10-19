@@ -24,6 +24,7 @@ import { getThemeServerFn } from '#/lib/theme';
 
 import appCss from '../styles.css?url';
 
+// TODO - REQUIRED FEATURE CREATE HOMEPAGE
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
 }>()({
@@ -56,7 +57,8 @@ export const Route = createRootRouteWithContext<{
           name: 'viewport',
         },
         {
-          title: 'Collection Manager',
+          // TODO - REQUIRED FEATURE: UPDATE PAGE TITLE FOR EACH UNIQUE PAGE TYPE
+          title: 'Collection Tracker',
         },
       ],
     };

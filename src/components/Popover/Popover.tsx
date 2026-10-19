@@ -24,7 +24,11 @@ export const Popover = (props: PopoverPropsDef) => {
     <Trigger />
   ) : (
     <MuiPopover.Root>
-      <MuiPopover.Trigger delay={delay} openOnHover>
+      <MuiPopover.Trigger
+        className="flex items-center"
+        delay={delay}
+        openOnHover
+      >
         <Trigger />
       </MuiPopover.Trigger>
       <MuiPopover.Portal>
