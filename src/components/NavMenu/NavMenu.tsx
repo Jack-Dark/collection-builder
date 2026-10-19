@@ -71,7 +71,7 @@ export const NavMenu = (props: { items: NavMenuItem[] }) => {
                       {RenderItem ? (
                         <RenderItem />
                       ) : (
-                        <div className="flex items-center justify-center">
+                        <div className="flex items-center justify-center gap-2">
                           {Icon && <Icon />}
                           {label}
                         </div>
