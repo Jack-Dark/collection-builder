@@ -40,14 +40,28 @@ export const auth = betterAuth({
     sendOnSignIn: true,
     sendOnSignUp: true,
     sendVerificationEmail: async ({ url, user }) => {
-      await sendVerificationEmailServerFn({ data: { email: user.email, url } });
+      await sendVerificationEmailServerFn({
+        data: {
+          email: user.email,
+          name: user.name,
+          url,
+        },
+      });
     },
   },
-
   plugins: [
     // ! make sure this is the last plugin in the array
     tanstackStartCookies(),
   ],
+  user: {
+    changeEmail: {
+      enabled: true,
+      updateEmailWithoutVerification: true,
+    },
+    deleteUser: {
+      enabled: true,
+    },
+  },
   // socialProviders: {
   //   google: {
   //     clientId: '',

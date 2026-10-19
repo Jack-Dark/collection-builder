@@ -43,6 +43,9 @@ export const reactMutationKeys = {
   /** @deprecated */
   updateCustomFields: 'update-custom-fields',
   users: {
+    email: {
+      update: 'update-email',
+    },
     password: {
       requestReset: 'request-password-reset',
       reset: 'reset-password',
@@ -56,6 +59,7 @@ export const reactMutationKeys = {
     signUp: {
       viaEmail: 'sign-up-via-email',
     },
+    update: 'update-user',
   },
 } as const;
 
