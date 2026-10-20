@@ -17,7 +17,7 @@ export const deleteCollectionItemsByIdsDbQuery = async ({
   const userId = context.user.id;
 
   await db.transaction(async (tx) => {
-    const data = await tx
+    const imagesToDelete = await tx
       .delete(collectionItemsTable)
       .where(
         and(
@@ -27,7 +27,7 @@ export const deleteCollectionItemsByIdsDbQuery = async ({
       )
       .returning({ images: collectionItemsTable.images });
 
-    const publicIds = data.reduce<string[]>((acc, { images }) => {
+    const publicIds = imagesToDelete.reduce<string[]>((acc, { images }) => {
       return [...acc, ...images];
     }, []);
 

@@ -17,7 +17,7 @@ export const deleteCollectionDbQuery = async ({
   const userId = context.user.id;
 
   await db.transaction(async (tx) => {
-    const collectionItemsImages = await tx.query.collectionItems.findMany({
+    const imagesToDelete = await tx.query.collectionItems.findMany({
       columns: {
         images: true,
       },
@@ -28,7 +28,7 @@ export const deleteCollectionDbQuery = async ({
       },
     });
 
-    const publicIds = collectionItemsImages.reduce<string[]>(
+    const publicIdsToDelete = imagesToDelete.reduce<string[]>(
       (acc, { images }) => {
         return [...acc, ...images];
       },
@@ -45,6 +45,6 @@ export const deleteCollectionDbQuery = async ({
         ),
       );
 
-    await deleteCloudinaryAssetsByPublicIds(...publicIds);
+    await deleteCloudinaryAssetsByPublicIds(...publicIdsToDelete);
   });
 };
