@@ -1,3 +1,5 @@
+import { eq } from 'drizzle-orm';
+
 import type { InsertLinkCollectionsToCustomFieldsRecordDef } from '#/api/db-tables-schema.types';
 import type { DbQueryArgsDef } from '#/auth/auth-middleware.types';
 
@@ -16,12 +18,30 @@ export const createCollectionDbQuery = async ({
   const { records } = data;
 
   if (!records || records.length === 0) {
-    return [];
+    return;
   }
 
   const userId = context.user.id;
 
-  await db.transaction(async (tx) => {
+  return await db.transaction(async (tx) => {
+    // ! temporarily cap the maximum allowed collections to avoid service fees
+    const totalCollections = await tx.$count(
+      collectionsTable,
+      eq(collectionsTable.userId, userId),
+    );
+
+    const maxAllowed = 20;
+    const numAdditionalCollectionsAllowed = Math.max(
+      0,
+      maxAllowed - totalCollections,
+    );
+
+    if (!numAdditionalCollectionsAllowed) {
+      return {
+        warning: `You have reached the maximum number of collections currently allowed for free (${maxAllowed}).`,
+      };
+    }
+
     for (const { customFields, ...record } of records) {
       // ? Create new collection records
       const [newCollectionRecord] = await tx

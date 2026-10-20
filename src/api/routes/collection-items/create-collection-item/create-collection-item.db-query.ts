@@ -1,3 +1,5 @@
+import { eq } from 'drizzle-orm';
+
 import type { InsertLinkCollectionItemsToCustomFieldValuesRecordDef } from '#/api/db-tables-schema.types';
 import type { CloudinaryTagsItem } from '#/lib/cloudinary';
 
@@ -25,21 +27,42 @@ export const createCollectionItemsDbQuery = async ({
 
   const userId = context.user.id;
 
-  const customFieldValuesIndexedToRecord: CustomFieldValuesByFieldId[] = [];
+  return await db.transaction(async (tx) => {
+    // ! temporarily cap the maximum allowed collections to avoid service fees
+    const totalCollections = await tx.$count(
+      collectionItemsTable,
+      eq(collectionItemsTable.userId, userId),
+    );
 
-  const formattedCollectionItemRecords = records.map(
-    ({ customFieldValues, ...record }, index) => {
-      customFieldValuesIndexedToRecord.push(customFieldValues);
+    const maxAllowed = 77;
+    const numAdditionalCollectionsAllowed = Math.max(
+      0,
+      maxAllowed - totalCollections,
+    );
+    const limitReached = numAdditionalCollectionsAllowed < records.length;
 
+    if (!numAdditionalCollectionsAllowed) {
       return {
-        ...record,
-        images: publicIds[index],
-        userId,
-      } satisfies InsertCollectionItemRecordDef;
-    },
-  );
+        warning: `You have reached the maximum number of collections currently allowed for free (${maxAllowed}).`,
+      };
+    }
 
-  await db.transaction(async (tx) => {
+    const recordsToCreate = records.slice(0, numAdditionalCollectionsAllowed);
+
+    const customFieldValuesIndexedToRecord: CustomFieldValuesByFieldId[] = [];
+
+    const formattedCollectionItemRecords = recordsToCreate.map(
+      ({ customFieldValues, ...record }, index) => {
+        customFieldValuesIndexedToRecord.push(customFieldValues);
+
+        return {
+          ...record,
+          images: publicIds[index],
+          userId,
+        } satisfies InsertCollectionItemRecordDef;
+      },
+    );
+
     // ? create new collection items
     const newCollectionItemRecords = await tx
       .insert(collectionItemsTable)
@@ -97,5 +120,11 @@ export const createCollectionItemsDbQuery = async ({
     );
 
     await addCloudinaryTagsToPublicIds(...cloudinaryTagItems);
+
+    if (limitReached) {
+      return {
+        warning: `You have been restricted to the maximum number of collections currently allowed for free (${maxAllowed}).`,
+      };
+    }
   });
 };

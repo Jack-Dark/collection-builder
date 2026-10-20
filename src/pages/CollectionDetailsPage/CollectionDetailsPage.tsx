@@ -17,6 +17,7 @@ import { useInvalidateGetFiltersForCollection } from '#/api/routes/collection-it
 import { useUpdateCollectionItems } from '#/api/routes/collection-items/update-collection-item-by-id/update-collection-item-by-id.react-query';
 import { useDeleteUnusedCustomFieldValues } from '#/api/routes/custom-field-values/delete-unused-custom-field-values/delete-unused-custom-field-values.react-query';
 import { useSpinner } from '#/components/FullPageLoadingSpinner/useSpinner';
+import { useNotifications } from '#/components/Notifications/useNotifications';
 import { PageWrapper } from '#/components/PageWrapper';
 import { Route as CollectionDetailsRoute } from '#/routes/_protected/collections/$id';
 
@@ -31,6 +32,7 @@ export const CollectionDetailsPage: RouteComponent = () => {
   const collectionId = Number(id);
 
   const { onInterceptRequest } = useSpinner();
+  const { notifyWarning } = useNotifications();
 
   const invalidateGetCollectionDetailsById =
     useInvalidateGetCollectionDetailsById();
@@ -42,6 +44,11 @@ export const CollectionDetailsPage: RouteComponent = () => {
     useInvalidateGetFiltersForCollection();
 
   const { onCreateCollectionItem } = useCreateCollectionItems({
+    onSuccess: (response) => {
+      if (response?.warning) {
+        notifyWarning(response.warning);
+      }
+    },
     showLoading: true,
   });
 

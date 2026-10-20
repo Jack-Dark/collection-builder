@@ -68,7 +68,7 @@ export const useCollectionDetailsSettingsProps = () => {
         disabled: true,
         key: 'download-data',
         Label: (
-          // TODO - FEATURE REQUEST: ADD DOWNLOAD DATA SUPPORT
+          // TODO - FUTURE FEATURE: ADD DOWNLOAD DATA SUPPORT
           <FormatLabelWithIcon Icon={DownloadIcon}>
             <p>Download collection into CSV</p>
             <p>(coming soon)</p>
@@ -79,7 +79,7 @@ export const useCollectionDetailsSettingsProps = () => {
         disabled: true,
         key: 'upload-data',
         Label: (
-          // TODO - FEATURE REQUEST: ADD UPLOAD DATA SUPPORT
+          // TODO - FUTURE FEATURE: ADD UPLOAD DATA SUPPORT
           <FormatLabelWithIcon Icon={UploadIcon}>
             <p>Upload CSV into collection</p>
             <p>(coming soon)</p>

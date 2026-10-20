@@ -16,6 +16,7 @@ import {
 } from '#/api/routes/collections/get-paginated-collections/get-paginated-collections.react-query';
 import { useUpdateCollectionById } from '#/api/routes/collections/update-collection-by-id/update-collection-by-id.react-query';
 import { useSpinner } from '#/components/FullPageLoadingSpinner/useSpinner';
+import { useNotifications } from '#/components/Notifications/useNotifications';
 import { PageWrapper } from '#/components/PageWrapper';
 import { Route as CollectionsRoute } from '#/routes/_protected/collections';
 
@@ -35,6 +36,7 @@ export const CollectionsListPage: RouteComponent = () => {
   });
 
   const { onInterceptRequest } = useSpinner();
+  const { notifyWarning } = useNotifications();
 
   const invalidateGetPaginatedCollections =
     useInvalidateGetPaginatedCollections();
@@ -44,7 +46,13 @@ export const CollectionsListPage: RouteComponent = () => {
 
   const invalidateGetNavMenuCollections = useInvalidateGetNavMenuCollections();
 
-  const { onCreateCollection } = useCreateCollection();
+  const { onCreateCollection } = useCreateCollection({
+    onSuccess: (response) => {
+      if (response?.warning) {
+        notifyWarning(response.warning);
+      }
+    },
+  });
 
   const { onUpdateCollectionById } = useUpdateCollectionById();
 
