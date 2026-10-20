@@ -1,17 +1,31 @@
-import { eq } from 'drizzle-orm';
-
+import type { TableTransactionDef } from '#/api/db-tables-schema.types';
 import type { DbQueryArgsDef } from '#/auth/auth-middleware.types';
-
-import { db } from '#/api/db';
-import { usersTable } from '#/api/db-tables-schema';
 
 import type { DeleteUserRequestArgsDef } from './delete-user.types';
 
-export const deleteUserDbQuery = async ({
+export const getUserImagesDbQuery = async <
+  TTransaction extends TableTransactionDef,
+>({
   context,
-  data,
-}: DbQueryArgsDef<DeleteUserRequestArgsDef>) => {
+  tx,
+}: DbQueryArgsDef<DeleteUserRequestArgsDef> & { tx: TTransaction }) => {
   const userId = context.user.id;
 
-  await db.delete(usersTable).where(eq(usersTable.id, userId));
+  const imagesToDelete = await tx.query.collectionItems.findMany({
+    columns: {
+      images: true,
+    },
+    where: {
+      userId,
+    },
+  });
+
+  const publicIdsToDelete = imagesToDelete.reduce<string[]>(
+    (acc, { images }) => {
+      return [...acc, ...images];
+    },
+    [],
+  );
+
+  return publicIdsToDelete;
 };
