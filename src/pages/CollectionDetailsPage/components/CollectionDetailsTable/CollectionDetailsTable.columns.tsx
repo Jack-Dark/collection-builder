@@ -112,7 +112,6 @@ export const getCollectionItemsTableColumns = (
         );
       },
       header: 'Added',
-      // size: 200,
     }),
     columnHelper.accessor('id', {
       cell: ({ row }) => {
