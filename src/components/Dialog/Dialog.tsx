@@ -60,7 +60,7 @@ export const Dialog = (props: DialogPropsDef) => {
 
               {!hideClose && (
                 <MuiDialog.Close
-                  className="cursor-pointer hover:text-theme-alert p-2"
+                  className="cursor-pointer hover:text-theme-t-alert p-2"
                   disabled={disableOnClose}
                   onClick={onClose}
                 >

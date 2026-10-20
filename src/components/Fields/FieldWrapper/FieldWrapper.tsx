@@ -52,7 +52,7 @@ export const FieldWrapper = (props: PropsWithChildren<FieldWrapperProps>) => {
       {Label && !hideLabel && (
         <Field.Label className="cursor-pointer">
           {isLabelString ? Label : <Label />}
-          {required ? <span className="text-red-600">*</span> : undefined}
+          {required ? <span className="text-theme-t-alert">*</span> : undefined}
         </Field.Label>
       )}
 
@@ -63,7 +63,9 @@ export const FieldWrapper = (props: PropsWithChildren<FieldWrapperProps>) => {
       {/* Groups individual items in a checkbox group or radio group with a label and description. Renders a <div> element. */}
       {/* <Field.Item /> */}
 
-      {errorMessage && <p className="text-red-500 text-xs">{errorMessage}</p>}
+      {errorMessage && (
+        <p className="text-theme-t-alert text-xs">{errorMessage}</p>
+      )}
     </Field.Root>
   );
 };

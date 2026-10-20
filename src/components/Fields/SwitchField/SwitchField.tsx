@@ -27,7 +27,7 @@ export const SwitchField = (props: SwitchFieldPropsDef) => {
     return Label ? (
       <Field.Label className="cursor-pointer">
         {typeof Label === 'string' ? Label : <Label />}
-        {required ? <span className="text-theme-alert">*</span> : undefined}
+        {required ? <span className="text-theme-t-alert">*</span> : undefined}
       </Field.Label>
     ) : null;
   }, [Label, required]);

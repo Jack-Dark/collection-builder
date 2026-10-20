@@ -260,7 +260,7 @@ export const CollectionsListCustomFieldsCell = (props: {
 
                     <Button
                       aria-label="Delete"
-                      className="text-theme-t2 hover:text-theme-alert-hover cursor-pointer ml-auto px-2 py-1"
+                      className="text-theme-t2 hover:text-theme-t-alert-hover cursor-pointer ml-auto px-2 py-1"
                       Icon={() => {
                         return <DeleteIcon fontSize="inherit" />;
                       }}

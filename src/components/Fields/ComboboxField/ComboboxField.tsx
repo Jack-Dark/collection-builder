@@ -429,7 +429,7 @@ const SortableChip = <TValue extends TValueRecordDef>(props: {
       <RenderChip item={item} />
       <Combobox.ChipRemove
         aria-label={`Remove ${label}`}
-        className="text-theme-t2 hover:text-theme-alert-hover cursor-pointer ml-auto p-0.5 leading-0"
+        className="text-theme-t2 hover:text-theme-t-alert-hover cursor-pointer ml-auto p-0.5 leading-0"
         onClick={() => {
           onRemoveChip?.(item, index);
         }}
