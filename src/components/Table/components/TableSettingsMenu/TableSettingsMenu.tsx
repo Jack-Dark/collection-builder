@@ -21,7 +21,7 @@ export const TableSettingsMenu = (props: TableSettingsMenuPropsDef) => {
     <div
       className={twJoin(
         'size-full flex items-center justify-center',
-        hasActiveItems ? 'text-theme-link-hover' : 'text-inherit',
+        hasActiveItems ? 'text-theme-link' : 'text-inherit',
         'hover:text-theme-link-hover',
       )}
     >
@@ -31,9 +31,15 @@ export const TableSettingsMenu = (props: TableSettingsMenuPropsDef) => {
             <Popover
               aria-label="Table settings"
               Description="Table settings"
+              isTriggerButton
               Trigger={() => {
                 return (
-                  <SettingsIcon className="cursor-pointer" fontSize="inherit" />
+                  <div className="flex items-center justify-between size-full p-1">
+                    <SettingsIcon
+                      className="cursor-pointer"
+                      fontSize="inherit"
+                    />
+                  </div>
                 );
               }}
             />
