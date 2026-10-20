@@ -17,15 +17,17 @@ export const CollectionsListNameCell = ({
   rowIndex: number;
   value: string;
 }) => {
-  const { getIsEditingRowId } = useEditingCollectionsRowIds();
+  const { editingRowIds, getIsEditingRowId } = useEditingCollectionsRowIds();
   const isEditingRow = getIsEditingRowId(rowId);
+
+  const isFirstEditRow = editingRowIds[0] === rowId;
 
   return (
     <form.Field name={`records[${rowIndex}].name`}>
       {(field) => {
         return isEditingRow ? (
           <InputField
-            autoFocus
+            autoFocus={isFirstEditRow}
             error={field.errors}
             hideLabel
             name={field.name}
