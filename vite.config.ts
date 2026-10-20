@@ -20,6 +20,9 @@ const dirname =
 // More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
 const config = defineConfig(({ mode }) => {
   return {
+    define: {
+      'process.env.NODE_ENV': JSON.stringify(mode),
+    },
     plugins: [
       devtools(),
       tsconfigPaths({

@@ -102,19 +102,21 @@ function RootComponent() {
         <RootDocument>
           <Outlet />
         </RootDocument>
-        <TanStackDevtools
-          plugins={[
-            formDevtoolsPlugin(),
-            {
-              name: 'TanStack Query',
-              render: <ReactQueryDevtoolsPanel />,
-            },
-            {
-              name: 'TanStack Router',
-              render: <TanStackRouterDevtoolsPanel />,
-            },
-          ]}
-        />
+        {import.meta.env.DEV && (
+          <TanStackDevtools
+            plugins={[
+              formDevtoolsPlugin(),
+              {
+                name: 'TanStack Query',
+                render: <ReactQueryDevtoolsPanel />,
+              },
+              {
+                name: 'TanStack Router',
+                render: <TanStackRouterDevtoolsPanel />,
+              },
+            ]}
+          />
+        )}
       </QueryClientProvider>
     </StrictMode>
   );
