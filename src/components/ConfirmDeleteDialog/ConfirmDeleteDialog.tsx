@@ -2,11 +2,13 @@ import type { ConfirmDeleteDialogPropsDef } from './ConfirmDeleteDialog.types';
 
 import { Button } from '../Button';
 import { Dialog } from '../Dialog';
+import { FormSubmitButton } from '../FormSubmitButton';
 import { useSpinner } from '../FullPageLoadingSpinner/useSpinner';
 
 export const ConfirmDeleteDialog = (props: ConfirmDeleteDialogPropsDef) => {
   const {
     children = 'Are you sure you want to delete this?',
+    form,
     hideDialog,
     onConfirm,
   } = props;
@@ -15,7 +17,7 @@ export const ConfirmDeleteDialog = (props: ConfirmDeleteDialogPropsDef) => {
 
   const handleConfirm = async () => {
     await onInterceptProcessingRequest(async () => {
-      await onConfirm();
+      await onConfirm?.();
       hideDialog();
     });
   };
@@ -32,12 +34,16 @@ export const ConfirmDeleteDialog = (props: ConfirmDeleteDialogPropsDef) => {
               text="Cancel"
               variant="mono"
             />
-            <Button
-              onClick={handleConfirm}
-              processing={processing}
-              text="Delete"
-              variant="alert"
-            />
+            {form ? (
+              <FormSubmitButton form={form} text="Delete" variant="alert" />
+            ) : (
+              <Button
+                onClick={handleConfirm}
+                processing={processing}
+                text="Delete"
+                variant="alert"
+              />
+            )}
           </>
         );
       }}

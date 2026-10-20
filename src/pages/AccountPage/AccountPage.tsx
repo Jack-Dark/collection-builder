@@ -18,6 +18,7 @@ import { useUserContext } from '#/hooks/use-user-context';
 import { useValidationFormOptions } from '#/hooks/use-validation-form-options';
 import { Route as CollectionRoute } from '#/routes/_protected/collections';
 
+import { DeleteAccountButton } from './components/DeleteAccountButton';
 import { UpdatePasswordDialog } from './components/UpdatePasswordDialog';
 
 export const AccountPage = () => {
@@ -55,6 +56,7 @@ export const AccountPage = () => {
 
   const form = useForm({
     ...validationFormOptions,
+    formId: 'update-user',
     onSubmit: async ({ value }) => {
       const isUpdatingEmail = value.email !== user?.email;
       if (isUpdatingEmail) {
@@ -222,19 +224,11 @@ export const AccountPage = () => {
         onClick={showUpdatePasswordDialog}
         size="sm"
         text="Update Password"
+        variant="secondary"
       />
 
       <div className="pt-10">
-        <Button
-          className="justify-self-start"
-          disabled
-          onClick={() => {
-            // TODO - REQUIRED FEATURE: ADD USER ACCOUNT DELETION SUPPORT
-          }}
-          size="sm"
-          text="Delete account"
-          variant="alert"
-        />
+        <DeleteAccountButton />
       </div>
     </PageWrapper>
   ) : null;

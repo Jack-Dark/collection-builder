@@ -43,6 +43,7 @@ export const reactMutationKeys = {
   /** @deprecated */
   updateCustomFields: 'update-custom-fields',
   users: {
+    delete: 'delete-user',
     email: {
       update: 'update-email',
     },
