@@ -14,6 +14,7 @@ import { FieldWrapper } from '../FieldWrapper';
 
 export const CheckboxField = (props: CheckboxFieldProps) => {
   const {
+    'aria-label': ariaLabel,
     checked,
     disabled,
     indeterminate,
@@ -46,6 +47,7 @@ export const CheckboxField = (props: CheckboxFieldProps) => {
         {labelPosition === 'left' && <LabelComponent />}
 
         <CheckboxBase
+          aria-label={ariaLabel}
           checked={checked}
           disabled={disabled}
           indeterminate={indeterminate}
@@ -60,10 +62,15 @@ export const CheckboxField = (props: CheckboxFieldProps) => {
 };
 
 export const CheckboxBase = (props: CheckboxBasePropsDef) => {
-  const { disabled, indeterminate, ...rootProps } = props;
+  const {
+    'aria-label': ariaLabel,
+    disabled,
+    indeterminate,
+    ...rootProps
+  } = props;
 
   return (
-    <Checkbox.Root {...rootProps}>
+    <Checkbox.Root aria-label={ariaLabel} {...rootProps}>
       <Checkbox.Indicator
         keepMounted
         render={(_props, { checked }) => {
@@ -71,6 +78,7 @@ export const CheckboxBase = (props: CheckboxBasePropsDef) => {
             <>
               {checked ? (
                 <CheckBoxIcon
+                  aria-label={`${ariaLabel} selected`}
                   className={
                     disabled
                       ? 'text-theme-disabled'
@@ -79,6 +87,7 @@ export const CheckboxBase = (props: CheckboxBasePropsDef) => {
                 />
               ) : indeterminate ? (
                 <IndeterminateCheckBoxIcon
+                  aria-label={`${ariaLabel} indeterminate`}
                   className={
                     disabled
                       ? 'text-theme-disabled'
@@ -87,6 +96,7 @@ export const CheckboxBase = (props: CheckboxBasePropsDef) => {
                 />
               ) : (
                 <CheckBoxOutlineBlankIcon
+                  aria-label={`${ariaLabel} unselected`}
                   className={
                     disabled
                       ? 'text-theme-disabled'

@@ -35,6 +35,7 @@ export const TablePagination = (props: {
     <div className="flex gap-4 items-center justify-end">
       {pagination.limit && (
         <SelectField
+          aria-label="Items per page"
           idProperty="value"
           items={limitItems}
           keyPrefix="limit"
@@ -55,6 +56,7 @@ export const TablePagination = (props: {
 
       {pagination.page && (
         <SelectField
+          aria-label="Page number"
           idProperty="value"
           items={pageItems}
           keyPrefix="page"

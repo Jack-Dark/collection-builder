@@ -5,6 +5,7 @@ import type { PopoverPropsDef } from './Popover.types';
 
 export const Popover = (props: PopoverPropsDef) => {
   const {
+    'aria-label': ariaLabel,
     delay = 100,
     Description = '',
     disabled,
@@ -26,6 +27,7 @@ export const Popover = (props: PopoverPropsDef) => {
   ) : (
     <MuiPopover.Root>
       <MuiPopover.Trigger
+        aria-label={ariaLabel}
         className="flex items-center"
         delay={delay}
         nativeButton={!isTriggerButton}

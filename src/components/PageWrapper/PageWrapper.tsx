@@ -29,10 +29,12 @@ export const PageWrapper = (props: PageWrapperPropsDef) => {
 
           <div className="flex gap-4 px-10">
             <Popover
+              aria-label="Buy me a coffee"
               Description="Buy me a coffee!"
               Trigger={() => {
                 return (
                   <a
+                    aria-label="Buy me a coffee"
                     className="text-white hover:text-primary-300 dark:hover:text-theme-link-hover"
                     href="https://buymeacoffee.com/jack.dark"
                     target="_blank"
@@ -44,10 +46,12 @@ export const PageWrapper = (props: PageWrapperPropsDef) => {
             />
 
             <Popover
+              aria-label="View GitHub"
               Description="This project is open source!"
               Trigger={() => {
                 return (
                   <a
+                    aria-label="View GitHub"
                     className="text-white hover:text-primary-300 dark:hover:text-theme-link-hover"
                     href={githubUrl.repo}
                     target="_blank"

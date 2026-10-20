@@ -14,6 +14,7 @@ export const SelectField = <TItem extends DefaultSelectItemDef>(
   props: SelectFieldPropsDef<TItem>,
 ) => {
   const {
+    'aria-label': ariaLabel,
     className,
     description,
     disabled,
@@ -91,7 +92,10 @@ export const SelectField = <TItem extends DefaultSelectItemDef>(
         }}
         value={value}
       >
-        <Select.Trigger className="grid grid-cols-[1fr_auto] gap-1 md:gap-2 p-1.5 bg-theme-surface-1 dark:bg-theme-surface-2 dialog:bg-theme-surface-1 border rounded-xs border-theme-divider-1 dark:border-theme-divider-3 cursor-pointer">
+        <Select.Trigger
+          aria-label={ariaLabel}
+          className="grid grid-cols-[1fr_auto] gap-1 md:gap-2 p-1.5 bg-theme-surface-1 dark:bg-theme-surface-2 dialog:bg-theme-surface-1 border rounded-xs border-theme-divider-1 dark:border-theme-divider-3 cursor-pointer"
+        >
           <Select.Value
             className="grid justify-start"
             placeholder={placeholder}

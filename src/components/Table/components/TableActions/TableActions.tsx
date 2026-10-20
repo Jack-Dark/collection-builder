@@ -35,6 +35,7 @@ export const TableActions = <TData extends RowData>(
       {search && <Search {...search} />}
       {sort ? (
         <SelectField
+          aria-label="Sort table"
           items={sort.items}
           onValueChange={sort.onChange}
           RenderValue={({ item }) => {

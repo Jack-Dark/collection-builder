@@ -126,7 +126,7 @@ export const RootDocument = ({
   const { theme } = Route.useLoaderData();
 
   return (
-    <html data-theme={theme} suppressHydrationWarning>
+    <html data-theme={theme} lang="en" suppressHydrationWarning>
       <head>
         <HeadContent />
       </head>

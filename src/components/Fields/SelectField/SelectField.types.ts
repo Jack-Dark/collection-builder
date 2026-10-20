@@ -1,4 +1,8 @@
-import type { SelectRootProps, SelectValueProps } from '@base-ui/react';
+import type {
+  SelectRootProps,
+  SelectTriggerProps,
+  SelectValueProps,
+} from '@base-ui/react';
 import type { HTMLAttributes, JSXElementConstructor } from 'react';
 
 import type { FieldWrapperProps } from '../FieldWrapper/FieldWrapper.types';
@@ -26,4 +30,5 @@ export type SelectFieldPropsDef<TItem extends DefaultSelectItemDef> = Omit<
     HTMLAttributes<HTMLElement> & { item: TItem }
   >;
 } & FieldWrapperProps &
-  Pick<SelectValueProps, 'placeholder'>;
+  Pick<SelectValueProps, 'placeholder'> &
+  Pick<SelectTriggerProps, 'aria-label'>;

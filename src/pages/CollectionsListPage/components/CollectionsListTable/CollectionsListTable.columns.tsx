@@ -61,6 +61,7 @@ export const getCollectionsListTableColumns = (
           <div className="flex gap-2 items-center">
             <span>Custom Fields</span>
             <Popover
+              aria-label="Info icon"
               Description="
               Each custom field will be a unique column on that
               collection's table."

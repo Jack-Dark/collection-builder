@@ -14,6 +14,7 @@ export const MoreMenu = (props: MenuPropsDef) => {
   return (
     <Menu.Root disabled={disabled} open={open}>
       <Menu.Trigger
+        aria-label="Actions menu"
         className={twJoin(
           `flex items-center justify-center select-none`,
           getCursorClassName(disabled),

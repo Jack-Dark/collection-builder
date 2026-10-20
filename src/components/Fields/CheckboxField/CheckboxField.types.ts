@@ -4,7 +4,7 @@ import type { FieldWrapperProps } from '../FieldWrapper/FieldWrapper.types';
 
 export type CheckboxFieldProps = Pick<
   CheckboxRootProps,
-  'checked' | 'onCheckedChange' | 'indeterminate' | 'value'
+  'checked' | 'onCheckedChange' | 'indeterminate' | 'value' | 'aria-label'
 > &
   FieldWrapperProps & {
     labelPosition?: 'left' | 'right';

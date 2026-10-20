@@ -11,4 +11,4 @@ export type PopoverPropsDef = {
   isTriggerButton?: boolean;
   side?: PopoverPositionerProps['side'];
   Trigger?: JSXElementConstructor<{}>;
-} & Pick<PopoverTriggerProps, 'delay'>;
+} & Pick<PopoverTriggerProps, 'delay' | 'aria-label'>;

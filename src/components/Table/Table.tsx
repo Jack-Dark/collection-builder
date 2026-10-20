@@ -162,6 +162,9 @@ export const Table = <TData extends RowData>({
                             header.getContext(),
                           );
 
+                          const checked = table.getIsAllRowsSelected();
+                          const indeterminate = table.getIsSomeRowsSelected();
+
                           return (
                             <th
                               className={`text-left px-2 py-1 ${tableCellClasses}`}
@@ -172,9 +175,14 @@ export const Table = <TData extends RowData>({
                               {showSelectionCheckbox ? (
                                 <div className="flex items-center gap-2">
                                   <CheckboxField
-                                    checked={table.getIsAllRowsSelected()}
+                                    aria-label={
+                                      checked
+                                        ? 'Unselect all rows'
+                                        : 'Select all rows'
+                                    }
+                                    checked={checked}
                                     disabled={disableRowSelection}
-                                    indeterminate={table.getIsSomeRowsSelected()}
+                                    indeterminate={indeterminate}
                                     onCheckedChange={(_checked, { event }) => {
                                       const toggleAllRowsSelected =
                                         table.getToggleAllRowsSelectedHandler();
@@ -275,6 +283,9 @@ export const Table = <TData extends RowData>({
                               {showSelectionCheckbox ? (
                                 <div className="relative h-full flex items-center gap-2">
                                   <CheckboxField
+                                    aria-label={
+                                      checked ? 'Unselect row' : 'Select row'
+                                    }
                                     checked={checked}
                                     disabled={disabled}
                                     onCheckedChange={onCheckedChange}
