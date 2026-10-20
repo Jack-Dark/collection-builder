@@ -35,6 +35,7 @@ export const ResetPasswordPage: RouteComponent = () => {
 
   const form = useForm({
     ...validationFormOptions,
+    formId: 'reset-password',
     onSubmit: async ({ value }) => {
       await onResetPassword(value);
 

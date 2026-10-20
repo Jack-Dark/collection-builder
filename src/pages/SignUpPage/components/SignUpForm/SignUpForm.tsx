@@ -32,6 +32,7 @@ export const SignUpForm: RouteComponent = () => {
 
   const form = useForm({
     ...validationFormOptions,
+    formId: 'sign-up',
     onSubmit: async ({ value }) => {
       await onSignUp(value);
     },

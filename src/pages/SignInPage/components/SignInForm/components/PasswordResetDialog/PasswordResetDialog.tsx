@@ -29,6 +29,7 @@ export const ResetPasswordDialog = (props: ResetPasswordDialogPropsDef) => {
 
   const form = useForm({
     ...validationFormOptions,
+    formId: 'request-password-reset',
     onSubmit: async ({ value }) => {
       await onRequestPasswordReset(value);
       hideDialog();
