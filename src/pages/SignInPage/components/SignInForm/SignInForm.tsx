@@ -2,6 +2,8 @@ import { useForm } from '@tanstack/react-form';
 import { useRouter } from '@tanstack/react-router';
 import { useLayoutEffect } from 'react';
 
+import type { RouterPath } from '#/types';
+
 import { useInvalidateGetNavMenuCollections } from '#/api/routes/collections/get-nav-menu-collections/get-nav-menu-collections.react-query';
 import { useSignIn } from '#/api/routes/users/sign-in/sign-in.react-query';
 import { signInRequestSchema } from '#/api/routes/users/sign-in/sign-in.schema';
@@ -10,13 +12,13 @@ import { useDialog } from '#/components/Dialog/hooks/useDialog';
 import { InputField } from '#/components/Fields/InputField';
 import { FormSubmitButton } from '#/components/FormSubmitButton';
 import { useValidationFormOptions } from '#/hooks/use-validation-form-options';
-import { Route } from '#/routes/_unprotected/sign-in';
+import { Route as SignInRoute } from '#/routes/_unprotected/sign-in';
 
 import { ResetPasswordDialog } from './components/PasswordResetDialog';
 
 export const SignInForm = () => {
   const router = useRouter();
-  const search = Route.useSearch();
+  const searchQueries = SignInRoute.useSearch();
 
   const invalidateGetNavMenuCollections = useInvalidateGetNavMenuCollections();
 
@@ -31,7 +33,9 @@ export const SignInForm = () => {
   const { onSignIn } = useSignIn({
     onSuccess: () => {
       invalidateGetNavMenuCollections();
-      router.navigate({ to: search.redirect || '/collections' });
+      router.navigate({
+        to: searchQueries.redirect || ('/collections' satisfies RouterPath),
+      });
     },
   });
 
@@ -58,10 +62,10 @@ export const SignInForm = () => {
   }, []);
 
   useLayoutEffect(() => {
-    if (search.resetPassword) {
+    if (searchQueries.resetPassword) {
       showResetPasswordDialog();
     }
-  }, [search.resetPassword]);
+  }, [searchQueries.resetPassword]);
 
   return (
     <form
