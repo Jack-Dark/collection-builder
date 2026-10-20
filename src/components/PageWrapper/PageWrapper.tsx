@@ -29,7 +29,7 @@ export const PageWrapper = (props: PageWrapperPropsDef) => {
 
           <div className="flex gap-4 px-10">
             <Popover
-              Description="Buy us a coffee!"
+              Description="Buy me a coffee!"
               Trigger={() => {
                 return (
                   <a
