@@ -1,5 +1,4 @@
 import { useForm } from '@tanstack/react-form';
-import { useNavigate } from '@tanstack/react-router';
 
 import type { HideDialog } from '#/components/Dialog/hooks/useDialog';
 
@@ -31,8 +30,6 @@ export const DeleteAccountButton = () => {
 const DeleteAccountDialog = (props: { hideDialog: HideDialog }) => {
   const { hideDialog } = props;
 
-  const navigate = useNavigate();
-
   const { notify } = useNotifications();
 
   const validationFormOptions = useValidationFormOptions({
@@ -45,7 +42,6 @@ const DeleteAccountDialog = (props: { hideDialog: HideDialog }) => {
   const { onDeleteUser } = useDeleteUser({
     onSuccess: ({ message }) => {
       notify(message);
-      navigate({ to: '/' });
     },
   });
 

@@ -1,5 +1,6 @@
 import { createMiddleware, createServerFn } from '@tanstack/react-start';
 import { getRequestHeaders } from '@tanstack/react-start/server';
+import { isAPIError } from 'better-auth/api';
 import { ReasonPhrases } from 'http-status-codes';
 
 import type { AuthContextDef } from './auth-middleware.types';
@@ -19,6 +20,7 @@ export const getSession = createServerFn({ method: 'GET' }).handler(
 export const ensureSession = createServerFn({ method: 'GET' }).handler(
   async () => {
     const headers = getRequestHeaders();
+
     const session = await auth.api.getSession({ headers });
 
     if (!session) {
@@ -91,6 +93,10 @@ export const errorHandlingMiddleware = createMiddleware({
     return await next();
   } catch (error) {
     console.error('Error captured by middleware:', error);
+
+    if (error instanceof Error || isAPIError(error)) {
+      throw new Error(error.message);
+    }
 
     throw error;
   }

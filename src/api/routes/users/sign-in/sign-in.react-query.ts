@@ -2,6 +2,7 @@ import type { GenericMutateQueryProps } from '#/api/react-query-hooks/use-generi
 
 import { reactMutationKeys } from '#/api/react-query-hooks/react-query.constants';
 import { useGenericMutateQuery } from '#/api/react-query-hooks/use-generic-mutate-query';
+import { useInvalidateEverything } from '#/api/react-query-hooks/use-invalidate-everything';
 
 import type { SignInRequestArgsDef, SignInResponseDef } from './sign-in.types';
 
@@ -14,13 +15,20 @@ export const useSignIn = <TTransformedData = SignInResponseDef>(
     TTransformedData
   >,
 ) => {
+  const invalidateEverything = useInvalidateEverything();
+
   const { onMutate: onSignIn, ...rest } = useGenericMutateQuery({
-    fallbackErrorMessage: 'Unable to sign in.',
+    fallbackErrorMessage: 'Unable to sign in. Please try again.',
     mutationFn: (data) => {
       return signInServerFn({ data });
     },
     mutationKey: [reactMutationKeys.users.signIn.viaEmail],
     ...props,
+    onSuccess: async (...args) => {
+      await invalidateEverything();
+
+      await props?.onSuccess?.(...args);
+    },
   });
 
   return { ...rest, onSignIn };

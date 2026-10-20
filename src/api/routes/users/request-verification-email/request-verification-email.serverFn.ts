@@ -6,6 +6,7 @@ import {
   authApiRouteMiddleware,
   errorHandlingMiddleware,
 } from '#/auth/auth-middleware';
+import { configs } from '#/configs';
 
 import { requestVerificationEmailRequestSchema } from './request-verification-email.schema';
 
@@ -17,9 +18,15 @@ export const requestVerificationEmailServerFn = createServerFn({
   .handler(async ({ data }) => {
     const headers = getRequestHeaders();
 
+    const callbackURL = `${configs.siteUrl}/collections`;
+    console.log('🚀 ~ requestVerificationEmail callbackURL:', callbackURL);
+
     await auth.api.sendVerificationEmail({
       headers,
-      body: data,
+      body: {
+        ...data,
+        callbackURL,
+      },
     });
 
     return {

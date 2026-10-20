@@ -3,7 +3,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import type { ReactQueryKeysDef } from '../../use-generic-fetch-query.types';
 
 export const getUseInvalidateQuery = <TRequestArgs extends Record<string, any>>(
-  groupName: ReactQueryKeysDef,
+  groupName: ReactQueryKeysDef | undefined,
 ) => {
   return () => {
     const queryClient = useQueryClient();

@@ -159,6 +159,8 @@ export const CustomFieldValueCombobox = <TField extends AnyFieldApi>({
                 e.preventDefault();
                 e.stopPropagation();
 
+                // TODO - BUG: NEWLY CREATED COLLECTIONS NOT DELETING
+
                 setCustomFieldValueToDelete(item);
                 showDeleteCustomFieldValueDialog();
               }}

@@ -4,11 +4,11 @@ import type {
 } from '@base-ui/react';
 import type { JSXElementConstructor } from 'react';
 
-export interface PopoverPropsDef {
-  delay?: PopoverTriggerProps['delay'];
+export type PopoverPropsDef = {
   Description: string | JSXElementConstructor<{}>;
   /** If `true`, returns the `Trigger` without the `Popover`. */
   disabled?: boolean;
+  isTriggerButton?: boolean;
   side?: PopoverPositionerProps['side'];
   Trigger?: JSXElementConstructor<{}>;
-}
+} & Pick<PopoverTriggerProps, 'delay'>;

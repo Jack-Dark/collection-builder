@@ -1,3 +1,5 @@
+import { PageWrapper } from '#/components/PageWrapper';
+
 export const HomePage = () => {
-  return null;
+  return <PageWrapper title="Homepage!">Content coming soon!</PageWrapper>;
 };

@@ -1,6 +1,7 @@
 import ClearIcon from '@mui/icons-material/Clear';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import { useLayoutEffect } from 'react';
 
 import type { CreateOrUpdateCollectionItemFormTypeDef } from '#/pages/CollectionDetailsPage/CollectionDetailsPage.types';
 
@@ -9,7 +10,10 @@ import { useInvalidateGetCollectionDetailsById } from '#/api/routes/collection-i
 import { Button } from '#/components/Button';
 import { ConfirmDeleteDialog } from '#/components/ConfirmDeleteDialog';
 import { useDialog } from '#/components/Dialog/hooks/useDialog';
+import { useNotifications } from '#/components/Notifications/useNotifications';
+import { Popover } from '#/components/Popover';
 import { pluralize } from '#/helpers/pluralize';
+import { useUserContext } from '#/hooks/use-user-context';
 import { Route as CollectionRoute } from '#/routes/_protected/collections/$id';
 
 import { useEditingCollectionItemsRowIds } from '../../../../hooks/use-editing-collection-items-row-ids';
@@ -29,6 +33,10 @@ export const CollectionDetailsTableRowActions = ({
 }) => {
   const { id } = CollectionRoute.useParams();
   const collectionId = Number(id);
+
+  const user = useUserContext();
+
+  const { notifyWarning } = useNotifications();
 
   const { addToEditingRowIds, isEditing } = useEditingCollectionItemsRowIds();
 
@@ -70,6 +78,19 @@ export const CollectionDetailsTableRowActions = ({
       </ConfirmDeleteDialog>
     );
   }, [selectedRowIds]);
+
+  const verifyEmailMessage =
+    'You must verify your email address before you can add items to your collection. It may be in your spam folder.';
+
+  useLayoutEffect(() => {
+    if (user?.id && !user?.emailVerified) {
+      notifyWarning(`Welcome! ${verifyEmailMessage}`, {
+        // TODO - BUG: EFFECT RENDERING MULTIPLE TIMES ON FIRST PAGE LOAD
+        closeOthersOfType: true,
+        keepOpen: true,
+      });
+    }
+  }, [user?.emailVerified]);
 
   return (
     <div className="flex justify-between">
@@ -117,15 +138,24 @@ export const CollectionDetailsTableRowActions = ({
             />
           </>
         ) : (
-          <AddNewCollectionItemButton
-            className="btn-sm md:btn-md"
-            form={form}
-            insertAtIndex={0}
-          >
-            <span>
-              Add <span className="sr-only md:not-sr-only">New</span>
-            </span>
-          </AddNewCollectionItemButton>
+          <Popover
+            Description={verifyEmailMessage}
+            isTriggerButton
+            Trigger={() => {
+              return (
+                <AddNewCollectionItemButton
+                  className="btn-sm md:btn-md"
+                  disabled={!user?.emailVerified}
+                  form={form}
+                  insertAtIndex={0}
+                >
+                  <span>
+                    Add <span className="sr-only md:not-sr-only">New</span>
+                  </span>
+                </AddNewCollectionItemButton>
+              );
+            }}
+          />
         )}
       </div>
     </div>

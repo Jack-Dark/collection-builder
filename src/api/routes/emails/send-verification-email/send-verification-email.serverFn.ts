@@ -18,7 +18,7 @@ export const sendVerificationEmailServerFn = createServerFn({
       from: resendEmailFrom,
       html: getVerificationEmailTemplateString(emailProps),
       subject: 'Verify your email address',
-      to: [email],
+      to: email,
     });
 
     if (error) {

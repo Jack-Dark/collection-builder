@@ -1,7 +1,7 @@
 import type { PropsWithChildren } from 'react';
 
 import { Field } from '@base-ui/react';
-import { useMemo } from 'react';
+import { Fragment, useMemo } from 'react';
 
 import type { FieldWrapperProps } from './FieldWrapper.types';
 
@@ -28,10 +28,10 @@ export const FieldWrapper = (props: PropsWithChildren<FieldWrapperProps>) => {
         ? error
         : error.map(({ message }, index) => {
             return (
-              <>
+              <Fragment key={message}>
                 {!!index && <br />}
                 {message}
-              </>
+              </Fragment>
             );
           });
     }

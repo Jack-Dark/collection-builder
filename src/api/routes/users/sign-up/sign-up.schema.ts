@@ -53,7 +53,6 @@ export const signUpRequestSchema = z.object({
   email: z.email().min(1),
   name: z.string().min(1),
   password: passwordSchema,
-  callbackURL: z.string().optional(),
 });
 
 export const signUpFormSchema = signUpRequestSchema

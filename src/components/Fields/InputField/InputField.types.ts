@@ -5,6 +5,7 @@ import type { FieldWrapperProps } from '../FieldWrapper/FieldWrapper.types';
 export type InputFieldProps = Pick<
   InputProps,
   | 'accept'
+  | 'autoComplete'
   | 'autoFocus'
   | 'capture'
   | 'defaultValue'

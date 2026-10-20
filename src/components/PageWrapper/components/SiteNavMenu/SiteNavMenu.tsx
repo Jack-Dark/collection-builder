@@ -1,5 +1,4 @@
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import { useRouter } from '@tanstack/react-router';
 
 import { useSignOut } from '#/api/routes/users/sign-out/sign-out.react-query';
 import { useUserContext } from '#/hooks/use-user-context';
@@ -24,17 +23,13 @@ export const SiteNavMenu = () => {
 
   const { collections } = data;
 
-  const router = useRouter();
-
   const user = useUserContext();
 
   const { onSignOut } = useSignOut({
-    onSuccess: () => {
-      router.navigate({ to: '/sign-in' });
-    },
+    onSuccess: () => {},
   });
 
-  const isLoggedOut = !user?.id;
+  const isLoggedIn = user?.id;
 
   const navItems: NavMenuItem[] = [
     {
@@ -47,23 +42,25 @@ export const SiteNavMenu = () => {
       }),
       label: 'Collections',
     },
-    {
-      hidden: isLoggedOut,
-      href: '/account' satisfies RouterPath,
-      Icon: AccountCircleIcon,
-      items: [
-        {
-          href: '/sign-out',
-          label: 'Sign out',
-          onClick: async (e) => {
-            e.preventDefault();
-
-            await onSignOut({});
-          },
+    isLoggedIn
+      ? {
+          href: '/account' satisfies RouterPath,
+          Icon: AccountCircleIcon,
+          items: [
+            {
+              href: '',
+              label: 'Sign out',
+              onClick: async () => {
+                await onSignOut({});
+              },
+            },
+          ],
+          label: 'Account',
+        }
+      : {
+          href: '/sign-in' satisfies RouterPath,
+          label: 'Sign In',
         },
-      ],
-      label: 'Account',
-    },
   ];
 
   return (

@@ -20,7 +20,7 @@ export const deleteUserServerFn = createServerFn({
   .handler(async ({ data, context }) => {
     const headers = getRequestHeaders();
 
-    await db.transaction(async (tx) => {
+    return db.transaction(async (tx) => {
       const publicIdsToDelete = await getUserImagesDbQuery({
         tx,
         data,

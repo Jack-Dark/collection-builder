@@ -8,7 +8,7 @@ const ResetPasswordEmailTemplate = ({
 }: SendVerificationEmailTemplateArgs) => {
   return (
     <div>
-      <p>Hi ${name || 'there'}!</p>
+      <p>Hi {name || 'there'}!</p>
       <p>
         Click{' '}
         <a href={url} target="_blank">

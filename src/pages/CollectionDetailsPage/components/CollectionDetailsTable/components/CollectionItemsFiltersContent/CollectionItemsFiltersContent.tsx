@@ -1,6 +1,7 @@
 import type { PropsWithChildren } from 'react';
 
 import { Slider } from '@base-ui/react';
+import InfoIcon from '@mui/icons-material/Info';
 import { useLayoutEffect, useMemo } from 'react';
 
 import type { GetFiltersForCollectionResponseDef } from '#/api/routes/collection-items/get-filters-for-collection/get-filters-for-collection.types';
@@ -29,7 +30,19 @@ const FiltersBlock = (props: FiltersBlockPropsDef) => {
       <div className="flex items-baseline gap-1">
         <h5 className="grid grid-cols-[auto_1fr] gap-1">
           {label}
-          {popoverMsg && <Popover Description={popoverMsg} />}
+          {popoverMsg && (
+            <Popover
+              Description={popoverMsg}
+              Trigger={() => {
+                return (
+                  <InfoIcon
+                    className="text-theme-t3 dark:text-theme-t2"
+                    fontSize="inherit"
+                  />
+                );
+              }}
+            />
+          )}
         </h5>
 
         <Button

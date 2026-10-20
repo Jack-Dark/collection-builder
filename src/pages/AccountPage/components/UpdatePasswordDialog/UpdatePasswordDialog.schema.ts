@@ -1,8 +1,8 @@
-import { updatePasswordRequestSchema } from '#/api/routes/users/update-password/update-password.schema';
 import {
   passwordSchema,
   passwordMismatchErrorMessage,
 } from '#/api/routes/users/sign-up/sign-up.schema';
+import { updatePasswordRequestSchema } from '#/api/routes/users/update-password/update-password.schema';
 
 export const updatePasswordFormSchema = updatePasswordRequestSchema
   .extend({

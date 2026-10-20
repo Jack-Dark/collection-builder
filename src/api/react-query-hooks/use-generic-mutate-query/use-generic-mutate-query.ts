@@ -1,4 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
+import { isAPIError } from 'better-auth/api';
 import { useLayoutEffect } from 'react';
 
 import { useSpinner } from '#/components/FullPageLoadingSpinner/useSpinner';
@@ -69,13 +70,15 @@ export const useGenericMutateQuery = <
     TRequestArgs
   >({
     mutationFn: handleMutationFn,
-    onError: (error: unknown, requestArgs) => {
+    onError: async (error, requestArgs) => {
       const message =
-        error instanceof Error ? error.message : fallbackErrorMessage;
+        error instanceof Error || isAPIError(error)
+          ? error.message || fallbackErrorMessage
+          : fallbackErrorMessage;
 
       notifyError(message);
 
-      onError?.(message, requestArgs);
+      await onError?.(message, requestArgs);
     },
     onSettled: async (...args) => {
       if (showLoading && isSpinning) {

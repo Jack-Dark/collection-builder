@@ -8,6 +8,7 @@ export const Popover = (props: PopoverPropsDef) => {
     delay = 100,
     Description = '',
     disabled,
+    isTriggerButton,
     side = 'top',
     Trigger = () => {
       return (
@@ -27,7 +28,15 @@ export const Popover = (props: PopoverPropsDef) => {
       <MuiPopover.Trigger
         className="flex items-center"
         delay={delay}
+        nativeButton={!isTriggerButton}
         openOnHover
+        render={
+          isTriggerButton
+            ? (props) => {
+                return <span {...props} />;
+              }
+            : undefined
+        }
       >
         <Trigger />
       </MuiPopover.Trigger>

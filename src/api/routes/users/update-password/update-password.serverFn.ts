@@ -15,15 +15,12 @@ export const updatePasswordServerFn = createServerFn({
   .middleware([errorHandlingMiddleware, authApiRouteMiddleware])
   .validator(updatePasswordRequestSchema)
   .handler(async ({ data }) => {
-    const { newPassword, currentPassword } = data;
-
     const headers = getRequestHeaders();
 
     await auth.api.changePassword({
       headers,
       body: {
-        newPassword,
-        currentPassword,
+        ...data,
         revokeOtherSessions: true,
       },
     });

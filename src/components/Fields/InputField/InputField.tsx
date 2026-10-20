@@ -9,6 +9,7 @@ import { FieldWrapper } from '../FieldWrapper';
 
 export const InputField = (props: InputFieldProps) => {
   const {
+    autoComplete = 'on',
     autoFocus,
     className,
     defaultValue,
@@ -66,7 +67,7 @@ export const InputField = (props: InputFieldProps) => {
       validationMode={validationMode}
     >
       <Input
-        autoComplete={type === 'password' ? 'off' : undefined}
+        autoComplete={type === 'password' ? 'off' : autoComplete}
         autoFocus={autoFocus}
         className={twMerge(
           'min-w-20 max-w-full p-1.5 border rounded-xs border-theme-divider-2 dark:border-theme-divider-3 bg-theme-surface-1 dark:bg-theme-surface-2 dialog:dark:bg-theme-surface-1',

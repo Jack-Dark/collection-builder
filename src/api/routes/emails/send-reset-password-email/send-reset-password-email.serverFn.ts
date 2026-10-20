@@ -18,7 +18,7 @@ export const sendResetPasswordEmailServerFn = createServerFn({
       from: resendEmailFrom,
       html: getSendPasswordEmailTemplateString(emailProps),
       subject: 'Reset your password',
-      to: [email],
+      to: email,
     });
 
     if (error) {

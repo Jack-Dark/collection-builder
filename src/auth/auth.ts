@@ -5,6 +5,7 @@ import { tanstackStartCookies } from 'better-auth/tanstack-start';
 import { db } from '#/api/db';
 import { sendResetPasswordEmailServerFn } from '#/api/routes/emails/send-reset-password-email/send-reset-password-email.serverFn';
 import { sendVerificationEmailServerFn } from '#/api/routes/emails/send-verification-email/send-verification-email.serverFn';
+import { configs } from '#/configs';
 
 import * as schema from '../api/db-tables-schema';
 
@@ -13,6 +14,9 @@ const resetPasswordTokenExpiresInSeconds =
   resetPasswordTokenExpiresInMinutes * 60;
 
 export const auth = betterAuth({
+  // TODO - REFACTOR: AFTER COMMITTING AUTH LOGIC, REMOVE AND TEST ALL AUTH LOGIC AGAIN TO SEE IF NECESSARY
+  baseURL:
+    configs.environment === 'development' ? configs.siteUrl : configs.authUrl,
   database: drizzleAdapter(db, {
     provider: 'pg',
     schema: {
@@ -23,6 +27,7 @@ export const auth = betterAuth({
     },
   }),
   emailAndPassword: {
+    // autoSignIn: true,
     enabled: true,
     resetPasswordTokenExpiresIn: resetPasswordTokenExpiresInSeconds,
     sendResetPassword: async ({ url, user }) => {

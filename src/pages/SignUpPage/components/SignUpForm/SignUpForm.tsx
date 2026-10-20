@@ -1,9 +1,7 @@
 import type { RouteComponent } from '@tanstack/react-router';
 
 import { useForm } from '@tanstack/react-form';
-import { useRouter, useSearch } from '@tanstack/react-router';
-
-import type { RouterPath } from '#/types';
+import { useNavigate } from '@tanstack/react-router';
 
 import { useSignUp } from '#/api/routes/users/sign-up/sign-up.react-query';
 import { signUpFormSchema } from '#/api/routes/users/sign-up/sign-up.schema';
@@ -12,11 +10,7 @@ import { FormSubmitButton } from '#/components/FormSubmitButton';
 import { useValidationFormOptions } from '#/hooks/use-validation-form-options';
 
 export const SignUpForm: RouteComponent = () => {
-  const router = useRouter();
-
-  const search: { redirect?: RouterPath } = useSearch({
-    strict: false,
-  });
+  const navigate = useNavigate();
 
   const validationFormOptions = useValidationFormOptions({
     defaultValues: {
@@ -30,14 +24,16 @@ export const SignUpForm: RouteComponent = () => {
 
   const { onSignUp } = useSignUp({
     onSuccess: () => {
-      router.navigate({ to: search.redirect || '/collections' });
+      navigate({
+        to: '/collections',
+      });
     },
   });
 
   const form = useForm({
     ...validationFormOptions,
     onSubmit: async ({ value }) => {
-      onSignUp({ ...value, callbackURL: '/collections' });
+      await onSignUp(value);
     },
   });
 
@@ -100,7 +96,6 @@ export const SignUpForm: RouteComponent = () => {
                       }}
                       required
                       value={value}
-                      // valid={!!errorMsg}
                     />
                   );
                 }}

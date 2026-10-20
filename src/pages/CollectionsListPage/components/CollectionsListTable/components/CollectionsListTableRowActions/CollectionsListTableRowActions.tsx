@@ -78,11 +78,10 @@ export const CollectionsListTableRowActions = (props: {
   }, [selectedRowIds]);
 
   const verifyEmailMessage =
-    'You must verify your email address before you can create new collections. Remember to check your spam folder!';
+    'You must verify your email address before you can create new collections. It may be in your spam folder.';
 
   useLayoutEffect(() => {
     if (user?.id && !user?.emailVerified) {
-      // debugger;
       notifyWarning(`Welcome! ${verifyEmailMessage}`, {
         // TODO - BUG: EFFECT RENDERING MULTIPLE TIMES ON FIRST PAGE LOAD
         closeOthersOfType: true,
@@ -137,6 +136,7 @@ export const CollectionsListTableRowActions = (props: {
               ) : (
                 <Popover
                   Description={verifyEmailMessage}
+                  isTriggerButton
                   Trigger={() => {
                     return (
                       <AddNewCollectionButton

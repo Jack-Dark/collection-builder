@@ -2,6 +2,7 @@ import type { GenericMutateQueryProps } from '#/api/react-query-hooks/use-generi
 
 import { reactMutationKeys } from '#/api/react-query-hooks/react-query.constants';
 import { useGenericMutateQuery } from '#/api/react-query-hooks/use-generic-mutate-query';
+import { useInvalidateEverything } from '#/api/react-query-hooks/use-invalidate-everything';
 
 import type {
   SignOutRequestArgsDef,
@@ -17,11 +18,18 @@ export const useSignOut = <TTransformedData = SignOutResponseDef>(
     TTransformedData
   >,
 ) => {
+  const invalidateEverything = useInvalidateEverything();
+
   const { onMutate: onSignOut, ...rest } = useGenericMutateQuery({
-    fallbackErrorMessage: 'Unable to sign out.',
+    fallbackErrorMessage: 'Unable to sign out. Please try again.',
     mutationFn: signOutServerFn,
     mutationKey: [reactMutationKeys.users.signOut],
     ...props,
+    onSuccess: async (...args) => {
+      await invalidateEverything({ thenNavigateTo: '/sign-in' });
+
+      await props?.onSuccess?.(...args);
+    },
   });
 
   return { ...rest, onSignOut };

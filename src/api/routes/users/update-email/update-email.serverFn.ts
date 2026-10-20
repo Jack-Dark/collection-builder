@@ -1,6 +1,8 @@
 import { createServerFn } from '@tanstack/react-start';
 import { getRequestHeaders } from '@tanstack/react-start/server';
 
+import type { RouterPath } from '#/types';
+
 import { auth } from '#/auth/auth';
 import {
   authApiRouteMiddleware,
@@ -19,8 +21,13 @@ export const updateEmailServerFn = createServerFn({
 
     await auth.api.changeEmail({
       headers,
-      body: data,
+      body: {
+        ...data,
+        callbackURL: '/account' satisfies RouterPath,
+      },
     });
 
-    return { message: 'Your password has been reset' };
+    return {
+      message: `A verification email has been sent to ${data.newEmail}`,
+    };
   });

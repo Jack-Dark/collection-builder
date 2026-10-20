@@ -11,7 +11,7 @@ export interface GenericMutateQueryProps<
     'onError' | 'mutationFn'
   >
 > {
-  onError?: (error: string, requestArgs?: TRequestArgs) => void;
+  onError?: (error: string, requestArgs?: TRequestArgs) => Promise<void> | void;
   showLoading?: boolean;
   transform?: (response: TResponseDef) => TTransformedData;
 }

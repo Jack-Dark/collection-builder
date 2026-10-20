@@ -16,7 +16,6 @@ import { PageWrapper } from '#/components/PageWrapper';
 import { Popover } from '#/components/Popover';
 import { useUserContext } from '#/hooks/use-user-context';
 import { useValidationFormOptions } from '#/hooks/use-validation-form-options';
-import { Route as CollectionRoute } from '#/routes/_protected/collections';
 
 import { DeleteAccountButton } from './components/DeleteAccountButton';
 import { UpdatePasswordDialog } from './components/UpdatePasswordDialog';
@@ -25,13 +24,12 @@ export const AccountPage = () => {
   const router = useRouter();
 
   const user = useUserContext();
-  const collectionPath = CollectionRoute.fullPath;
 
   const [showUpdatePasswordDialog, hideUpdatePasswordDialog] = useDialog(() => {
     return <UpdatePasswordDialog hideDialog={hideUpdatePasswordDialog} />;
   }, []);
 
-  const { notify } = useNotifications();
+  const { notify, notifyWarning } = useNotifications();
 
   const { onRequestVerificationEmail } = useRequestVerificationEmail({
     onSuccess: ({ message }) => {
@@ -39,7 +37,11 @@ export const AccountPage = () => {
     },
   });
 
-  const { onUpdateEmail } = useUpdateEmail();
+  const { onUpdateEmail } = useUpdateEmail({
+    onSuccess: ({ message }) => {
+      notifyWarning(message);
+    },
+  });
 
   const validationFormOptions = useValidationFormOptions({
     defaultValues: {
@@ -64,7 +66,6 @@ export const AccountPage = () => {
           newEmail: value.email,
         });
         setIsEditingEmail(false);
-        notify(`Verification email sent to ${value.email}`, { keepOpen: true });
       } else {
         await onUpdateUser(value);
         setIsEditingName(false);
@@ -168,66 +169,66 @@ export const AccountPage = () => {
             }}
           </form.Field>
 
-          {isEditingEmail ? (
-            <div className="flex gap-2">
-              <FormSubmitButton
-                className="justify-self-start"
-                form={form}
-                size="sm"
-                text="Save"
-                type="submit"
-              />
-              <Button
-                className="justify-self-start"
-                onClick={() => {
-                  setIsEditingEmail(false);
-                }}
-                size="sm"
-                text="Cancel"
-                variant="mono"
-              />
-            </div>
-          ) : (
-            <Button
-              className="justify-self-start"
-              disabled={isEditingName}
-              onClick={() => {
-                setIsEditingEmail(true);
-              }}
-              size="sm"
-              text="Edit"
-              variant="secondary"
-            />
-          )}
+          <div className="flex gap-2">
+            {isEditingEmail ? (
+              <>
+                <FormSubmitButton
+                  className="justify-self-start"
+                  form={form}
+                  size="sm"
+                  text="Save"
+                  type="submit"
+                />
+                <Button
+                  className="justify-self-start"
+                  onClick={() => {
+                    setIsEditingEmail(false);
+                  }}
+                  size="sm"
+                  text="Cancel"
+                  variant="mono"
+                />
+              </>
+            ) : (
+              <>
+                <Button
+                  className="justify-self-start"
+                  disabled={isEditingName}
+                  onClick={() => {
+                    setIsEditingEmail(true);
+                  }}
+                  size="sm"
+                  text="Edit"
+                  variant="secondary"
+                />
+
+                {!user.emailVerified && (
+                  <Button
+                    className="justify-self-start"
+                    onClick={async () => {
+                      await onRequestVerificationEmail({
+                        email: user.email,
+                      });
+                    }}
+                    size="sm"
+                    text="Resend verification email"
+                    variant="mono"
+                  />
+                )}
+              </>
+            )}
+          </div>
         </div>
       </form>
 
-      <div className="flex items-center gap-2 pt-10">
-        {!user.emailVerified && (
-          <Button
-            className="justify-self-start"
-            onClick={async () => {
-              await onRequestVerificationEmail({
-                callbackURL: collectionPath,
-                email: user.email,
-              });
-            }}
-            size="sm"
-            text="Resend verification email"
-            variant="secondary"
-          />
-        )}
-      </div>
-
-      <Button
-        className="justify-self-start"
-        onClick={showUpdatePasswordDialog}
-        size="sm"
-        text="Update Password"
-        variant="secondary"
-      />
-
-      <div className="pt-10">
+      <div className="grid gap-10 mt-5">
+        <Button
+          className="justify-self-start"
+          onClick={showUpdatePasswordDialog}
+          size="sm"
+          text="Update Password"
+          variant="secondary"
+        />
         <DeleteAccountButton />
       </div>
     </PageWrapper>

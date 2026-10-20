@@ -2,6 +2,7 @@ import type { GenericMutateQueryProps } from '#/api/react-query-hooks/use-generi
 
 import { reactMutationKeys } from '#/api/react-query-hooks/react-query.constants';
 import { useGenericMutateQuery } from '#/api/react-query-hooks/use-generic-mutate-query';
+import { useInvalidateEverything } from '#/api/react-query-hooks/use-invalidate-everything';
 
 import type {
   DeleteUserRequestArgsDef,
@@ -17,13 +18,20 @@ export const useDeleteUser = <TTransformedData = DeleteUserResponseDef>(
     TTransformedData
   >,
 ) => {
+  const invalidateEverything = useInvalidateEverything();
+
   const { onMutate: onDeleteUser, ...rest } = useGenericMutateQuery({
-    fallbackErrorMessage: 'Unable to delete user.',
+    fallbackErrorMessage: 'Unable to delete user. Please try again.',
     mutationFn: (data) => {
       return deleteUserServerFn({ data });
     },
     mutationKey: [reactMutationKeys.users.delete],
     ...props,
+    onSuccess: async (...args) => {
+      await invalidateEverything({ thenNavigateTo: '/' });
+
+      await props?.onSuccess?.(...args);
+    },
   });
 
   return { ...rest, onDeleteUser };

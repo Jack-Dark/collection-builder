@@ -69,5 +69,11 @@ export const useNotifications = () => {
     });
   };
 
-  return { notify, notifyError, notifyWarning };
+  const clearAllNotifications = () => {
+    notificationsStore.setState(() => {
+      return [];
+    });
+  };
+
+  return { clearAllNotifications, notify, notifyError, notifyWarning };
 };

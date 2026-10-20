@@ -14,10 +14,13 @@ export const requestPasswordResetServerFn = createServerFn({
   .handler(async ({ data }) => {
     const headers = getRequestHeaders();
 
+    const encodedEmail = encodeURI(data.email).replace(/\+/g, '%2B');
+    const redirectTo = `/reset-password?email=${encodedEmail}`;
+
     const { message, status } = await auth.api.requestPasswordReset({
       body: {
         ...data,
-        redirectTo: `/reset-password?email=${encodeURI(data.email).replace(/\+/g, '%2B')}`,
+        redirectTo,
       },
       headers,
     });

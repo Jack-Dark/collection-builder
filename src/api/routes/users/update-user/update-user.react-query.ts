@@ -26,5 +26,6 @@ export const useUpdateUser = <TTransformedData = UpdateUserResponseDef>(
     ...props,
   });
 
+  // TODO - REQUIRED FEATURE: INVALIDATE EVERYTHING ON SUCCESS IF DATA CONTAINS EMAIL
   return { ...rest, onUpdateUser };
 };

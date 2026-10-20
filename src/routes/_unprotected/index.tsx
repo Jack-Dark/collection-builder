@@ -1,16 +1,7 @@
-import { createFileRoute, redirect } from '@tanstack/react-router';
+import { createFileRoute } from '@tanstack/react-router';
 
-import { getSession } from '#/auth/auth-middleware';
+import { HomePage } from '#/pages/HomePage';
 
 export const Route = createFileRoute('/_unprotected/')({
-  beforeLoad: async () => {
-    const session = await getSession();
-
-    return { user: session?.user };
-  },
-  loader: () => {
-    throw redirect({
-      to: '/collections',
-    });
-  },
+  component: HomePage,
 });

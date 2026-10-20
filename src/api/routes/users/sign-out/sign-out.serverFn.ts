@@ -2,12 +2,15 @@ import { createServerFn } from '@tanstack/react-start';
 import { getRequestHeaders } from '@tanstack/react-start/server';
 
 import { auth } from '#/auth/auth';
-import { errorHandlingMiddleware } from '#/auth/auth-middleware';
+import {
+  authApiRouteMiddleware,
+  errorHandlingMiddleware,
+} from '#/auth/auth-middleware';
 
 export const signOutServerFn = createServerFn({
   method: 'POST',
 })
-  .middleware([errorHandlingMiddleware])
+  .middleware([errorHandlingMiddleware, authApiRouteMiddleware])
   .handler(async () => {
     const headers = getRequestHeaders();
 
