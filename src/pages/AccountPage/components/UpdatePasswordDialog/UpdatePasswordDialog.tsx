@@ -34,6 +34,7 @@ export const UpdatePasswordDialog = (props: UpdatePasswordDialogPropsDef) => {
 
   const form = useForm({
     ...validationFormOptions,
+    formId: 'update-password',
     onSubmit: async ({ value }) => {
       await onUpdatePassword(value);
       hideDialog();
@@ -108,7 +109,7 @@ export const UpdatePasswordDialog = (props: UpdatePasswordDialogPropsDef) => {
             return (
               <InputField
                 error={field.errors}
-                Label="Confirm Password"
+                Label="Confirm New Password"
                 name={field.name}
                 onValueChange={(value) => {
                   field.handleChange(value);
