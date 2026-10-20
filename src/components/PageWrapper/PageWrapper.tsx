@@ -1,5 +1,6 @@
 import type { PropsWithChildren } from 'react';
 
+import CoffeeIcon from '@mui/icons-material/Coffee';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import { QueryErrorResetBoundary } from '@tanstack/react-query';
@@ -26,20 +27,37 @@ export const PageWrapper = (props: PageWrapperPropsDef) => {
             <h1 className="text-inherit">{title}</h1>
           </Link>
 
-          <Popover
-            Description="This project is open source!"
-            Trigger={() => {
-              return (
-                <a
-                  className="text-white hover:text-primary-300 dark:hover:text-theme-link-hover"
-                  href={githubUrl.repo}
-                  target="_blank"
-                >
-                  <GitHubIcon />
-                </a>
-              );
-            }}
-          />
+          <div className="flex gap-4 px-10">
+            <Popover
+              Description="Buy us a coffee!"
+              Trigger={() => {
+                return (
+                  <a
+                    className="text-white hover:text-primary-300 dark:hover:text-theme-link-hover"
+                    href="https://buymeacoffee.com/jack.dark"
+                    target="_blank"
+                  >
+                    <CoffeeIcon />
+                  </a>
+                );
+              }}
+            />
+
+            <Popover
+              Description="This project is open source!"
+              Trigger={() => {
+                return (
+                  <a
+                    className="text-white hover:text-primary-300 dark:hover:text-theme-link-hover"
+                    href={githubUrl.repo}
+                    target="_blank"
+                  >
+                    <GitHubIcon />
+                  </a>
+                );
+              }}
+            />
+          </div>
         </div>
 
         <QueryErrorResetBoundary>
