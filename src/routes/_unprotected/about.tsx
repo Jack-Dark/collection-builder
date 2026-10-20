@@ -1,17 +1,10 @@
 import { createFileRoute } from '@tanstack/react-router';
 
-import { PageWrapper } from '#/components/PageWrapper';
-
 import { createMetaTags } from '../__root';
+import { AboutPage } from '../../pages/AboutPage';
 
 export const Route = createFileRoute('/_unprotected/about')({
-  component: () => {
-    return (
-      <PageWrapper title="About Collection Tracker">
-        Content coming soon
-      </PageWrapper>
-    );
-  },
+  component: AboutPage,
   head: () => {
     return {
       meta: createMetaTags({

@@ -76,7 +76,7 @@ export const AccountPage = () => {
   });
 
   return user ? (
-    <PageWrapper title="Collection Tracker">
+    <PageWrapper>
       <div className="grid gap-10">
         <h1>Account</h1>
 

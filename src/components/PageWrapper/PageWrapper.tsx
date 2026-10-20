@@ -12,11 +12,11 @@ import { githubUrl, SimpleErrorBoundary } from '../SimpleErrorBoundary';
 import { SiteNavMenu } from './components/SiteNavMenu';
 
 type PageWrapperPropsDef = PropsWithChildren<{
-  title: string;
+  title?: string;
 }>;
 
 export const PageWrapper = (props: PageWrapperPropsDef) => {
-  const { children, title } = props;
+  const { children, title = 'Collection Tracker' } = props;
 
   return (
     <div className="p-4 h-dvh overflow-hidden size-full grid grid-rows-[auto_1fr] gap-4">

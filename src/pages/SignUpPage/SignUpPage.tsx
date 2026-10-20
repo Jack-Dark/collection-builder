@@ -7,7 +7,7 @@ import { SignUpForm } from './components/SignUpForm';
 
 export const SignUpPage = () => {
   return (
-    <PageWrapper title="Collection Tracker">
+    <PageWrapper>
       <div className="grid gap-10">
         <h1>Sign Up</h1>
 

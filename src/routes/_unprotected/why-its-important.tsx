@@ -1,17 +1,10 @@
 import { createFileRoute } from '@tanstack/react-router';
 
-import { PageWrapper } from '#/components/PageWrapper';
-
 import { createMetaTags } from '../__root';
+import { WhyItsImportantPage } from '../../pages/WhyItsImportantPage';
 
 export const Route = createFileRoute('/_unprotected/why-its-important')({
-  component: () => {
-    return (
-      <PageWrapper title="About Collection Tracker">
-        Content coming soon
-      </PageWrapper>
-    );
-  },
+  component: WhyItsImportantPage,
   head: () => {
     return {
       meta: createMetaTags({

@@ -9,7 +9,7 @@ import { SignInForm } from './components/SignInForm';
 
 export const SignInPage: RouteComponent = () => {
   return (
-    <PageWrapper title="Collection Tracker">
+    <PageWrapper>
       <div className="grid gap-10">
         <h1>Sign In</h1>
 

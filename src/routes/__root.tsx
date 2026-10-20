@@ -76,7 +76,7 @@ export const Route = createRootRouteWithContext<{
   notFoundComponent: () => {
     return (
       <RootDocument>
-        <PageWrapper title="Collection Tracker">
+        <PageWrapper>
           <div className="grid gap-10">
             <h1>Page Not Found</h1>
             <p>

@@ -68,7 +68,7 @@ export const ResetPasswordPage: RouteComponent = () => {
   }, [error]);
 
   return (
-    <PageWrapper title="Collection Tracker">
+    <PageWrapper>
       <div className="grid gap-10">
         <h1>Reset Password</h1>
 
