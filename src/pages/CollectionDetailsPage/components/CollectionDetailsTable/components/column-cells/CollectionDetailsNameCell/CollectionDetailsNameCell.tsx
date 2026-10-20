@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+
 import type { CreateOrUpdateCollectionItemFormTypeDef } from '#/pages/CollectionDetailsPage/CollectionDetailsPage.types';
 
 import { InputField } from '#/components/Fields/InputField';
@@ -15,16 +17,25 @@ export const CollectionDetailsNameCell = ({
   const { editingRowIds, getIsEditingRowId } =
     useEditingCollectionItemsRowIds();
 
-  const isEditingRow = getIsEditingRowId(rowId);
+  const isEditingRow = useMemo(() => {
+    return getIsEditingRowId(rowId);
+  }, [editingRowIds]);
 
   const isFirstEditRow = editingRowIds[0] === rowId;
+
+  const autoFocusNewRow = useMemo(() => {
+    const isNewRow = Number.isNaN(Number(rowId));
+    const isLastRow = editingRowIds[editingRowIds.length - 1] === rowId;
+
+    return isNewRow && isLastRow;
+  }, [editingRowIds]);
 
   return (
     <form.Field name={`collectionItems[${rowIndex}].name`}>
       {(field) => {
         return isEditingRow ? (
           <InputField
-            autoFocus={isFirstEditRow}
+            autoFocus={isFirstEditRow || autoFocusNewRow}
             error={field.errors}
             hideLabel
             name={field.name}
