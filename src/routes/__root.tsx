@@ -53,8 +53,7 @@ export const Route = createRootRouteWithContext<{
         },
         {
           rel: 'icon',
-          // TODO - REQUIRED FEATURE: ADD FAVICON
-          href: '/favicon.ico',
+          href: 'https://res.cloudinary.com/collection-tracker/image/upload/v1792538004/arfzr3nj0yt5vdfrlumt.ico',
         },
       ],
       meta: createMetaTags(
