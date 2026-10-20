@@ -14,7 +14,6 @@ export const Route = createFileRoute('/_protected/collections/$id')({
   loaderDeps: ({ search }) => {
     return search;
   },
-  ssr: false,
   loader: async ({ context, deps: searchQueries, params }) => {
     const autoPopulateCustomFieldValues =
       await getAutoPopulateCustomFieldValuesServerFn();
