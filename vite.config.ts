@@ -10,11 +10,10 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vite';
 import checker from 'vite-plugin-checker';
-import tsconfigPaths from 'vite-tsconfig-paths';
 
 const dirname =
-  typeof __dirname !== 'undefined'
-    ? __dirname
+  typeof import.meta.dirname !== 'undefined'
+    ? import.meta.dirname
     : path.dirname(fileURLToPath(import.meta.url));
 
 // More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
@@ -25,9 +24,6 @@ const config = defineConfig(({ mode }) => {
     },
     plugins: [
       devtools(),
-      tsconfigPaths({
-        projects: ['./tsconfig.json'],
-      }),
       mode !== 'production' &&
         checker({
           eslint: {
@@ -44,6 +40,9 @@ const config = defineConfig(({ mode }) => {
     preview: {
       port: 8080,
       strictPort: true,
+    },
+    resolve: {
+      tsconfigPaths: true,
     },
     server: {
       port: 3000,
