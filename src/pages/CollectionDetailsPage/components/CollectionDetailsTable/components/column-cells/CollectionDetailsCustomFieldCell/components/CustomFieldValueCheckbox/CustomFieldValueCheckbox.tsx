@@ -16,6 +16,15 @@ type CustomFieldValueCheckboxPropsDef<TField extends AnyFieldApi> = {
   field: TField;
 };
 
+export const getCustomFieldValueCheckboxAriaLabel = (props: {
+  checked: boolean;
+  customFieldName: string;
+}) => {
+  const { checked, customFieldName } = props;
+
+  return `${checked ? 'Uncheck' : 'Checked'} ${customFieldName} for row`;
+};
+
 export const CustomFieldValueCheckbox = <TField extends AnyFieldApi>({
   customField,
   field,
@@ -25,9 +34,17 @@ export const CustomFieldValueCheckbox = <TField extends AnyFieldApi>({
 
   const { updateLastAddedCustomFieldValues } = useLastAddedCustomFieldValues();
 
+  const checked = !!field.value?.valueBoolean;
+
+  const ariaLabel = getCustomFieldValueCheckboxAriaLabel({
+    checked,
+    customFieldName: customField.name,
+  });
+
   return (
     <CheckboxField
-      checked={!!field.value?.valueBoolean}
+      aria-label={ariaLabel}
+      checked={checked}
       disabled={processing}
       onCheckedChange={async (value) => {
         const [newCustomFieldValue] = await onCreateCustomFieldValues({

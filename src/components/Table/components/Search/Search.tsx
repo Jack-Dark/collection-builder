@@ -56,6 +56,7 @@ export const Search = (props: SearchPropsDef) => {
       {enableSearchNotes && (
         <div className="absolute right-0 h-full flex items-stretch">
           <Popover
+            aria-label='Search "Notes"'
             Description='Search "Notes"'
             Trigger={() => {
               return (

@@ -7,7 +7,10 @@ import { useEditingCollectionItemsRowIds } from '#/pages/CollectionDetailsPage/h
 
 import type { CreateOrUpdateCollectionItemFormTypeDef } from '../../../../../CollectionDetailsPage.types';
 
-import { CustomFieldValueCheckbox } from './components/CustomFieldValueCheckbox';
+import {
+  CustomFieldValueCheckbox,
+  getCustomFieldValueCheckboxAriaLabel,
+} from './components/CustomFieldValueCheckbox';
 import { CustomFieldValueCombobox } from './components/CustomFieldValueCombobox';
 import { CustomFieldValueNumberInput } from './components/CustomFieldValueNumberInput';
 
@@ -42,6 +45,12 @@ export const CollectionDetailsCustomFieldCell = (
         name={`collectionItems[${rowIndex}].customFieldValues.${customField.id}`}
       >
         {(field) => {
+          const checked = !!field.value?.valueBoolean;
+          const checkboxAriaLabel = getCustomFieldValueCheckboxAriaLabel({
+            checked,
+            customFieldName: customField.name,
+          });
+
           return isEditingRow ? (
             <>
               {customField.type === 'boolean' && (
@@ -69,7 +78,11 @@ export const CollectionDetailsCustomFieldCell = (
           ) : (
             <>
               {customField.type === 'boolean' ? (
-                <CheckboxField checked={!!field.value?.valueBoolean} disabled />
+                <CheckboxField
+                  aria-label={checkboxAriaLabel}
+                  checked={checked}
+                  disabled
+                />
               ) : (
                 <p>
                   {field.value?.valueText ?? field.value?.valueNumber ?? '-'}

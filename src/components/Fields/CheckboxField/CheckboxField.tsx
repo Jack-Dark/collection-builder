@@ -78,7 +78,6 @@ export const CheckboxBase = (props: CheckboxBasePropsDef) => {
             <>
               {checked ? (
                 <CheckBoxIcon
-                  aria-label={`${ariaLabel} selected`}
                   className={
                     disabled
                       ? 'text-theme-disabled'
@@ -87,7 +86,6 @@ export const CheckboxBase = (props: CheckboxBasePropsDef) => {
                 />
               ) : indeterminate ? (
                 <IndeterminateCheckBoxIcon
-                  aria-label={`${ariaLabel} indeterminate`}
                   className={
                     disabled
                       ? 'text-theme-disabled'
@@ -96,7 +94,6 @@ export const CheckboxBase = (props: CheckboxBasePropsDef) => {
                 />
               ) : (
                 <CheckBoxOutlineBlankIcon
-                  aria-label={`${ariaLabel} unselected`}
                   className={
                     disabled
                       ? 'text-theme-disabled'
