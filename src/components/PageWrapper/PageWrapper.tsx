@@ -3,10 +3,11 @@ import type { PropsWithChildren } from 'react';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import { QueryErrorResetBoundary } from '@tanstack/react-query';
+import { Link } from '@tanstack/react-router';
 import { Suspense } from 'react';
 
 import { Popover } from '../Popover';
-import { SimpleErrorBoundary } from '../SimpleErrorBoundary';
+import { githubUrl, SimpleErrorBoundary } from '../SimpleErrorBoundary';
 import { SiteNavMenu } from './components/SiteNavMenu';
 
 type PageWrapperPropsDef = PropsWithChildren<{
@@ -17,13 +18,13 @@ export const PageWrapper = (props: PageWrapperPropsDef) => {
   const { children, title } = props;
 
   return (
-    <>
+    <div className="p-4 h-dvh overflow-hidden size-full grid grid-rows-[auto_1fr] gap-4">
       <header className="grid gap-4">
         <div className="flex items-center gap-2 justify-between text-white">
-          <div className="flex items-center gap-2">
-            <ListAltIcon className="text-4xl" fontSize="large" />
+          <Link className="flex items-center gap-2 text-inherit" to="/">
+            <ListAltIcon className="text-4xl text-inherit" fontSize="large" />
             <h1 className="text-inherit">{title}</h1>
-          </div>
+          </Link>
 
           <Popover
             Description="This project is open source!"
@@ -31,7 +32,7 @@ export const PageWrapper = (props: PageWrapperPropsDef) => {
               return (
                 <a
                   className="text-white hover:text-primary-300 dark:hover:text-theme-link-hover"
-                  href="https://github.com/Jack-Dark/collection-tracker"
+                  href={githubUrl.repo}
                   target="_blank"
                 >
                   <GitHubIcon />
@@ -73,6 +74,6 @@ export const PageWrapper = (props: PageWrapperPropsDef) => {
       </main>
 
       {/* <footer className="grid p-4">PLACEHOLDER FOOTER CONTENT</footer> */}
-    </>
+    </div>
   );
 };

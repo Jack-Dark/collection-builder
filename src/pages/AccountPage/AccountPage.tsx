@@ -76,102 +76,32 @@ export const AccountPage = () => {
   });
 
   return user ? (
-    <PageWrapper title="Account">
-      <form className="flex">
-        <div className="grid grid-cols-[1fr_max-content] gap-4 items-center">
-          <form.Field name="name">
-            {(field) => {
-              return (
-                <>
-                  {isEditingName ? (
-                    <InputField
-                      name={field.name}
-                      onValueChange={field.handleChange}
-                      value={field.value}
-                    />
-                  ) : (
-                    <p>{field.value}</p>
-                  )}
-                </>
-              );
-            }}
-          </form.Field>
+    <PageWrapper title="Collection Tracker">
+      <div className="grid gap-10">
+        <h1>Account</h1>
 
-          {isEditingName ? (
-            <div className="flex gap-2">
-              <FormSubmitButton
-                className="justify-self-start"
-                form={form}
-                size="sm"
-                text="Save"
-                type="submit"
-              />
-              <Button
-                className="justify-self-start"
-                onClick={() => {
-                  setIsEditingName(false);
-                }}
-                size="sm"
-                text="Cancel"
-                variant="mono"
-              />
-            </div>
-          ) : (
-            <Button
-              className="justify-self-start"
-              disabled={isEditingEmail}
-              onClick={() => {
-                setIsEditingName(true);
+        <form className="flex">
+          <div className="grid grid-cols-[1fr_max-content] gap-4 items-center">
+            <form.Field name="name">
+              {(field) => {
+                return (
+                  <>
+                    {isEditingName ? (
+                      <InputField
+                        name={field.name}
+                        onValueChange={field.handleChange}
+                        value={field.value}
+                      />
+                    ) : (
+                      <p>{field.value}</p>
+                    )}
+                  </>
+                );
               }}
-              size="sm"
-              text="Edit"
-              variant="secondary"
-            />
-          )}
+            </form.Field>
 
-          <form.Field name="email">
-            {(field) => {
-              return (
-                <>
-                  {isEditingEmail ? (
-                    <InputField
-                      name={field.name}
-                      onValueChange={field.handleChange}
-                      type="email"
-                      value={field.value}
-                    />
-                  ) : (
-                    <div className="flex gap-2 items-center">
-                      <p>
-                        {
-                          // ? Intentionally using user context instead of field value as user must verify the change via email before changes will take effect
-                          user.email
-                        }
-                      </p>
-
-                      {user.emailVerified && (
-                        <Popover
-                          Description="Email Verified"
-                          Trigger={() => {
-                            return (
-                              <VerifiedIcon
-                                className="text-primary-500"
-                                fontSize="small"
-                              />
-                            );
-                          }}
-                        />
-                      )}
-                    </div>
-                  )}
-                </>
-              );
-            }}
-          </form.Field>
-
-          <div className="flex gap-2">
-            {isEditingEmail ? (
-              <>
+            {isEditingName ? (
+              <div className="flex gap-2">
                 <FormSubmitButton
                   className="justify-self-start"
                   form={form}
@@ -182,46 +112,118 @@ export const AccountPage = () => {
                 <Button
                   className="justify-self-start"
                   onClick={() => {
-                    setIsEditingEmail(false);
+                    setIsEditingName(false);
                   }}
                   size="sm"
                   text="Cancel"
                   variant="mono"
                 />
-              </>
+              </div>
             ) : (
-              <>
-                <Button
-                  className="justify-self-start"
-                  disabled={isEditingName}
-                  onClick={() => {
-                    setIsEditingEmail(true);
-                  }}
-                  size="sm"
-                  text="Edit"
-                  variant="secondary"
-                />
+              <Button
+                className="justify-self-start"
+                disabled={isEditingEmail}
+                onClick={() => {
+                  setIsEditingName(true);
+                }}
+                size="sm"
+                text="Edit"
+                variant="secondary"
+              />
+            )}
 
-                {!user.emailVerified && (
+            <form.Field name="email">
+              {(field) => {
+                return (
+                  <>
+                    {isEditingEmail ? (
+                      <InputField
+                        name={field.name}
+                        onValueChange={field.handleChange}
+                        type="email"
+                        value={field.value}
+                      />
+                    ) : (
+                      <div className="flex gap-2 items-center">
+                        <p>
+                          {
+                            // ? Intentionally using user context instead of field value as user must verify the change via email before changes will take effect
+                            user.email
+                          }
+                        </p>
+
+                        {user.emailVerified && (
+                          <Popover
+                            Description="Email Verified"
+                            Trigger={() => {
+                              return (
+                                <VerifiedIcon
+                                  className="text-primary-500"
+                                  fontSize="small"
+                                />
+                              );
+                            }}
+                          />
+                        )}
+                      </div>
+                    )}
+                  </>
+                );
+              }}
+            </form.Field>
+
+            <div className="flex gap-2">
+              {isEditingEmail ? (
+                <>
+                  <FormSubmitButton
+                    className="justify-self-start"
+                    form={form}
+                    size="sm"
+                    text="Save"
+                    type="submit"
+                  />
                   <Button
                     className="justify-self-start"
-                    onClick={async () => {
-                      await onRequestVerificationEmail({
-                        email: user.email,
-                      });
+                    onClick={() => {
+                      setIsEditingEmail(false);
                     }}
                     size="sm"
-                    text="Resend verification email"
+                    text="Cancel"
                     variant="mono"
                   />
-                )}
-              </>
-            )}
-          </div>
-        </div>
-      </form>
+                </>
+              ) : (
+                <>
+                  <Button
+                    className="justify-self-start"
+                    disabled={isEditingName}
+                    onClick={() => {
+                      setIsEditingEmail(true);
+                    }}
+                    size="sm"
+                    text="Edit"
+                    variant="secondary"
+                  />
 
-      <div className="grid gap-10 mt-5">
+                  {!user.emailVerified && (
+                    <Button
+                      className="justify-self-start"
+                      onClick={async () => {
+                        await onRequestVerificationEmail({
+                          email: user.email,
+                        });
+                      }}
+                      size="sm"
+                      text="Resend verification email"
+                      variant="mono"
+                    />
+                  )}
+                </>
+              )}
+            </div>
+          </div>
+        </form>
+
         <Button
           className="justify-self-start"
           onClick={showUpdatePasswordDialog}
@@ -229,6 +231,7 @@ export const AccountPage = () => {
           text="Update Password"
           variant="secondary"
         />
+
         <DeleteAccountButton />
       </div>
     </PageWrapper>

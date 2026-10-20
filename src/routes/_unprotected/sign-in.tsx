@@ -3,10 +3,20 @@ import z from 'zod';
 
 import { SignInPage } from '#/pages/SignInPage';
 
+import { createMetaTags } from '../__root';
+
 export const Route = createFileRoute('/_unprotected/sign-in')({
-  component: SignInPage,
   validateSearch: z.object({
     resetPassword: z.boolean().optional(),
     redirect: z.string().optional(),
   }),
+  component: SignInPage,
+  head: () => {
+    return {
+      meta: createMetaTags({
+        title: 'Sign In: Collection Tracker',
+        description: 'Sign in to your Collection Tracker account.',
+      }),
+    };
+  },
 });

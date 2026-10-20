@@ -9,8 +9,10 @@ import { SignInForm } from './components/SignInForm';
 
 export const SignInPage: RouteComponent = () => {
   return (
-    <PageWrapper title="Sign In">
+    <PageWrapper title="Collection Tracker">
       <div className="grid gap-10">
+        <h1>Sign In</h1>
+
         <SignInForm />
 
         <div className="flex gap-4 items-center text-sm">

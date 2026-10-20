@@ -145,6 +145,7 @@ const IgnoreSortArticlesLabel = () => {
         {articlesToIgnore.reduce((acc, value, index) => {
           const isLastIndex = index === articlesToIgnore.length - 1;
           const formattedValue = `"${value}"`;
+
           if (isLastIndex) {
             return `${acc} or ${formattedValue}`;
           } else {

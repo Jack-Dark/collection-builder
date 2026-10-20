@@ -31,24 +31,27 @@ export const SiteNavMenu = () => {
 
   const isLoggedIn = user?.id;
 
-  const navItems: NavMenuItem[] = [
-    {
-      href: CollectionsRoute.fullPath,
-      items: collections?.map((collection) => {
-        return {
-          href: CollectionRoute.fullPath.replace('$id', String(collection.id)),
-          label: collection.name,
-        };
-      }),
-      label: 'Collections',
-    },
-    isLoggedIn
-      ? {
+  const navItems: NavMenuItem[] = isLoggedIn
+    ? [
+        {
+          href: CollectionsRoute.fullPath,
+          items: collections.map((collection) => {
+            return {
+              href: CollectionRoute.fullPath.replace(
+                '$id',
+                String(collection.id),
+              ),
+              label: collection.name,
+            };
+          }),
+          label: 'Collections',
+        },
+        {
           href: '/account' satisfies RouterPath,
           Icon: AccountCircleIcon,
           items: [
             {
-              href: '',
+              href: '#sign-out',
               label: 'Sign out',
               onClick: async () => {
                 await onSignOut({});
@@ -56,12 +59,33 @@ export const SiteNavMenu = () => {
             },
           ],
           label: 'Account',
-        }
-      : {
-          href: '/sign-in' satisfies RouterPath,
-          label: 'Sign In',
         },
-  ];
+      ]
+    : [
+        {
+          href: '/about' satisfies RouterPath,
+          label: 'About',
+        },
+        {
+          href: '/why-its-important' satisfies RouterPath,
+          label: "Why it's Important",
+        },
+        {
+          href: '/sign-in' satisfies RouterPath,
+          Icon: AccountCircleIcon,
+          items: [
+            {
+              href: '/sign-in' satisfies RouterPath,
+              label: 'Sign In',
+            },
+            {
+              href: '/sign-up' satisfies RouterPath,
+              label: 'Sign Up',
+            },
+          ],
+          label: 'Sign In / Sign Up',
+        },
+      ];
 
   return (
     <div className="flex justify-between items-center bg-theme-surface-1 text-theme-t1">

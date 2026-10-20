@@ -3,6 +3,11 @@ import type { ErrorBoundaryPropsWithFallback } from 'react-error-boundary';
 
 import { ErrorBoundary } from 'react-error-boundary';
 
+export const githubUrl = {
+  issues: 'https://github.com/Jack-Dark/collection-tracker/issues',
+  repo: 'https://github.com/Jack-Dark/collection-tracker',
+};
+
 export const SimpleErrorBoundary = ({
   children,
   ...rest
@@ -20,10 +25,7 @@ export const SimpleErrorBoundaryContent = () => {
       <div className="p-4 bg-white text-black rounded-xs">
         <p>Something went wrong.</p>
         <p>
-          <a
-            href="https://github.com/Jack-Dark/collection-builder/issues"
-            target="_blank"
-          >
+          <a href={githubUrl.issues} target="_blank">
             Please report this bug.
           </a>
         </p>

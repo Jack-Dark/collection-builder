@@ -68,57 +68,61 @@ export const ResetPasswordPage: RouteComponent = () => {
   }, [error]);
 
   return (
-    <PageWrapper title="Reset Password">
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          form.handleSubmit();
-        }}
-      >
-        <div className="grid gap-4 max-w-100">
-          <form.Field name="newPassword">
-            {(field) => {
-              return (
-                <InputField
-                  autoFocus
-                  error={field.errors}
-                  Label="New Password"
-                  name={field.name}
-                  onValueChange={(value) => {
-                    field.handleChange(value);
-                  }}
-                  required
-                  type="password"
-                  value={field.value}
-                />
-              );
-            }}
-          </form.Field>
+    <PageWrapper title="Collection Tracker">
+      <div className="grid gap-10">
+        <h1>Reset Password</h1>
 
-          <form.Field name="confirmNewPassword">
-            {(field) => {
-              return (
-                <InputField
-                  error={field.errors}
-                  Label="Confirm Password"
-                  name={field.name}
-                  onValueChange={(value) => {
-                    field.handleChange(value);
-                  }}
-                  required
-                  type="password"
-                  value={field.value}
-                />
-              );
-            }}
-          </form.Field>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            form.handleSubmit();
+          }}
+        >
+          <div className="grid gap-4 max-w-100">
+            <form.Field name="newPassword">
+              {(field) => {
+                return (
+                  <InputField
+                    autoFocus
+                    error={field.errors}
+                    Label="New Password"
+                    name={field.name}
+                    onValueChange={(value) => {
+                      field.handleChange(value);
+                    }}
+                    required
+                    type="password"
+                    value={field.value}
+                  />
+                );
+              }}
+            </form.Field>
 
-          <div className="flex gap-10 justify-between items-center pt-4">
-            <FormSubmitButton form={form} text="Submit" />
+            <form.Field name="confirmNewPassword">
+              {(field) => {
+                return (
+                  <InputField
+                    error={field.errors}
+                    Label="Confirm Password"
+                    name={field.name}
+                    onValueChange={(value) => {
+                      field.handleChange(value);
+                    }}
+                    required
+                    type="password"
+                    value={field.value}
+                  />
+                );
+              }}
+            </form.Field>
+
+            <div className="flex gap-10 justify-between items-center pt-4">
+              <FormSubmitButton form={form} text="Submit" />
+            </div>
           </div>
-        </div>
-      </form>
+        </form>
+      </div>
     </PageWrapper>
   );
 };

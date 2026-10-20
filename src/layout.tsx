@@ -11,9 +11,8 @@ export const Layout: RouteComponent = () => {
     <SimpleErrorBoundary>
       <FullPageLoadingSpinner />
       <Notifications />
-      <div className="p-4 h-dvh overflow-hidden size-full grid grid-rows-[auto_1fr] gap-4">
-        <Outlet />
-      </div>
+
+      <Outlet />
     </SimpleErrorBoundary>
   );
 };

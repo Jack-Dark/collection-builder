@@ -1,7 +1,7 @@
 /// <reference types="vite/client" />
 
 import type { QueryClient } from '@tanstack/react-query';
-import type { ReactNode } from 'react';
+import type { MetaHTMLAttributes, ReactNode } from 'react';
 
 import { TanStackDevtools } from '@tanstack/react-devtools';
 import { formDevtoolsPlugin } from '@tanstack/react-form-devtools';
@@ -17,14 +17,18 @@ import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
 import { StrictMode } from 'react';
 
 import { getSession } from '#/auth/auth-middleware';
+import { Button } from '#/components/Button';
 import { DialogProvider } from '#/components/Dialog/Dialog.Provider';
-import { SimpleErrorBoundaryContent } from '#/components/SimpleErrorBoundary';
+import { PageWrapper } from '#/components/PageWrapper';
+import {
+  githubUrl,
+  SimpleErrorBoundaryContent,
+} from '#/components/SimpleErrorBoundary';
 import { ThemeProvider } from '#/components/ThemeProvider';
 import { getThemeServerFn } from '#/lib/theme';
 
 import appCss from '../styles.css?url';
 
-// TODO - REQUIRED FEATURE CREATE HOMEPAGE
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
 }>()({
@@ -47,26 +51,43 @@ export const Route = createRootRouteWithContext<{
           href: appCss,
           rel: 'stylesheet',
         },
+        {
+          rel: 'icon',
+          // TODO - REQUIRED FEATURE: ADD FAVICON
+          href: '/favicon.ico',
+        },
       ],
-      meta: [
+      meta: createMetaTags(
         {
-          charSet: 'utf-8',
-        },
-        {
-          content: 'width=device-width, initial-scale=1',
-          name: 'viewport',
-        },
-        {
-          // TODO - REQUIRED FEATURE: UPDATE PAGE TITLE FOR EACH UNIQUE PAGE TYPE
           title: 'Collection Tracker',
         },
-      ],
+        [
+          {
+            charSet: 'utf-8',
+          },
+          {
+            content: 'width=device-width, initial-scale=1',
+            name: 'viewport',
+          },
+        ],
+      ),
     };
   },
   notFoundComponent: () => {
     return (
       <RootDocument>
-        <p>Not Found</p>
+        <PageWrapper title="Collection Tracker">
+          <div className="grid gap-10">
+            <h1>Page Not Found</h1>
+            <p>
+              Ack! You caught us with our pants down! If you think this is bug,
+              you can help us out by reporting it.
+            </p>
+            <a href={githubUrl.issues} target="_blank">
+              <Button text="Report Bug" />
+            </a>
+          </div>
+        </PageWrapper>
       </RootDocument>
     );
   },
@@ -120,4 +141,42 @@ export const RootDocument = ({
       </ThemeProvider>
     </html>
   );
+};
+
+/**
+ * @example
+ * export const Route = createFileRoute('/your-route-path')({
+ *   component: YourRouteComponent,
+ *   head: () => {
+ *     return {
+ *       meta: createMetaTags({
+ *         title: 'Sign In',
+ *         description: 'Sign in to your Collection Tracker account.',
+ *       }),
+ *     };
+ *   },
+ * });
+ */
+export const createMetaTags = (
+  props: {
+    description?: string;
+    title: string;
+  },
+  additionalTags: MetaHTMLAttributes<HTMLMetaElement>[] = [],
+) => {
+  const {
+    title,
+    description = 'Your helpful tracker for all your collections!',
+  } = props;
+
+  return [
+    {
+      title,
+    },
+    {
+      name: 'description',
+      content: description,
+    },
+    ...additionalTags,
+  ] satisfies MetaHTMLAttributes<HTMLMetaElement>[];
 };

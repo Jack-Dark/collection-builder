@@ -7,8 +7,10 @@ import { SignUpForm } from './components/SignUpForm';
 
 export const SignUpPage = () => {
   return (
-    <PageWrapper title="Sign Up!">
+    <PageWrapper title="Collection Tracker">
       <div className="grid gap-10">
+        <h1>Sign Up</h1>
+
         <SignUpForm />
 
         <div className="flex gap-4 items-center text-sm">

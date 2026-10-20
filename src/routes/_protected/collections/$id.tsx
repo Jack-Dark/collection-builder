@@ -1,13 +1,12 @@
 import { createFileRoute } from '@tanstack/react-router';
 
-import type { GetCollectionDetailsByIdResponseDef } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.types';
-
 import { reactQueryKeys } from '#/api/react-query-hooks/react-query.constants';
 import { getGenericFetchQueryOptions } from '#/api/react-query-hooks/use-generic-fetch-query/get-generic-fetch-query-options';
 import { collectionDetailsSearchQueriesSchema } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.schema';
 import { getCollectionDetailsByIdServerFn } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.serverFn';
 import { CollectionDetailsPage } from '#/pages/CollectionDetailsPage';
 import { getAutoPopulateCustomFieldValuesServerFn } from '#/pages/CollectionDetailsPage/components/CollectionDetailsTable/hooks/use-collection-details-settings-props';
+import { createMetaTags } from '#/routes/__root';
 
 export const Route = createFileRoute('/_protected/collections/$id')({
   component: CollectionDetailsPage,
@@ -17,6 +16,9 @@ export const Route = createFileRoute('/_protected/collections/$id')({
   },
   ssr: false,
   loader: async ({ context, deps: searchQueries, params }) => {
+    const autoPopulateCustomFieldValues =
+      await getAutoPopulateCustomFieldValuesServerFn();
+
     const collectionId = Number(params.id);
 
     const requestArgs = { collectionId, params: searchQueries };
@@ -31,29 +33,39 @@ export const Route = createFileRoute('/_protected/collections/$id')({
       requestArgs,
     });
 
-    await context.queryClient.query(queryOptions);
+    const collectionDetails = await context.queryClient.query(queryOptions);
 
-    const autoPopulateCustomFieldValues =
-      await getAutoPopulateCustomFieldValuesServerFn();
-
-    return { autoPopulateCustomFieldValues };
+    return { autoPopulateCustomFieldValues, ...collectionDetails };
   },
   head: ({ loaderData }) => {
-    const data = loaderData as unknown as GetCollectionDetailsByIdResponseDef;
+    const title = `${loaderData?.collection?.name || 'Collection Items'}: Collection Tracker`;
 
-    const title = data?.collection
-      ? `Collection: ${data?.collection?.name} (${data?.pagination?.totalRecords})`
-      : undefined;
+    const maxItems = 3;
+    const numRecords = loaderData?.items?.length || 0;
+    const numRecordsToList = Math.min(maxItems, numRecords);
+    const hasMoreRecords = numRecords > maxItems;
 
-    const content = data?.items
-      ?.slice(0, 3)
-      ?.map((item) => {
-        return item?.name;
-      })
-      .join(', ');
+    const description = loaderData?.items
+      ?.slice(0, numRecordsToList)
+      ?.reduce((acc, item, index) => {
+        const isLastIndex = index === numRecordsToList - 1;
+
+        if (isLastIndex) {
+          if (hasMoreRecords) {
+            return `${acc}${item.name}, etc...`;
+          } else {
+            return `${acc}${item.name}`;
+          }
+        } else {
+          return `${acc}${item.name}, `;
+        }
+      }, '');
 
     return {
-      meta: [{ title }, { content, name: 'description' }],
+      meta: createMetaTags({
+        title,
+        description,
+      }),
     };
   },
 });
