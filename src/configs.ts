@@ -3,7 +3,6 @@ import { config } from 'dotenv';
 config({ path: '.env' });
 
 export const configs = {
-  authSecret: process.env.BETTER_AUTH_SECRET!,
   authUrl: process.env.BETTER_AUTH_URL!,
   cloudinaryApiKey: process.env.CLOUDINARY_API_KEY!,
   cloudinaryApiSecret: process.env.CLOUDINARY_API_SECRET!,
