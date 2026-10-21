@@ -63,7 +63,7 @@ export const getCollectionsListTableColumns = (
             <Popover
               aria-label="Info icon"
               Description="
-              Each custom field will be a unique column on that
+              Each custom field will have a unique column on that
               collection's table."
               Trigger={() => {
                 return (
