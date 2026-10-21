@@ -34,7 +34,7 @@ export const createCollectionItemsDbQuery = async ({
       eq(collectionItemsTable.userId, userId),
     );
 
-    const maxAllowed = 77;
+    const maxAllowed = 250;
     const numAdditionalCollectionsAllowed = Math.max(
       0,
       maxAllowed - totalCollections,
