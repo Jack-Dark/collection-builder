@@ -2,7 +2,10 @@ import { useSelector } from '@tanstack/react-form';
 import { useEffect, useMemo } from 'react';
 
 import { getPaginationMetadataDefaults } from '#/api/pagination/pagination.constants';
-import { useGetPaginatedCollections } from '#/api/routes/collections/get-paginated-collections/get-paginated-collections.react-query';
+import {
+  useGetPaginatedCollections,
+  useInvalidateGetPaginatedCollections,
+} from '#/api/routes/collections/get-paginated-collections/get-paginated-collections.react-query';
 import { Table } from '#/components/Table';
 import { Route as CollectionsRoute } from '#/routes/_protected/collections';
 
@@ -22,6 +25,9 @@ export const CollectionsListTable = ({
 }) => {
   const searchQueries = CollectionsRoute.useSearch();
 
+  const invalidateGetPaginatedCollections =
+    useInvalidateGetPaginatedCollections();
+
   const { data } = useGetPaginatedCollections({
     placeholderData: {
       collections: [],
@@ -33,9 +39,10 @@ export const CollectionsListTable = ({
   const { pagination } = data;
 
   const onCancel = () => {
-    resetEditingRowIds();
+    // ? invalidate to solve issue of deleting a currently applied custom field and then cancelling your changes leaving the old field data in the table
+    invalidateGetPaginatedCollections();
 
-    form.reset();
+    resetEditingRowIds();
   };
 
   const { addToEditingRowIds, editingRowIds, isEditing, resetEditingRowIds } =

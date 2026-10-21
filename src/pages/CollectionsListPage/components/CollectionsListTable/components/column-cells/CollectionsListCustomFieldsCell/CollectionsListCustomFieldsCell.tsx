@@ -388,21 +388,18 @@ export const DeleteCustomFieldDialog = (props: {
 
         {!!numAffectedCollections && (
           <div className="grid gap-1">
-            <p className="text-center text-sm text-theme-t2">
+            <p className="text-center text-sm text-theme-t1">
               This will remove the field from {numAffectedCollections}{' '}
-              {pluralize('collection', numAffectedCollections)} and{' '}
-              {lastEditedCustomField.data?.customField.name} details from all
+              {pluralize('collection', numAffectedCollections)} and "
+              {lastEditedCustomField.data?.customField.name}" details from all
               items within.
-            </p>
-            <p className="text-center text-sm text-theme-t2">
-              <em>This cannot be undone.</em>
             </p>
           </div>
         )}
 
         <p className="max-w-100 text-theme-t2 text-sm text-center">
-          Note: This will delete the custom field, even if changes to your
-          collection are dismissed.
+          Note: This will delete both the field and values, even if changes to
+          your collection are dismissed.
         </p>
       </div>
     </ConfirmDeleteDialog>
@@ -613,7 +610,7 @@ export const AddOrEditCustomFieldDialog = (props: {
                 }}
               </form.Field>
 
-              <p className="max-w-100 text-gray-500 text-sm text-center">
+              <p className="max-w-100 text-theme-t2 text-sm text-center">
                 Note: This will {isNewRecord ? 'create the' : 'update your'}{' '}
                 custom field, even if changes to your collection are dismissed.
               </p>

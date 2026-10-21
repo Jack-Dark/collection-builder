@@ -1,7 +1,10 @@
 import { useEffect, useMemo } from 'react';
 
 import { getPaginationMetadataDefaults } from '#/api/pagination/pagination.constants';
-import { useGetCollectionDetailsById } from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.react-query';
+import {
+  useGetCollectionDetailsById,
+  useInvalidateGetCollectionDetailsById,
+} from '#/api/routes/collection-items/get-collection-details-by-id/get-collection-details-by-id.react-query';
 import { useDeleteUnusedCustomFieldValues } from '#/api/routes/custom-field-values/delete-unused-custom-field-values/delete-unused-custom-field-values.react-query';
 import { Table } from '#/components/Table';
 import { Route as CollectionRoute } from '#/routes/_protected/collections/$id';
@@ -27,6 +30,9 @@ export const CollectionDetailsTable = ({
   const collectionId = Number(id);
   const search = CollectionRoute.useSearch();
 
+  const invalidateGetCollectionDetailsById =
+    useInvalidateGetCollectionDetailsById();
+
   const { data } = useGetCollectionDetailsById({
     placeholderData: {
       collection: {
@@ -43,9 +49,10 @@ export const CollectionDetailsTable = ({
   const { pagination } = data;
 
   const onCancel = async () => {
-    resetEditingRowIds();
+    // ? invalidate to solve issue of deleting a currently applied custom field value and then cancelling your changes leaving the old custom field value in the table
+    invalidateGetCollectionDetailsById();
 
-    form.reset();
+    resetEditingRowIds();
 
     await onDeleteUnusedCustomFieldValues({ collectionId });
   };

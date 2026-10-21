@@ -84,7 +84,7 @@ export const CustomFieldValueCombobox = <TField extends AnyFieldApi>({
       caseSensitiveCreation
       createNewItem={(label) => {
         return {
-          // typing as number to resolve inferred type errors
+          // ? typing as number to resolve inferred type errors
           id: uuidv4() as unknown as number,
           valueBoolean: null,
           valueNumber: null,
@@ -158,8 +158,6 @@ export const CustomFieldValueCombobox = <TField extends AnyFieldApi>({
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-
-                // TODO - BUG: NEWLY CREATED COLLECTIONS NOT DELETING
 
                 setCustomFieldValueToDelete(item);
                 showDeleteCustomFieldValueDialog();

@@ -136,6 +136,10 @@ export const Table = <TData extends RowData>({
     }
   }, [pathname]);
 
+  useLayoutEffect(() => {
+    table.resetRowSelection();
+  }, [data]);
+
   return (
     <div
       className={`grid gap-2 md:gap-4 h-full max-h-[calc(100dvh-4rem)] ${tableWrapperClasses}`}

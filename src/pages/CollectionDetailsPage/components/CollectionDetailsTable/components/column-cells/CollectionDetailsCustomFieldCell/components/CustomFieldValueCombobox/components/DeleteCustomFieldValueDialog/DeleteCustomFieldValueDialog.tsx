@@ -36,9 +36,26 @@ export const DeleteCustomFieldValueDialog = <
 
   const id = Number(customFieldValueToDelete.id);
 
+  const getShouldAutoDelete = (props: {
+    affectedCollections: {
+      id: number;
+      name: string;
+    }[];
+    numAffectedCollectionItems: number;
+  }) => {
+    const { affectedCollections, numAffectedCollectionItems } = props;
+
+    return affectedCollections.length <= 1 && numAffectedCollectionItems <= 1;
+  };
+
   const { data } = useGetCollectionItemsWithCustomFieldValue({
     onSuccess: async ({ affectedCollections, numAffectedCollectionItems }) => {
-      if (!affectedCollections.length && !numAffectedCollectionItems) {
+      const shouldAutoDelete = getShouldAutoDelete({
+        affectedCollections,
+        numAffectedCollectionItems,
+      });
+
+      if (shouldAutoDelete) {
         await onDelete();
       }
     },
@@ -63,7 +80,6 @@ export const DeleteCustomFieldValueDialog = <
       await invalidateGetCustomFieldValuesByCustomFieldId();
 
       if (selectedCustomFieldValueId === id) {
-        // TODO - BUG: FIELD IS NOT CORRECTLY CLEARED IF DELETING CUSTOM FIELD/VALUE THAT IS CURRENTLY APPLIED AND THEN CANCELLING CHANGES
         handleFieldChange(undefined);
       }
 
@@ -79,22 +95,25 @@ export const DeleteCustomFieldValueDialog = <
     });
   };
 
-  return !affectedCollections.length && !numAffectedCollectionItems ? null : (
+  const shouldAutoDelete = getShouldAutoDelete({
+    affectedCollections,
+    numAffectedCollectionItems,
+  });
+
+  return shouldAutoDelete ? null : (
     <ConfirmDeleteDialog hideDialog={onClose} onConfirm={onDelete}>
       <div className="grid gap-4 content-center h-full">
-        <p className="text-center">
-          Are you sure you want to delete this custom field value?
-        </p>
-
-        <h4 className="text-center">{customFieldValueToDelete.valueText}</h4>
+        <p className="text-center" />
 
         {!!numAffectedCollectionItems && (
           <>
             <div className="grid gap-1">
-              <p className="text-center text-sm text-theme-t2">
-                This will remove the custom field value from{' '}
-                {numAffectedCollectionItems} collection{' '}
-                {pluralize('item', numAffectedCollectionItems)}{' '}
+              <p className="text-center text-sm text-theme-t1">
+                This will remove "{customFieldValueToDelete.valueText}" from{' '}
+                <strong className="text-theme-t-alert">
+                  {numAffectedCollectionItems}
+                </strong>{' '}
+                collection {pluralize('item', numAffectedCollectionItems)}{' '}
                 {pluralize('in', numAffectedCollectionItems, 'across')} the
                 following {pluralize('collection', numAffectedCollectionItems)}:
               </p>
@@ -110,16 +129,16 @@ export const DeleteCustomFieldValueDialog = <
                   })}
                 </ul>
               </div>
+
+              <p className="text-center text-sm text-theme-t1">
+                Are you sure you want to delete this custom field value?
+              </p>
             </div>
 
             <div className="grid gap-1">
               <p className="max-w-100 text-theme-t2 text-sm text-center">
                 Note: This will delete the custom field value, even if changes
                 to your collection are dismissed.
-              </p>
-
-              <p className="text-center text-sm text-theme-t2">
-                <em>This cannot be undone.</em>
               </p>
             </div>
           </>

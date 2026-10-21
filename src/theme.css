@@ -118,14 +118,13 @@
 
   --theme-alert: var(--color-red-900);
   --theme-alert-hover: var(--color-red-800);
-
-
 }
 
 @layer utilities {
 
   [data-them="light"] {
 
+    /* // TODO - IMPROVEMENT: AUTOFILL COLORS ARE NOT MATCHING THEME */
     input:-webkit-autofill,
     input:-webkit-autofill:hover,
     input:-webkit-autofill:focus,

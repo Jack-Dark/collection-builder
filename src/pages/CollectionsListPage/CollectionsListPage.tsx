@@ -28,6 +28,9 @@ export const CollectionsListPage: RouteComponent = () => {
   const searchQueries = CollectionsRoute.useSearch();
 
   const { data } = useGetPaginatedCollections({
+    onSuccess: () => {
+      form.reset();
+    },
     placeholderData: {
       collections: [],
       pagination: getPaginationMetadataDefaults(1000),
@@ -129,8 +132,8 @@ export const CollectionsListPage: RouteComponent = () => {
 
   return (
     <PageWrapper
-      wideOnMobile
       title={`Collections (${data.pagination.totalRecords})`}
+      wideOnMobile
     >
       <CollectionsListTable form={form} />
     </PageWrapper>
