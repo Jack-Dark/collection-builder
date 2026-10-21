@@ -18,7 +18,7 @@ export const MoreMenu = (props: MenuPropsDef) => {
         className={twJoin(
           `flex items-center justify-center select-none`,
           getCursorClassName(disabled),
-          disabled && 'text-disabled',
+          disabled && 'text-theme-disabled',
         )}
         disabled={disabled}
       >

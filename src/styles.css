@@ -18,10 +18,6 @@
 }
 
 @layer components {
-  .text-disabled {
-    color: var(--color-disabled);
-  }
-
   .root {
     isolation: isolate;
   }
@@ -40,12 +36,11 @@
     color: var(--color-text-theme-t1);
   }
 
-  /* For some reason tailwind element styles are overriding the class level specificity. Only way I could think to apply anchor styling without it overriding classes was to apply the styles only to anchors in paragraph tags. */
   a {
-    color: var(--color-anchor);
+    color: var(--color-theme-link);
 
     &:hover {
-      color: var(--color-anchor-hover)
+      color: var(--color-theme-link-hover)
     }
   }
 

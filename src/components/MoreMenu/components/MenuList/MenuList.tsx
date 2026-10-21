@@ -103,7 +103,7 @@ export const MenuList = (props: MenuPropsDef) => {
                               </ConditionalWrapper>
                             </Menu.Item>
                             {addSeparator && (
-                              <Menu.Separator className="mx-4 my-1.5 h-px bg-divider" />
+                              <Menu.Separator className="mx-4 my-1.5 h-px bg-theme-divider" />
                             )}
                           </Fragment>
                         );
@@ -165,7 +165,7 @@ export const MenuList = (props: MenuPropsDef) => {
                     </Menu.Item>
                   )}
                   {addSeparator && (
-                    <Menu.Separator className="mx-4 my-1.5 h-px bg-divider" />
+                    <Menu.Separator className="mx-4 my-1.5 h-px bg-theme-divider" />
                   )}
                 </Fragment>
               );
