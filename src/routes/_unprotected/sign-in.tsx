@@ -1,6 +1,7 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, redirect } from '@tanstack/react-router';
 import z from 'zod';
 
+import { getSession } from '#/auth/auth-middleware';
 import { SignInPage } from '#/pages/SignInPage';
 
 import { createMetaTags } from '../__root';
@@ -11,6 +12,15 @@ export const Route = createFileRoute('/_unprotected/sign-in')({
     redirect: z.string().optional(),
   }),
   component: SignInPage,
+  beforeLoad: () => {
+    return getSession();
+  },
+  loader: ({ context }) => {
+    if (context.user?.id)
+      throw redirect({
+        to: '/collections',
+      });
+  },
   head: () => {
     return {
       meta: createMetaTags({
