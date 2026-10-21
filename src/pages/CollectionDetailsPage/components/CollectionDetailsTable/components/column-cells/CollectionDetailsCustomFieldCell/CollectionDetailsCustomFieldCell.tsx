@@ -2,7 +2,7 @@ import { Suspense } from 'react';
 
 import type { CustomFieldTypeDef } from '#/api/db-tables-schema.types';
 
-import { CheckboxField } from '#/components/Fields/CheckboxField';
+import { CheckboxBaseIcon } from '#/components/Fields/CheckboxField';
 import { useEditingCollectionItemsRowIds } from '#/pages/CollectionDetailsPage/hooks/use-editing-collection-items-row-ids';
 
 import type { CreateOrUpdateCollectionItemFormTypeDef } from '../../../../../CollectionDetailsPage.types';
@@ -78,10 +78,10 @@ export const CollectionDetailsCustomFieldCell = (
           ) : (
             <>
               {customField.type === 'boolean' ? (
-                <CheckboxField
+                <CheckboxBaseIcon
                   aria-label={checkboxAriaLabel}
                   checked={checked}
-                  disabled
+                  className="text-theme-t1"
                 />
               ) : (
                 <p>

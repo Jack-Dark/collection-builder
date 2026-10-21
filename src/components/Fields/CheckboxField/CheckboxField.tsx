@@ -4,8 +4,10 @@ import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import IndeterminateCheckBoxIcon from '@mui/icons-material/IndeterminateCheckBox';
 import { useCallback } from 'react';
+import { twMerge } from 'tailwind-merge';
 
 import type {
+  CheckboxBaseIconPropsDef,
   CheckboxBasePropsDef,
   CheckboxFieldProps,
 } from './CheckboxField.types';
@@ -106,5 +108,51 @@ export const CheckboxBase = (props: CheckboxBasePropsDef) => {
         }}
       />
     </Checkbox.Root>
+  );
+};
+
+export const CheckboxBaseIcon = (props: CheckboxBaseIconPropsDef) => {
+  const {
+    'aria-label': ariaLabel,
+    checked,
+    className,
+    disabled,
+    indeterminate,
+  } = props;
+
+  return (
+    <>
+      {checked ? (
+        <CheckBoxIcon
+          aria-label={ariaLabel}
+          className={twMerge(
+            disabled
+              ? 'text-theme-disabled'
+              : 'text-theme-link hover:text-theme-link-hover',
+            className,
+          )}
+        />
+      ) : indeterminate ? (
+        <IndeterminateCheckBoxIcon
+          aria-label={ariaLabel}
+          className={twMerge(
+            disabled
+              ? 'text-theme-disabled'
+              : 'text-theme-link/50 hover:text-theme-link-hover',
+            className,
+          )}
+        />
+      ) : (
+        <CheckBoxOutlineBlankIcon
+          aria-label={ariaLabel}
+          className={twMerge(
+            disabled
+              ? 'text-theme-disabled'
+              : 'text-theme-t1 dark:text-theme-t2 hover:text-theme-link-hover',
+            className,
+          )}
+        />
+      )}
+    </>
   );
 };

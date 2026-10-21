@@ -4,13 +4,17 @@ import type { FieldWrapperProps } from '../FieldWrapper/FieldWrapper.types';
 
 export type CheckboxFieldProps = Pick<
   CheckboxRootProps,
-  'checked' | 'onCheckedChange' | 'indeterminate' | 'value' | 'aria-label'
+  'onCheckedChange' | 'value'
 > &
   FieldWrapperProps & {
     labelPosition?: 'left' | 'right';
-  };
+  } & CheckboxBasePropsDef;
 
-export type CheckboxBasePropsDef = CheckboxRootProps & {
-  disabled?: boolean;
-  indeterminate?: boolean;
+export type CheckboxBasePropsDef = CheckboxRootProps & CheckboxBaseIconPropsDef;
+
+export type CheckboxBaseIconPropsDef = Pick<
+  CheckboxRootProps,
+  'aria-label' | 'checked' | 'disabled' | 'indeterminate'
+> & {
+  className?: string;
 };
