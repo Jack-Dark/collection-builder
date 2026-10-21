@@ -13,7 +13,7 @@ export const DesktopNavMenu = (props: { items: NavMenuItem[] }) => {
 
   return (
     <NavigationMenu.Root
-      className="min-w-max"
+      className="p-1"
       // closeDelay={99999999} // ? uncomment to troubleshoot menu
     >
       <NavigationMenu.List className="relative flex items-center gap-2">

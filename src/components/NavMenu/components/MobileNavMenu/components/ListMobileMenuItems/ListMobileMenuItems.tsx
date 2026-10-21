@@ -48,7 +48,7 @@ export const ListMobileMenuItems = (props: ListMobileMenuItemsPropsDef) => {
                     onClick={handleOnClick}
                   >
                     <NavigationLinkWrapper
-                      className="block px-3 py-2 text-inherit"
+                      className="px-3 py-1 text-inherit"
                       href={href}
                       onClick={handleOnClick}
                     >

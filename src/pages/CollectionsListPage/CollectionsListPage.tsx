@@ -128,7 +128,10 @@ export const CollectionsListPage: RouteComponent = () => {
   }, []);
 
   return (
-    <PageWrapper title={`Collections (${data.pagination.totalRecords})`}>
+    <PageWrapper
+      wideOnMobile
+      title={`Collections (${data.pagination.totalRecords})`}
+    >
       <CollectionsListTable form={form} />
     </PageWrapper>
   );

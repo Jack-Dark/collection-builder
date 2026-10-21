@@ -138,7 +138,7 @@ export const Table = <TData extends RowData>({
 
   return (
     <div
-      className={`grid gap-4 h-full max-h-[calc(100dvh-4rem)] ${tableWrapperClasses}`}
+      className={`grid gap-2 md:gap-4 h-full max-h-[calc(100dvh-4rem)] ${tableWrapperClasses}`}
     >
       {AboveTableComponent && <AboveTableComponent table={table} />}
       {showTableActions && (

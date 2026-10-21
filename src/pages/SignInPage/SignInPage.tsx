@@ -15,7 +15,7 @@ export const SignInPage: RouteComponent = () => {
 
         <SignInForm />
 
-        <div className="flex gap-4 items-center text-sm">
+        <div className="flex gap-4 items-center flex-wrap text-sm">
           <p>Don't have an account yet?</p>
           <Link to="/sign-up">
             <Button size="sm" variant="secondary">

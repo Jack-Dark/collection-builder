@@ -37,7 +37,7 @@ export const ThemeToggles = () => {
   return (
     <ToggleGroup
       aria-label="User Theme"
-      className="grid gap-1 grid-cols-2 border border-theme-divider-2 rounded-4xl p-1 w-full"
+      className="grid gap-1 grid-cols-2 border border-theme-divider-2 rounded-4xl p-1 w-25"
       defaultValue={[userPreferenceThemes.dark]}
     >
       {themeToggleItems.map(({ label, theme, ThemeIcon }) => {
@@ -64,7 +64,7 @@ export const ThemeToggles = () => {
             }}
             value={theme}
           >
-            <ThemeIcon className="inherit" fontSize="small" />
+            <ThemeIcon className="inherit" fontSize="inherit" />
           </Toggle>
         );
       })}

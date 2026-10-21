@@ -2,7 +2,7 @@ import type { NavigationMenuLinkProps } from '@base-ui/react';
 
 import { NavigationMenu } from '@base-ui/react';
 import { Link } from '@tanstack/react-router';
-import { twJoin } from 'tailwind-merge';
+import { twMerge } from 'tailwind-merge';
 
 export const NavigationLinkWrapper = (
   props: NavigationMenuLinkProps & { className?: string },
@@ -13,7 +13,7 @@ export const NavigationLinkWrapper = (
   return (
     <NavigationMenu.Link
       {...navigationLinkProps}
-      className={twJoin(className, 'flex px-3 py-2')}
+      className={twMerge('flex px-3 py-2', className)}
       closeOnClick
       href={href}
       render={

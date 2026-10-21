@@ -83,22 +83,26 @@ export const CollectionsListTableRowActions = (props: {
               {!!selectedRowIds.length && (
                 <>
                   <Button
+                    className="btn-sm md:btn-md"
                     disabled={isEditing}
                     Icon={EditIcon}
                     onClick={() => {
                       addToEditingRowIds(...selectedRowIds);
                     }}
-                    text="Edit"
                     variant="secondary"
-                  />
+                  >
+                    <span className="sr-only md:not-sr-only">Edit</span>
+                  </Button>
 
                   <Button
+                    className="btn-sm md:btn-md"
                     disabled={isEditing}
                     Icon={DeleteIcon}
                     onClick={showConfirmDeleteDialog}
-                    text="Delete"
                     variant="alert"
-                  />
+                  >
+                    <span className="sr-only md:not-sr-only">Delete</span>
+                  </Button>
                 </>
               )}
             </div>
@@ -124,11 +128,16 @@ export const CollectionsListTableRowActions = (props: {
                   Trigger={() => {
                     return (
                       <AddNewCollectionButton
+                        className="btn-sm md:btn-md"
                         disabled={!user?.emailVerified}
                         form={form}
                         insertAtIndex={0}
-                        text="Add New"
-                      />
+                      >
+                        <span>
+                          Add{' '}
+                          <span className="sr-only md:not-sr-only">New</span>
+                        </span>
+                      </AddNewCollectionButton>
                     );
                   }}
                 />

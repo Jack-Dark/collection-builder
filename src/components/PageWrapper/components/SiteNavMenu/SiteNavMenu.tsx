@@ -1,7 +1,6 @@
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
-import { useSignOut } from '#/api/routes/users/sign-out/sign-out.react-query';
-import { NavMenu } from '#/components/NavMenu';
+import { DesktopNavMenu } from '#/components/NavMenu/components/DesktopNavMenu';
 import { useUserContext } from '#/hooks/use-user-context';
 
 import type { RouterPath } from '../../../../types';
@@ -13,6 +12,24 @@ import { Route as CollectionRoute } from '../../../../routes/_protected/collecti
 import { ThemeToggles } from './components/ThemeToggles';
 
 export const SiteNavMenu = () => {
+  const { accountNavItems, primaryNavItems } = useSiteNavMenuItems();
+
+  return (
+    <div className="hidden md:flex justify-between items-center bg-theme-surface-1 text-theme-t1 rounded-xs">
+      <DesktopNavMenu items={primaryNavItems} />
+
+      <div className="flex items-center">
+        <DesktopNavMenu items={accountNavItems} />
+
+        <div className="py-1 px-1 md:px-3 flex justify-center ">
+          <ThemeToggles />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export const useSiteNavMenuItems = () => {
   const { data } = useGetNavMenuCollections({
     placeholderData: {
       collections: [],
@@ -24,15 +41,15 @@ export const SiteNavMenu = () => {
 
   const user = useUserContext();
 
-  const { onSignOut } = useSignOut({
-    onSuccess: () => {},
-  });
+  const isLoggedOut = !user?.id;
 
-  const isLoggedIn = user?.id;
-
-  const navItems: NavMenuItem[] = isLoggedIn
-    ? [
-        {
+  const primaryNavItems: NavMenuItem[] = [
+    isLoggedOut
+      ? {
+          href: '/' satisfies RouterPath,
+          label: 'Home',
+        }
+      : {
           href: CollectionsRoute.fullPath,
           items: collections.map((collection) => {
             return {
@@ -45,54 +62,45 @@ export const SiteNavMenu = () => {
           }),
           label: 'Collections',
         },
-        {
-          href: '/account' satisfies RouterPath,
-          Icon: AccountCircleIcon,
-          items: [
-            {
-              href: '/sign-in',
-              label: 'Sign out',
-              onClick: async () => {
-                await onSignOut({});
-              },
-            },
-          ],
-          label: 'Account',
-        },
-      ]
-    : [
-        {
-          href: '/about' satisfies RouterPath,
-          label: 'About',
-        },
-        {
-          href: '/why-its-important' satisfies RouterPath,
-          label: "Why it's Important",
-        },
-        {
+    {
+      href: '/about' satisfies RouterPath,
+      label: 'About',
+    },
+    {
+      href: '/why-its-important' satisfies RouterPath,
+      label: "Why it's Important",
+    },
+  ];
+
+  const accountNavItems: NavMenuItem[] = [
+    isLoggedOut
+      ? {
           href: '/sign-in' satisfies RouterPath,
           Icon: AccountCircleIcon,
           items: [
             {
               href: '/sign-in' satisfies RouterPath,
-              label: 'Sign In',
+              label: 'Log In',
             },
             {
               href: '/sign-up' satisfies RouterPath,
               label: 'Sign Up',
             },
           ],
-          label: 'Sign In / Sign Up',
+          label: 'Log In / Sign Up',
+        }
+      : {
+          href: '/account' satisfies RouterPath,
+          Icon: AccountCircleIcon,
+          items: [
+            {
+              href: '/sign-out',
+              label: 'Log Out',
+            },
+          ],
+          label: 'Account',
         },
-      ];
+  ];
 
-  return (
-    <div className="flex justify-between items-center bg-theme-surface-1 text-theme-t1 rounded-xs">
-      <NavMenu items={navItems} />
-
-      <div className="py-1 px-1 md:px-3 flex justify-center w-30">
-        <ThemeToggles />
-      </div>
-    </div>
-  );
+  return { accountNavItems, primaryNavItems };
 };

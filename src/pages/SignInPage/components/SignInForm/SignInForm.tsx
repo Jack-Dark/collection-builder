@@ -112,10 +112,14 @@ export const SignInForm = () => {
           }}
         </form.Field>
 
-        <div className="flex gap-10 justify-between items-center pt-4">
-          <FormSubmitButton form={form} text="Sign In" />
+        <div className="flex flex-wrap gap-5 md:gap-10 justify-between items-center pt-4">
+          <FormSubmitButton
+            className="justify-self-start"
+            form={form}
+            text="Sign In"
+          />
 
-          <div className="flex items-center gap-1 text-sm">
+          <div className="flex flex-wrap items-center gap-1 text-sm">
             <p>Having trouble?</p>
             <Button onClick={showResetPasswordDialog} size="xs" variant="ghost">
               <span className="font-normal">Reset Password</span>

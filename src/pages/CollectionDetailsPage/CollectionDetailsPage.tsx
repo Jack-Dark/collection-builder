@@ -141,6 +141,7 @@ export const CollectionDetailsPage: RouteComponent = () => {
 
   return (
     <PageWrapper
+      wideOnMobile
       title={`${data?.collection?.name || '-'} (${data?.pagination.totalRecords})`}
     >
       <CollectionDetailsTable form={form} />
