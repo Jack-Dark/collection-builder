@@ -25,5 +25,3 @@ export const signUpServerFn = createServerFn({
       data: undefined,
     });
   });
-
-// TODO - REQUIRED FEATURE: ADD MAX COLLECTIONS/COLLECTION ITEMS/IMAGES VALIDATION
