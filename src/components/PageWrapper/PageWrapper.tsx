@@ -27,7 +27,7 @@ export const PageWrapper = (props: PageWrapperPropsDef) => {
             <h1 className="text-inherit text-2xl md:text-3xl">{title}</h1>
           </Link>
 
-          <div className="flex gap-2 md:gap-4 md:px-10">
+          <div className="flex gap-2 md:gap-4">
             <Popover
               aria-label="Buy me a coffee"
               Description="Buy me a coffee!"
@@ -94,8 +94,6 @@ export const PageWrapper = (props: PageWrapperPropsDef) => {
           }}
         </QueryErrorResetBoundary>
       </main>
-
-      {/* <footer className="grid p-4">PLACEHOLDER FOOTER CONTENT</footer> */}
     </div>
   );
 };
