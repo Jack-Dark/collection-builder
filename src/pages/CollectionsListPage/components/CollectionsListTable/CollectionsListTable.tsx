@@ -1,4 +1,3 @@
-import { useSelector } from '@tanstack/react-form';
 import { useEffect, useMemo } from 'react';
 
 import { getPaginationMetadataDefaults } from '#/api/pagination/pagination.constants';
@@ -60,41 +59,42 @@ export const CollectionsListTable = ({
   const paginationProps = useCollectionsListPaginationProps({ pagination });
   const sortProps = useCollectionsListSortProps();
 
-  const tableData = useSelector(form.atom, ({ values }) => {
-    return values.records;
-  });
-
   useEffect(() => {
     // ? clear edit state on unmount
     return resetEditingRowIds;
   }, []);
 
   return (
-    <Table
-      AboveTableComponent={({ table }) => {
-        const selectedRowIds = table
-          .getSelectedRowModel()
-          .rows.map(({ id }) => {
-            return id;
-          });
-
+    <form.Field name="records">
+      {(field) => {
         return (
-          <CollectionsListTableRowActions
-            form={form}
-            onCancel={onCancel}
-            resetRowSelection={table.resetRowSelection}
-            selectedRowIds={selectedRowIds}
+          <Table
+            AboveTableComponent={({ table }) => {
+              const selectedRowIds = table
+                .getSelectedRowModel()
+                .rows.map(({ id }) => {
+                  return id;
+                });
+
+              return (
+                <CollectionsListTableRowActions
+                  form={form}
+                  onCancel={onCancel}
+                  resetRowSelection={table.resetRowSelection}
+                  selectedRowIds={selectedRowIds}
+                />
+              );
+            }}
+            columns={columns}
+            data={field.value}
+            disableRowSelection={isEditing}
+            pagination={paginationProps}
+            search={searchProps}
+            showRowSelection
+            sort={sortProps}
           />
         );
       }}
-      columns={columns}
-      // @ts-expect-error // TS type mismatch between new and old records
-      data={tableData}
-      disableRowSelection={isEditing}
-      pagination={paginationProps}
-      search={searchProps}
-      showRowSelection
-      sort={sortProps}
-    />
+    </form.Field>
   );
 };

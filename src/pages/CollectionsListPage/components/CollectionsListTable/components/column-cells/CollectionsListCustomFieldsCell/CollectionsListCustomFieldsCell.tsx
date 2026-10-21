@@ -339,70 +339,71 @@ export const DeleteCustomFieldDialog = (props: {
 
   const invalidateGetCustomFields = useInvalidateGetCustomFields();
 
-  const { onDeleteCustomFields } = useDeleteCustomFields({
-    onSuccess: async () => {
-      await invalidateGetCustomFields();
-
-      // TODO - IMPROVEMENT PASS FIELD ONCHANGE FUNCTION TO MODAL TO UPDATE ONLY THAT FIELD. IE, REMOVE FORM.STATE
-      const cleanedRecords = form.state.values.records.map((record) => {
-        const filteredCustomFields = record.customFields.filter(
-          ({ customField }) => {
-            return customField.id !== id;
-          },
-        );
-
-        return { ...record, customFields: filteredCustomFields };
-      });
-      form.setFieldValue('records', cleanedRecords);
-
-      onClose();
-    },
-  });
+  const { onDeleteCustomFields } = useDeleteCustomFields();
 
   const numAffectedCollections = collectionsWithCustomField.length;
 
   return (
-    <ConfirmDeleteDialog
-      hideDialog={onClose}
-      onConfirm={async () => {
-        await onDeleteCustomFields({ ids: [id] });
+    <form.Field name="records">
+      {(field) => {
+        const handleDelete = async () => {
+          await onDeleteCustomFields({ ids: [id] });
+          await invalidateGetCustomFields();
+
+          const cleanedRecords = field.value.map((record) => {
+            const filteredCustomFields = record.customFields.filter(
+              ({ customField }) => {
+                return customField.id !== id;
+              },
+            );
+
+            return { ...record, customFields: filteredCustomFields };
+          });
+          field.handleChange(cleanedRecords);
+
+          onClose();
+        };
+
+        return (
+          <ConfirmDeleteDialog hideDialog={onClose} onConfirm={handleDelete}>
+            <div className="grid gap-4">
+              <p className="text-center">
+                Are you sure you want to delete this field?
+              </p>
+
+              <h4 className="text-center">
+                {lastEditedCustomField.data?.customField.name}{' '}
+                <span className="text-theme-t2 text-[.7em]">
+                  (
+                  {lastEditedCustomField.data?.customField.type
+                    ? customFieldTypeLabelsMap[
+                        lastEditedCustomField.data.customField.type
+                      ]
+                    : '-'}
+                  )
+                </span>
+              </h4>
+
+              {!!numAffectedCollections && (
+                <div className="grid gap-1">
+                  <p className="text-center text-sm text-theme-t1">
+                    This will remove the field from {numAffectedCollections}{' '}
+                    {pluralize('collection', numAffectedCollections)} and "
+                    {lastEditedCustomField.data?.customField.name}" details from
+                    all items within.
+                  </p>
+                </div>
+              )}
+
+              <p className="max-w-100 text-theme-t2 text-sm text-center">
+                Note: This will delete both the field and values, even if
+                changes to your collection are dismissed.
+              </p>
+            </div>
+          </ConfirmDeleteDialog>
+        );
       }}
-    >
-      <div className="grid gap-4">
-        <p className="text-center">
-          Are you sure you want to delete this field?
-        </p>
-
-        <h4 className="text-center">
-          {lastEditedCustomField.data?.customField.name}{' '}
-          <span className="text-theme-t2 text-[.7em]">
-            (
-            {lastEditedCustomField.data?.customField.type
-              ? customFieldTypeLabelsMap[
-                  lastEditedCustomField.data.customField.type
-                ]
-              : '-'}
-            )
-          </span>
-        </h4>
-
-        {!!numAffectedCollections && (
-          <div className="grid gap-1">
-            <p className="text-center text-sm text-theme-t1">
-              This will remove the field from {numAffectedCollections}{' '}
-              {pluralize('collection', numAffectedCollections)} and "
-              {lastEditedCustomField.data?.customField.name}" details from all
-              items within.
-            </p>
-          </div>
-        )}
-
-        <p className="max-w-100 text-theme-t2 text-sm text-center">
-          Note: This will delete both the field and values, even if changes to
-          your collection are dismissed.
-        </p>
-      </div>
-    </ConfirmDeleteDialog>
+    </form.Field>
   );
 };
 

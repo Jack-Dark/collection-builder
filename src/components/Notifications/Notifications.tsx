@@ -9,9 +9,7 @@ import { notificationTypes } from './Notifications.constants';
 import { notificationsStore } from './useNotifications';
 
 export const Notifications = () => {
-  const notifications = useSelector(notificationsStore, (state) => {
-    return state;
-  });
+  const notifications = useSelector(notificationsStore);
 
   const clearNotification = (id: string) => {
     notificationsStore.setState((prevNotifications) => {
