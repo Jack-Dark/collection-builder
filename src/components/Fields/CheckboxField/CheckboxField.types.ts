@@ -14,7 +14,7 @@ export type CheckboxBasePropsDef = CheckboxRootProps & CheckboxBaseIconPropsDef;
 
 export type CheckboxBaseIconPropsDef = Pick<
   CheckboxRootProps,
-  'aria-label' | 'checked' | 'disabled' | 'indeterminate'
+  'aria-label' | 'checked' | 'indeterminate'
 > & {
   className?: string;
 };
