@@ -25,12 +25,12 @@ export const Route = createFileRoute('/_protected')({
 
       return { user: session.user };
     } catch (error) {
-      // Re-throw redirects (they're intentional, not errors)
+      // ? Re-throw redirects (they're intentional, not errors)
       if (isRedirect(error)) {
         throw error;
       }
 
-      // Auth check failed (network error, etc.) - redirect to login
+      // ? Auth check failed (network error, etc.) - redirect to login
       throw redirectToSignIn();
     }
   },
