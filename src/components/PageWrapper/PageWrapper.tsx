@@ -19,15 +19,15 @@ export const PageWrapper = (props: PageWrapperPropsDef) => {
   const { children, title = 'Collection Tracker' } = props;
 
   return (
-    <div className="p-4 h-dvh overflow-hidden size-full grid grid-rows-[auto_1fr] gap-4">
-      <header className="grid gap-4">
+    <div className="p-1 md:p-4 h-dvh overflow-hidden size-full grid grid-rows-[auto_1fr] gap-2 md:gap-4">
+      <header className="grid gap-2 md:gap-4">
         <div className="flex items-center gap-2 justify-between text-white">
           <Link className="flex items-center gap-2 text-inherit" to="/">
             <ListAltIcon className="text-4xl text-inherit" fontSize="large" />
-            <h1 className="text-inherit">{title}</h1>
+            <h1 className="text-inherit text-2xl md:text-3xl">{title}</h1>
           </Link>
 
-          <div className="flex gap-4 px-10">
+          <div className="flex gap-2 md:gap-4 md:px-10">
             <Popover
               aria-label="Buy me a coffee"
               Description="Buy me a coffee!"
@@ -77,7 +77,7 @@ export const PageWrapper = (props: PageWrapperPropsDef) => {
         </QueryErrorResetBoundary>
       </header>
 
-      <main className="relative size-full px-4 pt-6 pb-4 bg-theme-surface-1 rounded-xs">
+      <main className="relative size-full p-2 md:px-4 md:pt-6 md:pb-4 bg-theme-surface-1 rounded-xs">
         <QueryErrorResetBoundary>
           {({ reset }) => {
             return (

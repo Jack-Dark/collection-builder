@@ -1,6 +1,7 @@
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 import { useSignOut } from '#/api/routes/users/sign-out/sign-out.react-query';
+import { NavMenu } from '#/components/NavMenu';
 import { useUserContext } from '#/hooks/use-user-context';
 
 import type { RouterPath } from '../../../../types';
@@ -9,10 +10,8 @@ import type { NavMenuItem } from '../../../NavMenu/NavMenu.types';
 import { useGetNavMenuCollections } from '../../../../api/routes/collections/get-nav-menu-collections/get-nav-menu-collections.react-query';
 import { Route as CollectionsRoute } from '../../../../routes/_protected/collections';
 import { Route as CollectionRoute } from '../../../../routes/_protected/collections/$id';
-import { NavMenu } from '../../../NavMenu';
 import { ThemeToggles } from './components/ThemeToggles';
 
-// TODO - REQUIRED FEATURE: BUILD MOBILE NAV SUPPORT
 export const SiteNavMenu = () => {
   const { data } = useGetNavMenuCollections({
     placeholderData: {
@@ -51,7 +50,7 @@ export const SiteNavMenu = () => {
           Icon: AccountCircleIcon,
           items: [
             {
-              href: '#sign-out',
+              href: '/sign-in',
               label: 'Sign out',
               onClick: async () => {
                 await onSignOut({});
@@ -88,10 +87,10 @@ export const SiteNavMenu = () => {
       ];
 
   return (
-    <div className="flex justify-between items-center bg-theme-surface-1 text-theme-t1">
+    <div className="flex justify-between items-center bg-theme-surface-1 text-theme-t1 rounded-xs">
       <NavMenu items={navItems} />
 
-      <div className="py-1 px-3 flex justify-center w-30">
+      <div className="py-1 px-1 md:px-3 flex justify-center w-30">
         <ThemeToggles />
       </div>
     </div>
