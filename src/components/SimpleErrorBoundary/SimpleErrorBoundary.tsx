@@ -3,10 +3,7 @@ import type { ErrorBoundaryPropsWithFallback } from 'react-error-boundary';
 
 import { ErrorBoundary } from 'react-error-boundary';
 
-export const githubUrl = {
-  issues: 'https://github.com/Jack-Dark/collection-tracker/issues',
-  repo: 'https://github.com/Jack-Dark/collection-tracker',
-};
+import { githubUrl } from '../../constants/githubUrl';
 
 export const SimpleErrorBoundary = ({
   children,

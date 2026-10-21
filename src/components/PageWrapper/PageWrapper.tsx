@@ -7,8 +7,10 @@ import { QueryErrorResetBoundary } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { Suspense } from 'react';
 
+import { githubUrl } from '#/constants/githubUrl';
+
 import { Popover } from '../Popover';
-import { githubUrl, SimpleErrorBoundary } from '../SimpleErrorBoundary';
+import { SimpleErrorBoundary } from '../SimpleErrorBoundary';
 import { SiteNavMenu } from './components/SiteNavMenu';
 
 type PageWrapperPropsDef = PropsWithChildren<{

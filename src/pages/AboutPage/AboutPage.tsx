@@ -1,6 +1,6 @@
 import { Button } from '#/components/Button';
 import { PageWrapper } from '#/components/PageWrapper';
-import { githubUrl } from '#/components/SimpleErrorBoundary';
+import { githubUrl } from '#/constants/githubUrl';
 
 // TODO - REQUIRED FEATURE: FILL OUT ABOUT PAGE
 export const AboutPage = () => {
@@ -20,7 +20,7 @@ export const AboutPage = () => {
             thoughts on the project and all the libraries and tools that I used.
           </p>
 
-          <a className="flex" href={githubUrl.repo} target="_blank">
+          <a className="flex" href={githubUrl.readme} target="_blank">
             <Button size="sm" text="View the README" />
           </a>
         </div>

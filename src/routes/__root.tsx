@@ -20,11 +20,9 @@ import { getSession } from '#/auth/auth-middleware';
 import { Button } from '#/components/Button';
 import { DialogProvider } from '#/components/Dialog/Dialog.Provider';
 import { PageWrapper } from '#/components/PageWrapper';
-import {
-  githubUrl,
-  SimpleErrorBoundaryContent,
-} from '#/components/SimpleErrorBoundary';
+import { SimpleErrorBoundaryContent } from '#/components/SimpleErrorBoundary';
 import { ThemeProvider } from '#/components/ThemeProvider';
+import { githubUrl } from '#/constants/githubUrl';
 import { getThemeServerFn } from '#/lib/theme';
 
 import appCss from '../styles.css?url';
