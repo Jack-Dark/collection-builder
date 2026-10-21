@@ -32,17 +32,17 @@ export const createNewUserExampleRecordsDbQuery = async ({
       .insert(customFieldsTable)
       .values([
         {
-          name: 'Example Custom Text Field',
+          name: 'Example Text Field',
           userId,
           type: 'string',
         },
         {
-          name: 'Example Custom Number Field',
+          name: 'Example Number Field',
           userId,
           type: 'number',
         },
         {
-          name: 'Example Custom TRUE/FALSE Field',
+          name: 'Example TRUE/FALSE Field',
           userId,
           type: 'boolean',
         },
