@@ -24,7 +24,11 @@ export const getCollectionItemsTableColumns = (
 ) => {
   const { customFields, form, onCancel, onEditClick } = props;
 
-  return [
+  const sortedCustomFields = _.sortBy(customFields, ({ order }) => {
+    return order;
+  });
+
+  return columnHelper.columns([
     columnHelper.accessor('name', {
       cell: ({ row }) => {
         return (
@@ -51,9 +55,7 @@ export const getCollectionItemsTableColumns = (
       header: 'Images',
       size: 200,
     }),
-    ..._.sortBy(customFields, ({ order }) => {
-      return order;
-    }).map(({ customField }) => {
+    ...sortedCustomFields.map(({ customField }) => {
       return columnHelper.accessor('customFieldValues', {
         cell: ({ row }) => {
           return (
@@ -129,5 +131,5 @@ export const getCollectionItemsTableColumns = (
       id: 'actions',
       maxSize: 40,
     }),
-  ];
+  ]);
 };

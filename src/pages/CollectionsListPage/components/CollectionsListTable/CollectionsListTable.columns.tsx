@@ -29,7 +29,7 @@ export const getCollectionsListTableColumns = (
 ) => {
   const { form, onCancel, onEditClick } = props;
 
-  return [
+  return columnHelper.columns([
     columnHelper.accessor('name', {
       cell: (props) => {
         const { getValue, row } = props;
@@ -107,5 +107,5 @@ export const getCollectionsListTableColumns = (
       id: 'actions',
       maxSize: 40,
     }),
-  ];
+  ]);
 };
