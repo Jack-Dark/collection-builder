@@ -31,7 +31,7 @@ export const Image = (props: ImagePropsDef) => {
       className={`flex justify-center items-center size-full max-w-full max-h-full ${onClick ? 'cursor-pointer' : ''}`}
       onClick={onClick}
     >
-      <img alt={alt} className="object-contain" src={imgSrc} />
+      <img alt={alt} className="size-full object-contain" src={imgSrc} />
     </div>
   );
 };
