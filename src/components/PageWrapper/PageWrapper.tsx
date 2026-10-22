@@ -12,6 +12,7 @@ import { githubUrl } from '#/constants/githubUrl';
 import { useUserContext } from '#/hooks/use-user-context';
 
 import { MobileNavMenu } from '../NavMenu/components/MobileNavMenu';
+import { ListMobileMenuItems } from '../NavMenu/components/MobileNavMenu/components/ListMobileMenuItems';
 import { Popover } from '../Popover';
 import { SimpleErrorBoundary } from '../SimpleErrorBoundary';
 import { SiteNavMenu, useSiteNavMenuItems } from './components/SiteNavMenu';
@@ -27,23 +28,6 @@ export const PageWrapper = (props: PageWrapperPropsDef) => {
 
   const { accountNavItems, primaryNavItems } = useSiteNavMenuItems();
 
-  const mobileAccountNavItems = accountNavItems.reduce<
-    {
-      href: string | undefined;
-      label: string | undefined;
-    }[]
-  >((acc, { href, items, label }) => {
-    if (items?.length) {
-      const formattedSubItems = items.map(({ href, label }) => {
-        return { href, label };
-      });
-
-      return [...acc, { href, label }, ...formattedSubItems];
-    } else {
-      return [...acc, { href, label }];
-    }
-  }, []);
-
   const user = useUserContext();
 
   return (
@@ -54,20 +38,10 @@ export const PageWrapper = (props: PageWrapperPropsDef) => {
             <MobileNavMenu
               BottomContent={({ closeMenu }) => {
                 return (
-                  <div className="px-10 flex items-center justify-between gap-10">
-                    {mobileAccountNavItems.map(({ href, label }) => {
-                      return (
-                        <Link
-                          className="px-3 py-1 text-inherit"
-                          key={label}
-                          onClick={closeMenu}
-                          to={href}
-                        >
-                          {label}
-                        </Link>
-                      );
-                    })}
-                  </div>
+                  <ListMobileMenuItems
+                    closeMenu={closeMenu}
+                    items={accountNavItems}
+                  />
                 );
               }}
               items={primaryNavItems}

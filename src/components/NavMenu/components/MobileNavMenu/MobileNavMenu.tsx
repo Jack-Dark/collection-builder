@@ -82,8 +82,8 @@ export const MobileNavMenu = (props: {
             <div className="overflow-hidden">
               <ScrollArea.Root className="h-full overscroll-contain transition-transform duration-600 ease-[cubic-bezier(0.45,1.005,0,1.005)] group-data-starting-style:translate-y-[100dvh] group-data-ending-style:pointer-events-none">
                 <ScrollArea.Viewport className="h-full overscroll-contain touch-auto">
-                  <ScrollArea.Content className="min-h-full">
-                    <Drawer.Content className="grid grid-rows-[1fr_auto] gap-5 py-4">
+                  <ScrollArea.Content className="h-full min-h-full">
+                    <Drawer.Content className="h-full min-h-full grid grid-rows-[1fr_auto] gap-5 py-4">
                       <ListMobileMenuItems
                         closeMenu={closeMenu}
                         items={items}

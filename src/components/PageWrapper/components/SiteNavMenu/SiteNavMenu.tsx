@@ -1,4 +1,5 @@
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 
 import { useImpersonateUserStop } from '#/api/routes/users/impersonate-user-stop/impersonate-user-stop.react-query';
 import { DesktopNavMenu } from '#/components/NavMenu/components/DesktopNavMenu';
@@ -73,11 +74,6 @@ export const useSiteNavMenuItems = () => {
       href: '/why-its-important' satisfies RouterPath,
       label: "Why it's Important",
     },
-    {
-      hidden: user?.role !== 'admin',
-      href: '/admin/users' satisfies RouterPath,
-      label: 'Admin: Users',
-    },
   ];
 
   const accountNavItems: NavMenuItem[] = [
@@ -101,6 +97,12 @@ export const useSiteNavMenuItems = () => {
           href: '/account' satisfies RouterPath,
           Icon: AccountCircleIcon,
           items: [
+            {
+              hidden: user?.role !== 'admin',
+              href: '/admin/users' satisfies RouterPath,
+              Icon: AdminPanelSettingsIcon,
+              label: 'Admin: Users',
+            },
             user.impersonatedBy
               ? {
                   href: '/sign-in',
