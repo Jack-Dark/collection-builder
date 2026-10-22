@@ -1,6 +1,7 @@
 import type { RouteComponent } from '@tanstack/react-router';
 
 import { useForm } from '@tanstack/react-form';
+import { useHotkeys } from '@tanstack/react-hotkeys';
 import { useBlocker } from '@tanstack/react-router';
 import { useEffect } from 'react';
 
@@ -109,10 +110,21 @@ export const CollectionsListPage: RouteComponent = () => {
     },
   });
 
+  useHotkeys([
+    {
+      callback: async () => {
+        if (isEditing && form.state.isDirty) {
+          await form.handleSubmit();
+        }
+      },
+      hotkey: 'Mod+Enter',
+    },
+  ]);
+
   useBlocker({
     disabled: !isEditing,
     shouldBlockFn: () => {
-      if (isEditing) {
+      if (isEditing && form.state.isDirty) {
         const shouldLeave = confirm(
           'You will lose any unsaved changes. Are you sure you want to leave?',
         );

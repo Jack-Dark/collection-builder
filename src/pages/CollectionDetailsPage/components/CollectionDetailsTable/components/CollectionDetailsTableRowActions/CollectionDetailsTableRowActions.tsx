@@ -19,6 +19,7 @@ import { useEditingCollectionItemsRowIds } from '../../../../hooks/use-editing-c
 import { AddNewCollectionItemButton } from './components/AddNewCollectionItemButton';
 import { CollectionDetailsSubmitButton } from './components/CollectionDetailsSubmitButton';
 
+// TODO - IMPROVEMENT: RENAME TO SOMETHING MORE APPROPRIATE
 export const CollectionDetailsTableRowActions = ({
   form,
   onCancel,
