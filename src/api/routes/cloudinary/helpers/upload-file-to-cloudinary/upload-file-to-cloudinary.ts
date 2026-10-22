@@ -33,8 +33,7 @@ export const uploadFileToCloudinary = async (
     const arrayBuffer = await file.arrayBuffer();
     const bytes = new Uint8Array(arrayBuffer);
     const totalChunks = Math.max(1, Math.ceil(bytes.length / chunkSize));
-    // const uploadId = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
-    const uploadId = 'MOCK_DATA`';
+    const uploadId = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
 
     let photo: UploadApiResponse | null = null;
 
@@ -43,13 +42,11 @@ export const uploadFileToCloudinary = async (
       // ? Uint8Array.slice() returns a copy with its own buffer — safe to pass directly
       const chunk = bytes.slice(start, start + chunkSize);
       const chunkBase64 = arrayBufferToBase64(chunk.buffer);
-      const filename = file.name;
 
       const result = await uploadChunkToCloudinaryServerFn({
         data: {
           chunkBase64,
           chunkIndex: i,
-          filename,
           tags,
           totalChunks,
           uploadId,

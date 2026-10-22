@@ -28,13 +28,11 @@ export function safeCtxValue(s: string | number | undefined): string {
 
 export const uploadChunkToCloudinary = async (props: {
   fileBuffer: Buffer;
-  filename: string;
   tags?: string[];
 }): Promise<UploadApiResponse> => {
-  const { fileBuffer, filename, tags } = props;
+  const { fileBuffer, tags } = props;
 
   const uploadOptions: UploadApiOptions = {
-    public_id: `${Date.now()}-${filename.replace(/\.[^/.]+$/, '')}`,
     resource_type: 'image' as const,
     tags,
     transformation: [

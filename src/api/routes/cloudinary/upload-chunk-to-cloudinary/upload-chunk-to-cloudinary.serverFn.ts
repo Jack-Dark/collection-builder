@@ -17,8 +17,7 @@ export const uploadChunkToCloudinaryServerFn = createServerFn({
 })
   .validator(uploadCloudinaryFileSchema)
   .handler(async ({ data }) => {
-    const { chunkBase64, chunkIndex, filename, tags, totalChunks, uploadId } =
-      data;
+    const { chunkBase64, chunkIndex, tags, totalChunks, uploadId } = data;
 
     if (!chunkBuffers.has(uploadId)) {
       chunkBuffers.set(uploadId, new Array(totalChunks).fill(null));
@@ -38,7 +37,6 @@ export const uploadChunkToCloudinaryServerFn = createServerFn({
 
     const result = await uploadChunkToCloudinary({
       fileBuffer,
-      filename,
       tags,
     });
 
