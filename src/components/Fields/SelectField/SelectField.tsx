@@ -94,7 +94,7 @@ export const SelectField = <TItem extends DefaultSelectItemDef>(
       >
         <Select.Trigger
           aria-label={ariaLabel}
-          className="grid grid-cols-[1fr_auto] gap-1 md:gap-2 p-1.5 bg-theme-surface-1 dark:bg-theme-surface-2 dialog:bg-theme-surface-1 border rounded-xs border-theme-divider-1 dark:border-theme-divider-3 cursor-pointer"
+          className="grid grid-cols-[1fr_auto] gap-1 md:gap-2 p-1.5 bg-theme-surface-1 dark:bg-theme-surface-2 dialog:bg-theme-surface-1 border rounded-xs border-theme-divider-1 dark:border-theme-divider-3 cursor-pointer text-left"
         >
           <Select.Value
             className="grid justify-start"
@@ -103,13 +103,15 @@ export const SelectField = <TItem extends DefaultSelectItemDef>(
             {(item: TItem | undefined) => {
               return item ? (
                 <RenderValue
-                  className={`${
-                    item?.disabled || item?.placeholder ? 'text-gray-500 ' : ''
+                  className={`min-w-30 ${
+                    item?.disabled || item?.placeholder
+                      ? 'text-theme-disabled '
+                      : ''
                   } ${item?.disabled ? 'cursor-not-allowed' : ''}`}
                   item={item}
                 />
               ) : (
-                <span className="text-gray-500">{placeholder}</span>
+                <span className="text-theme-t2">{placeholder}</span>
               );
             }}
           </Select.Value>
@@ -120,7 +122,7 @@ export const SelectField = <TItem extends DefaultSelectItemDef>(
         <Select.Portal>
           <Select.Positioner align="start" alignItemWithTrigger={false}>
             <Select.Popup>
-              <Select.List className="min-w-25 bg-theme-surface-1 dark:bg-theme-surface-2 text-theme-t1 border border-theme-divider-1 dark:border-theme-divider-3 py-2 rounded-sm shadow-lg max-h-100 overflow-auto data-empty:hidden">
+              <Select.List className="min-w-30 bg-theme-surface-1 dark:bg-theme-surface-2 text-theme-t1 border border-theme-divider-1 dark:border-theme-divider-3 py-2 rounded-sm shadow-lg max-h-100 overflow-auto data-empty:hidden">
                 {items.map((item, index) => {
                   return (
                     <Fragment
@@ -132,11 +134,9 @@ export const SelectField = <TItem extends DefaultSelectItemDef>(
                         <Select.Item
                           className={twMerge(
                             'p-2 flex align-items-center',
-                            item.disabled || item.placeholder
-                              ? 'text-theme-disabled'
-                              : '',
+                            item?.placeholder && 'text-theme-t2',
                             item?.disabled
-                              ? 'cursor-not-allowed'
+                              ? 'text-theme-disabled cursor-not-allowed'
                               : twJoin(
                                   'cursor-pointer',
                                   // ? selected status styles

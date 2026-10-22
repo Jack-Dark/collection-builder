@@ -332,7 +332,7 @@ export const ComboboxField = <
           <Combobox.Value>
             {() => {
               const classNames =
-                'min-w-20 max-w-full p-1.5 border rounded-xs border-theme-divider-2 dark:border-theme-divider-3 bg-theme-surface-1 dark:bg-theme-surface-2 dialog:dark:bg-theme-surface-1';
+                'min-w-30 max-w-full p-1.5 border rounded-xs border-theme-divider-2 dark:border-theme-divider-3 bg-theme-surface-1 dark:bg-theme-surface-2 dialog:dark:bg-theme-surface-1';
 
               return multiple ? (
                 <Combobox.Input

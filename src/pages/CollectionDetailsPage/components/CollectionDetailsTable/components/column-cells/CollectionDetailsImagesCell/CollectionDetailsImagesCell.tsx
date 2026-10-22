@@ -47,9 +47,10 @@ export const CollectionDetailsImagesCell = (props: {
                             }
                           : { src: data.previewUrl };
 
+                        // TODO - IMPROVEMENT: UPDATE TO SLIDESHOW
                         return (
                           <div
-                            className="p-1 size-14 bg-white border border-gray-400 text-gray-500"
+                            className="p-1 size-14 border border-theme-divider-3 bg-theme-surface-2 text-theme-t2 hover:border-theme-link-hover hover:text-theme-link-hover"
                             key={key}
                           >
                             <ZoomableThumbnail

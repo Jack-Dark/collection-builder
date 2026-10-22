@@ -28,10 +28,10 @@ export const Image = (props: ImagePropsDef) => {
 
   return (
     <div
-      className={`w-full h-full overflow-hidden ${onClick ? 'cursor-pointer' : ''}`}
+      className={`flex justify-center items-center size-full max-w-full max-h-full ${onClick ? 'cursor-pointer' : ''}`}
       onClick={onClick}
     >
-      <img alt={alt} className="w-full h-full object-contain" src={imgSrc} />
+      <img alt={alt} className="object-contain" src={imgSrc} />
     </div>
   );
 };

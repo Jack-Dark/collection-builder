@@ -9,7 +9,11 @@ export const ZoomableThumbnail = (props: ZoomableThumbnailPropsDef) => {
 
   const [showDialog, hideDialog] = useDialog(() => {
     return (
-      <Dialog Header={alt} onClose={hideDialog}>
+      <Dialog
+        Header={alt}
+        maxWidthClassName="md:max-w-max"
+        onClose={hideDialog}
+      >
         <Image {...image} alt={alt} />
       </Dialog>
     );

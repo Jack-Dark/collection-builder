@@ -4,7 +4,10 @@ import { useRef } from 'react';
 
 import type { CreateOrUpdateCollectionItemFormTypeDef } from '#/pages/CollectionDetailsPage/CollectionDetailsPage.types';
 
-import { createCloudinaryUrl } from '#/api/routes/cloudinary/cloudinary-url';
+import {
+  createCloudinaryUrl,
+  thumbnailSize,
+} from '#/api/routes/cloudinary/cloudinary-url';
 import { Image } from '#/components/Image';
 import { SimpleErrorBoundary } from '#/components/SimpleErrorBoundary';
 
@@ -32,20 +35,26 @@ export const CollectionDetailsImagesField = ({
                 previewUrl = image.previewUrl;
               }
 
-              const src = previewUrl || createCloudinaryUrl({ publicId });
+              const src =
+                previewUrl ||
+                createCloudinaryUrl({
+                  height: thumbnailSize,
+                  publicId,
+                  width: thumbnailSize,
+                });
 
               return (
                 <SimpleErrorBoundary key={src}>
-                  <div className="relative grid grid-rows-[auto_1fr] items-center p-1 size-14 bg-white border border-gray-400 text-gray-500">
+                  <div className="relative p-1 size-14 border border-theme-divider-3 bg-theme-surface-2 text-theme-t2">
                     <div
-                      className="absolute right-0 top-0 flex justify-end p-4px bg-white border-l border-b border-gray-400 rounded-bl-sm text-lg hover:text-red-700 cursor-pointer"
+                      className="absolute right-0 top-0 flex justify-end p-4px bg-inherit border-l border-b border-theme-divider-3 rounded-bl-sm text-lg hover:text-theme-t-alert cursor-pointer"
                       onClick={() => {
                         field.removeValue(index);
                       }}
                     >
                       <DeleteIcon fontSize="inherit" />
                     </div>
-                    <div className="w-full h-full overflow-hidden">
+                    <div className="size-full">
                       <Image
                         alt={`${field.name} thumbnail ${index + 1}`}
                         src={src}
@@ -55,18 +64,20 @@ export const CollectionDetailsImagesField = ({
                 </SimpleErrorBoundary>
               );
             })}
+
             <SimpleErrorBoundary>
               <div
-                className="grid items-center justify-center size-14 border border-gray-400 text-gray-500 cursor-pointer"
+                aria-label="Upload image"
+                className="grid items-center justify-center size-14 border border-theme-divider-3 bg-theme-surface-2 text-theme-t2 hover:border-theme-link-hover hover:text-theme-link-hover cursor-pointer"
                 onClick={() => {
                   fileInputRef.current?.click();
                 }}
-                title="Upload"
+                title="Upload image"
               >
                 <AddIcon fontSize="large" />
               </div>
               <input
-                accept=".jpg,.jpeg,.png,.webp"
+                accept="image/*"
                 autoFocus
                 capture="environment"
                 className="hidden"
