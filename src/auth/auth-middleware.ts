@@ -6,7 +6,7 @@ import { ReasonPhrases } from 'http-status-codes';
 import type { AuthContextDef } from './auth-middleware.types';
 
 import { auth } from './auth';
-import { authSchema } from './auth-middleware.schema';
+import { authAdminSchema, authSchema } from './auth-middleware.schema';
 
 export const getSession = createServerFn({ method: 'GET' }).handler(
   async () => {
@@ -33,9 +33,35 @@ export const ensureSession = createServerFn({ method: 'GET' }).handler(
 /** Use this middleware to authenticate protected API routes. */
 export const authApiRouteMiddleware = createMiddleware().server(
   async ({ next }) => {
-    const session = await ensureSession();
+    const response = await ensureSession();
 
-    const { data, error, success } = authSchema.safeParse(session.user);
+    const { data, error, success } = authSchema.safeParse(response.user);
+
+    if (success) {
+      const context: AuthContextDef = {
+        user: {
+          ...data,
+          impersonatedBy: response.session.impersonatedBy,
+        },
+      };
+
+      return await next({
+        context,
+      });
+    }
+
+    console.error(error.message);
+
+    throw new Error(error.message);
+  },
+);
+
+/** Use this middleware to authenticate protected API routes. */
+export const authAdminApiRouteMiddleware = createMiddleware().server(
+  async ({ next }) => {
+    const response = await ensureSession();
+
+    const { data, error, success } = authAdminSchema.safeParse(response.user);
 
     if (success) {
       const context: AuthContextDef = {
@@ -56,10 +82,10 @@ export const authApiRouteMiddleware = createMiddleware().server(
 /** Use this middleware to authenticate unprotected API routes. Will try to authorize, but won't throw an error if it fails (unless the response is malformed). */
 export const softAuthApiRouteMiddleware = createMiddleware().server(
   async ({ next }) => {
-    const session = await getSession();
+    const response = await getSession();
 
-    if (session) {
-      const { data, error, success } = authSchema.safeParse(session.user);
+    if (response) {
+      const { data, error, success } = authSchema.safeParse(response.user);
 
       if (success) {
         const context: AuthContextDef = {

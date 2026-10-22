@@ -9,6 +9,7 @@ export const reactQueryKeys = {
   getFiltersForCollection: 'get-filters-for-collection',
   getNavMenuCollections: 'get-nav-menu-collections',
   getPaginatedCollections: 'get-paginated-collections',
+  getPaginatedUsers: 'get-paginated-users',
 } as const;
 
 export const reactMutationKeys = {
@@ -47,6 +48,8 @@ export const reactMutationKeys = {
     email: {
       update: 'update-email',
     },
+    impersonate: 'impersonate-user',
+    impersonateStop: 'stop-impersonating-user',
     password: {
       requestReset: 'request-password-reset',
       reset: 'reset-password',

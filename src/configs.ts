@@ -9,6 +9,7 @@ export const configs = {
   cloudinaryCloudName: process.env.CLOUDINARY_CLOUD_NAME!,
   cloudinaryUploadPreset: process.env.CLOUDINARY_UPLOAD_PRESET!,
   dbUrl: process.env.DATABASE_URL!,
+  environment: process.env.NODE_ENV!,
   resendApiKey: process.env.RESEND_API_KEY!,
   siteUrl: process.env.SITE_URL!,
 } as const;

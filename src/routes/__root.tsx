@@ -31,9 +31,14 @@ export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
 }>()({
   beforeLoad: async () => {
-    const session = await getSession();
+    const response = await getSession();
 
-    return { user: session?.user };
+    return {
+      user: {
+        ...response?.user,
+        impersonatedBy: response?.session.impersonatedBy,
+      },
+    };
   },
   component: RootComponent,
   errorComponent: SimpleErrorBoundaryContent,

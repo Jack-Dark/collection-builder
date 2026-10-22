@@ -22,17 +22,22 @@ export const timestamps = {
 };
 
 export const usersTable = snakeCase.table('users', {
+  banExpires: timestamp('ban_expires'),
+  banned: boolean('banned'),
+  banReason: text('ban_reason'),
   email: text('email').notNull().unique(),
   emailVerified: boolean('email_verified').default(false).notNull(),
   id: text('id').primaryKey(),
   image: text('image'),
   name: text('name').notNull(),
+  role: text('role').notNull().default('user'),
   ...timestamps,
 });
 
 export const sessionsTable = snakeCase.table('sessions', {
   expiresAt: timestamp('expires_at').notNull(),
   id: text('id').primaryKey(),
+  impersonatedBy: text('impersonated_by'),
   ipAddress: text('ip_address'),
   token: text('token').notNull().unique(),
   userAgent: text('user_agent'),

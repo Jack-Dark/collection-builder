@@ -3,7 +3,12 @@ import type { authSchema } from './auth-middleware.schema';
 
 type AuthSchemaDef = z.output<typeof authSchema>;
 
-export type AuthContextDef = Record<'user', AuthSchemaDef>;
+export type AuthContextDef = Record<
+  'user',
+  AuthSchemaDef & {
+    impersonatedBy?: string | null | undefined;
+  }
+>;
 
 export type DbQueryArgsDef<TData extends any, TContext = AuthContextDef> = [
   TData,

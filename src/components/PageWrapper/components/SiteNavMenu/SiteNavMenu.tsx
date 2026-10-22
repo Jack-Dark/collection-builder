@@ -1,5 +1,6 @@
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
+import { useImpersonateUserStop } from '#/api/routes/users/impersonate-user-stop/impersonate-user-stop.react-query';
 import { DesktopNavMenu } from '#/components/NavMenu/components/DesktopNavMenu';
 import { useUserContext } from '#/hooks/use-user-context';
 
@@ -39,6 +40,8 @@ export const useSiteNavMenuItems = () => {
 
   const { collections } = data;
 
+  const { onImpersonateUserStop } = useImpersonateUserStop();
+
   const user = useUserContext();
 
   const isLoggedOut = !user?.id;
@@ -70,6 +73,11 @@ export const useSiteNavMenuItems = () => {
       href: '/why-its-important' satisfies RouterPath,
       label: "Why it's Important",
     },
+    {
+      hidden: user?.role !== 'admin',
+      href: '/admin/users' satisfies RouterPath,
+      label: 'Admin: Users',
+    },
   ];
 
   const accountNavItems: NavMenuItem[] = [
@@ -93,10 +101,16 @@ export const useSiteNavMenuItems = () => {
           href: '/account' satisfies RouterPath,
           Icon: AccountCircleIcon,
           items: [
-            {
-              href: '/sign-out',
-              label: 'Log Out',
-            },
+            user.impersonatedBy
+              ? {
+                  href: '/sign-in',
+                  label: 'Stop Impersonating',
+                  onClick: onImpersonateUserStop,
+                }
+              : {
+                  href: '/sign-out',
+                  label: 'Log Out',
+                },
           ],
           label: 'Account',
         },
